@@ -8,7 +8,15 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+
+import bus.DiscountService;
+import bus.ProductService;
+import domain.InvoiceItem;
+import domain.PaymentItem;
+import domain.Product;
+import forms.invoice.InvoicePanel;
 
 
 /**
@@ -156,6 +164,51 @@ public class PaymentDialog extends javax.swing.JDialog {
 					getContentPane().add(jButton1);
 					jButton1.setText("OK");
 					jButton1.setBounds(101, 354, 58, 24);
+					jButton1.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							Integer paymentType = jComboBox2.getSelectedIndex()+1;
+							Double amount = Double.parseDouble(txtAmount.getText());
+							String creditCard = txtCreditCard.getText().toString();
+							String creditCardType = cbCreditCardType.getSelectedItem().toString();
+							String bankCheck = txtBankCheck.getText().toString();
+							String giftCertificate = txtGiftCertificate.getText().toString();
+							
+							PaymentItem paymentItem = new PaymentItem();
+							paymentItem.setPaymentCode(paymentType);
+							paymentItem.setAmount(amount);
+							paymentItem.setCardNo(creditCard);
+							if(cbCreditCardType.getSelectedIndex() == 0){
+								paymentItem.setCardType("");
+							}
+							else{
+								paymentItem.setCardType(creditCardType);
+							}
+							paymentItem.setCheckNo(bankCheck);
+							paymentItem.setGcNo(giftCertificate);
+							
+							if(invoker instanceof InvoicePanel){
+								System.out.println("invoking...");
+								InvoicePanel invoicePanel = (InvoicePanel)invoker;
+							
+								if(action.equals("add")){
+									if(invoicePanel.getPaymentItemRow(paymentItem.getPaymentCode()) == null){
+										invoicePanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else{
+										JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else { //edit
+									//invoicePanel.editInvoiceItem(invoiceItem, action);
+									paymentDialog.setVisible(false);
+								}
+									
+								
+							}
+						}
+					});
+
 				}
 				{
 					jButton2 = new JButton();
