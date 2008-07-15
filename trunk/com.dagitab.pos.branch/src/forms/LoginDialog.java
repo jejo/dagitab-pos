@@ -130,5 +130,10 @@ public class LoginDialog extends javax.swing.JDialog {
 			e.printStackTrace();
 		}
 	}
+	
+	public void resetTextFieldValues(){
+		jTextField1.setText("");
+		jPasswordField1.setText("");
+	}
 
 }
