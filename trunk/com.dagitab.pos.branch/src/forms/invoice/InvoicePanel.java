@@ -24,6 +24,7 @@ import util.StringUtility;
 
 import main.Main;
 import bus.InvoiceService;
+import bus.PaymentItemService;
 import bus.ProductService;
 import bus.VatService;
 
@@ -31,6 +32,7 @@ import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
 import domain.InvoiceItem;
+import domain.PaymentItem;
 import domain.Product;
 import forms.FastAddition;
 import forms.PackageItems;
@@ -780,8 +782,27 @@ public class InvoicePanel extends javax.swing.JPanel {
 		lblAmount.setText(String.format("%.2f", amount));
 	}
 	
-	public void addPaymentItem(){
+	public void addPaymentItem(PaymentItem paymentItem){
+		DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+		model.addRow(new String[]{paymentItem.getPaymentCode().toString(),
+								  PaymentItemService.getPaymentType(paymentItem.getPaymentCode()),
+								  paymentItem.getAmount().toString(),
+								  paymentItem.getCardType(),
+								  paymentItem.getCardNo(),
+								  paymentItem.getCheckNo(),
+								  paymentItem.getGcNo()
+								  });
 		
+	}
+
+	public Integer getPaymentItemRow(Integer paymentCode){
+		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			if(model.getValueAt(i, 0).toString().equals(paymentCode)){
+				return i;
+			}
+		}
+		return null;
 	}
 	
 }
