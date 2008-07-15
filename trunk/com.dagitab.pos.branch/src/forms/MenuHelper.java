@@ -60,6 +60,15 @@ public class MenuHelper {
 	}
 	
 	static{
+		CONFIGURATION.setEnabled(false);
+		PASSWORD.setEnabled(false);
+		CONNECT.setEnabled(false);
+		RE_PRINT_RECEIPT.setEnabled(false);
+		PULL_OUT_MENU.setEnabled(false);
+		DELIVERY_MENU.setEnabled(false);
+		REPORTS_MENU.setEnabled(false);
+		ABOUT_MENU.setEnabled(false);
+		
 		LOGOUT.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt) {
 			Main.setClerkCode(null);

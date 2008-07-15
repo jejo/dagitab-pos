@@ -344,12 +344,13 @@ public class MainWindow extends javax.swing.JFrame {
 					{
 						returnedPanel = new ReturnedPanel();
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/Files-text.png"));
-						jTabbedPane1.addTab("Returned Items", icon, returnedPanel, null);
+//						jTabbedPane1.addTab("Returned Items", icon, returnedPanel, null);
 					}
 					{
 						pendingPanel = new PendingPanel();
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/pausepic.png"));
-						jTabbedPane1.addTab("Pending Transactions",icon,pendingPanel,null);
+//						jTabbedPane1.addTab("Pending Transactions",icon,pendingPanel,null);
+						
 					}
 				}
 			}
