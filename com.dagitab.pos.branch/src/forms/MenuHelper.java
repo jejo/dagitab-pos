@@ -1,9 +1,14 @@
 package forms;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+
+import main.Main;
 
 public class MenuHelper {
 	private static JMenuBar MENU_BAR = new JMenuBar();
@@ -19,6 +24,7 @@ public class MenuHelper {
 	private static JMenuItem CONNECT = new JMenuItem("Connect to Server");
 	private static JMenuItem RE_PRINT_RECEIPT = new JMenuItem("Re-Print Receipt");
 	private static JSeparator SEPARATOR = new JSeparator();
+	private static JMenuItem LOGOUT = new JMenuItem("Log-out");
 	private static JMenuItem EXIT = new JMenuItem("Exit");
 	
 	private static JMenuItem DELIVERY_MANAGER = new JMenuItem("Delivery Manager");
@@ -40,6 +46,7 @@ public class MenuHelper {
 		FILE_MENU.add(PASSWORD);
 		FILE_MENU.add(CONNECT);
 		FILE_MENU.add(RE_PRINT_RECEIPT);
+		FILE_MENU.add(LOGOUT);
 		FILE_MENU.add(SEPARATOR);
 		FILE_MENU.add(EXIT);
 		
@@ -52,6 +59,15 @@ public class MenuHelper {
 		ABOUT_MENU.add(ABOUT);
 	}
 	
+	static{
+		LOGOUT.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt) {
+			Main.setClerkCode(null);
+			Main.hideMainWindow();
+			Main.clearLoginInfo();
+			Main.showLoginDialog();
+		}});
+	}
 	
 	public static JMenuBar getMenuBar(){
 		return MENU_BAR;

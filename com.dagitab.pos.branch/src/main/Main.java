@@ -95,6 +95,9 @@ public class Main {
 	public static void hideLoginDiaolog(){
 		loginDialog.setVisible(false);
 	}
+	public static void clearLoginInfo(){
+		loginDialog.resetTextFieldValues();
+	}
 	
 	
 	
