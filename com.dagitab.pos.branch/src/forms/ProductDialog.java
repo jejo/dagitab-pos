@@ -72,7 +72,7 @@ public class ProductDialog extends javax.swing.JDialog {
 	}
 	
 	@SuppressWarnings("static-access")
-	private ProductDialog(JFrame frame,Object invoker, String action) {
+	private ProductDialog(JFrame frame, Object invoker, String action) {
 		super(frame);
 		this.invoker = invoker;
 		this.action = action;
