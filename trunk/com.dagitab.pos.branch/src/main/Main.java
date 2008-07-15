@@ -6,14 +6,32 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import connection.ScheduledExecutor;
+import forms.LoginDialog;
 import forms.MainWindow;
 
 public class Main {
 	private static DBManager dbMan;
 	private static String storeCode;
 	private static MainWindow mainWindow;
+	private static LoginDialog loginDialog;
+	private static Integer clerkCode = null;
 	
+	public static Integer getClerkCode() {
+		return clerkCode;
+	}
+	
+	public static DBManager getDBManager(){
+		return dbMan;
+	}
+
+	public static MainWindow getInst() {
+		return mainWindow;
+	}
+
+	public static String getStoreCode() {
+		return storeCode;
+	}
+
 	@SuppressWarnings("static-access")
 	public static void main(String[] args){
 		
@@ -49,25 +67,35 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		
-		
 		mainWindow = new MainWindow();
+		showMainWindow();
+		hideMainWindow();
+		loginDialog = new LoginDialog(mainWindow);
+		showLoginDialog();
+	
+	}
+
+	public static void setClerkCode(Integer clerkCode) {
+		Main.clerkCode = clerkCode;
+	}
+	
+	public static void showMainWindow(){
 		mainWindow.setVisible(true);
-		
 //		ScheduledExecutor connector = new ScheduledExecutor(mainWindow);
 //		connector.connect();
 		
 	}
+	public static void hideMainWindow(){
+		mainWindow.setVisible(false);
+	}
+	public static void showLoginDialog(){
+		loginDialog.setVisible(true);
+		loginDialog.setLocationRelativeTo(null);
+	}
+	public static void hideLoginDiaolog(){
+		loginDialog.setVisible(false);
+	}
 	
-	public static DBManager getDBManager(){
-		return dbMan;
-	}
-
-	public static String getStoreCode() {
-		return storeCode;
-	}
-
-	public static MainWindow getInst() {
-		return mainWindow;
-	}
+	
+	
 }

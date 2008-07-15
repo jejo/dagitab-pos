@@ -183,7 +183,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton3.setPreferredSize(new java.awt.Dimension(63, 21));
 				jButton3.addActionListener(new ActionListener() {
 					
-
 					public void actionPerformed(ActionEvent evt) {
 						
 						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,"add");
