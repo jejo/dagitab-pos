@@ -329,6 +329,8 @@ public class MainWindow extends javax.swing.JFrame {
 						invoicePanel = new InvoicePanel();
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/add.png"));
 						jTabbedPane1.addTab("Invoice", icon, invoicePanel, null);
+						
+						
 					}
 					{
 						partialPanel = new PartialPanel();
@@ -365,6 +367,17 @@ public class MainWindow extends javax.swing.JFrame {
 	}
 	
 	
+	public JPanel getInvoicePanel(){
+		return invoicePanel;
+	}
+	
+	
+	
+	/*
+	 * 
+	 * DEPRECATED PARTS!!!
+	 * 
+	 */
 	//functions for payment item table part if main invoice or for returned items
 	public void setPaymentTable(Vector<String> args, String part){
 		if(part.equals("main")){
@@ -585,7 +598,6 @@ public class MainWindow extends javax.swing.JFrame {
 	public void setCustomer(String id){
 		jTextField9.setText(id);
 	}
-	
 	
 	//update amounts
 	public void updateAmounts(){
