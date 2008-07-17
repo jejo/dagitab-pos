@@ -151,6 +151,7 @@ public class LoginDialog extends javax.swing.JDialog {
 				String branchName = StoreService.getStoreName(Integer.parseInt(Main.getStoreCode()));
 				String userName = clerk.getFirstName()+" "+clerk.getLastName(); 
 				Main.displayLoginInformation(userName, branchName);
+				Main.clearInvoiceInformation();
 			}
 			else{
 				JOptionPane.showMessageDialog(null, "Please check your login information.", "Invalid Clerk Login", JOptionPane.ERROR_MESSAGE);
