@@ -1,6 +1,8 @@
 package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,6 +16,8 @@ import javax.swing.SwingUtilities;
 import main.Main;
 import util.Validator;
 import bus.ClerkService;
+import bus.StoreService;
+import domain.Clerk;
 
 
 /**
@@ -103,19 +107,7 @@ public class LoginDialog extends javax.swing.JDialog {
 					jButton1.setBounds(170, 204, 66, 26);
 					jButton1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							String clerkCode = jTextField1.getText();
-							String password = new String(jPasswordField1.getPassword());
-							System.out.println("Clerk Logging in as: "+clerkCode+" with password: "+password);
-							if(Validator.isNumeric(clerkCode)){
-								if(ClerkService.isValid(clerkCode, password)){
-									Main.setClerkCode(Integer.parseInt(clerkCode));
-									Main.showMainWindow();
-									Main.hideLoginDiaolog();
-								}
-								else{
-									JOptionPane.showMessageDialog(null, "Please check your login information.", "Invalid Clerk Login", JOptionPane.ERROR_MESSAGE);
-								}
-							}
+							login();
 						}
 					});
 				}
@@ -123,6 +115,16 @@ public class LoginDialog extends javax.swing.JDialog {
 					jPasswordField1 = new JPasswordField();
 					getContentPane().add(jPasswordField1);
 					jPasswordField1.setBounds(94, 148, 233, 30);
+					jPasswordField1.addKeyListener(new KeyAdapter() {
+						
+					 @Override
+						public void keyPressed(KeyEvent e) {
+							 int key = e.getKeyCode();
+						     if (key == KeyEvent.VK_ENTER){
+						    	 login();
+						     }
+						}
+					});
 				}
 			}
 			this.setSize(429, 311);
@@ -134,6 +136,26 @@ public class LoginDialog extends javax.swing.JDialog {
 	public void resetTextFieldValues(){
 		jTextField1.setText("");
 		jPasswordField1.setText("");
+	}
+	
+	public void login(){
+		String clerkCode = jTextField1.getText();
+		String password = new String(jPasswordField1.getPassword());
+		System.out.println("Clerk Logging in as: "+clerkCode+" with password: "+password);
+		if(Validator.isNumeric(clerkCode)){
+			if(ClerkService.isValid(clerkCode, password)){
+				Main.setClerkCode(Integer.parseInt(clerkCode));
+				Main.showMainWindow();
+				Main.hideLoginDiaolog();
+				Clerk clerk = ClerkService.getClerkByID(Integer.parseInt(clerkCode));
+				String branchName = StoreService.getStoreName(Integer.parseInt(Main.getStoreCode()));
+				String userName = clerk.getFirstName()+" "+clerk.getLastName(); 
+				Main.displayLoginInformation(userName, branchName);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "Please check your login information.", "Invalid Clerk Login", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 }

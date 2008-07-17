@@ -89,7 +89,7 @@ public class ClerkLookUp extends javax.swing.JDialog {
 						
 							InvoicePanel invoicePanel = ((InvoicePanel)invoker);
 							if(fieldName.equals("Clerk")){
-								invoicePanel.setClerkID(selected);
+//								invoicePanel.setClerkID(selected);
 							}
 							else if(fieldName.equals("Assistant")){
 								invoicePanel.setAssistantID(selected);
@@ -158,7 +158,7 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			this.setSize(428, 474);
 			
 			ResultSet rs = ClerkService.getAllClerks();
-			TableUtility.fillTable(jTable1, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
+			TableUtility.fillTable(jTable1, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name","Rocky"});
 			
 		} catch (Exception e) {
 			e.printStackTrace();

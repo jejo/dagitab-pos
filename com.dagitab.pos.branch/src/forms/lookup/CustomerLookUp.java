@@ -15,7 +15,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import util.TableUtility;
-import bus.ClerkService;
 import bus.CustomerService;
 
 import com.cloudgarden.layout.AnchorConstraint;

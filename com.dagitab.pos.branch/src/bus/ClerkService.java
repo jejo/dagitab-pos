@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import domain.Clerk;
 
 public class ClerkService {
 	
@@ -33,5 +34,24 @@ public class ClerkService {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public static Clerk getClerkByID(Integer clerkID){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM clerk_lu WHERE clerk_code = "+clerkID);
+		Clerk clerk = new Clerk();
+		try {
+			if(rs.next()){
+				clerk.setAddress(rs.getString("ADDRESS"));
+				clerk.setBirthDate(rs.getString("BIRTH_DT"));
+				clerk.setClerkCode(rs.getLong("CLERK_CODE"));
+				clerk.setFirstName(rs.getString("FIRST_NAME"));
+				clerk.setLastName(rs.getString("LAST_NAME"));
+				clerk.setNickName(rs.getString("NICK_NAME"));
+				return clerk;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

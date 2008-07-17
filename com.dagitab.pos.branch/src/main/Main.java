@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import forms.LoginDialog;
 import forms.MainWindow;
+import forms.invoice.InvoicePanel;
 
 public class Main {
 	private static DBManager dbMan;
@@ -97,6 +98,11 @@ public class Main {
 	}
 	public static void clearLoginInfo(){
 		loginDialog.resetTextFieldValues();
+	}
+	
+	public static void displayLoginInformation(String userName, String branchName){
+		InvoicePanel invoicePanel = (InvoicePanel) mainWindow.getInvoicePanel();
+		invoicePanel.setLoginInformation(userName, branchName);
 	}
 	
 	

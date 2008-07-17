@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import javax.swing.BorderFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,6 +43,19 @@ import forms.Payment;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 @SuppressWarnings("serial")
 public class InvoicePanel extends javax.swing.JPanel {
 
@@ -81,19 +95,17 @@ public class InvoicePanel extends javax.swing.JPanel {
 	private JTextField jTextField8;
 	private JPanel jPanel6;
 	private JCheckBox jCheckBox1;
+	private JLabel jLabel2;
+	private JLabel jLabel1;
+	private JPanel welcomePanel;
 	private JLabel jLabel7;
 	private JTextField jTextField2;
 	private JTextField jTextField4;
 	private JLabel jLabel8;
-	private JLabel jLabel4;
-	private JButton jButton1;
-	private JLabel jLabel5;
 	private JLabel jLabel6;
 	private JButton jButton2;
 	private JLabel jLabel9;
 	private JTextField jTextField5;
-	private JPasswordField jPasswordField2;
-	private JTextField jTextField6;
 	private JLabel jLabel17;
 	private JTextField jTextField9;
 	private JButton jButton10;
@@ -122,6 +134,27 @@ public class InvoicePanel extends javax.swing.JPanel {
 			this.setBackground(new java.awt.Color(255,255,255));
 			this.setPreferredSize(new java.awt.Dimension(861, 469));
 			this.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
+			{
+				welcomePanel = new JPanel();
+				this.add(welcomePanel, new AnchorConstraint(45, 277, 146, 7, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				welcomePanel.setPreferredSize(new java.awt.Dimension(232, 47));
+				welcomePanel.setBackground(new java.awt.Color(254,253,218));
+				welcomePanel.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
+				welcomePanel.setLayout(null);
+				{
+					jLabel1 = new JLabel();
+					welcomePanel.add(jLabel1);
+					jLabel1.setText("Welcome, Ate Eva");
+					jLabel1.setBounds(13, 7, 203, 16);
+					jLabel1.setFont(new java.awt.Font("Segoe UI",1,12));
+				}
+				{
+					jLabel2 = new JLabel();
+					welcomePanel.add(jLabel2);
+					jLabel2.setText("Shaw Boulevard Branch");
+					jLabel2.setBounds(13, 24, 207, 19);
+				}
+			}
 			{
 				jButton30 = new JButton();
 				this.add(jButton30, new AnchorConstraint(936, 430, 978, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
@@ -224,8 +257,8 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jPanel7 = new JPanel();
 				AnchorLayout jPanel7Layout = new AnchorLayout();
 				jPanel7.setLayout(jPanel7Layout);
-				this.add(jPanel7, new AnchorConstraint(610, 276, 978, 8, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jPanel7.setPreferredSize(new java.awt.Dimension(231, 182));
+				this.add(jPanel7, new AnchorConstraint(587, 277, 956, 7, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jPanel7.setPreferredSize(new java.awt.Dimension(232, 173));
 				jPanel7.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				jPanel7.setBackground(new java.awt.Color(255,128,255));
 				{
@@ -312,84 +345,56 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jPanel6 = new JPanel();
 				AnchorLayout jPanel6Layout = new AnchorLayout();
 				jPanel6.setLayout(jPanel6Layout);
-				this.add(jPanel6, new AnchorConstraint(29, 276, 596, 8, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jPanel6.setPreferredSize(new java.awt.Dimension(231, 280));
+				this.add(jPanel6, new AnchorConstraint(165, 277, 568, 7, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jPanel6.setPreferredSize(new java.awt.Dimension(232, 189));
 				jPanel6.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				jPanel6.setBackground(new java.awt.Color(164,222,251));
 				{
 					jCheckBox1 = new JCheckBox();
-					jPanel6.add(jCheckBox1, new AnchorConstraint(276, 880, 380, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jCheckBox1.setPreferredSize(new java.awt.Dimension(112, 29));
+					jPanel6.add(jCheckBox1, new AnchorConstraint(388, 877, 537, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jCheckBox1.setPreferredSize(new java.awt.Dimension(112, 28));
 					jCheckBox1.setBackground(new java.awt.Color(164,222,251));
 				}
 				{
 					jLabel7 = new JLabel();
-					jPanel6.add(jLabel7, new AnchorConstraint(76, 396, 126, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jLabel7, new AnchorConstraint(108, 394, 177, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel7.setText("OR Number");
-					jLabel7.setPreferredSize(new java.awt.Dimension(84, 14));
+					jLabel7.setPreferredSize(new java.awt.Dimension(84, 13));
 					jLabel7.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
 					jTextField2 = new JTextField();
-					jPanel6.add(jTextField2, new AnchorConstraint(76, 971, 151, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField2.setPreferredSize(new java.awt.Dimension(133, 21));
+					jPanel6.add(jTextField2, new AnchorConstraint(108, 967, 214, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField2.setPreferredSize(new java.awt.Dimension(133, 20));
 					jTextField2.setEditable(false);
 					jTextField2.setText(StringUtility.zeroFill(InvoiceService.getNextORNumber(), 10));
 
 				}
 				{
 					jTextField4 = new JTextField();
-					jPanel6.add(jTextField4, new AnchorConstraint(176, 971, 251, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField4.setPreferredSize(new java.awt.Dimension(133, 21));
-					
-					
+					jPanel6.add(jTextField4, new AnchorConstraint(246, 967, 351, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField4.setPreferredSize(new java.awt.Dimension(133, 20));
+
 				}
 				{
 					jLabel8 = new JLabel();
-					jPanel6.add(jLabel8, new AnchorConstraint(176, 456, 226, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jLabel8, new AnchorConstraint(246, 454, 320, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel8.setText("Invoice No");
 					jLabel8.setPreferredSize(new java.awt.Dimension(98, 14));
 					jLabel8.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
-					jLabel4 = new JLabel();
-					jPanel6.add(jLabel4, new AnchorConstraint(455, 396, 505, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel4.setText("Clerk ID");
-					jLabel4.setPreferredSize(new java.awt.Dimension(84, 14));
-					jLabel4.setFont(new java.awt.Font("Tahoma",1,12));
-				}
-				{
-					jButton1 = new JButton();
-					jPanel6.add(jButton1, new AnchorConstraint(426, 971, 501, 820, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jButton1.setText("...");
-					jButton1.setPreferredSize(new java.awt.Dimension(35, 21));
-					jButton1.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							ClerkLookUp dialog = ClerkLookUp.getClerkLookUp(Main.getInst(), InvoicePanel.this, "Clerk");
-							dialog.setLocationRelativeTo(null);
-							dialog.setVisible(true);
-						}
-					});
-				}
-				{
-					jLabel5 = new JLabel();
-					jPanel6.add(jLabel5, new AnchorConstraint(530, 305, 630, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel5.setText("Password");
-					jLabel5.setPreferredSize(new java.awt.Dimension(63, 28)); 
-					jLabel5.setFont(new java.awt.Font("Tahoma",1,12));
-				}
-				{
 					jLabel6 = new JLabel();
-					jPanel6.add(jLabel6, new AnchorConstraint(680, 426, 780, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jLabel6, new AnchorConstraint(563, 424, 706, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel6.setText("Sales Specs");
-					jLabel6.setPreferredSize(new java.awt.Dimension(91, 28));
+					jLabel6.setPreferredSize(new java.awt.Dimension(91, 27));
 					jLabel6.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
 					jButton2 = new JButton();
-					jPanel6.add(jButton2, new AnchorConstraint(680, 971, 755, 820, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jButton2, new AnchorConstraint(579, 976, 685, 825, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton2.setText("...");
-					jButton2.setPreferredSize(new java.awt.Dimension(35, 21));
+					jButton2.setPreferredSize(new java.awt.Dimension(35, 20));
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							ClerkLookUp dialog = ClerkLookUp.getClerkLookUp(Main.getInst(), InvoicePanel.this, "Assistant");
@@ -400,43 +405,33 @@ public class InvoicePanel extends javax.swing.JPanel {
 				}
 				{
 					jLabel9 = new JLabel();
-					jPanel6.add(jLabel9, new AnchorConstraint(301, 426, 355, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jLabel9, new AnchorConstraint(425, 424, 500, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel9.setText("Partial");
-					jLabel9.setPreferredSize(new java.awt.Dimension(91, 15));
+					jLabel9.setPreferredSize(new java.awt.Dimension(91, 14));
 					jLabel9.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
 					jTextField5 = new JTextField();
-					jPanel6.add(jTextField5, new AnchorConstraint(680, 820, 755, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField5.setPreferredSize(new java.awt.Dimension(98, 21));
-				}
-				{
-					jPasswordField2 = new JPasswordField();
-					jPanel6.add(jPasswordField2, new AnchorConstraint(530, 971, 605, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jPasswordField2.setPreferredSize(new java.awt.Dimension(133, 21));
-				}
-				{
-					jTextField6 = new JTextField();
-					jPanel6.add(jTextField6, new AnchorConstraint(430, 820, 505, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField6.setPreferredSize(new java.awt.Dimension(98, 21));
+					jPanel6.add(jTextField5, new AnchorConstraint(579, 825, 685, 403, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField5.setPreferredSize(new java.awt.Dimension(98, 20));
 				}
 				{
 					jLabel17 = new JLabel();
-					jPanel6.add(jLabel17, new AnchorConstraint(826, 426, 926, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jLabel17, new AnchorConstraint(732, 424, 875, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel17.setText("Customer ");
 					jLabel17.setFont(new java.awt.Font("Tahoma",1,12));
-					jLabel17.setPreferredSize(new java.awt.Dimension(91, 28));
+					jLabel17.setPreferredSize(new java.awt.Dimension(91, 27));
 				}
 				{
 					jTextField9 = new JTextField();
-					jPanel6.add(jTextField9, new AnchorConstraint(851, 820, 926, 396, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField9.setPreferredSize(new java.awt.Dimension(98, 21));
+					jPanel6.add(jTextField9, new AnchorConstraint(732, 821, 838, 398, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField9.setPreferredSize(new java.awt.Dimension(98, 20));
 				}
 				{
 					jButton10 = new JButton();
-					jPanel6.add(jButton10, new AnchorConstraint(851, 971, 926, 820, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jButton10, new AnchorConstraint(732, 976, 838, 825, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton10.setText("...");
-					jButton10.setPreferredSize(new java.awt.Dimension(35, 21));
+					jButton10.setPreferredSize(new java.awt.Dimension(35, 20));
 					jButton10.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							CustomerLookUp dialog = CustomerLookUp.getCustomerLookUp(Main.getInst(), InvoicePanel.this, null);
@@ -712,9 +707,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 		}
 	}
 	
-	public void setClerkID(String id){
-		jTextField6.setText(StringUtility.zeroFill(id, 3));
-	}
+
 	public void setAssistantID(String id){
 		jTextField5.setText(StringUtility.zeroFill(id, 3));
 	}
@@ -805,4 +798,8 @@ public class InvoicePanel extends javax.swing.JPanel {
 		return null;
 	}
 	
+	public void setLoginInformation(String userName, String branchName){
+		jLabel1.setText("Welcome, "+userName);
+		jLabel2.setText(branchName);
+	}
 }
