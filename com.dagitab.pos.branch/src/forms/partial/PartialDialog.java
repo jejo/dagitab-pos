@@ -1,4 +1,4 @@
-package forms;
+package forms.partial;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -29,6 +29,8 @@ import com.cloudgarden.layout.AnchorLayout;
 
 import connection.DataUtil;
 import connection.LogHandler;
+import forms.MainWindow;
+import forms.Payment;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -42,7 +44,7 @@ import connection.LogHandler;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class Partial extends javax.swing.JDialog {
+public class PartialDialog extends javax.swing.JDialog {
 
 	{
 		//Set Look & Feel
@@ -99,7 +101,7 @@ public class Partial extends javax.swing.JDialog {
 //		inst.setVisible(true);
 	}
 	
-	public Partial(MainWindow frame,String orNum, String dtime, String clerkNo) {
+	public PartialDialog(MainWindow frame,String orNum, String dtime, String clerkNo) {
 		super(frame);
 		this.form = frame;
 		this.orNum = orNum;
@@ -128,7 +130,7 @@ public class Partial extends javax.swing.JDialog {
 				jButton5.setPreferredSize(new java.awt.Dimension(112, 28));
 				jButton5.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						Partial.this.dispose();
+						PartialDialog.this.dispose();
 					}
 				});
 			}
@@ -277,7 +279,7 @@ public class Partial extends javax.swing.JDialog {
 									receiptdialog.setLocationRelativeTo(null);
 									receiptdialog.setVisible(true);
 								
-								Partial.this.dispose();
+								PartialDialog.this.dispose();
 								form.setPartialList();
 							}
 						}
@@ -297,7 +299,7 @@ public class Partial extends javax.swing.JDialog {
 				jButton1.setPreferredSize(new java.awt.Dimension(56, 28));
 				jButton1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						Payment dialog = new Payment(Partial.this);
+						Payment dialog = new Payment(PartialDialog.this);
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -572,7 +574,7 @@ public class Partial extends javax.swing.JDialog {
 								for(int i =0; i<7; i++){
 									values[i] = (String) jTable2.getValueAt(jTable2.getSelectedRow(), i);
 								}
-								Payment dialog = new Payment(Partial.this,values,jTable2.getSelectedRow());
+								Payment dialog = new Payment(PartialDialog.this,values,jTable2.getSelectedRow());
 								dialog.setLocationRelativeTo(null);
 								dialog.setVisible(true);
 							}

@@ -142,14 +142,15 @@ public class InvoicePanel extends javax.swing.JPanel {
 					jLabel1 = new JLabel();
 					welcomePanel.add(jLabel1);
 					jLabel1.setText("Welcome, Ate Eva");
-					jLabel1.setBounds(13, 7, 203, 16);
-					jLabel1.setFont(new java.awt.Font("Segoe UI",1,12));
+					jLabel1.setBounds(7, 7, 219, 19);
+					jLabel1.setFont(new java.awt.Font("Segoe UI",0,20));
 				}
 				{
 					jLabel2 = new JLabel();
 					welcomePanel.add(jLabel2);
 					jLabel2.setText("Shaw Boulevard Branch");
-					jLabel2.setBounds(13, 24, 207, 19);
+					jLabel2.setBounds(7, 26, 219, 19);
+					jLabel2.setFont(new java.awt.Font("Segoe UI",0,12));
 				}
 			}
 			{

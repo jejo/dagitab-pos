@@ -19,6 +19,8 @@ import main.Main;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.partial.PartialDialog;
+
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -49,7 +51,7 @@ public class Payment extends javax.swing.JDialog {
 	private JLabel jLabel3;
 	private JTextField jTextField1;
 	private MainWindow form;
-	private Partial form2;
+	private PartialDialog form2;
 	private Vector<String> paymentCode;
 	private String[] textval;
 	private int index;
@@ -94,14 +96,14 @@ public class Payment extends javax.swing.JDialog {
 		jTextField4.setText(val[6]);
 	}
 	
-	public Payment(Partial frame) {
+	public Payment(PartialDialog frame) {
 		super(frame);
 		this.form2 = frame;
 		status = "add|partial";
 		initGUI();
 	}
 	
-	public Payment(Partial frame, String[] val, int index){
+	public Payment(PartialDialog frame, String[] val, int index){
 		this(frame);
 		status = "edit|partial";
 		textval = val;

@@ -51,7 +51,7 @@ public class ProductDialog extends javax.swing.JDialog {
 	private JLabel jLabel3;
 	private JTextField jTextField1;
 	private JLabel jLabel2;
-	private JComboBox jComboBox1;
+	private JComboBox discountCB;
 	private JLabel jLabel1;
 	private JTextField txtProduct;
 	private static Object invoker;
@@ -136,10 +136,10 @@ public class ProductDialog extends javax.swing.JDialog {
 				}
 				{
 					ComboBoxModel jComboBox1Model = new DefaultComboBoxModel(DiscountService.getAllDiscounts());
-					jComboBox1 = new JComboBox();
-					getContentPane().add(jComboBox1);
-					jComboBox1.setModel(jComboBox1Model);
-					jComboBox1.setBounds(15, 340, 249, 22);
+					discountCB = new JComboBox();
+					getContentPane().add(discountCB);
+					discountCB.setModel(jComboBox1Model);
+					discountCB.setBounds(15, 340, 249, 22);
 				}
 				{
 					jLabel2 = new JLabel();
@@ -177,7 +177,7 @@ public class ProductDialog extends javax.swing.JDialog {
 							Product product = ProductService.getProductById(selected);
 							
 							
-							String discountCode = jComboBox1.getSelectedItem().toString().split("-")[0];
+							String discountCode = discountCB.getSelectedItem().toString().split("-")[0];
 							Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
 							Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
 								
@@ -268,7 +268,7 @@ public class ProductDialog extends javax.swing.JDialog {
 	}
 	
 	public void setDiscount(int discCode){
-		DefaultComboBoxModel model = (DefaultComboBoxModel) jComboBox1.getModel();
+		DefaultComboBoxModel model = (DefaultComboBoxModel) discountCB.getModel();
 		int index = 0;
 		for(int i = 0; i<model.getSize(); i++){
 			if(Integer.parseInt(model.getElementAt(i).toString().split("-")[0])== discCode){
@@ -277,7 +277,13 @@ public class ProductDialog extends javax.swing.JDialog {
 			}
 		}
 		
-		jComboBox1.setSelectedIndex(index);
+		discountCB.setSelectedIndex(index);
+	}
+	
+	public void clearProductInformation(){
+		txtProduct.setText("");
+		TableUtility.fillTable(jTable1, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
+		discountCB.setSelectedIndex(0);
 	}
 
 }
