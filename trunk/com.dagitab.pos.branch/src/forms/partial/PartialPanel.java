@@ -3,7 +3,6 @@ package forms.partial;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 
 import javax.swing.AbstractButton;
@@ -12,29 +11,20 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import util.TableUtility;
 
-import main.Main;
-
-import bus.ClerkService;
 import bus.InvoiceService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
-
-import forms.invoice.InvoicePanel;
-import forms.lookup.CustomerLookUp;
 
 
 /**
@@ -160,6 +150,7 @@ public class PartialPanel extends javax.swing.JPanel {
 						new String[] { "OR Number",
 								"Transaction Date & Time" });
 					jTable4 = new JTable() {
+						@Override
 						public boolean isCellEditable(
 							int row,
 							int column) {

@@ -2,12 +2,8 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import main.Main;
 
-import domain.Invoice;
 import domain.InvoiceItem;
 
 public class InvoiceItemService {
