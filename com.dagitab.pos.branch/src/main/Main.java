@@ -105,6 +105,10 @@ public class Main {
 		invoicePanel.setLoginInformation(userName, branchName);
 	}
 	
+	public static void clearInvoiceInformation(){
+		InvoicePanel invoicePanel = (InvoicePanel) mainWindow.getInvoicePanel();
+		invoicePanel.clearInfoValues();
+	}
 	
 	
 }

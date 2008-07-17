@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import javax.swing.BorderFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,7 +10,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -21,9 +19,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import util.StringUtility;
-
 import main.Main;
+import util.StringUtility;
 import bus.InvoiceService;
 import bus.PaymentItemService;
 import bus.ProductService;
@@ -37,9 +34,9 @@ import domain.PaymentItem;
 import domain.Product;
 import forms.FastAddition;
 import forms.PackageItems;
+import forms.Payment;
 import forms.PaymentDialog;
 import forms.ProductDialog;
-import forms.Payment;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
 
@@ -71,17 +68,17 @@ public class InvoicePanel extends javax.swing.JPanel {
 		frame.setVisible(true);
 	}
 
-	private JButton jButton30;
+	private JButton resetBtn;
 	protected boolean pauseDeleteFlag;
 	protected int pauseSelectedIndex;
 	private JButton jButton29;
 	private JButton jButton17;
 	private JLabel jLabel15;
 	private JButton jButton3;
-	private JScrollPane jScrollPane2;
-	private JTable jTable2;
-	private JScrollPane jScrollPane1;
-	private JTable jTable1;
+	private JScrollPane paymentTableScrollPane;
+	private JTable paymentTable;
+	private JScrollPane itemTableScrollPane;
+	private JTable itemTable;
 	private JPanel jPanel7;
 	private JTextField txtSubTotal;
 	private JLabel jLabel10;
@@ -94,20 +91,20 @@ public class InvoicePanel extends javax.swing.JPanel {
 	private JTextField jTextField7;
 	private JTextField jTextField8;
 	private JPanel jPanel6;
-	private JCheckBox jCheckBox1;
+	private JCheckBox partialChk;
 	private JLabel jLabel2;
 	private JLabel jLabel1;
 	private JPanel welcomePanel;
 	private JLabel jLabel7;
 	private JTextField jTextField2;
-	private JTextField jTextField4;
+	private JTextField invoiceTxt;
 	private JLabel jLabel8;
 	private JLabel jLabel6;
 	private JButton jButton2;
 	private JLabel jLabel9;
-	private JTextField jTextField5;
+	private JTextField salesSpecialistTxt;
 	private JLabel jLabel17;
-	private JTextField jTextField9;
+	private JTextField customerTxt;
 	private JButton jButton10;
 	private JButton jButton4;
 	private JButton jButton5;
@@ -156,12 +153,12 @@ public class InvoicePanel extends javax.swing.JPanel {
 				}
 			}
 			{
-				jButton30 = new JButton();
-				this.add(jButton30, new AnchorConstraint(936, 430, 978, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton30.setText("Reset All");
-				jButton30.setPreferredSize(new java.awt.Dimension(98, 21));
-				jButton30.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png")));
-				jButton30.addActionListener(new ActionListener() {
+				resetBtn = new JButton();
+				this.add(resetBtn, new AnchorConstraint(936, 430, 978, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				resetBtn.setText("Reset All");
+				resetBtn.setPreferredSize(new java.awt.Dimension(98, 21));
+				resetBtn.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png")));
+				resetBtn.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						pauseDeleteFlag = false;
 						pauseSelectedIndex = -1;
@@ -195,7 +192,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton17.setEnabled(false);
 				jButton17.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						String packagecode = jTable1.getValueAt(jTable1.getSelectedRow(),0).toString();
+						String packagecode = itemTable.getValueAt(itemTable.getSelectedRow(),0).toString();
 						PackageItems dialog = new PackageItems(Main.getInst(),packagecode);
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
@@ -228,29 +225,29 @@ public class InvoicePanel extends javax.swing.JPanel {
 				});
 			}
 			{
-				jScrollPane2 = new JScrollPane();
-				this.add(jScrollPane2, new AnchorConstraint(567, 975, 808, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jScrollPane2.setPreferredSize(new java.awt.Dimension(567, 119));
+				paymentTableScrollPane = new JScrollPane();
+				this.add(paymentTableScrollPane, new AnchorConstraint(567, 975, 808, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				paymentTableScrollPane.setPreferredSize(new java.awt.Dimension(567, 119));
 				{
 					TableModel jTable2Model = new DefaultTableModel(
 						new String[][] { },
 						new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
-					jTable2 = new JTable();
-					jScrollPane2.setViewportView(jTable2);
-					jTable2.setModel(jTable2Model);
+					paymentTable = new JTable();
+					paymentTableScrollPane.setViewportView(paymentTable);
+					paymentTable.setModel(jTable2Model);
 				}
 			}
 			{
-				jScrollPane1 = new JScrollPane();
-				this.add(jScrollPane1, new AnchorConstraint(72, 975, 455, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jScrollPane1.setPreferredSize(new java.awt.Dimension(567, 189));
+				itemTableScrollPane = new JScrollPane();
+				this.add(itemTableScrollPane, new AnchorConstraint(72, 975, 455, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				itemTableScrollPane.setPreferredSize(new java.awt.Dimension(567, 189));
 				{
 					TableModel jTable1Model = new DefaultTableModel(
 						new String[][] {  },
 						new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
-					jTable1 = new JTable();
-					jScrollPane1.setViewportView(jTable1);
-					jTable1.setModel(jTable1Model);
+					itemTable = new JTable();
+					itemTableScrollPane.setViewportView(itemTable);
+					itemTable.setModel(jTable1Model);
 				}
 			}
 			{
@@ -350,10 +347,10 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jPanel6.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				jPanel6.setBackground(new java.awt.Color(164,222,251));
 				{
-					jCheckBox1 = new JCheckBox();
-					jPanel6.add(jCheckBox1, new AnchorConstraint(388, 877, 537, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jCheckBox1.setPreferredSize(new java.awt.Dimension(112, 28));
-					jCheckBox1.setBackground(new java.awt.Color(164,222,251));
+					partialChk = new JCheckBox();
+					jPanel6.add(partialChk, new AnchorConstraint(388, 877, 537, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					partialChk.setPreferredSize(new java.awt.Dimension(112, 28));
+					partialChk.setBackground(new java.awt.Color(164,222,251));
 				}
 				{
 					jLabel7 = new JLabel();
@@ -371,9 +368,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 
 				}
 				{
-					jTextField4 = new JTextField();
-					jPanel6.add(jTextField4, new AnchorConstraint(246, 967, 351, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField4.setPreferredSize(new java.awt.Dimension(133, 20));
+					invoiceTxt = new JTextField();
+					jPanel6.add(invoiceTxt, new AnchorConstraint(246, 967, 351, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					invoiceTxt.setPreferredSize(new java.awt.Dimension(133, 20));
 
 				}
 				{
@@ -411,9 +408,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 					jLabel9.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
-					jTextField5 = new JTextField();
-					jPanel6.add(jTextField5, new AnchorConstraint(579, 825, 685, 403, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField5.setPreferredSize(new java.awt.Dimension(98, 20));
+					salesSpecialistTxt = new JTextField();
+					jPanel6.add(salesSpecialistTxt, new AnchorConstraint(579, 825, 685, 403, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					salesSpecialistTxt.setPreferredSize(new java.awt.Dimension(98, 20));
 				}
 				{
 					jLabel17 = new JLabel();
@@ -423,9 +420,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 					jLabel17.setPreferredSize(new java.awt.Dimension(91, 27));
 				}
 				{
-					jTextField9 = new JTextField();
-					jPanel6.add(jTextField9, new AnchorConstraint(732, 821, 838, 398, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField9.setPreferredSize(new java.awt.Dimension(98, 20));
+					customerTxt = new JTextField();
+					jPanel6.add(customerTxt, new AnchorConstraint(732, 821, 838, 398, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					customerTxt.setPreferredSize(new java.awt.Dimension(98, 20));
 				}
 				{
 					jButton10 = new JButton();
@@ -449,10 +446,10 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton4.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 
-						String productCode = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
-						String quantity = jTable1.getValueAt(jTable1.getSelectedRow(), 2).toString();
-						int discountCode = Integer.parseInt( jTable1.getValueAt(jTable1.getSelectedRow(), 6).toString());
-						String deferred = jTable1.getValueAt(jTable1.getSelectedRow(), 5).toString();
+						String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
+						String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
+						int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
+						String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
 						
 						
 						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
@@ -501,9 +498,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 					public void actionPerformed(ActionEvent evt) {
 						String[] values = new String[7];
 						for(int i =0; i<7; i++){
-							values[i] = (String) jTable2.getValueAt(jTable2.getSelectedRow(), i);
+							values[i] = (String) paymentTable.getValueAt(paymentTable.getSelectedRow(), i);
 						}
-						Payment dialog = new Payment(Main.getInst(),values,jTable2.getSelectedRow(),"edit");
+						Payment dialog = new Payment(Main.getInst(),values,paymentTable.getSelectedRow(),"edit");
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -709,14 +706,14 @@ public class InvoicePanel extends javax.swing.JPanel {
 	
 
 	public void setAssistantID(String id){
-		jTextField5.setText(StringUtility.zeroFill(id, 3));
+		salesSpecialistTxt.setText(StringUtility.zeroFill(id, 3));
 	}
 	public void setCustomerID(String id){
-		jTextField9.setText(StringUtility.zeroFill(id, 5));
+		customerTxt.setText(StringUtility.zeroFill(id, 5));
 	}
 	
 	public void addInvoiceItem(InvoiceItem invoiceItem){
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 //		"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" 
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
 		model.addRow(new String[]{invoiceItem.getProductCode(),
@@ -731,7 +728,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 	}
 	
 	public Integer getInvoiceItemRow(String prodCode){
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			if(model.getValueAt(i, 0).toString().equals(prodCode)){
 				return i;
@@ -743,7 +740,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 	public void editInvoiceItem(InvoiceItem invoiceItem, String productCode){
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
 		int index = getInvoiceItemRow(productCode);
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
 		model.setValueAt(invoiceItem.getQuantity(), index, 2);
@@ -755,15 +752,15 @@ public class InvoicePanel extends javax.swing.JPanel {
 	}
 	
 	public void removeInvoiceItem(){
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-		model.removeRow(jTable1.getSelectedRow());
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+		model.removeRow(itemTable.getSelectedRow());
 		updateAmounts();
 	}
 	
 	public void updateAmounts(){
 		Double vatRate = VatService.getVatRate();
 		Double amount = 0.0d;
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			int quantity =  Integer.parseInt(model.getValueAt(i,2).toString());
 			double sellingPrice = Double.parseDouble(model.getValueAt(i, 4).toString());
@@ -776,7 +773,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 	}
 	
 	public void addPaymentItem(PaymentItem paymentItem){
-		DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		model.addRow(new String[]{paymentItem.getPaymentCode().toString(),
 								  PaymentItemService.getPaymentType(paymentItem.getPaymentCode()),
 								  paymentItem.getAmount().toString(),
@@ -789,7 +786,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 	}
 
 	public Integer getPaymentItemRow(Integer paymentCode){
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			if(model.getValueAt(i, 0).toString().equals(paymentCode)){
 				return i;
@@ -801,5 +798,32 @@ public class InvoicePanel extends javax.swing.JPanel {
 	public void setLoginInformation(String userName, String branchName){
 		jLabel1.setText("Welcome, "+userName);
 		jLabel2.setText(branchName);
+	}
+	
+	public void clearInfoValues(){
+		//clear items table;
+		TableModel jTable1Model = new DefaultTableModel(
+				new String[][] {  },
+				new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
+		itemTable = new JTable();
+		itemTableScrollPane.setViewportView(itemTable);
+		itemTable.setModel(jTable1Model);
+		
+		//clear payments table
+		TableModel jTable2Model = new DefaultTableModel(
+			new String[][] { },
+			new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
+		paymentTable = new JTable();
+		paymentTableScrollPane.setViewportView(paymentTable);
+		paymentTable.setModel(jTable2Model);
+		
+		//clear text fields
+		invoiceTxt.setText("");
+		partialChk.setSelected(false);
+		salesSpecialistTxt.setText("");
+		customerTxt.setText("");
+		
+		//update amounts
+		updateAmounts();
 	}
 }
