@@ -9,11 +9,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -22,8 +19,6 @@ import javax.swing.table.TableModel;
 import util.TableUtility;
 
 import bus.InvoiceItemService;
-import bus.InvoiceService;
-
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
