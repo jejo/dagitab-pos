@@ -133,9 +133,9 @@ public class CustomerLookUp extends javax.swing.JDialog {
 			}
 			{
 				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(23, 304, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel1, new AnchorConstraint(23, 976, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel1.setText("Customer Search");
-				jLabel1.setPreferredSize(new java.awt.Dimension(110, 28));
+				jLabel1.setPreferredSize(new java.awt.Dimension(387, 28));
 				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
 			}
 			{

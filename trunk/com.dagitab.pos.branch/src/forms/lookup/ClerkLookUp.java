@@ -71,16 +71,16 @@ public class ClerkLookUp extends javax.swing.JDialog {
 	
 	private void initGUI() {
 		try {
-			AnchorLayout thisLayout = new AnchorLayout();
-			getContentPane().setLayout(thisLayout);
+			getContentPane().setLayout(null);
 			this.setTitle("Search Clerk");
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
 			this.setModal(true);
 			{
 				jButton2 = new JButton();
-				getContentPane().add(jButton2, new AnchorConstraint(896, 450, 957, 302, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jButton2);
 				jButton2.setText("OK");
 				jButton2.setPreferredSize(new java.awt.Dimension(61, 27));
+				jButton2.setBounds(124, 392, 61, 27);
 				jButton2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
@@ -102,8 +102,9 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			}
 			{
 				jScrollPane1 = new JScrollPane();
-				getContentPane().add(jScrollPane1, new AnchorConstraint(197, 972, 841, 40, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jScrollPane1);
 				jScrollPane1.setPreferredSize(new java.awt.Dimension(384, 282));
+				jScrollPane1.setBounds(16, 86, 384, 282);
 				{
 					TableModel jTable1Model = new DefaultTableModel(
 						new String[][] { },
@@ -121,8 +122,9 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			}
 			{
 				jTextField1 = new JTextField();
-				getContentPane().add(jTextField1, new AnchorConstraint(122, 974, 183, 44, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jTextField1);
 				jTextField1.setPreferredSize(new java.awt.Dimension(383, 27));
+				jTextField1.setBounds(18, 53, 383, 27);
 				jTextField1.addKeyListener(new KeyAdapter() {
 					public void keyTyped(KeyEvent evt) {
 						ResultSet rs = ClerkService.filterClerk(jTextField1.getText());
@@ -133,22 +135,25 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			}
 			{
 				jLabel2 = new JLabel();
-				getContentPane().add(jLabel2, new AnchorConstraint(78, 299, 122, 44, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel2);
 				jLabel2.setText("Clerk ID/Name");
 				jLabel2.setPreferredSize(new java.awt.Dimension(105, 19));
+				jLabel2.setBounds(18, 34, 105, 19);
 			}
 			{
 				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(23, 304, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel1);
 				jLabel1.setText("Clerk Search");
-				jLabel1.setPreferredSize(new java.awt.Dimension(110, 28));
+				jLabel1.setPreferredSize(new java.awt.Dimension(383, 28));
 				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
+				jLabel1.setBounds(15, 10, 383, 28);
 			}
 			{
 				jButton3 = new JButton();
-				getContentPane().add(jButton3, new AnchorConstraint(898, 683, 957, 501, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jButton3);
 				jButton3.setText("Cancel");
 				jButton3.setPreferredSize(new java.awt.Dimension(75, 26));
+				jButton3.setBounds(206, 393, 75, 26);
 				jButton3.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						clerkLookUp.setVisible(false);
