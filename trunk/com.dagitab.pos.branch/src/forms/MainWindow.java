@@ -37,7 +37,7 @@ import com.cloudgarden.layout.AnchorLayout;
 
 import connection.DataUtil;
 import connection.LogHandler;
-import forms.deferred.Deferred;
+import forms.deferred.DeferredPanel;
 import forms.invoice.InvoicePanel;
 import forms.partial.PartialPanel;
 import forms.pending.PendingPanel;
@@ -269,11 +269,14 @@ public class MainWindow extends javax.swing.JFrame {
 //								}
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 1){	//partial
+								((PartialPanel) partialPanel).refreshTables();
+								
 //								setPartialList();
 //								jTextField10.setText("");
 //								jPasswordField3.setText("");
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 2){ //deferred
+								((DeferredPanel) deferredPanel).refreshTables();
 //								setDeferredList();
 //								jTextField13.setText("");
 //								jPasswordField1.setText("");
@@ -339,7 +342,7 @@ public class MainWindow extends javax.swing.JFrame {
 						
 					}
 					{
-						deferredPanel = new Deferred();
+						deferredPanel = new DeferredPanel();
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/deferred.png"));
 						jTabbedPane1.addTab("Deferred", icon, deferredPanel, null);
 					}
