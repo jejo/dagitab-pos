@@ -3,6 +3,7 @@ package forms.deferred;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,11 +19,29 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.TableUtility;
+
+import bus.InvoiceItemService;
+import bus.InvoiceService;
+
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 @SuppressWarnings("serial")
-public class Deferred extends javax.swing.JPanel {
+public class DeferredPanel extends javax.swing.JPanel {
 
 	/**
 	* Auto-generated main method to display this 
@@ -30,7 +49,7 @@ public class Deferred extends javax.swing.JPanel {
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.getContentPane().add(new Deferred());
+		frame.getContentPane().add(new DeferredPanel());
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
@@ -41,16 +60,11 @@ public class Deferred extends javax.swing.JPanel {
 	private JScrollPane jScrollPane3;
 	private JTable jTable3;
 	private JLabel jLabel18;
-	private JPanel jPanel8;
-	private JLabel jLabel20;
-	private JButton jButton11;
-	private JLabel jLabel21;
-	private JPasswordField jPasswordField1;
-	private JTextField jTextField13;
-	
-	public Deferred() {
+
+	public DeferredPanel() {
 		super();
 		initGUI();
+		refreshTables();
 	}
 	
 	private void initGUI() {
@@ -66,24 +80,15 @@ public class Deferred extends javax.swing.JPanel {
 				0), 1, false));
 			{
 				jButton13 = new JButton();
-				this.add(jButton13, new AnchorConstraint(
-					794,
-					447,
-					851,
-					325,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
+				this.add(jButton13, new AnchorConstraint(795, 136, 851, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton13.setText("Refresh");
 				jButton13.setIcon(new ImageIcon(getClass()
 					.getClassLoader().getResource(
 						"images/search2.png")));
-				jButton13.setPreferredSize(new java.awt.Dimension(
-					105,
-					28));
+				jButton13.setPreferredSize(new java.awt.Dimension(48, 17));
 				jButton13.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
+						refreshTables();
 //						setDeferredList();
 					}
 				});
@@ -188,19 +193,8 @@ public class Deferred extends javax.swing.JPanel {
 			}
 			{
 				jScrollPane3 = new JScrollPane();
-				this.add(jScrollPane3, new AnchorConstraint(
-					114,
-					966,
-					780,
-					325,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
-				jScrollPane3
-					.setPreferredSize(new java.awt.Dimension(
-						553,
-						329));
+				this.add(jScrollPane3, new AnchorConstraint(115, 966, 781, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jScrollPane3.setPreferredSize(new java.awt.Dimension(380, 200));
 				{
 					TableModel jTable3Model = new DefaultTableModel(
 						new String[][] {},
@@ -215,155 +209,20 @@ public class Deferred extends javax.swing.JPanel {
 			}
 			{
 				jLabel18 = new JLabel();
-				this.add(jLabel18, new AnchorConstraint(
-					15,
-					317,
-					114,
-					16,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
+				this.add(jLabel18, new AnchorConstraint(15, 773, 115, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel18.setText("Manage Deferred Products");
-				jLabel18.setPreferredSize(new java.awt.Dimension(
-					259,
-					49));
+				jLabel18.setPreferredSize(new java.awt.Dimension(303, 30));
 				jLabel18
 					.setFont(new java.awt.Font("Tahoma", 1, 18));
-			}
-			{
-				jPanel8 = new JPanel();
-				this.add(jPanel8, new AnchorConstraint(
-					114,
-					292,
-					341,
-					24,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
-				AnchorLayout jPanel8Layout = new AnchorLayout();
-				jPanel8.setBackground(new java.awt.Color(
-					164,
-					222,
-					251));
-				jPanel8.setPreferredSize(new java.awt.Dimension(
-					231,
-					112));
-				jPanel8.setBorder(new LineBorder(
-					new java.awt.Color(0, 0, 0),
-					1,
-					false));
-				jPanel8.setLayout(jPanel8Layout);
-				{
-					jLabel20 = new JLabel();
-					jPanel8.add(jLabel20, new AnchorConstraint(
-						129,
-						396,
-						379,
-						32,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jLabel20.setText("Clerk ID");
-					jLabel20.setFont(new java.awt.Font(
-						"Tahoma",
-						1,
-						12));
-					jLabel20
-						.setPreferredSize(new java.awt.Dimension(
-							84,
-							28));
-				}
-				{
-					jButton11 = new JButton();
-					jPanel8.add(jButton11, new AnchorConstraint(
-						129,
-						971,
-						316,
-						820,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jButton11.setText("...");
-					jButton11
-						.setPreferredSize(new java.awt.Dimension(
-							35,
-							21));
-					jButton11
-						.addActionListener(new ActionListener() {
-							public void actionPerformed(
-								ActionEvent evt) {
-//								Clerk dialog = new Clerk(
-//									MainWindow.this,"deferred");
-//								dialog.setLocationRelativeTo(null);
-//								dialog.setVisible(true);
-
-							}
-						});
-				}
-				{
-					jLabel21 = new JLabel();
-					jPanel8.add(jLabel21, new AnchorConstraint(
-						504,
-						305,
-						754,
-						32,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jLabel21.setText("Password");
-					jLabel21.setFont(new java.awt.Font(
-						"Tahoma",
-						1,
-						12));
-					jLabel21
-						.setPreferredSize(new java.awt.Dimension(
-							63,
-							28));
-				}
-				{
-					jPasswordField1 = new JPasswordField();
-					jPanel8.add(
-						jPasswordField1,
-						new AnchorConstraint(
-							504,
-							971,
-							691,
-							396,
-							AnchorConstraint.ANCHOR_REL,
-							AnchorConstraint.ANCHOR_REL,
-							AnchorConstraint.ANCHOR_REL,
-							AnchorConstraint.ANCHOR_REL));
-					jPasswordField1
-						.setPreferredSize(new java.awt.Dimension(
-							133,
-							21));
-				}
-				{
-					jTextField13 = new JTextField();
-					jPanel8.add(jTextField13, new AnchorConstraint(
-						129,
-						820,
-						316,
-						396,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jTextField13
-						.setPreferredSize(new java.awt.Dimension(
-							98,
-							21));
-				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void refreshTables() {
+		ResultSet rs = InvoiceItemService.fetchAllDeferredInvoiceItems();
+		TableUtility.fillTable(jTable3, rs, new String[]{"OR Number", "Invoice No", "Product Code", "Product Name", "Quantity", "Transaction Date & Time"});
+	}
 }

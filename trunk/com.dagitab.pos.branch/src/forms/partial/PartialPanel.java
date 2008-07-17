@@ -3,6 +3,8 @@ package forms.partial;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -21,9 +23,32 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.TableUtility;
+
+import main.Main;
+
+import bus.ClerkService;
+import bus.InvoiceService;
+
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.invoice.InvoicePanel;
+import forms.lookup.CustomerLookUp;
+
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 @SuppressWarnings("serial")
 public class PartialPanel extends javax.swing.JPanel {
 
@@ -44,16 +69,11 @@ public class PartialPanel extends javax.swing.JPanel {
 	private JScrollPane jScrollPane4;
 	private JTable jTable4;
 	private JLabel jLabel19;
-	private JPanel jPanel9;
-	private JLabel jLabel22;
-	private JButton jButton14;
-	private JLabel jLabel23;
-	private JPasswordField jPasswordField3;
-	private JTextField jTextField10;
-	
+
 	public PartialPanel() {
 		super();
 		initGUI();
+		refreshTables();
 	}
 	
 	private void initGUI() {
@@ -117,45 +137,23 @@ public class PartialPanel extends javax.swing.JPanel {
 			}
 			{
 				jButton15 = new JButton();
-				this.add(jButton15, new AnchorConstraint(
-					808,
-					439,
-					865,
-					325,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
+				this.add(jButton15, new AnchorConstraint(808, 130, 865, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton15.setText("Refresh");
 				jButton15.setIcon(new ImageIcon(getClass()
 					.getClassLoader().getResource(
 						"images/search2.png")));
-				jButton15.setPreferredSize(new java.awt.Dimension(
-					98,
-					28));
+				jButton15.setPreferredSize(new java.awt.Dimension(98, 26));
 				jButton15.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-//						setPartialList();
-//						jTextField10.setText("");
-//						jPasswordField3.setText("");
+//						public void keyTyped(KeyEvent evt) {
+						refreshTables();
 					}
 				});
 			}
 			{
 				jScrollPane4 = new JScrollPane();
-				this.add(jScrollPane4, new AnchorConstraint(
-					114,
-					966,
-					794,
-					325,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
-				jScrollPane4
-					.setPreferredSize(new java.awt.Dimension(
-						553,
-						336));
+				this.add(jScrollPane4, new AnchorConstraint(114, 965, 793, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jScrollPane4.setPreferredSize(new java.awt.Dimension(818, 311));
 				{
 					TableModel jTable4Model = new DefaultTableModel(
 						new String[][] {},
@@ -190,140 +188,14 @@ public class PartialPanel extends javax.swing.JPanel {
 					259,
 					49));
 			}
-			{
-				jPanel9 = new JPanel();
-				this.add(jPanel9, new AnchorConstraint(
-					114,
-					292,
-					341,
-					24,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
-				AnchorLayout jPanel9Layout = new AnchorLayout();
-				jPanel9.setBackground(new java.awt.Color(
-					164,
-					222,
-					251));
-				jPanel9.setPreferredSize(new java.awt.Dimension(
-					231,
-					112));
-				jPanel9.setBorder(new LineBorder(
-					new java.awt.Color(0, 0, 0),
-					1,
-					false));
-				jPanel9.setLayout(jPanel9Layout);
-				{
-					jLabel22 = new JLabel();
-					jPanel9.add(jLabel22, new AnchorConstraint(
-						129,
-						396,
-						379,
-						32,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jLabel22.setText("Clerk ID");
-					jLabel22.setFont(new java.awt.Font(
-						"Tahoma",
-						1,
-						12));
-					jLabel22
-						.setPreferredSize(new java.awt.Dimension(
-							84,
-							28));
-				}
-				{
-					jButton14 = new JButton();
-					jPanel9.add(jButton14, new AnchorConstraint(
-						129,
-						971,
-						316,
-						820,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jButton14.setText("...");
-					jButton14
-						.setPreferredSize(new java.awt.Dimension(
-							35,
-							21));
-					jButton14
-						.addActionListener(new ActionListener() {
-							public void actionPerformed(
-								ActionEvent evt) {
-//								Clerk dialog = new Clerk(
-//									MainWindow.this,
-//									"partial");
-//								dialog.setLocationRelativeTo(null);
-//								dialog.setVisible(true);
-
-							}
-						});
-				}
-				{
-					jLabel23 = new JLabel();
-					jPanel9.add(jLabel23, new AnchorConstraint(
-						504,
-						305,
-						754,
-						32,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jLabel23.setText("Password");
-					jLabel23.setFont(new java.awt.Font(
-						"Tahoma",
-						1,
-						12));
-					jLabel23
-						.setPreferredSize(new java.awt.Dimension(
-							63,
-							28));
-				}
-				{
-					jPasswordField3 = new JPasswordField();
-					jPanel9.add(
-						jPasswordField3,
-						new AnchorConstraint(
-							504,
-							971,
-							691,
-							396,
-							AnchorConstraint.ANCHOR_REL,
-							AnchorConstraint.ANCHOR_REL,
-							AnchorConstraint.ANCHOR_REL,
-							AnchorConstraint.ANCHOR_REL));
-					jPasswordField3
-						.setPreferredSize(new java.awt.Dimension(
-							133,
-							21));
-				}
-				{
-					jTextField10 = new JTextField();
-					jPanel9.add(jTextField10, new AnchorConstraint(
-						129,
-						820,
-						316,
-						396,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL,
-						AnchorConstraint.ANCHOR_REL));
-					jTextField10
-						.setPreferredSize(new java.awt.Dimension(
-							98,
-							21));
-				}
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void refreshTables() {
+		ResultSet rs = InvoiceService.fetchAllPartialInvoices();
+		TableUtility.fillTable(jTable4, rs, new String[]{"Invoice No", "OR Number","Transaction Date & Time"});
+	}
 }
