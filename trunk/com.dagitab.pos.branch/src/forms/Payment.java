@@ -19,6 +19,9 @@ import main.Main;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import domain.PaymentItem;
+
+import forms.invoice.InvoicePanel;
 import forms.partial.PartialDialog;
 
 /**
@@ -53,6 +56,7 @@ public class Payment extends javax.swing.JDialog {
 	private MainWindow form;
 	private PartialDialog form2;
 	private Vector<String> paymentCode;
+	private static Object invoker;
 	private String[] textval;
 	private int index;
 	private String status;
@@ -82,9 +86,11 @@ public class Payment extends javax.swing.JDialog {
 		initGUI();
 	
 	}
-	public Payment(MainWindow frame, String[] val, int index, String status){
+	@SuppressWarnings("static-access")
+	public Payment(MainWindow frame, Object invoker, String[] val, int index, String status){
 		this(frame,status);
 		textval = val;
+		this.invoker = invoker;
 		this.index = index;
 		
 		//set values
@@ -130,9 +136,11 @@ public class Payment extends javax.swing.JDialog {
 				this.setModal(true);
 				{
 					jButton2 = new JButton();
-					getContentPane().add(jButton2, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jButton2, new AnchorConstraint(864, 753, 923, 524, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton2.setText("Cancel");
-					jButton2.setPreferredSize(new java.awt.Dimension(0, 0));
+					jButton2.setPreferredSize(new java.awt.Dimension(90, 24));
+					jButton2.setOpaque(false);
+					jButton2.setFont(new java.awt.Font("Arial",0,11));
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							Payment.this.setVisible(false);
@@ -142,306 +150,54 @@ public class Payment extends javax.swing.JDialog {
 				}
 				{
 					jButton1 = new JButton();
-					getContentPane().add(jButton1, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jButton1, new AnchorConstraint(867, 437, 923, 223, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton1.setText("OK");
-					jButton1.setPreferredSize(new java.awt.Dimension(0, 0));
+					jButton1.setPreferredSize(new java.awt.Dimension(84, 23));
+					jButton1.setOpaque(false);
+					jButton1.setFont(new java.awt.Font("Arial",0,11));
 					jButton1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							Vector<String> values = new Vector<String>();
-							values.add(paymentCode.get(jComboBox1.getSelectedIndex()));
-							values.add(jComboBox1.getSelectedItem().toString());
-							values.add(jTextField1.getText());
-							if(jComboBox1.getSelectedItem().equals("Cash")){
-								values.add("N/A");
-								values.add("N/A");
-								values.add("N/A");
-								values.add("N/A");
-							}
-							else if(jComboBox1.getSelectedItem().equals("Credit Card")){
-								values.add(jComboBox2.getSelectedItem().toString());
-								values.add(jTextField2.getText());
-								values.add("N/A");
-								values.add("N/A");
-							}
-							else if(jComboBox1.getSelectedItem().equals("Bank Check")){
-								
-								values.add("N/A");
-								values.add("N/A");
-								values.add(jTextField3.getText());
-								values.add("N/A");
-							}
-							else if(jComboBox1.getSelectedItem().equals("Bank Check")){
-								
-								values.add("N/A");
-								values.add("N/A");
-								values.add(jTextField3.getText());
-								values.add("N/A");
+							Integer paymentType = jComboBox1.getSelectedIndex()+1;
+							Double amount = Double.parseDouble(jTextField1.getText());
+							String creditCard = jTextField2.getText().toString();
+							String creditCardType = jComboBox2.getSelectedItem().toString();
+							String bankCheck = jTextField3.getText().toString();
+							String giftCertificate = jTextField4.getText().toString();
+							
+							PaymentItem paymentItem = new PaymentItem();
+							paymentItem.setPaymentCode(paymentType);
+							paymentItem.setAmount(amount);
+							paymentItem.setCardNo(creditCard);
+/*							if(jComboBox2.getSelectedIndex() == 0){
+								paymentItem.setCardType("");
 							}
 							else{
-								values.add("N/A");
-								values.add("N/A");
-								values.add("N/A");
-								values.add(jTextField4.getText());
+								paymentItem.setCardType(creditCardType);
 							}
+							paymentItem.setCheckNo(bankCheck);
+							paymentItem.setGcNo(giftCertificate);
 							
+							if(invoker instanceof InvoicePanel){
+								System.out.println("invoking...");
+								InvoicePanel invoicePanel = (InvoicePanel)invoker;
 							
-							
-							
-							
-							if(jComboBox1.getSelectedItem().equals("Cash")){
-								if(jTextField1.getText().length() == 0){
-									JOptionPane.showMessageDialog(null, 
-											"Please complete required fields", 
-											"Warning",JOptionPane.WARNING_MESSAGE);
-								}
-								else {
-									try{
-										Double.parseDouble(jTextField1.getText());
-										if(status.equals("add")){
-											
-											if(!form.hasPaymentCash("main")){
-											
-												form.setPaymentTable(values,"main");
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already payment type of cash. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("add|replaced")){
-											if(!form.hasPaymentCash("replaced")){
-												
-												form.setPaymentTable(values,"replaced");
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already payment type of cash. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("add|partial")){
-											if(!form2.hasPaymentCash()){
-												
-												form2.setPaymentTable(values);
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already payment type of cash. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("edit|partial")){
-											form2.setThisPaymentTable(values,index);
-										}
-										else if(status.equals("edit")){ //Edit
-											form.setThisPaymentTable(values, index,"main");
-										}
-										else if(status.equals("edit|replaced")){ //Edit
-											form.setThisPaymentTable(values, index,"replaced");
-										}
-										Payment.this.dispose();
-											
-									}catch(Exception ex){
-										ex.printStackTrace();
-										JOptionPane.showMessageDialog(null, 
-												"Please input valid quantity amount.", 
-												"Warning",JOptionPane.WARNING_MESSAGE);
+								if(status.equals("edit")){
+									if(invoicePanel.getPaymentItemRow(paymentItem.getPaymentCode()) != null){
+										invoicePanel.editPaymentItem(paymentItem);
+										payment.setVisible(false);
 									}
+									else{
+										JOptionPane.showMessageDialog(Payment.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else { //edit
+									//invoicePanel.editInvoiceItem(invoiceItem, action);
+									paymentDialog.setVisible(false);
+								}
 									
-								}
+								
 							}
-							else if(jComboBox1.getSelectedItem().equals("Credit Card")){
-									if(jTextField1.getText().length() == 0 || 
-										jTextField2.getText().length() == 0 || 
-										jComboBox2.getSelectedIndex() == 0){
-										JOptionPane.showMessageDialog(null, 
-												"Please complete required fields", 
-												"Warning",JOptionPane.WARNING_MESSAGE);
-									}
-									else {
-										try{
-											Double.parseDouble(jTextField1.getText());
-											if(status.equals("add")){
-												if(!form.hasSameCreditCard(jTextField2.getText(),"main")){
-													form.setPaymentTable(values,"main");
-												}
-												else{
-													JOptionPane.showMessageDialog(null, 
-																"There is already the same credit card no. You may just edit that payment type.", 
-																"Warning",JOptionPane.WARNING_MESSAGE);
-												}
-											}
-											else if(status.equals("add|replaced")){
-												if(!form.hasSameCreditCard(jTextField2.getText(),"replaced")){
-													form.setPaymentTable(values,"replaced");
-												}
-												else{
-													JOptionPane.showMessageDialog(null, 
-																"There is already the same credit card no. You may just edit that payment type.", 
-																"Warning",JOptionPane.WARNING_MESSAGE);
-												}
-											}
-											else if(status.equals("add|partial")){
-												if(!form2.hasSameCreditCard(jTextField2.getText())){
-													form2.setPaymentTable(values);
-												}
-												else{
-													JOptionPane.showMessageDialog(null, 
-																"There is already the same credit card no. You may just edit that payment type.", 
-																"Warning",JOptionPane.WARNING_MESSAGE);
-												}
-											}
-											else if(status.equals("edit|partial")){
-												form2.setThisPaymentTable(values, index);
-											}
-											else if(status.equals("edit")){ //Edit
-												form.setThisPaymentTable(values, index,"main");
-											}	
-											else if(status.equals("edit|replaced")){ //Edit
-												form.setThisPaymentTable(values, index,"replaced");
-											}	
-											Payment.this.dispose();
-											
-										}catch(Exception ex){
-											ex.printStackTrace();
-											JOptionPane.showMessageDialog(null, 
-													"Please input valid quantity amount.", 
-													"Warning",JOptionPane.WARNING_MESSAGE);
-										}
-									}
-							}
-							else if(jComboBox1.getSelectedItem().equals("Bank Check")){
-								if(jTextField1.getText().length() == 0 || 
-									jTextField3.getText().length() == 0){
-									JOptionPane.showMessageDialog(null, 
-											"Please complete required fields", 
-											"Warning",JOptionPane.WARNING_MESSAGE);
-								}
-								else {
-									try{
-										Double.parseDouble(jTextField1.getText());
-										if(status.equals("add")){
-											if(!form.hasSameBankCheck(jTextField3.getText(),"main")){
-												form.setPaymentTable(values,"main");
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already the same bank check no. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("add|replaced")){
-											if(!form.hasSameBankCheck(jTextField3.getText(),"replaced")){
-												form.setPaymentTable(values,"replaced");
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already the same bank check no. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("add|parital")){
-											if(!form2.hasSameBankCheck(jTextField3.getText())){
-												form2.setPaymentTable(values);
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already the same bank check no. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("edit|partial")){
-											form2.setThisPaymentTable(values, index);
-										}
-										else if(status.equals("edit")){ //Edit
-											form.setThisPaymentTable(values, index,"main");
-										}
-										else if(status.equals("edit|replaced")){ //Edit
-											form.setThisPaymentTable(values, index,"replaced");
-										}
-										Payment.this.dispose();
-										
-									}catch(Exception ex){
-										ex.printStackTrace();
-										JOptionPane.showMessageDialog(null, 
-												"Please input valid quantity amount.", 
-												"Warning",JOptionPane.WARNING_MESSAGE);
-									}
-								}
-							}
-							else if(jComboBox1.getSelectedItem().equals("Gift Certificate")){
-								if(jTextField1.getText().length() == 0 || 
-										jTextField4.getText().length() == 0){
-									JOptionPane.showMessageDialog(null, 
-											"Please complete required fields", 
-											"Warning",JOptionPane.WARNING_MESSAGE);
-								}
-								else {
-									try{
-										Double.parseDouble(jTextField1.getText());
-										if(status.equals("add")){
-											if(!form.hasSameGiftCertificate(jTextField4.getText(),"main")){
-												form.setPaymentTable(values,"main");
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already the gift certificate no. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("add|replaced")){
-											if(!form.hasSameGiftCertificate(jTextField4.getText(),"replaced")){
-												form.setPaymentTable(values,"replaced");
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already the gift certificate no. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("add|partial")){
-											if(!form2.hasSameGiftCertificate(jTextField4.getText())){
-												
-												form2.setPaymentTable(values);
-											
-											
-											}
-											else{
-												JOptionPane.showMessageDialog(null, 
-															"There is already the gift certificate no. You may just edit that payment type.", 
-															"Warning",JOptionPane.WARNING_MESSAGE);
-											}
-										}
-										else if(status.equals("edit|partial")){
-											form2.setThisPaymentTable(values, index);
-										}
-										else if(status.equals("edit")){ //Edit
-											form.setThisPaymentTable(values, index,"main");
-										}
-										else if(status.equals("edit|replaced")){ //Edit
-											form.setThisPaymentTable(values, index,"replaced");
-										}
-										Payment.this.dispose();
-										
-									}catch(Exception ex){
-										ex.printStackTrace();
-										JOptionPane.showMessageDialog(null, 
-												"Please input valid quantity amount.", 
-												"Warning",JOptionPane.WARNING_MESSAGE);
-									}
-								}
-							}
-							if(status.equals("add") || status.equals("edit")){
-								form.updateAmounts();
-							}
-							else if(status.equals("add|partial") || status.equals("edit|partial")){ 
-								form2.updateAmounts();
-							}
-							else{
-								form.updateReturnedAmounts();
-							}
-							
+						*/
 						}
 					});
 				}
@@ -457,9 +213,10 @@ public class Payment extends javax.swing.JDialog {
 					ComboBoxModel jComboBox1Model = new DefaultComboBoxModel(
 						payments);
 					jComboBox1 = new JComboBox();
-					getContentPane().add(jComboBox1, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jComboBox1, new AnchorConstraint(152, 970, 198, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jComboBox1.setModel(jComboBox1Model);
-					jComboBox1.setPreferredSize(new java.awt.Dimension(0, 0));
+					jComboBox1.setPreferredSize(new java.awt.Dimension(368, 19));
+					jComboBox1.setOpaque(false);
 					jComboBox1.addItemListener(new ItemListener() {
 						public void itemStateChanged(ItemEvent evt) {
 							if(jComboBox1.getSelectedItem().toString().equals("Cash")){
@@ -511,78 +268,74 @@ public class Payment extends javax.swing.JDialog {
 				}
 				{
 					jTextField1 = new JTextField();
-					getContentPane().add(jTextField1, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField1.setPreferredSize(new java.awt.Dimension(0, 0));
+					getContentPane().add(jTextField1, new AnchorConstraint(261, 970, 305, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField1.setPreferredSize(new java.awt.Dimension(368, 18));
 				}
 				{
 					jLabel2 = new JLabel();
-					getContentPane().add(jLabel2, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel2, new AnchorConstraint(30, 422, 76, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel2.setText("Add Payments");
-					jLabel2.setPreferredSize(new java.awt.Dimension(0, 0));
+					jLabel2.setPreferredSize(new java.awt.Dimension(153, 19));
 					jLabel2.setFont(new java.awt.Font("Tahoma",1,16));
 				}
 				{
 					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel1, new AnchorConstraint(210, 207, 256, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel1.setText("Amount");
-					jLabel1.setPreferredSize(new java.awt.Dimension(0, 0));
+					jLabel1.setPreferredSize(new java.awt.Dimension(69, 19));
 				}
 				{
 					jLabel3 = new JLabel();
-					getContentPane().add(jLabel3, new AnchorConstraint(101, 345, 166, 126, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel3, new AnchorConstraint(105, 235, 137, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel3.setText("Payment Type");
-					jLabel3.setPreferredSize(new java.awt.Dimension(84, 27));
+					jLabel3.setPreferredSize(new java.awt.Dimension(80, 13));
 				}
 				{
 					jLabel4 = new JLabel();
-					getContentPane().add(jLabel4, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel4, new AnchorConstraint(332, 340, 378, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel4.setText("Credit Card No");
-					jLabel4.setPreferredSize(new java.awt.Dimension(0, 0));
+					jLabel4.setPreferredSize(new java.awt.Dimension(121, 19));
 				}
 				{
 					jTextField2 = new JTextField();
-					getContentPane().add(jTextField2, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField2.setPreferredSize(new java.awt.Dimension(0, 0));
-					jTextField2.setEnabled(false);
+					getContentPane().add(jTextField2, new AnchorConstraint(385, 970, 429, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField2.setPreferredSize(new java.awt.Dimension(368, 18));
 				}
 				{
 					jLabel5 = new JLabel();
-					getContentPane().add(jLabel5, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel5, new AnchorConstraint(590, 274, 636, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel5.setText("Check Number");
-					jLabel5.setPreferredSize(new java.awt.Dimension(0, 0));
+					jLabel5.setPreferredSize(new java.awt.Dimension(95, 19));
 				}
 				{
 					jTextField3 = new JTextField();
-					getContentPane().add(jTextField3, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField3.setPreferredSize(new java.awt.Dimension(0, 0));
-					jTextField3.setEnabled(false);
+					getContentPane().add(jTextField3, new AnchorConstraint(638, 970, 684, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField3.setPreferredSize(new java.awt.Dimension(368, 19));
 				}
 				{
 					ComboBoxModel jComboBox2Model = new DefaultComboBoxModel(
 						new String[] {"", "Visa", "Master Card","Diners","EPS", "BPI","AMEX" });
 					jComboBox2 = new JComboBox();
-					getContentPane().add(jComboBox2, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jComboBox2, new AnchorConstraint(507, 970, 560, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jComboBox2.setModel(jComboBox2Model);
-					jComboBox2.setPreferredSize(new java.awt.Dimension(0, 0));
-					jComboBox2.setEnabled(false);
+					jComboBox2.setPreferredSize(new java.awt.Dimension(368, 22));
 				}
 				{
 					jLabel6 = new JLabel();
-					getContentPane().add(jLabel6, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel6, new AnchorConstraint(458, 235, 507, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel6.setText("Card Type");
-					jLabel6.setPreferredSize(new java.awt.Dimension(0, 0));
+					jLabel6.setPreferredSize(new java.awt.Dimension(80, 20));
 				}
 				{
 					jLabel7 = new JLabel();
-					getContentPane().add(jLabel7, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel7, new AnchorConstraint(709, 235, 743, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel7.setText("Gift Cert No");
-					jLabel7.setPreferredSize(new java.awt.Dimension(0, 0));
+					jLabel7.setPreferredSize(new java.awt.Dimension(80, 14));
 				}
 				{
 					jTextField4 = new JTextField();
-					getContentPane().add(jTextField4, new AnchorConstraint(1, 1, 1, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField4.setPreferredSize(new java.awt.Dimension(0, 0));
-					jTextField4.setEnabled(false);
+					getContentPane().add(jTextField4, new AnchorConstraint(757, 970, 806, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jTextField4.setPreferredSize(new java.awt.Dimension(368, 20));
 				}
 			}
 			this.setSize(400, 454);
