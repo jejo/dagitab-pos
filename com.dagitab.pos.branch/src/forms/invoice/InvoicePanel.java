@@ -501,7 +501,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 						for(int i =0; i<7; i++){
 							values[i] = (String) paymentTable.getValueAt(paymentTable.getSelectedRow(), i);
 						}
-						Payment dialog = new Payment(Main.getInst(),values,paymentTable.getSelectedRow(),"edit");
+						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,"edit");
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -784,6 +784,31 @@ public class InvoicePanel extends javax.swing.JPanel {
 								  paymentItem.getGcNo()
 								  });
 		
+	}
+	
+	public void editPaymentItem(PaymentItem paymentItem, String paymentCode){
+		PaymentItem payment = PaymentItemService.getPaymentById(paymentItem.getOrNo());
+		int index = getInvoicePaymentRow(paymentCode);
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		model.setValueAt(paymentItem.getOrNo(), index, 0);
+		model.setValueAt(PaymentItemService.getPaymentType(payment.getPaymentCode()), index, 1);
+		model.setValueAt(payment.getAmount(), index, 2);
+		model.setValueAt(payment.getCardType().toString(), index, 3);
+		model.setValueAt(payment.getCardNo().toString(), index, 4);
+		model.setValueAt(payment.getGcNo().toString(), index, 6);
+		model.setValueAt(payment.getCheckNo().toString(), index, 7);
+		model.setValueAt(payment.getStoreNo(), index, 8);
+		updateAmounts();
+	}
+	
+	public Integer getInvoicePaymentRow(String prodCode){
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			if(model.getValueAt(i, 0).toString().equals(prodCode)){
+				return i;
+			}
+		}
+		return null;
 	}
 
 	public Integer getPaymentItemRow(Integer paymentCode){

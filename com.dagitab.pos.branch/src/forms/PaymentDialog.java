@@ -201,6 +201,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 								}
 								else { //edit
 									//invoicePanel.editInvoiceItem(invoiceItem, action);
+									invoicePanel.editPaymentItem(paymentItem, action);
 									paymentDialog.setVisible(false);
 								}
 									
