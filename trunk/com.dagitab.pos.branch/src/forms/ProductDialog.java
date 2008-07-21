@@ -21,6 +21,7 @@ import javax.swing.table.TableModel;
 
 import util.StorePropertyHandler;
 import util.TableUtility;
+import util.Validator;
 import bus.DiscountService;
 import bus.ProductService;
 import domain.InvoiceItem;
@@ -44,12 +45,12 @@ import forms.invoice.InvoicePanel;
 public class ProductDialog extends javax.swing.JDialog {
 	private JLabel lblProduct;
 	private JScrollPane jScrollPane1;
-	private JCheckBox jCheckBox1;
+	private JCheckBox deferredChk;
 	private JButton jButton1;
 	private JTable jTable1;
 	private JButton jButton2;
 	private JLabel jLabel3;
-	private JTextField jTextField1;
+	private JTextField quantityTxt;
 	private JLabel jLabel2;
 	private JComboBox discountCB;
 	private JLabel jLabel1;
@@ -148,9 +149,9 @@ public class ProductDialog extends javax.swing.JDialog {
 					jLabel2.setBounds(15, 324, 47, 16);
 				}
 				{
-					jTextField1 = new JTextField();
-					getContentPane().add(jTextField1);
-					jTextField1.setBounds(289, 340, 249, 22);
+					quantityTxt = new JTextField();
+					getContentPane().add(quantityTxt);
+					quantityTxt.setBounds(289, 340, 249, 22);
 				}
 				{
 					jLabel3 = new JLabel();
@@ -165,7 +166,7 @@ public class ProductDialog extends javax.swing.JDialog {
 					jButton1.setBounds(215, 428, 49, 25);
 					jButton1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							//TODO Validator
+							
 							String selected = "";
 							try{
 								selected = jTable1.getValueAt(jTable1.getSelectedRow(),0).toString();
@@ -174,42 +175,47 @@ public class ProductDialog extends javax.swing.JDialog {
 								JOptionPane.showMessageDialog(ProductDialog.this,"Please select product from the list","Prompt",JOptionPane.ERROR_MESSAGE);
 								return;
 							}
-							Product product = ProductService.getProductById(selected);
+							
+							if(!Validator.isEmpty("Product Item", selected) && 
+							   !Validator.isEmpty("Quantity", quantityTxt.getText()) && 
+							    Validator.isNumeric(quantityTxt.getText()) )
+							{
 							
 							
-							String discountCode = discountCB.getSelectedItem().toString().split("-")[0];
-							Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
-							Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
+								Product product = ProductService.getProductById(selected);
+								String discountCode = discountCB.getSelectedItem().toString().split("-")[0];
+								Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
+								Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
+									
+								InvoiceItem invoiceItem = new InvoiceItem();
+								invoiceItem.setCost(product.getCost());
+								invoiceItem.setDiscountCode(Integer.parseInt(discountCode));
+								invoiceItem.setIsDeferred(deferredChk.isSelected()?1:0);
+								invoiceItem.setProductCode(selected);
+								invoiceItem.setQuantity(Integer.parseInt(quantityTxt.getText()));
+								invoiceItem.setSellPrice(sellingPrice);
 								
-							InvoiceItem invoiceItem = new InvoiceItem();
-							invoiceItem.setCost(product.getCost());
-							invoiceItem.setDiscountCode(Integer.parseInt(discountCode));
-							invoiceItem.setIsDeferred(jCheckBox1.isSelected()?1:0);
-							invoiceItem.setProductCode(selected);
-							invoiceItem.setQuantity(Integer.parseInt(jTextField1.getText()));
-							invoiceItem.setSellPrice(sellingPrice);
-							
-							if(invoker instanceof InvoicePanel){
-								System.out.println("invoking...");
-								InvoicePanel invoicePanel = (InvoicePanel)invoker;
-							
-								if(action.equals("add")){
-									if(invoicePanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
-										invoicePanel.addInvoiceItem(invoiceItem);
+								if(invoker instanceof InvoicePanel){
+									System.out.println("invoking...");
+									InvoicePanel invoicePanel = (InvoicePanel)invoker;
+								
+									if(action.equals("add")){
+										if(invoicePanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
+											invoicePanel.addInvoiceItem(invoiceItem);
+											productDialog.setVisible(false);
+										}
+										else{
+											JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+										}
+									}
+									else { //edit
+										invoicePanel.editInvoiceItem(invoiceItem, action);
 										productDialog.setVisible(false);
 									}
-									else{
-										JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else { //edit
-									invoicePanel.editInvoiceItem(invoiceItem, action);
-									productDialog.setVisible(false);
-								}
+										
 									
-								
+								}
 							}
-							
 						}
 					});
 				}
@@ -225,11 +231,11 @@ public class ProductDialog extends javax.swing.JDialog {
 					});
 				}
 				{
-					jCheckBox1 = new JCheckBox();
-					getContentPane().add(jCheckBox1);
-					jCheckBox1.setText("Deferred");
-					jCheckBox1.setBounds(15, 381, 85, 20);
-					jCheckBox1.setBackground(new java.awt.Color(255,255,255));
+					deferredChk = new JCheckBox();
+					getContentPane().add(deferredChk);
+					deferredChk.setText("Deferred");
+					deferredChk.setBounds(15, 381, 85, 20);
+					deferredChk.setBackground(new java.awt.Color(255,255,255));
 				}
 
 				TableUtility.fillTable(jTable1, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
@@ -256,15 +262,15 @@ public class ProductDialog extends javax.swing.JDialog {
 	
 	public void setDeferredValue(String value){
 		if(value.equals("Yes")){
-			jCheckBox1.setSelected(true);
+			deferredChk.setSelected(true);
 		}
 		else{
-			jCheckBox1.setSelected(false);
+			deferredChk.setSelected(false);
 		}
 	}
 	
 	public void setQuantity(String qty){
-		jTextField1.setText(qty);
+		quantityTxt.setText(qty);
 	}
 	
 	public void setDiscount(int discCode){
@@ -284,6 +290,8 @@ public class ProductDialog extends javax.swing.JDialog {
 		txtProduct.setText("");
 		TableUtility.fillTable(jTable1, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
 		discountCB.setSelectedIndex(0);
+		quantityTxt.setText("");
+		deferredChk.setSelected(false);
 	}
 
 }

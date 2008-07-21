@@ -247,84 +247,17 @@ public class MainWindow extends javax.swing.JFrame {
 						public void stateChanged(ChangeEvent evt) {
 							
 							if(jTabbedPane1.getSelectedIndex() == 0){ //regular
-//								ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice WHERE STORE_CODE = '"+Main.getStoreCode()+"'  ORDER by OR_NO DESC LIMIT 1");
-//								try {
-//									if(rs.next()){
-//										int ornum = rs.getInt("OR_NO")+1;
-//										String temp = ornum+"";
-//										int len = 10-temp.length();
-//										
-//										for(int i = 0; i<len; i++)
-//										{
-//											temp = "0"+temp;
-//										}
-//										currOrNum = temp;
-//									}
-//									else{
-//										currOrNum = "0000000001";
-//									}
-//								} catch (SQLException e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								}
+
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 1){	//partial
 								((PartialPanel) partialPanel).refreshTables();
-								
-//								setPartialList();
-//								jTextField10.setText("");
-//								jPasswordField3.setText("");
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 2){ //deferred
 								((DeferredPanel) deferredPanel).refreshTables();
-//								setDeferredList();
-//								jTextField13.setText("");
-//								jPasswordField1.setText("");
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 3){ //returned
-//								ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice WHERE STORE_CODE = '"+Main.getStoreCode()+"' ORDER by OR_NO DESC LIMIT 1");
-//								try {
-//									if(rs.next()){
-//										int ornum = rs.getInt("OR_NO")+1;
-//										String temp = ornum+"";
-//										int len = 10-temp.length();
-//										
-//										for(int i = 0; i<len; i++)
-//										{
-//											temp = "0"+temp;
-//										}
-//										currOrNum = temp;
-//									}
-//									else{
-//										currOrNum = "0000000001";
-//									}
-//								} catch (SQLException e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								}
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 4){ //pending
-//								Object[][] data = new Object[pausedData.size()][7];
-//								for(int i = 0; i< pausedData.size(); i++)
-//								{
-//									data[i][0] = i+1;
-//									PendingTransactionData pauseTransactionRow = pausedData.get(i);
-//									data[i][1] = pauseTransactionRow.getDate();
-//									data[i][2] = pauseTransactionRow.getTime();
-//									
-//								}
-//								
-//								TableModel jTable1Model = new DefaultTableModel(
-//										data,
-//										new String[] { "Transaction No", "Date","Time"  });
-//									jTable8 = new JTable(){
-//										public boolean isCellEditable(int row, int column)
-//										{
-//											return false;
-//										}
-//									};
-//									jScrollPane8.setViewportView(jTable8);
-//									jTable8.setModel(jTable1Model);
 							}
 						}
 					});

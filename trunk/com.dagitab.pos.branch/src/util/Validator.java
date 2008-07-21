@@ -14,4 +14,12 @@ public class Validator {
 		}
 		return true;
 	}
+	
+	public static Boolean isEmpty(String field, String s){
+		if("".equals(s.trim())){
+			JOptionPane.showMessageDialog(null, "Please complete "+field+" value", "Input Prompt", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+		return false;
+	}
 }
