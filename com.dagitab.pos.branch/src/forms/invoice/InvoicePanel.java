@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import javax.swing.BorderFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -653,18 +652,18 @@ public class InvoicePanel extends javax.swing.JPanel {
 	}
 	
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode){
-		PaymentItem payment = PaymentItemService.getPaymentById(paymentItem.getOrNo());
-		int index = getInvoicePaymentRow(paymentCode);
-		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
-		model.setValueAt(paymentItem.getOrNo(), index, 0);
-		model.setValueAt(PaymentItemService.getPaymentType(payment.getPaymentCode()), index, 1);
-		model.setValueAt(payment.getAmount(), index, 2);
-		model.setValueAt(payment.getCardType().toString(), index, 3);
-		model.setValueAt(payment.getCardNo().toString(), index, 4);
-		model.setValueAt(payment.getGcNo().toString(), index, 6);
-		model.setValueAt(payment.getCheckNo().toString(), index, 7);
-		model.setValueAt(payment.getStoreNo(), index, 8);
-		updateAmounts();
+//		PaymentItem payment = PaymentItemService.getPaymentById(paymentItem.getOrNo());
+//		int index = getInvoicePaymentRow(paymentCode);
+//		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+//		model.setValueAt(paymentItem.getOrNo(), index, 0);
+//		model.setValueAt(PaymentItemService.getPaymentType(payment.getPaymentCode()), index, 1);
+//		model.setValueAt(payment.getAmount(), index, 2);
+//		model.setValueAt(payment.getCardType().toString(), index, 3);
+//		model.setValueAt(payment.getCardNo().toString(), index, 4);
+//		model.setValueAt(payment.getGcNo().toString(), index, 6);
+//		model.setValueAt(payment.getCheckNo().toString(), index, 7);
+//		model.setValueAt(payment.getStoreNo(), index, 8);
+//		updateAmounts();
 	}
 	
 	public Integer getInvoicePaymentRow(String prodCode){
