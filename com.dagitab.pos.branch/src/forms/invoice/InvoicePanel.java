@@ -3,12 +3,14 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import javax.swing.BorderFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -34,7 +36,6 @@ import domain.PaymentItem;
 import domain.Product;
 import forms.FastAddition;
 import forms.PackageItems;
-import forms.Payment;
 import forms.PaymentDialog;
 import forms.ProductDialog;
 import forms.lookup.ClerkLookUp;
@@ -150,7 +151,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 					welcomePanel.add(jLabel2);
 					jLabel2.setText("Shaw Boulevard Branch");
 					jLabel2.setBounds(7, 26, 219, 19);
-					jLabel2.setFont(new java.awt.Font("Segoe UI",0,12));
+					jLabel2.setFont(new java.awt.Font("Segoe UI",0,14));
 				}
 			}
 			{
@@ -177,6 +178,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				this.add(jButton29, new AnchorConstraint(468, 439, 511, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton29.setText("Fast Addition");
 				jButton29.setPreferredSize(new java.awt.Dimension(105, 21));
+				jButton29.setEnabled(false);
 				jButton29.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						FastAddition dialog = new FastAddition(Main.getInst());
@@ -217,8 +219,8 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton3.addActionListener(new ActionListener() {
 					
 					public void actionPerformed(ActionEvent evt) {
-						
 						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,"add");
+						dialog.clearProductInformation();
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 						
@@ -229,6 +231,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				paymentTableScrollPane = new JScrollPane();
 				this.add(paymentTableScrollPane, new AnchorConstraint(567, 975, 808, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				paymentTableScrollPane.setPreferredSize(new java.awt.Dimension(567, 119));
+				paymentTableScrollPane.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				{
 					TableModel jTable2Model = new DefaultTableModel(
 						new String[][] { },
@@ -242,6 +245,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				itemTableScrollPane = new JScrollPane();
 				this.add(itemTableScrollPane, new AnchorConstraint(72, 975, 455, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				itemTableScrollPane.setPreferredSize(new java.awt.Dimension(567, 189));
+				itemTableScrollPane.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				{
 					TableModel jTable1Model = new DefaultTableModel(
 						new String[][] {  },
@@ -446,21 +450,25 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton4.setPreferredSize(new java.awt.Dimension(63, 21));
 				jButton4.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-
-						String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
-						String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
-						int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
-						String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
-						
-						
-						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
-						dialog.setProductCode(productCode);
-						dialog.setQuantity(quantity);
-						dialog.setDiscount(discountCode);
-						dialog.setDeferredValue(deferred);
-						
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
+						try{
+							String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
+							String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
+							int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
+							String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
+							
+							
+							ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
+							dialog.setProductCode(productCode);
+							dialog.setQuantity(quantity);
+							dialog.setDiscount(discountCode);
+							dialog.setDeferredValue(deferred);
+							
+							dialog.setLocationRelativeTo(null);
+							dialog.setVisible(true);
+						}
+						catch(ArrayIndexOutOfBoundsException e){
+							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 			}
@@ -471,7 +479,12 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton5.setPreferredSize(new java.awt.Dimension(70, 21));
 				jButton5.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						removeInvoiceItem();
+						try{
+							removeInvoiceItem();
+						}
+						catch(ArrayIndexOutOfBoundsException e){
+							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 			}
@@ -482,8 +495,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton6.setPreferredSize(new java.awt.Dimension(63, 21));
 				jButton6.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-//						double curAmount = Double.parseDouble(lblAmount.getText());
-//						Payment dialog = new Payment(Main.getInst(),"add", curAmount);
 						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(), InvoicePanel.this, "add");
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
@@ -497,6 +508,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton7.setPreferredSize(new java.awt.Dimension(63, 21));
 				jButton7.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
+						
 						String[] values = new String[7];
 						for(int i =0; i<7; i++){
 							values[i] = (String) paymentTable.getValueAt(paymentTable.getSelectedRow(), i);
@@ -526,122 +538,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 				jButton9.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-//						if(	productItems.size() != 0 && 
-//							jTextField6.getText().length() != 0 &&
-//							jPasswordField2.getPassword().length != 0){
-////							ResultSet rs = db.executeQuery("SELECT * FROM clerk_lu WHERE AES_DECRYPT(password,'babyland') = '"+new String(jPasswordField2.getPassword())+"' AND clerk_code = '"+jTextField6.getText()+"'");
-//							ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM clerk_lu WHERE password = '"+new String(jPasswordField2.getPassword())+"' AND clerk_code = '"+jTextField6.getText()+"'");
-//							
-//							try {
-//								if(rs.next()){
-//									if(!jCheckBox1.isSelected()){
-//										
-//										//complete transaction
-//										if(paymentItems.size() != 0) {
-//									
-//											double amount = Double.parseDouble(jLabel2.getText());
-//											double payments = Double.parseDouble(jTextField7.getText());
-//											
-//											if(amount <= payments){
-//												
-//												processTransaction("complete");
-//												
-//												if(pauseDeleteFlag){
-//													pausedData.remove(pauseSelectedIndex);
-//													Object[][] data = new Object[pausedData.size()][7];
-//													for(int i = 0; i< pausedData.size(); i++)
-//													{
-//														data[i][0] = i+1;
-//														PendingTransactionData pauseTransactionRow = pausedData.get(i);
-//														data[i][1] = pauseTransactionRow.getDate();
-//														data[i][2] = pauseTransactionRow.getTime();
-//														
-//													}
-//													
-//													TableModel jTable1Model = new DefaultTableModel(
-//															data,
-//															new String[] { "Transaction No", "Date","Time"  });
-//														jTable8 = new JTable(){
-//															public boolean isCellEditable(int row, int column)
-//															{
-//																return false;
-//															}
-//														};
-//														jScrollPane8.setViewportView(jTable8);
-//														jTable8.setModel(jTable1Model);
-//														
-//													pauseDeleteFlag = false;
-//													pauseSelectedIndex = -1;
-//												}
-//											}
-//											
-//											else{
-//												JOptionPane.showMessageDialog(null, 
-//														"This is not a partial transaction. \n" +
-//														" Amount is greater than payment.", 
-//														"Warning",JOptionPane.WARNING_MESSAGE);
-//											}
-//										}
-//										else{
-//											JOptionPane.showMessageDialog(null, 
-//													"This is not a partial transaction. \n" +
-//													" Amount is greater than payment.", 
-//													"Warning",JOptionPane.WARNING_MESSAGE);
-//										}
-//									}
-//									else{
-//										try {
-//											processTransaction("partial");
-//											
-//											if(pauseDeleteFlag){
-//												pausedData.remove(pauseSelectedIndex);
-//												Object[][] data = new Object[pausedData.size()][7];
-//												for(int i = 0; i< pausedData.size(); i++)
-//												{
-//													data[i][0] = i+1;
-//													PendingTransactionData pauseTransactionRow = pausedData.get(i);
-//													data[i][1] = pauseTransactionRow.getDate();
-//													data[i][2] = pauseTransactionRow.getTime();
-//													
-//												}
-//												
-//												TableModel jTable1Model = new DefaultTableModel(
-//														data,
-//														new String[] { "Transaction No", "Date","Time"  });
-//													jTable8 = new JTable(){
-//														public boolean isCellEditable(int row, int column)
-//														{
-//															return false;
-//														}
-//													};
-//													jScrollPane8.setViewportView(jTable8);
-//													jTable8.setModel(jTable1Model);
-//													
-//												pauseDeleteFlag = false;
-//												pauseSelectedIndex = -1;
-//											}
-//										} catch (SQLException e) {
-//											// TODO Auto-generated catch block
-//											e.printStackTrace();
-//										}
-//									}
-//								}
-//								else{
-//									JOptionPane.showMessageDialog(null, 
-//												"Invalid Cashier log in.", 
-//												"Warning",JOptionPane.WARNING_MESSAGE);
-//								}
-//							}
-//							catch (SQLException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//						}
-//						else{
-//							JOptionPane.showMessageDialog(null, 
-//									"Please complete required fields of the form.", 
-//									"Warning",JOptionPane.WARNING_MESSAGE);
-//						}
+
 					}
 				});
 			}
@@ -661,38 +558,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton31.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/pause.png")));
 				jButton31.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-//						pauseDeleteFlag = false;
-//						pauseSelectedIndex = -1;
-//						ResultSet rs = Main.getDBManager().executeQuery("SELECT DATE(CURRENT_TIMESTAMP), TIME(CURRENT_TIMESTAMP)");
-//						String date = "";
-//						String time = "";
-//						try {
-//							if(rs.next()){
-//								date = rs.getString(1);
-//								time = rs.getString(2);
-//							}
-//						} catch (SQLException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//						
-//						if(productItems.size() >0){
-//							Vector<Vector<String>> tempProdList = new Vector<Vector<String>>();
-//							for(int i = 0; i< productItems.size(); i++){
-//								Vector<String> otherdata = productItems.get(i);
-//								tempProdList.add(otherdata);
-//							}
-//							
-//							PendingTransactionData ptd = new PendingTransactionData(date, time, tempProdList);
-//							pausedData.add(ptd);
-//							
-//							try {
-//								updateAll();
-//							} catch (SQLException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//						}
+
 					}
 				});
 				
