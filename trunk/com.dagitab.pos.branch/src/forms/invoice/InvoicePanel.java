@@ -525,7 +525,12 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton8.setPreferredSize(new java.awt.Dimension(70, 21));
 				jButton8.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						
+						try{
+							removePaymentItem();
+						}
+						catch(ArrayIndexOutOfBoundsException e){
+							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 			}
@@ -620,6 +625,12 @@ public class InvoicePanel extends javax.swing.JPanel {
 	public void removeInvoiceItem(){
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		model.removeRow(itemTable.getSelectedRow());
+		updateAmounts();
+	}
+	
+	public void removePaymentItem(){
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		model.removeRow(paymentTable.getSelectedRow());
 		updateAmounts();
 	}
 	
