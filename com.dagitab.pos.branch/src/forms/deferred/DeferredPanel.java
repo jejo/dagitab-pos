@@ -22,6 +22,8 @@ import bus.InvoiceItemService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.MainWindow;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -42,22 +44,24 @@ public class DeferredPanel extends javax.swing.JPanel {
 	* Auto-generated main method to display this 
 	* JPanel inside a new JFrame.
 	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new DeferredPanel());
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		JFrame frame = new JFrame();
+//		frame.getContentPane().add(new DeferredPanel());
+//		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+//		frame.pack();
+//		frame.setVisible(true);
+//	}
 
 	private JButton jButton13;
 	private JButton jButton12;
 	private JScrollPane jScrollPane3;
 	private JTable jTable3;
 	private JLabel jLabel18;
+	private MainWindow mainWindow;
 
-	public DeferredPanel() {
-		super();
+	public DeferredPanel(MainWindow mainWindow) {
+		super(); 
+		setMainWindow(mainWindow);
 		initGUI();
 		refreshTables();
 	}
@@ -219,5 +223,13 @@ public class DeferredPanel extends javax.swing.JPanel {
 	public void refreshTables() {
 		ResultSet rs = InvoiceItemService.fetchAllDeferredInvoiceItems();
 		TableUtility.fillTable(jTable3, rs, new String[]{"OR Number", "Invoice No", "Product Code", "Product Name", "Quantity", "Transaction Date & Time"});
+	}
+
+	public MainWindow getMainWindow() {
+		return mainWindow;
+	}
+
+	public void setMainWindow(MainWindow mainWindow) {
+		this.mainWindow = mainWindow;
 	}
 }

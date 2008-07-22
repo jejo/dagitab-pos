@@ -120,6 +120,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 				{
 					txtCreditCard = new JTextField();
 					getContentPane().add(txtCreditCard);
+					txtCreditCard.setEnabled(false);
 					txtCreditCard.setBounds(12, 158, 353, 22);
 				}
 				{
@@ -135,6 +136,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 					cbCreditCardType = new JComboBox();
 					getContentPane().add(cbCreditCardType);
 					cbCreditCardType.setModel(jComboBox1Model);
+					cbCreditCardType.setEnabled(false);
 					cbCreditCardType.setBounds(12, 211, 353, 22);
 				}
 				{
@@ -146,6 +148,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 				{
 					txtBankCheck = new JTextField();
 					getContentPane().add(txtBankCheck);
+					txtBankCheck.setEnabled(false);
 					txtBankCheck.setBounds(12, 261, 353, 22);
 				}
 				{
@@ -157,6 +160,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 				{
 					txtGiftCertificate = new JTextField();
 					getContentPane().add(txtGiftCertificate);
+					txtGiftCertificate.setEnabled(false);
 					txtGiftCertificate.setBounds(12, 311, 353, 22);
 				}
 				{
@@ -176,15 +180,15 @@ public class PaymentDialog extends javax.swing.JDialog {
 							PaymentItem paymentItem = new PaymentItem();
 							paymentItem.setPaymentCode(paymentType);
 							paymentItem.setAmount(amount);
-							paymentItem.setCardNo(creditCard);
+							paymentItem.setCardNo(("".equals(creditCard)?"N/A":creditCard));
 							if(cbCreditCardType.getSelectedIndex() == 0){
-								paymentItem.setCardType("");
+								paymentItem.setCardType("N/A");
 							}
 							else{
 								paymentItem.setCardType(creditCardType);
 							}
-							paymentItem.setCheckNo(bankCheck);
-							paymentItem.setGcNo(giftCertificate);
+							paymentItem.setCheckNo(("".equals(bankCheck)?"N/A":bankCheck));
+							paymentItem.setGcNo(("".equals(giftCertificate)?"N/A":giftCertificate));
 							
 							if(invoker instanceof InvoicePanel){
 								System.out.println("invoking...");

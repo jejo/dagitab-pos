@@ -26,6 +26,8 @@ import bus.InvoiceService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.MainWindow;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -46,22 +48,24 @@ public class PartialPanel extends javax.swing.JPanel {
 	* Auto-generated main method to display this 
 	* JPanel inside a new JFrame.
 	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new PartialPanel());
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		JFrame frame = new JFrame();
+//		frame.getContentPane().add(new PartialPanel());
+//		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+//		frame.pack();
+//		frame.setVisible(true);
+//	}
 
 	private JButton jButton16;
 	private JButton jButton15;
 	private JScrollPane jScrollPane4;
 	private JTable jTable4;
 	private JLabel jLabel19;
+	private MainWindow mainWindow;
 
-	public PartialPanel() {
+	public PartialPanel(MainWindow mainWindow) {
 		super();
+		setMainWindow(mainWindow); 
 		initGUI();
 		refreshTables();
 	}
@@ -84,11 +88,17 @@ public class PartialPanel extends javax.swing.JPanel {
 				jButton16.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 				jButton16.setPreferredSize(new java.awt.Dimension(189,28));
 				jButton16.addActionListener(new ActionListener() {
-					private JPasswordField jPasswordField3;
-					private AbstractButton jTextField10;
-					private JTable jTable4;
+//					private JPasswordField jPasswordField3;
+//					private AbstractButton jTextField10;
+//					private JTable jTable4;
 
+					private PartialDialog partialDialog;
+					
 					public void actionPerformed(ActionEvent evt) {
+						System.out.println(jTable4.getValueAt(jTable4.getSelectedRow(), 0).toString());
+						System.out.println(jTable4.getValueAt(jTable4.getSelectedRow(), 1).toString());
+						System.out.println(jTable4.getValueAt(jTable4.getSelectedRow(), 2).toString());
+						partialDialog = new PartialDialog(getMainWindow(), jTable4.getValueAt(jTable4.getSelectedRow(), 0).toString(), jTable4.getValueAt(jTable4.getSelectedRow(), 1).toString(), jTable4.getValueAt(jTable4.getSelectedRow(), 2).toString());
 //						ResultSet rs =db.executeQuery("SELECT * FROM clerk_lu WHERE AES_DECRYPT(password,'babyland') = '"
 //						ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM  clerk_lu WHERE password = '"
 //														+ new String( jPasswordField3.getPassword())
@@ -187,6 +197,14 @@ public class PartialPanel extends javax.swing.JPanel {
 
 	public void refreshTables() {
 		ResultSet rs = InvoiceService.fetchAllPartialInvoices();
-		TableUtility.fillTable(jTable4, rs, new String[]{"Invoice No", "OR Number","Transaction Date & Time"});
+		TableUtility.fillTable(jTable4, rs, new String[]{"OR Number","Transaction Date & Time", "Clerk No"});
+	}
+
+	public MainWindow getMainWindow() {
+		return mainWindow;
+	}
+
+	public void setMainWindow(MainWindow mainWindow) {
+		this.mainWindow = mainWindow;
 	}
 }
