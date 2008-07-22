@@ -21,9 +21,10 @@ public class PaymentItemService {
 	}
 	
 	
-	public static PaymentItem getPaymentById(Long id){
+	public static PaymentItem getPaymentItemById(Integer id){
 		PaymentItem paymentItem = new PaymentItem();
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
+		System.out.println("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
 		try {
 			if(rs.next()){
 				paymentItem.setOrNo(rs.getLong("OR_NO"));

@@ -19,6 +19,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.xml.bind.ParseConversionEvent;
 
 import main.Main;
 import util.StringUtility;
@@ -88,8 +89,8 @@ public class InvoicePanel extends javax.swing.JPanel {
 	private JLabel jLabel14;
 	private JLabel lblAmount;
 	private JTextField txtVat;
-	private JTextField jTextField7;
-	private JTextField jTextField8;
+	private JTextField totalPayment;
+	private JTextField changeField;
 	private JPanel jPanel6;
 	private JCheckBox partialChk;
 	private JLabel jLabel2;
@@ -333,20 +334,20 @@ public class InvoicePanel extends javax.swing.JPanel {
 					txtVat.setText("0.00");
 				}
 				{
-					jTextField7 = new JTextField();
-					jPanel7.add(jTextField7, new AnchorConstraint(656, 941, 771, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField7.setPreferredSize(new java.awt.Dimension(98, 21));
-					jTextField7.setEditable(false);
-					jTextField7.setHorizontalAlignment(SwingConstants.RIGHT);
-					jTextField7.setText("0.00");
+					totalPayment = new JTextField();
+					jPanel7.add(totalPayment, new AnchorConstraint(656, 941, 771, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					totalPayment.setPreferredSize(new java.awt.Dimension(98, 21));
+					totalPayment.setEditable(false);
+					totalPayment.setHorizontalAlignment(SwingConstants.RIGHT);
+					totalPayment.setText("0.00");
 				}
 				{
-					jTextField8 = new JTextField();
-					jPanel7.add(jTextField8, new AnchorConstraint(810, 941, 925, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField8.setPreferredSize(new java.awt.Dimension(98, 21));
-					jTextField8.setEditable(false);
-					jTextField8.setHorizontalAlignment(SwingConstants.RIGHT);
-					jTextField8.setText("0.00");
+					changeField = new JTextField();
+					jPanel7.add(changeField, new AnchorConstraint(810, 941, 925, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					changeField.setPreferredSize(new java.awt.Dimension(98, 21));
+					changeField.setEditable(false);
+					changeField.setHorizontalAlignment(SwingConstants.RIGHT);
+					changeField.setText("0.00");
 				}
 			}
 			{
@@ -501,7 +502,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton6.setPreferredSize(new java.awt.Dimension(63, 21));
 				jButton6.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
+						
 						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(), InvoicePanel.this, "add");
+						
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -515,11 +518,24 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton7.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
-						String[] values = new String[7];
-						for(int i =0; i<7; i++){
-							values[i] = (String) paymentTable.getValueAt(paymentTable.getSelectedRow(), i);
-						}
-						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,"edit");
+						String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+						String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+						String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+						String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+						String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+						String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+						String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+						
+						
+						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,paymentCode);
+						
+						dialog.setAmount(paymentAmount);
+						dialog.setPaymentType(paymentType);
+						dialog.setCreditType(creditCardType);
+						dialog.setCreditCard(creditCardNum);
+						dialog.setBankCheck(bankCheckNum);
+						dialog.setGiftCheck(gcNum);
+						
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -538,6 +554,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 						catch(ArrayIndexOutOfBoundsException e){
 							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
 						}
+
 					}
 				});
 			}
@@ -632,14 +649,16 @@ public class InvoicePanel extends javax.swing.JPanel {
 	public void removeInvoiceItem(){
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		model.removeRow(itemTable.getSelectedRow());
-		updateAmounts();
+		updatePaymentAmounts();
 	}
 	
 	public void removePaymentItem(){
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		model.removeRow(paymentTable.getSelectedRow());
-		updateAmounts();
+		updatePaymentAmounts();
 	}
+	
+
 	
 	public void updateAmounts(){
 		Double vatRate = VatService.getVatRate();
@@ -656,6 +675,20 @@ public class InvoicePanel extends javax.swing.JPanel {
 		lblAmount.setText(String.format("%.2f", amount));
 	}
 	
+	public void updatePaymentAmounts(){
+		
+		Double payment = 0.0d;
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			double quantity =  Double.parseDouble(model.getValueAt(i,2).toString());
+			payment += quantity;
+		}
+		String amountString = txtSubTotal.getText();
+		double amount = Double.parseDouble(amountString);
+		totalPayment.setText(String.format("%.2f", payment));
+		changeField.setText(String.format("%.2f", (payment-amount)));
+	}
+	
 	public void addPaymentItem(PaymentItem paymentItem){
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		model.addRow(new String[]{paymentItem.getPaymentCode().toString(),
@@ -669,18 +702,17 @@ public class InvoicePanel extends javax.swing.JPanel {
 	}
 	
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode){
-//		PaymentItem payment = PaymentItemService.getPaymentById(paymentItem.getOrNo());
-//		int index = getInvoicePaymentRow(paymentCode);
-//		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
-//		model.setValueAt(paymentItem.getOrNo(), index, 0);
-//		model.setValueAt(PaymentItemService.getPaymentType(payment.getPaymentCode()), index, 1);
-//		model.setValueAt(payment.getAmount(), index, 2);
-//		model.setValueAt(payment.getCardType().toString(), index, 3);
-//		model.setValueAt(payment.getCardNo().toString(), index, 4);
-//		model.setValueAt(payment.getGcNo().toString(), index, 6);
-//		model.setValueAt(payment.getCheckNo().toString(), index, 7);
-//		model.setValueAt(payment.getStoreNo(), index, 8);
-//		updateAmounts();
+		//PaymentItem payment = PaymentItemService.getPaymentItemById(paymentItem.getPaymentCode());
+		int index = getInvoicePaymentRow(paymentCode);
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		//model.setValueAt(paymentItem.getOrNo(), index, 0);
+		model.setValueAt(PaymentItemService.getPaymentType(paymentItem.getPaymentCode()), index, 1);
+		model.setValueAt(paymentItem.getAmount(), index, 2);
+		model.setValueAt(paymentItem.getCardType().toString(), index, 3);
+		model.setValueAt(paymentItem.getCardNo().toString(), index, 4);
+		model.setValueAt(paymentItem.getCheckNo().toString(), index, 5);
+		model.setValueAt(paymentItem.getGcNo().toString(), index, 6);
+		updatePaymentAmounts();
 	}
 	
 	public Integer getInvoicePaymentRow(String prodCode){

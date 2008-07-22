@@ -51,7 +51,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	private JTextField txtAmount;
 	private static PaymentDialog paymentDialog;
 	private static Object invoker;
-	private static String action;
+	private static String actionProdCode;
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -70,7 +70,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	public PaymentDialog(JFrame frame, Object invoker, String action) {
 		super(frame);
 		this.invoker = invoker;
-		this.action = action;
+		this.actionProdCode = action;
 		initGUI();
 	}
 	
@@ -194,9 +194,10 @@ public class PaymentDialog extends javax.swing.JDialog {
 								System.out.println("invoking...");
 								InvoicePanel invoicePanel = (InvoicePanel)invoker;
 							
-								if(action.equals("add")){
+								if(actionProdCode.equals("add")){
 									if(invoicePanel.getPaymentItemRow(paymentItem.getPaymentCode()) == null){
 										invoicePanel.addPaymentItem(paymentItem);
+										invoicePanel.updatePaymentAmounts();
 										paymentDialog.setVisible(false);
 									}
 									else{
@@ -204,8 +205,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 									}
 								}
 								else { //edit
-									//invoicePanel.editInvoiceItem(invoiceItem, action);
-									invoicePanel.editPaymentItem(paymentItem, action);
+									invoicePanel.editPaymentItem(paymentItem, actionProdCode);
 									paymentDialog.setVisible(false);
 								}
 									
@@ -301,11 +301,46 @@ public class PaymentDialog extends javax.swing.JDialog {
 	}
 
 	public static String getAction() {
-		return action;
+		return actionProdCode;
 	}
 	
-	public void setAmountValue(String s){
+	
+	public void setPaymentType(String s){
+		jComboBox2.setSelectedItem(s);
+		/*
+		if(s.equals("Cash")){
+			jComboBox2.setSelectedIndex(0);
+		}
+		else if(s.equals("Credit Card")){
+			jComboBox2.setSelectedIndex(1);
+		}
+		else if(s.equals("Bank Check")){
+			jComboBox2.setSelectedIndex(2);
+		}
+		else if(s.equals("Gift Certificate")){
+			jComboBox2.setSelectedIndex(3);
+		}
+		*/
+	}	
+
+	public void setAmount(String s){
 		txtAmount.setText(s);
+	}
+	
+	public void setCreditCard(String s){
+		txtCreditCard.setText(s);
+	}
+	
+	public void setCreditType(String s){
+		cbCreditCardType.setSelectedItem(s);
+	}
+	
+	public void setBankCheck(String s){
+		txtBankCheck.setText(s);
+	}
+	
+	public void setGiftCheck(String s){
+		txtGiftCertificate.setText(s);
 	}
 }
 
