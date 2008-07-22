@@ -2,23 +2,13 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import main.Main;
 
+import main.Main;
 import domain.InvoiceItem;
 
 public class InvoiceItemService {
 	public static ResultSet fetchAllDeferredInvoiceItems() {
-//		List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.OR_NO, INVOICE_NO, products_lu.PROD_CODE, products_lu.NAME, QUANTITY, TRANS_DT FROM invoice_item left outer join invoice on invoice_item.OR_NO = invoice.OR_NO left outer join products_lu on invoice_item.PROD_CODE = products_lu.PROD_CODE WHERE invoice_item.DEFERRED = 1");		
-//		
-//		try {
-//			while(rs.next()){
-//				invoiceItems.add(toInvoiceItemObject(rs));
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		return invoiceItems;
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.OR_NO, INVOICE_NO, products_lu.PROD_CODE, products_lu.NAME, QUANTITY, TRANS_DT FROM invoice_item, invoice, products_lu WHERE invoice_item.OR_NO=invoice.OR_NO AND invoice_item.STORE_CODE = invoice.STORE_CODE AND invoice_item.PROD_CODE = products_lu.PROD_CODE AND invoice_item.DEFERRED = 1 AND invoice_item.STORE_CODE = "+Main.getStoreCode());		
 		return rs;
 	}
 	
@@ -33,5 +23,13 @@ public class InvoiceItemService {
 		invoiceItem.setSellPrice(rs.getDouble("SELL_PRICE"));
 		invoiceItem.setStoreNo(rs.getInt("STORE_CODE"));
 		return invoiceItem;
+	}
+	
+	public static int processDeferredItem(Long orNo, String prodCode, String storeCode){
+		int result = Main.getDBManager().executeUpdate("UPDATE invoice_item SET DEFERRED = 0 WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+prodCode+"' AND STORE_CODE = "+storeCode);
+		System.out.println("UPDATE invoice_item SET DEFERRED = 1 WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+prodCode+"' AND STORE_CODE = "+storeCode);
+		System.out.println("Result From Process Deferred Item: "+result);
+		return result;
+		
 	}
 }

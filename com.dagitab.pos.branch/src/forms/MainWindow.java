@@ -250,10 +250,10 @@ public class MainWindow extends javax.swing.JFrame {
 
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 1){	//partial
-								((PartialPanel) partialPanel).refreshTables();
+								((PartialPanel) partialPanel).refreshPartialTable();
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 2){ //deferred
-								((DeferredPanel) deferredPanel).refreshTables();
+								((DeferredPanel) deferredPanel).refreshDeferredTable();
 							}
 							else if(jTabbedPane1.getSelectedIndex() == 3){ //returned
 							}

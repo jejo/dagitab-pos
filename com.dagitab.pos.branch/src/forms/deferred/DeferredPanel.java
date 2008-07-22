@@ -7,21 +7,22 @@ import java.sql.ResultSet;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import main.Main;
 import util.TableUtility;
-
 import bus.InvoiceItemService;
+
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import domain.InvoiceItem;
 import forms.MainWindow;
 
 
@@ -40,22 +41,10 @@ import forms.MainWindow;
 @SuppressWarnings("serial")
 public class DeferredPanel extends javax.swing.JPanel {
 
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-//	public static void main(String[] args) {
-//		JFrame frame = new JFrame();
-//		frame.getContentPane().add(new DeferredPanel());
-//		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-//		frame.pack();
-//		frame.setVisible(true);
-//	}
-
-	private JButton jButton13;
-	private JButton jButton12;
-	private JScrollPane jScrollPane3;
-	private JTable jTable3;
+	private JButton refreshButton;
+	private JButton processButton;
+	private JScrollPane deferredScrollPane;
+	private JTable deferredTable;
 	private JLabel jLabel18;
 	private MainWindow mainWindow;
 
@@ -63,7 +52,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 		super(); 
 		setMainWindow(mainWindow);
 		initGUI();
-		refreshTables();
+		refreshDeferredTable();
 	}
 	
 	private void initGUI() {
@@ -71,139 +60,64 @@ public class DeferredPanel extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(400, 300));
 			AnchorLayout jPanel4Layout = new AnchorLayout();
 			this.setLayout(jPanel4Layout);
-			this
-				.setBackground(new java.awt.Color(255, 255, 255));
-			this.setBorder(new LineBorder(new java.awt.Color(
-				0,
-				0,
-				0), 1, false));
+			this.setBackground(new java.awt.Color(255, 255, 255));
+			this.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 			{
-				jButton13 = new JButton();
-				this.add(jButton13, new AnchorConstraint(795, 136, 851, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton13.setText("Refresh");
-				jButton13.setIcon(new ImageIcon(getClass()
-					.getClassLoader().getResource(
-						"images/search2.png")));
-				jButton13.setPreferredSize(new java.awt.Dimension(48, 17));
-				jButton13.addActionListener(new ActionListener() {
+				refreshButton = new JButton();
+				this.add(refreshButton, new AnchorConstraint(795, 136, 851, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				refreshButton.setText("Refresh");
+				refreshButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/search2.png")));
+				refreshButton.setPreferredSize(new java.awt.Dimension(48, 17));
+				refreshButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						refreshTables();
-//						setDeferredList();
+						refreshDeferredTable();
 					}
 				});
 			}
 			{
-				jButton12 = new JButton();
-				this.add(jButton12, new AnchorConstraint(
-					794,
-					966,
-					851,
-					812,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL,
-					AnchorConstraint.ANCHOR_REL));
-				jButton12.setText("Process");
-				jButton12.setIcon(new ImageIcon(getClass()
-					.getClassLoader().getResource(
-						"images/process.png")));
-				jButton12.setPreferredSize(new java.awt.Dimension(
-					133,
-					28));
-				jButton12.addActionListener(new ActionListener() {
+				processButton = new JButton();
+				this.add(processButton, new AnchorConstraint(794,966,851,812,
+																AnchorConstraint.ANCHOR_REL,
+																AnchorConstraint.ANCHOR_REL,
+																AnchorConstraint.ANCHOR_REL,
+																AnchorConstraint.ANCHOR_REL));
+				processButton.setText("Process");
+				processButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
+				processButton.setPreferredSize(new java.awt.Dimension(133,28));
+				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-//						ResultSet rs = Main.getDBManager()
-//						.executeQuery("SELECT * FROM clerk_lu WHERE password = '"
-////							.executeQuery("SELECT * FROM clerk_lu WHERE AES_DECRYPT(password,'babyland') = '"
-//								+ jPasswordField1.getText()
-//								+ "' AND clerk_code = '"
-//								+ jTextField13.getText()
-//								+ "'");
-//
-//						try {
-//							if (rs.next()) {
-//
-//								try {
-//									String orNO = jTable3
-//										.getValueAt(
-//											jTable3
-//												.getSelectedRow(),
-//											0).toString();
-//									String prodCode = jTable3
-//										.getValueAt(
-//											jTable3
-//												.getSelectedRow(),
-//											2).toString();
-//									int n = JOptionPane
-//										.showConfirmDialog(
-//											MainWindow.this,
-//											"Are you sure you want to process the deferred product?",
-//											"Confirmation",
-//											JOptionPane.YES_NO_OPTION);
-//									if (n == 0) {
-//										int result = Main.getDBManager()
-//											.executeUpdate("UPDATE invoice_item SET deferred = 0 "
-//												+ "WHERE OR_NO = '"
-//												+ orNO
-//												+ "' AND PROD_CODE = '"
-//												+ prodCode
-//												+ "' AND STORE_CODE = "
-//												+ Main.getStoreCode());
-//
-//										String dataToLog2 = DataUtil
-//											.rowToData(
-//												"EDIT",
-//												"invoice_item",
-//												new String[] {
-//														"OR_NO",
-//														"PROD_CODE",
-//														"STORE_CODE" },
-//												new String[] {
-//														orNO,
-//														prodCode,
-//														Main.getStoreCode() });
-//										cachewriter
-//											.writeToFile(dataToLog2);
-//										setDeferredList();
-//										jTextField13.setText("");
-//										jPasswordField1.setText("");
-//									}
-//								} catch (Exception e) {
-//									JOptionPane
-//										.showMessageDialog(
-//											null,
-//											"Please select item from the list.",
-//											"Warning",
-//											JOptionPane.WARNING_MESSAGE);
-//								}
-//							} else {
-//								JOptionPane.showMessageDialog(
-//									null,
-//									"Invalid clerk Log in",
-//									"Warning",
-//									JOptionPane.WARNING_MESSAGE);
-//							}
-//						} catch (SQLException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
+						try{
+							InvoiceItem invoiceItem = new InvoiceItem();
+							invoiceItem.setOrNo(Long.parseLong(deferredTable.getValueAt(deferredTable.getSelectedRow(), 0).toString()));
+							invoiceItem.setProductCode(deferredTable.getValueAt(deferredTable.getSelectedRow(), 2).toString());
+							int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Deferred Prompt", JOptionPane.INFORMATION_MESSAGE);
+							if(result == 0){ //yes
+								int success = InvoiceItemService.processDeferredItem(invoiceItem.getOrNo(), invoiceItem.getProductCode(), Main.getStoreCode());
+								if(success > 0){
+									JOptionPane.showMessageDialog(null, "Successfully processed deferred item.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+									refreshDeferredTable();
+								}
+								else{
+									JOptionPane.showMessageDialog(null, "Cannot process deferred item. Please try again later.", "Prompt", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+						}
+						catch(ArrayIndexOutOfBoundsException e){
+							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
+						
 					}
 				});
 			}
 			{
-				jScrollPane3 = new JScrollPane();
-				this.add(jScrollPane3, new AnchorConstraint(115, 966, 781, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jScrollPane3.setPreferredSize(new java.awt.Dimension(380, 200));
+				deferredScrollPane = new JScrollPane();
+				this.add(deferredScrollPane, new AnchorConstraint(115, 966, 781, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				deferredScrollPane.setPreferredSize(new java.awt.Dimension(380, 200));
 				{
-					TableModel jTable3Model = new DefaultTableModel(
-						new String[][] {},
-						new String[] { "OR Number",
-								"Invoice Number", "Product Code",
-								"Product Name", "Quantity",
-								"Transaction Date & Time" });
-					jTable3 = new JTable();
-					jScrollPane3.setViewportView(jTable3);
-					jTable3.setModel(jTable3Model);
+					TableModel jTable3Model = new DefaultTableModel(new String[][] {}, new String[] { "OR Number", "Invoice Number", "Product Code", "Product Name", "Quantity","Transaction Date & Time" });
+					deferredTable = new JTable();
+					deferredScrollPane.setViewportView(deferredTable);
+					deferredTable.setModel(jTable3Model);
 				}
 			}
 			{
@@ -211,8 +125,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 				this.add(jLabel18, new AnchorConstraint(15, 773, 115, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel18.setText("Manage Deferred Products");
 				jLabel18.setPreferredSize(new java.awt.Dimension(303, 30));
-				jLabel18
-					.setFont(new java.awt.Font("Tahoma", 1, 18));
+				jLabel18.setFont(new java.awt.Font("Tahoma", 1, 18));
 			}
 
 		} catch (Exception e) {
@@ -220,9 +133,9 @@ public class DeferredPanel extends javax.swing.JPanel {
 		}
 	}
 	
-	public void refreshTables() {
+	public void refreshDeferredTable() {
 		ResultSet rs = InvoiceItemService.fetchAllDeferredInvoiceItems();
-		TableUtility.fillTable(jTable3, rs, new String[]{"OR Number", "Invoice No", "Product Code", "Product Name", "Quantity", "Transaction Date & Time"});
+		TableUtility.fillTable(deferredTable, rs, new String[]{"OR Number", "Invoice No", "Product Code", "Product Name", "Quantity", "Transaction Date & Time"});
 	}
 
 	public MainWindow getMainWindow() {

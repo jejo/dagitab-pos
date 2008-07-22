@@ -463,7 +463,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 							int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
 							String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
 							
-							
 							ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
 							dialog.setProductCode(productCode);
 							dialog.setQuantity(quantity);
@@ -584,6 +583,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton31.setText("Pause Transaction");
 				jButton31.setPreferredSize(new java.awt.Dimension(147, 21));
 				jButton31.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/pause.png")));
+				jButton31.setEnabled(false);
 				jButton31.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 
