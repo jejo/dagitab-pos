@@ -91,6 +91,7 @@ public class PartialDialog extends javax.swing.JDialog {
 	private Vector<Vector<String>> paymentItems;
 	private LogHandler cachewriter;
 	private String clerkNo;
+	private Double totalAmount;
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -106,21 +107,24 @@ public class PartialDialog extends javax.swing.JDialog {
 		this.form = frame;
 		this.orNum = orNum;
 		this.clerkNo = clerkNo;
-		initGUI();
+		totalAmount = 0.0d;
+		initGUI(dtime);
 		this.paymentSize = jTable2.getRowCount();
 		jTextField2.setText(orNum);
-		String[] datetime = dtime.split(" ");
-		jTextField1.setText(datetime[0]);
-		jTextField7.setText(datetime[1]);
+		
 		cachewriter = new LogHandler();
 		updateAmounts();
 	}
 	
-	private void initGUI() {
+	private void initGUI(String dtime) {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
+			jTable2 = new JTable();
+			totalAmount = 0.0d;
+			String[] datetime = dtime.split(" ");
+			
 			this.setTitle("Partial Transaction");
 			this.setModal(true);
 			{
@@ -363,7 +367,7 @@ public class PartialDialog extends javax.swing.JDialog {
 				{
 					jLabel4 = new JLabel();
 					jPanel2.add(jLabel4, new AnchorConstraint(137, 818, 246, 33, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel4.setText("0.00");
+					jLabel4.setText(totalAmount.toString());
 					jLabel4.setFont(new java.awt.Font("Tahoma",1,22));
 					jLabel4.setPreferredSize(new java.awt.Dimension(175, 28));
 				}
@@ -404,6 +408,7 @@ public class PartialDialog extends javax.swing.JDialog {
 					jTextField2 = new JTextField();
 					jPanel1.add(jTextField2, new AnchorConstraint(202, 943, 322, 410, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jTextField2.setEditable(false);
+					jTextField2.setText(orNum);
 					jTextField2.setPreferredSize(new java.awt.Dimension(119, 21));
 				}
 				{
@@ -424,6 +429,7 @@ public class PartialDialog extends javax.swing.JDialog {
 					jTextField1 = new JTextField();
 					jPanel1.add(jTextField1, new AnchorConstraint(482, 943, 602, 410, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jTextField1.setPreferredSize(new java.awt.Dimension(119, 21));
+					jTextField1.setText(datetime[0]);
 					jTextField1.setEditable(false);
 				}
 				{
@@ -436,7 +442,7 @@ public class PartialDialog extends javax.swing.JDialog {
 				{
 					jTextField7 = new JTextField();
 					jPanel1.add(jTextField7, new AnchorConstraint(642, 940, 762, 409, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField7.setText(orNum);
+					jTextField7.setText(datetime[1]);
 					jTextField7.setEditable(false);
 					jTextField7.setPreferredSize(new java.awt.Dimension(112, 21));
 				}
@@ -460,6 +466,8 @@ public class PartialDialog extends javax.swing.JDialog {
 						rowData.add(rs.getString(2));
 						rowData.add(rs.getString(3));
 						rowData.add(rs.getString(4));
+						totalAmount += rs.getDouble(4);
+						System.out.println("totalAmount: " + totalAmount);
 						
 						ResultSet curr = Main.getDBManager().executeQuery("SELECT SELL_PRICE FROM products_lu WHERE PROD_CODE = \""+rs.getString(1)+"\"" );
 						if(curr.next()){
@@ -613,7 +621,9 @@ public class PartialDialog extends javax.swing.JDialog {
 					}
 				});
 			}
+			updateAmounts();
 			this.setSize(806, 573);
+			this.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -637,7 +647,8 @@ public class PartialDialog extends javax.swing.JDialog {
 			double price = Double.parseDouble(jTable1.getValueAt(i, 3).toString());
 			amount += (quantity*price);
 		}
-		jLabel4.setText(String.format("%.2f", amount));
+		System.out.println("totalAmount2:" + totalAmount);
+		jLabel4.setText(String.format("%.2f", totalAmount));
 		
 		//update SubTotal
 		VAT = VAT+1;

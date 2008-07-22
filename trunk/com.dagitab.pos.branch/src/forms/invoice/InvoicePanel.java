@@ -235,7 +235,14 @@ public class InvoicePanel extends javax.swing.JPanel {
 					TableModel jTable2Model = new DefaultTableModel(
 						new String[][] { },
 						new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
-					paymentTable = new JTable();
+					paymentTable = new JTable() {
+						@Override
+						public boolean isCellEditable(
+							int row,
+							int column) {
+							return false;
+						}
+					};
 					paymentTableScrollPane.setViewportView(paymentTable);
 					paymentTable.setModel(jTable2Model);
 				}
@@ -659,7 +666,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 								  paymentItem.getCheckNo(),
 								  paymentItem.getGcNo()
 								  });
-		
 	}
 	
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode){
@@ -715,7 +721,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 		TableModel jTable2Model = new DefaultTableModel(
 			new String[][] { },
 			new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
-		paymentTable = new JTable();
 		paymentTableScrollPane.setViewportView(paymentTable);
 		paymentTable.setModel(jTable2Model);
 		

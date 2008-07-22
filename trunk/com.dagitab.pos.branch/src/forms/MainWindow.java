@@ -269,13 +269,13 @@ public class MainWindow extends javax.swing.JFrame {
 						
 					}
 					{
-						partialPanel = new PartialPanel();
+						partialPanel = new PartialPanel(this);
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/partial.png"));
 						jTabbedPane1.addTab("Partial", icon, partialPanel, null);
 						
 					}
 					{
-						deferredPanel = new DeferredPanel();
+						deferredPanel = new DeferredPanel(this);
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/deferred.png"));
 						jTabbedPane1.addTab("Deferred", icon, deferredPanel, null);
 					}

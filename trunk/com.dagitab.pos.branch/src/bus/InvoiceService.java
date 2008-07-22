@@ -26,7 +26,7 @@ public class InvoiceService {
 	}
 	public static ResultSet fetchAllPartialInvoices(){
 //		List<Invoice> invoices = new ArrayList<Invoice>();
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice WHERE PARTIAL = '1'");		
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT `OR_NO`, `TRANS_DT`, `ENCODER_CODE` FROM invoice WHERE PARTIAL = '1'");		
 //		
 //		try {
 //			while(rs.next()){
