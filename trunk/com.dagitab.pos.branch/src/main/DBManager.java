@@ -235,6 +235,7 @@ public class DBManager {
 					valuesSt += "\"" + columnValues[i] + "\"";
 					if (i < columns.length - 1) {
 						columnsSt += ", ";
+						valuesSt += ", ";
 					}
 				}
 			}
@@ -251,8 +252,8 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-//			System.out.println("INSERT INTO " + table + columnsSt + " VALUES "
-//					+ valuesSt + " " + whereSt);
+			System.out.println("INSERT INTO " + table + columnsSt + " VALUES "
+					+ valuesSt + " " + whereSt);
 			return statement.executeUpdate("INSERT INTO " + table + columnsSt
 					+ " VALUES " + valuesSt + " " + whereSt);
 		} catch (SQLException e) {

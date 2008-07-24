@@ -19,10 +19,10 @@ import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import javax.xml.bind.ParseConversionEvent;
 
 import main.Main;
 import util.StringUtility;
+import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
 import bus.ProductService;
@@ -31,6 +31,7 @@ import bus.VatService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
 import domain.Product;
@@ -40,8 +41,6 @@ import forms.PaymentDialog;
 import forms.ProductDialog;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
-
-
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -97,7 +96,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 	private JLabel jLabel1;
 	private JPanel welcomePanel;
 	private JLabel jLabel7;
-	private JTextField jTextField2;
+	private JTextField orNoTxt;
 	private JTextField invoiceTxt;
 	private JLabel jLabel8;
 	private JLabel jLabel6;
@@ -162,15 +161,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 				resetBtn.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png")));
 				resetBtn.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						pauseDeleteFlag = false;
-						pauseSelectedIndex = -1;
-//						try {
-////							updateAll();
-//						} catch (SQLException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
+						clearInfoValues();
 					}
+					
 				});
 			}
 			{
@@ -372,18 +365,20 @@ public class InvoicePanel extends javax.swing.JPanel {
 					jLabel7.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
-					jTextField2 = new JTextField();
-					jPanel6.add(jTextField2, new AnchorConstraint(108, 967, 214, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField2.setPreferredSize(new java.awt.Dimension(133, 20));
-					jTextField2.setEditable(false);
-					jTextField2.setText(StringUtility.zeroFill(InvoiceService.getNextORNumber(), 10));
-
+					orNoTxt = new JTextField();
+					jPanel6.add(orNoTxt, new AnchorConstraint(108, 967, 214, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					orNoTxt.setPreferredSize(new java.awt.Dimension(133, 20));
+					orNoTxt.setEditable(false);
+					String nextOR = InvoiceService.getNextORNumber();
+					if(nextOR == null){
+						nextOR = "0";
+					}
+					orNoTxt.setText(StringUtility.zeroFill(nextOR, 10));
 				}
 				{
 					invoiceTxt = new JTextField();
 					jPanel6.add(invoiceTxt, new AnchorConstraint(246, 967, 351, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					invoiceTxt.setPreferredSize(new java.awt.Dimension(133, 20));
-
 				}
 				{
 					jLabel8 = new JLabel();
@@ -565,7 +560,27 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 				jButton9.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-
+						System.out.println("processing invoice transaction...");
+						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+						if(confirm == 0){
+							if(hasEnoughPayment()){
+								saveTransaction();
+							}
+							else{
+								if(isPartial()){
+									int confirm2  = JOptionPane.showConfirmDialog(null, "You are saving a partial transaction. Are you sure you want to continue?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+									if(confirm2 == 0){
+										saveTransaction();
+									}
+								}
+								else{
+									JOptionPane.showMessageDialog(null, "This is not a partial transaction. You have an insufficient payment amount.", "Prompt", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							
+						}
+						
+						
 					}
 				});
 			}
@@ -586,7 +601,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton31.setEnabled(false);
 				jButton31.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-
+						
 					}
 				});
 				
@@ -683,7 +698,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 			double quantity =  Double.parseDouble(model.getValueAt(i,2).toString());
 			payment += quantity;
 		}
-		String amountString = txtSubTotal.getText();
+		String amountString = lblAmount.getText();
 		double amount = Double.parseDouble(amountString);
 		totalPayment.setText(String.format("%.2f", payment));
 		changeField.setText(String.format("%.2f", (payment-amount)));
@@ -764,5 +779,90 @@ public class InvoicePanel extends javax.swing.JPanel {
 		
 		//update amounts
 		updateAmounts();
+	}
+	
+	private boolean hasEnoughPayment(){
+		//payment item data
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		Double paymentAmount = 0d;
+		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			paymentAmount += Double.parseDouble(paymentTable.getValueAt(i, 2).toString());
+		}
+		Double amount = Double.parseDouble(lblAmount.getText());
+		if(amount > paymentAmount){
+			return false;
+		}
+		return true;
+		
+	}
+	
+	private boolean isPartial(){
+		return partialChk.isSelected();
+	}
+	
+	public void saveTransaction(){
+		Invoice invoice = new Invoice();
+		
+		//TODO: validate numeric fields (use Apache commons)
+		if(!invoiceTxt.getText().trim().equals("")){
+			invoice.setInvoiceNo(Long.parseLong(invoiceTxt.getText()));
+		}
+		if(!salesSpecialistTxt.getText().trim().equals("")){
+			invoice.setAssistantCode(Integer.parseInt(salesSpecialistTxt.getText()));
+		}
+		if(!customerTxt.getText().trim().equals("")){
+			invoice.setCustomerNo(Integer.parseInt(customerTxt.getText()));
+		}
+		if(partialChk.isSelected()){
+			invoice.setIsPartial(1);
+		}
+		else{
+			invoice.setIsPartial(0);
+		}
+		invoice.setEncoderCode(Main.getClerkCode());
+		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+		
+		InvoiceService.insert(invoice);
+		
+		//invoice item data
+		DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
+		for(int i = 0; i<itemTableModel.getRowCount(); i++){
+			InvoiceItem invoiceItem = new InvoiceItem();
+			invoiceItem.setDiscountCode(Integer.parseInt(itemTableModel.getValueAt(i, 6).toString()));
+			if(itemTableModel.getValueAt(i, 5).toString().equals("Yes")){
+				invoiceItem.setIsDeferred(1);
+			}
+			else{
+				invoiceItem.setIsDeferred(0);
+			}
+			invoiceItem.setOrNo(Long.parseLong(orNoTxt.getText()));
+			invoiceItem.setProductCode(itemTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setQuantity(Integer.parseInt(itemTableModel.getValueAt(i, 2).toString()));
+			invoiceItem.setSellPrice(Double.parseDouble(itemTableModel.getValueAt(i, 4).toString()));
+			invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			Product product = ProductService.getProductById(itemTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setCost(product.getCost());
+			InvoiceItemService.insert(invoiceItem);
+		}
+		
+		//payment item data
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			PaymentItem paymentItem = new PaymentItem();
+			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
+			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
+			paymentItem.setCardType(paymentTable.getValueAt(i, 3).toString());
+			paymentItem.setCheckNo(paymentTable.getValueAt(i, 5).toString());
+			paymentItem.setGcNo(paymentTable.getValueAt(i, 6).toString());
+			paymentItem.setOrNo(Long.parseLong(orNoTxt.getText()));
+			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
+			PaymentItemService.insert(paymentItem);
+		}
+		
+		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+		clearInfoValues();
+		//receipt
+		
 	}
 }

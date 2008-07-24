@@ -2,10 +2,10 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import domain.Invoice;
 
 import main.Main;
 import util.StorePropertyHandler;
+import domain.Invoice;
 
 public class InvoiceService {
 	
@@ -15,8 +15,6 @@ public class InvoiceService {
 		try {
 			if (rs.next()){
 				return rs.getString(1);
-				
-				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -25,18 +23,7 @@ public class InvoiceService {
 		
 	}
 	public static ResultSet fetchAllPartialInvoices(){
-//		List<Invoice> invoices = new ArrayList<Invoice>();
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT `OR_NO`, `TRANS_DT`, `ENCODER_CODE` FROM invoice WHERE PARTIAL = '1'");		
-//		
-//		try {
-//			while(rs.next()){
-//				invoices.add(toInvoiceObject(rs));
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return invoices;
 		return rs;
 	}
 
@@ -50,5 +37,19 @@ public class InvoiceService {
 		invoice.setCustomerNo(rs.getInt("CUST_NO"));
 		invoice.setAssistantCode(rs.getInt("ASSIST_CODE"));
 		return invoice;
+	}
+	
+	public static int insert(Invoice invoice){
+		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
+		String[] columnValues = new String[]{invoice.getInvoiceNo().toString(), 
+											 invoice.getEncoderCode().toString(), 
+											 invoice.getAssistantCode().toString(), 
+											 invoice.getCustomerNo().toString(), 
+											 invoice.getStoreNo().toString(), 
+											 invoice.getIsPartial().toString()};
+		
+		
+		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);
+		return result;
 	}
 }

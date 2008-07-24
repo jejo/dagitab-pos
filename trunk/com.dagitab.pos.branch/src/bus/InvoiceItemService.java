@@ -32,4 +32,22 @@ public class InvoiceItemService {
 		return result;
 		
 	}
+	
+	
+	public static int insert(InvoiceItem invoiceItem){
+		String[] columns = new String[]{"OR_NO","PROD_CODE","DISC_CODE","QUANTITY","DEFERRED","SELL_PRICE","COST","STORE_CODE"};
+		String[] columnValues = new String[]{invoiceItem.getOrNo().toString(),
+											 invoiceItem.getProductCode().toString(),
+											 invoiceItem.getDiscountCode().toString(),
+											 invoiceItem.getQuantity().toString(),
+											 invoiceItem.getIsDeferred().toString(),
+											 invoiceItem.getSellPrice().toString(),
+											 invoiceItem.getCost().toString(),
+											 invoiceItem.getStoreNo().toString()
+											 };
+		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice_item", null, null);
+		return result;
+	}
+	
+	
 }
