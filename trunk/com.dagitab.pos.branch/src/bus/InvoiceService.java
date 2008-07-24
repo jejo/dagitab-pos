@@ -38,6 +38,23 @@ public class InvoiceService {
 		invoice.setAssistantCode(rs.getInt("ASSIST_CODE"));
 		return invoice;
 	}
+<<<<<<< .mine
+	
+	public static Invoice getInvoiceByOr(String orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("Select * from Invoice where OR_NO = '" + orNo + "'");
+		
+		try {
+			if(rs.next()){
+				return toInvoiceObject(rs);
+			}
+			return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+=======
 	
 	public static int insert(Invoice invoice){
 		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
@@ -52,4 +69,5 @@ public class InvoiceService {
 		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);
 		return result;
 	}
+>>>>>>> .r23
 }
