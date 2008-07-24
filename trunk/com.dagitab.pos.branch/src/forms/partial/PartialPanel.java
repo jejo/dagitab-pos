@@ -21,6 +21,7 @@ import bus.InvoiceService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import domain.Invoice;
 import forms.MainWindow;
 
 
@@ -75,7 +76,8 @@ public class PartialPanel extends javax.swing.JPanel {
 						System.out.println(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
 						System.out.println(partialTable.getValueAt(partialTable.getSelectedRow(), 1).toString());
 						System.out.println(partialTable.getValueAt(partialTable.getSelectedRow(), 2).toString());
-						partialDialog = new PartialDialog(getMainWindow(), partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString(), partialTable.getValueAt(partialTable.getSelectedRow(), 1).toString(), partialTable.getValueAt(partialTable.getSelectedRow(), 2).toString());
+						Invoice invoice = InvoiceService.getInvoiceByOr(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
+						partialDialog = new PartialDialog(getMainWindow(), invoice);
 					}
 				});
 			}
