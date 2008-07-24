@@ -13,13 +13,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import main.Main;
+import util.TableUtility;
+import bus.InvoiceItemService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
 import connection.LogHandler;
+import domain.Invoice;
 import forms.MainWindow;
 
 /**
@@ -58,10 +63,8 @@ public class PartialDialog extends javax.swing.JDialog {
 	private JLabel jLabel15;
 	private JLabel jLabel16;
 	private JTextField jTextField6;
-	private JTable jTable2;
-	private JTextField jTextField7;
+	private JTextField timeTextField;
 	private JLabel jLabel5;
-	private JTable jTable1;
 	private JButton jButton5;
 	private JTextField jTextField5;
 	private JTextField jTextField4;
@@ -74,7 +77,7 @@ public class PartialDialog extends javax.swing.JDialog {
 	private JPanel jPanel2;
 	private JPanel jPanel1;
 	private JTextField jTextField2;
-	private JTextField jTextField1;
+	private JTextField dateTextField;
 	private MainWindow form;
 	private String orNum;
 	private int paymentSize;
@@ -82,6 +85,7 @@ public class PartialDialog extends javax.swing.JDialog {
 	private LogHandler cachewriter;
 	private String clerkNo;
 	private Double totalAmount;
+	private JTable itemTable;
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -92,27 +96,25 @@ public class PartialDialog extends javax.swing.JDialog {
 //		inst.setVisible(true);
 	}
 	
-	public PartialDialog(MainWindow frame,String orNum, String dtime, String clerkNo) {
+	public PartialDialog(MainWindow frame,Invoice invoice) {
 		super(frame);
 		this.form = frame;
-		this.orNum = orNum;
-		this.clerkNo = clerkNo;
+		orNum = invoice.getOrNo().toString();
 		totalAmount = 0.0d;
-		initGUI(dtime);
-		this.paymentSize = jTable2.getRowCount();
+		initGUI();
+		refreshItemTable();
+//		this.paymentSize = jTable2.getRowCount();
 		jTextField2.setText(orNum);
 		cachewriter = new LogHandler();
 		
 	}
 	
-	private void initGUI(String dtime) {
+	private void initGUI() {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
-			jTable2 = new JTable();
 			totalAmount = 0.0d;
-			String[] datetime = dtime.split(" ");
 			
 			this.setTitle("Partial Transaction");
 			this.setModal(true);
@@ -267,11 +269,11 @@ public class PartialDialog extends javax.swing.JDialog {
 					jLabel2.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
-					jTextField1 = new JTextField();
-					jPanel1.add(jTextField1, new AnchorConstraint(482, 943, 602, 410, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField1.setPreferredSize(new java.awt.Dimension(119, 21));
-					jTextField1.setText(datetime[0]);
-					jTextField1.setEditable(false);
+					dateTextField = new JTextField();
+					jPanel1.add(dateTextField, new AnchorConstraint(482, 943, 602, 410, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					dateTextField.setPreferredSize(new java.awt.Dimension(119, 21));
+		//			jTextField1.setText(datetime[0]);
+					dateTextField.setEditable(false);
 				}
 				{
 					jLabel5 = new JLabel();
@@ -281,11 +283,11 @@ public class PartialDialog extends javax.swing.JDialog {
 					jLabel5.setPreferredSize(new java.awt.Dimension(77, 21));
 				}
 				{
-					jTextField7 = new JTextField();
-					jPanel1.add(jTextField7, new AnchorConstraint(642, 940, 762, 409, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField7.setText(datetime[1]);
-					jTextField7.setEditable(false);
-					jTextField7.setPreferredSize(new java.awt.Dimension(112, 21));
+					timeTextField = new JTextField();
+					jPanel1.add(timeTextField, new AnchorConstraint(642, 940, 762, 409, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+		//			jTextField7.setText(datetime[1]);
+					timeTextField.setEditable(false);
+					timeTextField.setPreferredSize(new java.awt.Dimension(112, 21));
 				}
 			}
 			{
@@ -293,7 +295,10 @@ public class PartialDialog extends javax.swing.JDialog {
 				getContentPane().add(jScrollPane1, new AnchorConstraint(156, 974, 455, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jScrollPane1.setPreferredSize(new java.awt.Dimension(518, 161));
 				{
-					
+					TableModel jTable1Model = new DefaultTableModel( new String[][] {  }, new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
+						itemTable = new JTable();
+						jScrollPane1.setViewportView(itemTable);
+						itemTable.setModel(jTable1Model);
 				}
 			}
 			{
@@ -354,6 +359,10 @@ public class PartialDialog extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void refreshItemTable(){
+		ResultSet rs = InvoiceItemService.fetchPartialInvoiceItem(orNum);
+		TableUtility.fillTable(itemTable, rs, new String[]{"Product Code", "Product Name", "Quantity", "Current Price", "Selling Price", "Deferred", "Disc Code", "Extension"});
 	}
 	
 	
