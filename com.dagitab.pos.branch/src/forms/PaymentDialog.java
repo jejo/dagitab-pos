@@ -307,20 +307,6 @@ public class PaymentDialog extends javax.swing.JDialog {
 	
 	public void setPaymentType(String s){
 		jComboBox2.setSelectedItem(s);
-		/*
-		if(s.equals("Cash")){
-			jComboBox2.setSelectedIndex(0);
-		}
-		else if(s.equals("Credit Card")){
-			jComboBox2.setSelectedIndex(1);
-		}
-		else if(s.equals("Bank Check")){
-			jComboBox2.setSelectedIndex(2);
-		}
-		else if(s.equals("Gift Certificate")){
-			jComboBox2.setSelectedIndex(3);
-		}
-		*/
 	}	
 
 	public void setAmount(String s){
