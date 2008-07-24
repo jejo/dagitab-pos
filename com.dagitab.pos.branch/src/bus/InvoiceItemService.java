@@ -2,6 +2,8 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import main.Main;
 import domain.InvoiceItem;
@@ -57,5 +59,41 @@ public class InvoiceItemService {
 		return result;
 	}
 	
+	public static List<InvoiceItem> findInvoiceItemByOR(Long orNo){
+		
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO	= "+orNo+" AND STORE_CODE = "+Main.getStoreCode() );
+		try {
+			ArrayList<InvoiceItem> invoiceItemList = new ArrayList<InvoiceItem>();
+			while(rs.next()){
+				InvoiceItem invoiceItem = new InvoiceItem();
+				invoiceItem.setCost(rs.getDouble("COST"));
+				invoiceItem.setSellPrice(rs.getDouble("SELL_PRICE"));
+				invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+				invoiceItem.setQuantity(rs.getInt("QUANTITY"));
+				invoiceItem.setDiscountCode(rs.getInt("DISC_CODE"));
+				invoiceItem.setProductCode(rs.getString("PROD_CODE"));
+				invoiceItem.setOrNo(rs.getLong("OR_NO"));
+				invoiceItem.setIsDeferred(rs.getInt("DEFERRED"));
+				invoiceItemList.add(invoiceItem);
+			}
+			return invoiceItemList;
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Double getInvoiceItemAmount(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(SELL_PRICE * QUANTITY) FROM invoice_item WHERE OR_NO	= "+orNo+" AND STORE_CODE = "+Main.getStoreCode() );
+		try {
+			if(rs.next()){
+				return rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0.0d;
+	}
 	
 }

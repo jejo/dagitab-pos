@@ -9,6 +9,7 @@ public class Invoice {
 	private Integer storeNo;
 	private Integer isPartial = 0;
 	private Integer isReturn = 0;
+	private String transactionDate;
 	
 	public Integer getAssistantCode() {
 		return assistantCode;
@@ -34,6 +35,9 @@ public class Invoice {
 	public Integer getStoreNo() {
 		return storeNo;
 	}
+	public String getTransactionDate() {
+		return transactionDate;
+	}
 	public void setAssistantCode(Integer assistantCode) {
 		this.assistantCode = assistantCode;
 	}
@@ -57,5 +61,8 @@ public class Invoice {
 	}
 	public void setStoreNo(Integer storeNo) {
 		this.storeNo = storeNo;
+	}
+	public void setTransactionDate(String transactionDate) {
+		this.transactionDate = transactionDate;
 	}
 }

@@ -36,9 +36,10 @@ public class InvoiceService {
 		invoice.setEncoderCode(rs.getInt("ENCODER_CODE"));
 		invoice.setCustomerNo(rs.getInt("CUST_NO"));
 		invoice.setAssistantCode(rs.getInt("ASSIST_CODE"));
+		invoice.setTransactionDate(rs.getString("TRANS_DT"));
 		return invoice;
 	}
-<<<<<<< .mine
+
 	
 	public static Invoice getInvoiceByOr(String orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("Select * from Invoice where OR_NO = '" + orNo + "'");
@@ -54,7 +55,6 @@ public class InvoiceService {
 		}
 		return null;
 	}
-=======
 	
 	public static int insert(Invoice invoice){
 		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
@@ -69,5 +69,5 @@ public class InvoiceService {
 		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);
 		return result;
 	}
->>>>>>> .r23
+
 }

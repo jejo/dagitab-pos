@@ -208,8 +208,6 @@ public class PaymentDialog extends javax.swing.JDialog {
 									invoicePanel.editPaymentItem(paymentItem, actionProdCode);
 									paymentDialog.setVisible(false);
 								}
-									
-								
 							}
 						}
 					});
@@ -233,9 +231,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 					jLabel7.setBounds(11, 45, 89, 16);
 				}
 				{
-					ComboBoxModel jComboBox2Model = 
-						new DefaultComboBoxModel(
-								new String[] { "Cash", "Credit Card","Bank Check","Gift Certificate" });
+					ComboBoxModel jComboBox2Model =new DefaultComboBoxModel(new String[] { "Cash", "Credit Card","Bank Check","Gift Certificate" });
 					jComboBox2 = new JComboBox();
 					getContentPane().add(jComboBox2);
 					jComboBox2.setModel(jComboBox2Model);
@@ -293,7 +289,6 @@ public class PaymentDialog extends javax.swing.JDialog {
 			}
 			
 		}
-		
 	}
 
 	public static Object getInvoker() {

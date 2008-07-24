@@ -371,7 +371,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 					orNoTxt.setEditable(false);
 					String nextOR = InvoiceService.getNextORNumber();
 					if(nextOR == null){
-						nextOR = "0";
+						nextOR = "1";
 					}
 					orNoTxt.setText(StringUtility.zeroFill(nextOR, 10));
 				}
