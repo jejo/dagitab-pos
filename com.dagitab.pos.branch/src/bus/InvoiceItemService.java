@@ -25,6 +25,14 @@ public class InvoiceItemService {
 		return invoiceItem;
 	}
 	
+	public static ResultSet fetchPartialInvoiceItem(String orNo){
+	//	"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension"
+		ResultSet rs = Main.getDBManager().executeQuery("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
+		System.out.println("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
+		return rs;
+		
+	}
+	
 	public static int processDeferredItem(Long orNo, String prodCode, String storeCode){
 		int result = Main.getDBManager().executeUpdate("UPDATE invoice_item SET DEFERRED = 0 WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+prodCode+"' AND STORE_CODE = "+storeCode);
 		System.out.println("UPDATE invoice_item SET DEFERRED = 1 WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+prodCode+"' AND STORE_CODE = "+storeCode);
