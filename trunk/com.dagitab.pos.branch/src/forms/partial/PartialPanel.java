@@ -62,9 +62,7 @@ public class PartialPanel extends javax.swing.JPanel {
 			this.setLayout(jPanel2Layout);
 			this.setFont(new java.awt.Font("Dialog", 1, 14));
 			this.setBackground(new java.awt.Color(255, 255, 255));
-			this.setPreferredSize(new java.awt.Dimension(
-				862,
-				458));
+			this.setPreferredSize(new java.awt.Dimension(862,458));
 			this.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 			{
 				processButton = new JButton();
