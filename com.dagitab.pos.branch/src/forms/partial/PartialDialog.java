@@ -1,36 +1,26 @@
 package forms.partial;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import main.Main;
-import print.ValidateReceipt;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
-import connection.DataUtil;
 import connection.LogHandler;
 import forms.MainWindow;
-import forms.Payment;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -111,9 +101,8 @@ public class PartialDialog extends javax.swing.JDialog {
 		initGUI(dtime);
 		this.paymentSize = jTable2.getRowCount();
 		jTextField2.setText(orNum);
-		
 		cachewriter = new LogHandler();
-		updateAmounts();
+		
 	}
 	
 	private void initGUI(String dtime) {
@@ -146,152 +135,6 @@ public class PartialDialog extends javax.swing.JDialog {
 				jButton4.setPreferredSize(new java.awt.Dimension(126, 28));
 				jButton4.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						double amountdue = Double.parseDouble(jLabel4.getText());
-						double payments = Double.parseDouble(jTextField5.getText());
-						if(amountdue <= payments){
-							int n = JOptionPane.showConfirmDialog(
-									null,
-									"You are about to process this transaction. \n" +
-									"Are you sure you want to continue?",
-									"Confirmation", JOptionPane.YES_NO_OPTION);
-							if(n == 0){
-								for(int i = paymentSize; i< paymentItems.size(); i++){
-									double paymentCash = 0;
-									double amount = 0;
-									if(jTable2.getValueAt(i, 1).toString().equals("Cash")){
-										paymentCash = Double.parseDouble(jTable2.getValueAt(i, 2).toString());
-										amount = paymentCash - Double.parseDouble(jTextField6.getText());
-									}
-									else{
-										amount = Double.parseDouble(jTable2.getValueAt(i, 2).toString());
-									}
-									
-									String query = "INSERT INTO payment_item " +
-											"(OR_NO, PT_CODE, AMT, CARD_TYPE, CARD_NO, GC_NO, CHECK_NO,STORE_CODE) VALUES " +
-											"("+orNum+","+paymentItems.get(i).get(0).toString()+","+ 
-											amount+",'"+paymentItems.get(i).get(3).toString()+"','"+
-											paymentItems.get(i).get(4).toString()+"','"+paymentItems.get(i).get(6).toString()+"','"+
-											paymentItems.get(i).get(5).toString()+"',"+Main.getStoreCode()+")";
-									
-									Main.getDBManager().executeUpdate(query);
-									String dataToLog2 = DataUtil.rowToData("ADD","payment_item",
-											new String[]{"OR_NO","PT_CODE","CARD_NO","GC_NO","CHECK_NO","STORE_CODE"}, 
-											new String[]{orNum,paymentItems.get(i).get(0).toString(),
-														 paymentItems.get(i).get(4).toString(),
-														 paymentItems.get(i).get(6).toString(),
-														 paymentItems.get(i).get(5).toString(),
-														 Main.getStoreCode()});
-									cachewriter.writeToFile(dataToLog2);
-									
-								}
-								Main.getDBManager().executeUpdate("UPDATE invoice SET PARTIAL = 0 WHERE OR_NO = "+orNum+" AND STORE_CODE = "+Main.getStoreCode());
-								
-								String[] keyFields = new String[2];
-								keyFields[0] = "OR_NO";
-								keyFields[1] = "STORE_CODE";
-								
-								String[] keys = new String[2];
-								keys[0] = orNum;
-								keys[1] = Main.getStoreCode();
-								
-								String dataToLog = DataUtil.rowToData("EDIT","invoice",keyFields,keys);
-								cachewriter.writeToFile(dataToLog);
-								
-								 /*MAKE RECEIPT*/
-									
-									Vector<String> headerData = new Vector<String>();
-									
-									ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM store_lu WHERE STORE_CODE =" + Main.getStoreCode());
-									try {
-										if(rs.next()){
-											headerData.add(rs.getString(3));
-										}
-									} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									
-									try {
-										BufferedReader br = new BufferedReader(new FileReader("data/.tinno"));
-										headerData.add(br.readLine());
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									
-									String OR_NO = Main.getStoreCode()+"-"+jTextField2.getText();
-									headerData.add(OR_NO);
-									
-									rs = Main.getDBManager().executeQuery("SELECT * FROM clerk_lu WHERE CLERK_CODE = \""+clerkNo+ "\"");
-									try {
-										if(rs.next()){
-											String name = rs.getString(4)+" "+rs.getString(3);
-											headerData.add(name);
-										}
-									} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									
-									rs = Main.getDBManager().executeQuery("SELECT DATE(CURRENT_TIMESTAMP), TIME(CURRENT_TIMESTAMP)");
-									try {
-										if(rs.next()){
-											headerData.add("DATE: "+rs.getString(1));
-											headerData.add("TIME: "+rs.getString(2));
-										}
-									} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									
-									Vector<Vector<String>> itemData = new Vector<Vector<String>>();
-									
-									rs = Main.getDBManager().executeQuery("SELECT* FROM invoice_item WHERE OR_NO = '"+orNum+"' AND STORE_CODE = '"+Main.getStoreCode()+"'");
-									try {
-										while(rs.next()){
-											Vector<String> row = new Vector<String>();
-											row.add(rs.getString("PROD_CODE"));
-											ResultSet rs2 = Main.getDBManager().executeQuery("SELECT * FROM products_lu WHERE PROD_CODE = \""+rs.getString("PROD_CODE")+"\"");
-											if(rs2.next()){
-												row.add(rs2.getString("NAME"));
-												row.add(rs2.getString("SELL_PRICE")); //curprice
-											}
-											row.add(rs.getString("SELL_PRICE")); //sellprice
-											row.add(rs.getString("QUANTITY"));
-											itemData.add(row);
-										}
-									} catch (SQLException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-									
-									Vector<Vector<String>> paymentData = new Vector<Vector<String>>();
-									for(int i = 0; i< paymentItems.size(); i++){
-										Vector<String> row = new Vector<String>();
-										String paymentName = paymentItems.get(i).get(1).toString();
-										String amount = paymentItems.get(i).get(2).toString();
-										row.add(paymentName);
-										row.add(amount);
-										paymentData.add(row);
-										
-									}
-									
-									String vatAmount = jTextField4.getText();
-									String changeAmount = jTextField6.getText();
-									
-									ValidateReceipt receiptdialog = new ValidateReceipt(form,headerData, itemData, paymentData, vatAmount, changeAmount, Main.getDBManager(),"reg");
-									receiptdialog.setLocationRelativeTo(null);
-									receiptdialog.setVisible(true);
-								
-								PartialDialog.this.dispose();
-								form.setPartialList();
-							}
-						}
-						else{
-							JOptionPane.showMessageDialog(null, 
-									"Amount is greater than payment.", 
-									"Warning",JOptionPane.WARNING_MESSAGE);
-						}
 						
 					}
 				});
@@ -303,9 +146,7 @@ public class PartialDialog extends javax.swing.JDialog {
 				jButton1.setPreferredSize(new java.awt.Dimension(56, 28));
 				jButton1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						Payment dialog = new Payment(PartialDialog.this);
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
+						
 					}
 				});
 			}
@@ -452,55 +293,7 @@ public class PartialDialog extends javax.swing.JDialog {
 				getContentPane().add(jScrollPane1, new AnchorConstraint(156, 974, 455, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jScrollPane1.setPreferredSize(new java.awt.Dimension(518, 161));
 				{
-					ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.PROD_CODE, products_lu.NAME, QUANTITY, invoice_item.SELL_PRICE, DISC_RATE,deferred,invoice_item.DISC_CODE " +
-													"FROM invoice_item, products_lu, discount_lu " +
-													"WHERE invoice_item.OR_NO = '"+orNum+"' " +
-													"AND invoice_item.PROD_CODE = products_lu.PROD_CODE " +
-													"AND invoice_item.DISC_CODE = discount_lu.DISC_NO");
 					
-					Vector<Vector<String>> data = new Vector<Vector<String>>();
-					
-					while(rs.next()){
-						Vector<String> rowData = new Vector<String>();
-						rowData.add(rs.getString(1));
-						rowData.add(rs.getString(2));
-						rowData.add(rs.getString(3));
-						rowData.add(rs.getString(4));
-						totalAmount += rs.getDouble(4);
-						System.out.println("totalAmount: " + totalAmount);
-						
-						ResultSet curr = Main.getDBManager().executeQuery("SELECT SELL_PRICE FROM products_lu WHERE PROD_CODE = \""+rs.getString(1)+"\"" );
-						if(curr.next()){
-							rowData.add(curr.getString(1));
-						}
-						
-						if(rs.getString(6).equals("1")){
-							rowData.add("Yes");
-						}
-						else{
-							rowData.add("No");
-						}
-						rowData.add(rs.getString(7));
-						data.add(rowData);
-					}
-					//fill the String[][] with values
-					String[][] dataSource = new String[data.size()][7];
-					for(int i = 0; i<data.size(); i++){
-						for(int j = 0; j< data.get(i).size(); j++){
-							dataSource[i][j] = data.get(i).get(j);
-						}
-					}
-					TableModel jTable1Model = new DefaultTableModel(
-						dataSource,
-						new String[] { "Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code" });
-					jTable1 = new JTable(){
-						public boolean isCellEditable(int row, int column)
-						{
-							return false;
-						}
-					};
-					jScrollPane1.setViewportView(jTable1);
-					jTable1.setModel(jTable1Model);
 				}
 			}
 			{
@@ -531,36 +324,7 @@ public class PartialDialog extends javax.swing.JDialog {
 				getContentPane().add(jScrollPane2, new AnchorConstraint(520, 974, 767, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jScrollPane2.setPreferredSize(new java.awt.Dimension(518, 133));
 				{
-					ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM pay_type_lu, payment_item " +
-													"WHERE OR_NO = '"+orNum+"' " +
-													"AND pay_type_lu.PT_CODE = payment_item.PT_CODE AND STORE_CODE="+Main.getStoreCode());
 					
-					paymentItems = new Vector<Vector<String>>();
-					while(rs.next()){
-						Vector<String> rowData = new Vector<String>();
-						rowData.add(rs.getString(1));
-						rowData.add(rs.getString(2));
-						rowData.add(rs.getString(6));
-						rowData.add(rs.getString(7));
-						rowData.add(rs.getString(8));
-						rowData.add(rs.getString(11));
-						rowData.add(rs.getString(10));
-						paymentItems.add(rowData);
-					}
-					//fill the String[][] with values
-					String[][] dataSource = new String[paymentItems.size()][7];
-					for(int i = 0; i<paymentItems.size(); i++){
-						for(int j = 0; j< paymentItems.get(i).size(); j++){
-							dataSource[i][j] = paymentItems.get(i).get(j);
-						}
-					}
-					
-					TableModel jTable2Model = new DefaultTableModel(
-						dataSource,
-						new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate No" });
-					jTable2 = new JTable();
-					jScrollPane2.setViewportView(jTable2);
-					jTable2.setModel(jTable2Model);
 				}
 			}
 			{
@@ -570,27 +334,7 @@ public class PartialDialog extends javax.swing.JDialog {
 				jButton2.setPreferredSize(new java.awt.Dimension(56, 28));
 				jButton2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						try{
-							jTable2.getValueAt(jTable2.getSelectedRow(), 0); //return exception
-							if(jTable2.getSelectedRow() < paymentSize){
-								JOptionPane.showMessageDialog(null, 
-										"This is the original payment. You cannot edit this payment.", 
-										"Warning",JOptionPane.WARNING_MESSAGE);
-							}
-							else{
-								String[] values = new String[7];
-								for(int i =0; i<7; i++){
-									values[i] = (String) jTable2.getValueAt(jTable2.getSelectedRow(), i);
-								}
-								Payment dialog = new Payment(PartialDialog.this,values,jTable2.getSelectedRow());
-								dialog.setLocationRelativeTo(null);
-								dialog.setVisible(true);
-							}
-						}catch(Exception e){
-							JOptionPane.showMessageDialog(null, 
-									"Please select item from the list.", 
-									"Warning",JOptionPane.WARNING_MESSAGE);
-						}
+						
 					}
 				});
 			}
@@ -601,27 +345,10 @@ public class PartialDialog extends javax.swing.JDialog {
 				jButton3.setPreferredSize(new java.awt.Dimension(77, 28));
 				jButton3.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						try{
-							jTable2.getValueAt(jTable2.getSelectedRow(), 0); //return exception
-							if(jTable2.getSelectedRow() < paymentSize){
-								JOptionPane.showMessageDialog(null, 
-										"This is the original payment. You cannot delete this payment.", 
-										"Warning",JOptionPane.WARNING_MESSAGE);
-							}
-							else{
-								paymentItems.remove(jTable2.getSelectedRow());
-								setPaymentTable(null);
-								updateAmounts();
-							}
-						}catch(Exception e){
-							JOptionPane.showMessageDialog(null, 
-									"Please select item from the list.", 
-									"Warning",JOptionPane.WARNING_MESSAGE);
-						}
+						
 					}
 				});
 			}
-			updateAmounts();
 			this.setSize(806, 573);
 			this.setVisible(true);
 		} catch (Exception e) {
@@ -629,142 +356,6 @@ public class PartialDialog extends javax.swing.JDialog {
 		}
 	}
 	
-	public void updateAmounts(){
-		//update amount
-		double amount = 0;
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT VAT FROM global");
-		double VAT = 0; //customizable
-		try {
-			if(rs.next()){
-				VAT = Double.parseDouble("0."+rs.getString("VAT"));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for(int i = 0; i< jTable1.getRowCount(); i++){
-			int quantity =  Integer.parseInt(jTable1.getValueAt(i, 2).toString());
-			double price = Double.parseDouble(jTable1.getValueAt(i, 3).toString());
-			amount += (quantity*price);
-		}
-		System.out.println("totalAmount2:" + totalAmount);
-		jLabel4.setText(String.format("%.2f", totalAmount));
-		
-		//update SubTotal
-		VAT = VAT+1;
-		double subTotal = amount/VAT;
-		jTextField3.setText(String.format("%.2f", subTotal));
-		jTextField4.setText(String.format("%.2f", (amount - subTotal)));
-		
-		//update payments
-		double paymentAmount = 0;
-		
-		for(int i =0; i<jTable2.getRowCount(); i++){
-			paymentAmount += Double.parseDouble(jTable2.getValueAt(i, 2).toString());
-		}
-		jTextField5.setText(String.format("%.2f", paymentAmount));
-		
-		//update change
-		if(hasPaymentCash())
-		{
-			double paymentCash = 0;
-			
-			for(int i =paymentSize; i<jTable2.getRowCount(); i++){
-				if(jTable2.getValueAt(i, 1).toString().equals("Cash")){
-					paymentCash = Double.parseDouble(jTable2.getValueAt(i, 2).toString());
-					break;
-				}
-			}
-			
-			double change = paymentAmount - amount;
-			if(change > paymentCash){
-				jTextField6.setText(String.format("%.2f", paymentCash));
-			}
-			else{
-				jTextField6.setText(String.format("%.2f", change));
-			}
-			
-		}
-		else{
-			
-			if(paymentAmount < amount){
-				double change = paymentAmount - amount;
-				jTextField6.setText(String.format("%.2f", change));
-			}
-			else{
-				double change = 0;
-				jTextField6.setText(String.format("%.2f", change));
-			}
-			
-		}
-		
-	}
 	
-	//functions for payment item table
-	public void setPaymentTable(Vector<String> args){
-		if(args != null) {
-			paymentItems.add(args);
-		}
-		
-		Object[][] data = new Object[paymentItems.size()][7];
-		for(int i = 0; i< paymentItems.size(); i++)
-		{
-			for(int j=0; j<7; j++){
-				data[i][j] = paymentItems.get(i).get(j);
-			}
-		}
-		
-		TableModel jTable1Model = new DefaultTableModel(
-				data,
-				new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number"  });
-			jTable2 = new JTable(){
-				public boolean isCellEditable(int row, int column)
-				{
-					return false;
-				}
-			};
-			jScrollPane2.setViewportView(jTable2);
-			jTable2.setModel(jTable1Model);
-	}
-	public void setThisPaymentTable(Vector<String> args, int index){
-		//for editing 
-		paymentItems.set(index, args);
-		setPaymentTable(null);
-	}
-	
-	public boolean hasPaymentCash(){
-		
-		for(int i =paymentSize; i<paymentItems.size(); i++){
-			if(paymentItems.get(i).get(1).equals("Cash")){
-				return true;
-			}
-		}
-		return false;
-	}
-	public boolean hasSameCreditCard(String no){
-		for(int i =paymentSize; i<paymentItems.size(); i++){
-			if(paymentItems.get(i).get(4).equals(no)){
-				return true;
-			}
-		}
-		return false;
-	}
-	public boolean hasSameBankCheck(String no){
-		for(int i =0; i<paymentItems.size(); i++){
-			if(paymentItems.get(i).get(5).equals(no)){
-				return true;
-			}
-		}
-		return false;
-	}
-	public boolean hasSameGiftCertificate(String no){
-		for(int i =0; i<paymentItems.size(); i++){
-			if(paymentItems.get(i).get(6).equals(no)){
-				return true;
-			}
-		}
-		return false;
-		
-	}
 
 }
