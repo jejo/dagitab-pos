@@ -1,14 +1,14 @@
 package domain;
 
 public class Invoice {
-	private Long invoiceNo;
+	private Long invoiceNo =0L;
 	private Long orNo;
-	private Integer encoderCode;
-	private Integer assistantCode;
-	private Integer customerNo;
+	private Integer encoderCode = 0;
+	private Integer assistantCode = 0;
+	private Integer customerNo = 0;
 	private Integer storeNo;
-	private Integer isPartial;
-	private Integer isReturn;
+	private Integer isPartial = 0;
+	private Integer isReturn = 0;
 	
 	public Integer getAssistantCode() {
 		return assistantCode;
