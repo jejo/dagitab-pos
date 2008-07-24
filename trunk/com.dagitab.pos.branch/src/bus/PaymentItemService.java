@@ -56,4 +56,23 @@ public class PaymentItemService {
 		Integer result = Main.getDBManager().insert(columns, columnValues, "payment_item", null, null);
 		return result;
 	}
+	
+	
+	public static Double getTotalPaymentAmount(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(AMT) FROM payment_item WHERE OR_NO	= "+orNo+" AND STORE_CODE = "+Main.getStoreCode() );
+		try {
+			if(rs.next()){
+				return rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0.0d;
+	}
+	
+	public static ResultSet findPaymentItems(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
+		System.out.println("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
+		return rs;
+	}
 }

@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import main.Main;
 import util.TableUtility;
 import bus.InvoiceService;
 
@@ -73,11 +74,10 @@ public class PartialPanel extends javax.swing.JPanel {
 				processButton.setPreferredSize(new java.awt.Dimension(189,28));
 				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						System.out.println(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
-						System.out.println(partialTable.getValueAt(partialTable.getSelectedRow(), 1).toString());
-						System.out.println(partialTable.getValueAt(partialTable.getSelectedRow(), 2).toString());
 						Invoice invoice = InvoiceService.getInvoiceByOr(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
-						partialDialog = new PartialDialog(getMainWindow(), invoice);
+						partialDialog = new PartialDialog(Main.getInst(), invoice);
+						partialDialog.setLocationRelativeTo(null);
+						partialDialog.setVisible(true);
 					}
 				});
 			}
