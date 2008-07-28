@@ -1,4 +1,5 @@
 package forms;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -6,17 +7,14 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import bus.DiscountService;
-import bus.ProductService;
-import domain.InvoiceItem;
+import bus.PaymentTypeService;
 import domain.PaymentItem;
-import domain.Product;
 import forms.invoice.InvoicePanel;
+import forms.partial.PartialDialog;
 
 
 /**
@@ -39,7 +37,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	private JLabel jLabel3;
 	private JLabel jLabel4;
 	private JLabel jLabel5;
-	private JComboBox jComboBox2;
+	private JComboBox paymentTypeComboBox;
 	private JLabel jLabel7;
 	private JButton jButton1;
 	private JButton jButton2;
@@ -67,21 +65,21 @@ public class PaymentDialog extends javax.swing.JDialog {
 	}
 	
 	@SuppressWarnings("static-access")
-	public PaymentDialog(JFrame frame, Object invoker, String action) {
-		super(frame);
+	public PaymentDialog(Window window, Object invoker, String action) {
+		super(window);
 		this.invoker = invoker;
 		this.actionProdCode = action;
 		initGUI();
 	}
 	
-	public static PaymentDialog getPaymentDialog(JFrame frame, Object invoker, String action){
+	public static PaymentDialog getPaymentDialog(Window parentWindow, Object invoker, String action){
 		if(paymentDialog == null){
-			paymentDialog = new PaymentDialog(frame, invoker,action); 
+			paymentDialog = new PaymentDialog(parentWindow, invoker,action); 
 		}
 		else{
 			if(!invoker.equals(getInvoker()) || !action.equals(getAction())){
 				paymentDialog = null;
-				paymentDialog = new PaymentDialog(frame, invoker,action);
+				paymentDialog = new PaymentDialog(parentWindow, invoker,action);
 			}
 		}
 		return paymentDialog;
@@ -170,7 +168,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 					jButton1.setBounds(101, 354, 58, 24);
 					jButton1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							Integer paymentType = jComboBox2.getSelectedIndex()+1;
+							Integer paymentType = PaymentTypeService.getPaymentCode(paymentTypeComboBox.getSelectedItem().toString());
 							Double amount = Double.parseDouble(txtAmount.getText());
 							String creditCard = txtCreditCard.getText().toString();
 							String creditCardType = cbCreditCardType.getSelectedItem().toString();
@@ -191,13 +189,12 @@ public class PaymentDialog extends javax.swing.JDialog {
 							paymentItem.setGcNo(("".equals(giftCertificate)?"N/A":giftCertificate));
 							
 							if(invoker instanceof InvoicePanel){
-								System.out.println("invoking...");
+								System.out.println("invoking instance of invoice panel from payment dialog");
 								InvoicePanel invoicePanel = (InvoicePanel)invoker;
 							
 								if(actionProdCode.equals("add")){
-									if(invoicePanel.getPaymentItemRow(paymentItem.getPaymentCode()) == null){
+									if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode())){
 										invoicePanel.addPaymentItem(paymentItem);
-										invoicePanel.updatePaymentAmounts();
 										paymentDialog.setVisible(false);
 									}
 									else{
@@ -206,6 +203,24 @@ public class PaymentDialog extends javax.swing.JDialog {
 								}
 								else { //edit
 									invoicePanel.editPaymentItem(paymentItem, actionProdCode);
+									paymentDialog.setVisible(false);
+								}
+							}
+							else if(invoker instanceof PartialDialog){
+								System.out.println("invoking instance of partial dialog from payment dialog");
+								PartialDialog partialDialog = (PartialDialog)invoker;
+								if(actionProdCode.equals("add")){
+									if(!partialDialog.validatePayment(paymentItem.getPaymentCode())){
+										partialDialog.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else{
+										JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+									}
+									
+								}
+								else{ //edit
+									partialDialog.editPaymentItem(paymentItem, actionProdCode);
 									paymentDialog.setVisible(false);
 								}
 							}
@@ -232,11 +247,11 @@ public class PaymentDialog extends javax.swing.JDialog {
 				}
 				{
 					ComboBoxModel jComboBox2Model =new DefaultComboBoxModel(new String[] { "Cash", "Credit Card","Bank Check","Gift Certificate" });
-					jComboBox2 = new JComboBox();
-					getContentPane().add(jComboBox2);
-					jComboBox2.setModel(jComboBox2Model);
-					jComboBox2.setBounds(12, 63, 352, 22);
-					jComboBox2.addActionListener(new PaymentTypeListener());
+					paymentTypeComboBox = new JComboBox();
+					getContentPane().add(paymentTypeComboBox);
+					paymentTypeComboBox.setModel(jComboBox2Model);
+					paymentTypeComboBox.setBounds(12, 63, 352, 22);
+					paymentTypeComboBox.addActionListener(new PaymentTypeListener());
 
 				}
 			}
@@ -301,7 +316,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	
 	
 	public void setPaymentType(String s){
-		jComboBox2.setSelectedItem(s);
+		paymentTypeComboBox.setSelectedItem(s);
 	}	
 
 	public void setAmount(String s){
@@ -323,5 +338,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	public void setGiftCheck(String s){
 		txtGiftCertificate.setText(s);
 	}
+	
+	
 }
 

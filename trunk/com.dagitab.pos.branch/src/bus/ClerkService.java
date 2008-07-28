@@ -41,17 +41,27 @@ public class ClerkService {
 		Clerk clerk = new Clerk();
 		try {
 			if(rs.next()){
+				clerk.setClerkCode(rs.getLong("CLERK_CODE"));
 				clerk.setAddress(rs.getString("ADDRESS"));
 				clerk.setBirthDate(rs.getString("BIRTH_DT"));
 				clerk.setClerkCode(rs.getLong("CLERK_CODE"));
 				clerk.setFirstName(rs.getString("FIRST_NAME"));
 				clerk.setLastName(rs.getString("LAST_NAME"));
 				clerk.setNickName(rs.getString("NICK_NAME"));
+				clerk.setPassword(rs.getString("PASSWORD"));
 				return clerk;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static int updateClerkPassword(Clerk clerk){
+		String[] columns = new String[]{"PASSWORD"};
+		String[] columnValues = new String[]{clerk.getPassword()};
+		String[] whereColumns = new String[]{"CLERK_CODE"};
+		String[] whereValues = new String[]{clerk.getClerkCode().toString()};
+		return Main.getDBManager().update(columns, columnValues, "clerk_lu", whereColumns, whereValues);
 	}
 }

@@ -75,4 +75,10 @@ public class PaymentItemService {
 		System.out.println("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		return rs;
 	}
+	
+	public static void removePaymentItem(Long orNo){
+		String [] whereColumns = new String[]{"OR_NO","STORE_CODE"};
+		String [] whereValues = new String[]{orNo.toString(),Main.getStoreCode()};
+		Main.getDBManager().delete("payment_item", whereColumns, whereValues);
+	}
 }

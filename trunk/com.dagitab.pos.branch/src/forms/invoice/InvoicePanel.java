@@ -76,6 +76,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 	private JLabel jLabel15;
 	private JButton jButton3;
 	private JScrollPane paymentTableScrollPane;
+	private JLabel partialLabel;
 	private JTable paymentTable;
 	private JScrollPane itemTableScrollPane;
 	private JTable itemTable;
@@ -101,7 +102,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 	private JLabel jLabel8;
 	private JLabel jLabel6;
 	private JButton jButton2;
-	private JLabel jLabel9;
 	private JTextField salesSpecialistTxt;
 	private JLabel jLabel17;
 	private JTextField customerTxt;
@@ -352,10 +352,18 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jPanel6.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				jPanel6.setBackground(new java.awt.Color(164,222,251));
 				{
+					partialLabel = new JLabel();
+					jPanel6.add(partialLabel, new AnchorConstraint(732, 364, 828, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					partialLabel.setText("Partial");
+					partialLabel.setPreferredSize(new java.awt.Dimension(77, 18));
+					partialLabel.setFont(new java.awt.Font("Tahoma",1,12));
+				}
+				{
 					partialChk = new JCheckBox();
-					jPanel6.add(partialChk, new AnchorConstraint(388, 877, 537, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					partialChk.setPreferredSize(new java.awt.Dimension(112, 28));
+					jPanel6.add(partialChk, new AnchorConstraint(716, 816, 843, 441, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					partialChk.setPreferredSize(new java.awt.Dimension(87, 24));
 					partialChk.setBackground(new java.awt.Color(164,222,251));
+					partialChk.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
 					jLabel7 = new JLabel();
@@ -366,8 +374,8 @@ public class InvoicePanel extends javax.swing.JPanel {
 				}
 				{
 					orNoTxt = new JTextField();
-					jPanel6.add(orNoTxt, new AnchorConstraint(108, 967, 214, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					orNoTxt.setPreferredSize(new java.awt.Dimension(133, 20));
+					jPanel6.add(orNoTxt, new AnchorConstraint(92, 959, 198, 446, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					orNoTxt.setPreferredSize(new java.awt.Dimension(119, 20));
 					orNoTxt.setEditable(false);
 					String nextOR = InvoiceService.getNextORNumber();
 					if(nextOR == null){
@@ -377,28 +385,28 @@ public class InvoicePanel extends javax.swing.JPanel {
 				}
 				{
 					invoiceTxt = new JTextField();
-					jPanel6.add(invoiceTxt, new AnchorConstraint(246, 967, 351, 394, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					invoiceTxt.setPreferredSize(new java.awt.Dimension(133, 20));
+					jPanel6.add(invoiceTxt, new AnchorConstraint(246, 959, 351, 446, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					invoiceTxt.setPreferredSize(new java.awt.Dimension(119, 20));
 				}
 				{
 					jLabel8 = new JLabel();
-					jPanel6.add(jLabel8, new AnchorConstraint(246, 454, 320, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel6.add(jLabel8, new AnchorConstraint(261, 454, 335, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel8.setText("Invoice No");
 					jLabel8.setPreferredSize(new java.awt.Dimension(98, 14));
 					jLabel8.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
 					jLabel6 = new JLabel();
-					jPanel6.add(jLabel6, new AnchorConstraint(563, 424, 706, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel6.setText("Sales Specs");
-					jLabel6.setPreferredSize(new java.awt.Dimension(91, 27));
+					jPanel6.add(jLabel6, new AnchorConstraint(415, 420, 558, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jLabel6.setText("Sales Specs ID");
+					jLabel6.setPreferredSize(new java.awt.Dimension(90, 27));
 					jLabel6.setFont(new java.awt.Font("Tahoma",1,12));
 				}
 				{
 					jButton2 = new JButton();
-					jPanel6.add(jButton2, new AnchorConstraint(579, 976, 685, 825, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jButton2.setText("...");
-					jButton2.setPreferredSize(new java.awt.Dimension(35, 20));
+					jPanel6.add(jButton2, new AnchorConstraint(431, 959, 537, 739, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jButton2.setText("Search");
+					jButton2.setPreferredSize(new java.awt.Dimension(51, 20));
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							ClerkLookUp dialog = ClerkLookUp.getClerkLookUp(Main.getInst(), InvoicePanel.this, "Assistant");
@@ -408,34 +416,27 @@ public class InvoicePanel extends javax.swing.JPanel {
 						});
 				}
 				{
-					jLabel9 = new JLabel();
-					jPanel6.add(jLabel9, new AnchorConstraint(425, 424, 500, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel9.setText("Partial");
-					jLabel9.setPreferredSize(new java.awt.Dimension(91, 14));
-					jLabel9.setFont(new java.awt.Font("Tahoma",1,12));
-				}
-				{
 					salesSpecialistTxt = new JTextField();
-					jPanel6.add(salesSpecialistTxt, new AnchorConstraint(579, 825, 685, 403, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					salesSpecialistTxt.setPreferredSize(new java.awt.Dimension(98, 20));
+					jPanel6.add(salesSpecialistTxt, new AnchorConstraint(431, 721, 537, 446, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					salesSpecialistTxt.setPreferredSize(new java.awt.Dimension(64, 20));
 				}
 				{
 					jLabel17 = new JLabel();
-					jPanel6.add(jLabel17, new AnchorConstraint(732, 424, 875, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel17.setText("Customer ");
+					jPanel6.add(jLabel17, new AnchorConstraint(568, 420, 701, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jLabel17.setText("Customer ID");
 					jLabel17.setFont(new java.awt.Font("Tahoma",1,12));
-					jLabel17.setPreferredSize(new java.awt.Dimension(91, 27));
+					jLabel17.setPreferredSize(new java.awt.Dimension(90, 25));
 				}
 				{
 					customerTxt = new JTextField();
-					jPanel6.add(customerTxt, new AnchorConstraint(732, 821, 838, 398, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					customerTxt.setPreferredSize(new java.awt.Dimension(98, 20));
+					jPanel6.add(customerTxt, new AnchorConstraint(579, 721, 685, 446, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					customerTxt.setPreferredSize(new java.awt.Dimension(64, 20));
 				}
 				{
 					jButton10 = new JButton();
-					jPanel6.add(jButton10, new AnchorConstraint(732, 976, 838, 825, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jButton10.setText("...");
-					jButton10.setPreferredSize(new java.awt.Dimension(35, 20));
+					jPanel6.add(jButton10, new AnchorConstraint(579, 959, 685, 739, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jButton10.setText("Search");
+					jButton10.setPreferredSize(new java.awt.Dimension(51, 20));
 					jButton10.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							CustomerLookUp dialog = CustomerLookUp.getCustomerLookUp(Main.getInst(), InvoicePanel.this, null);
@@ -496,9 +497,7 @@ public class InvoicePanel extends javax.swing.JPanel {
 				jButton6.setPreferredSize(new java.awt.Dimension(63, 21));
 				jButton6.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						
 						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(), InvoicePanel.this, "add");
-						
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -667,13 +666,6 @@ public class InvoicePanel extends javax.swing.JPanel {
 		updatePaymentAmounts();
 	}
 	
-	public void removePaymentItem(){
-		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
-		model.removeRow(paymentTable.getSelectedRow());
-		updatePaymentAmounts();
-	}
-	
-
 	
 	public void updateAmounts(){
 		Double vatRate = VatService.getVatRate();
@@ -714,13 +706,12 @@ public class InvoicePanel extends javax.swing.JPanel {
 								  paymentItem.getCheckNo(),
 								  paymentItem.getGcNo()
 								  });
+		updatePaymentAmounts();
 	}
 	
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode){
-		//PaymentItem payment = PaymentItemService.getPaymentItemById(paymentItem.getPaymentCode());
-		int index = getInvoicePaymentRow(paymentCode);
+		int index = getPaymentItemRow(Integer.parseInt(paymentCode));
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
-		//model.setValueAt(paymentItem.getOrNo(), index, 0);
 		model.setValueAt(PaymentItemService.getPaymentType(paymentItem.getPaymentCode()), index, 1);
 		model.setValueAt(paymentItem.getAmount(), index, 2);
 		model.setValueAt(paymentItem.getCardType().toString(), index, 3);
@@ -730,24 +721,33 @@ public class InvoicePanel extends javax.swing.JPanel {
 		updatePaymentAmounts();
 	}
 	
-	public Integer getInvoicePaymentRow(String prodCode){
+	public void removePaymentItem(){
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		model.removeRow(paymentTable.getSelectedRow());
+		updatePaymentAmounts();
+	}
+	
+
+	public Integer getPaymentItemRow(Integer paymentCode){
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			if(model.getValueAt(i, 0).toString().equals(prodCode)){
+			if(model.getValueAt(i, 0).toString().equals(paymentCode.toString())){
 				return i;
 			}
 		}
 		return null;
 	}
-
-	public Integer getPaymentItemRow(Integer paymentCode){
-		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+	
+	public Boolean hasCashPayment(Integer paymentCode){
+		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			if(model.getValueAt(i, 0).toString().equals(paymentCode)){
-				return i;
+			System.out.println(model.getValueAt(i, 1).toString());
+			if(model.getValueAt(i, 1).toString().equals("Cash") && paymentName.equals("Cash")){
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 	
 	public void setLoginInformation(String userName, String branchName){
