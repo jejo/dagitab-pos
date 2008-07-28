@@ -60,8 +60,8 @@ public class MenuHelper {
 	}
 	
 	static{
-		CONFIGURATION.setEnabled(false);
-		PASSWORD.setEnabled(false);
+		
+		
 		CONNECT.setEnabled(false);
 		RE_PRINT_RECEIPT.setEnabled(false);
 		PULL_OUT_MENU.setEnabled(false);
@@ -69,6 +69,27 @@ public class MenuHelper {
 		REPORTS_MENU.setEnabled(false);
 		ABOUT_MENU.setEnabled(false);
 		
+		CONFIGURATION.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ConfigurationDialog configurationDialog = new ConfigurationDialog(Main.getInst());
+				configurationDialog.setLocationRelativeTo(null);
+				configurationDialog.setVisible(true);
+				
+			}
+			
+		});
+		
+		
+		PASSWORD.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PasswordManagerDialog passwordManagerDialog = new PasswordManagerDialog(Main.getInst());
+				passwordManagerDialog.setLocationRelativeTo(null);
+				passwordManagerDialog.setVisible(true);
+			}
+			
+		});
 		LOGOUT.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt) {
 			Main.setClerkCode(null);

@@ -163,7 +163,7 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			this.setSize(428, 474);
 			
 			ResultSet rs = ClerkService.getAllClerks();
-			TableUtility.fillTable(jTable1, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name","Rocky"});
+			TableUtility.fillTable(jTable1, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
 			
 		} catch (Exception e) {
 			e.printStackTrace();

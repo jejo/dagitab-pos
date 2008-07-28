@@ -69,5 +69,25 @@ public class InvoiceService {
 		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);
 		return result;
 	}
+	
+	public static int update(Invoice invoice){
+		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
+		String[] columnValues = new String[]{invoice.getInvoiceNo().toString(), 
+											 invoice.getEncoderCode().toString(), 
+											 invoice.getAssistantCode().toString(), 
+											 invoice.getCustomerNo().toString(), 
+											 invoice.getStoreNo().toString(), 
+											 invoice.getIsPartial().toString()};
+		String[] whereColumns = new String[]{"OR_NO","STORE_CODE"};
+		String[] whereValues = new String[]{invoice.getOrNo().toString(),Main.getStoreCode()};
+		
+		
+		Integer result = Main.getDBManager().update(columns, columnValues, "invoice", whereColumns, whereValues);
+		return result;
+	}
+	
+	
+	
+	
 
 }

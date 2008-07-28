@@ -64,7 +64,7 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-//			System.out.println("DELETE FROM `" + table + "` " + whereSt);
+			System.out.println("DELETE FROM `" + table + "` " + whereSt);
 			statement.execute("DELETE FROM `" + table + "` " + whereSt);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -210,8 +210,8 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-//			System.out.println("UPDATE " + table + " SET " + updateSt + " "
-//					+ whereSt);
+			System.out.println("UPDATE " + table + " SET " + updateSt + " "
+					+ whereSt);
 			return statement.executeUpdate("UPDATE " + table + " SET " + updateSt
 					+ " " + whereSt);
 		} catch (SQLException e) {
@@ -252,10 +252,12 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
+			System.out.println("auto commit: "+connection.getAutoCommit());
 			System.out.println("INSERT INTO " + table + columnsSt + " VALUES "
 					+ valuesSt + " " + whereSt);
 			return statement.executeUpdate("INSERT INTO " + table + columnsSt
 					+ " VALUES " + valuesSt + " " + whereSt);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
