@@ -750,6 +750,51 @@ public class InvoicePanel extends javax.swing.JPanel {
 		return false;
 	}
 	
+	public Boolean hasCardNo(Integer paymentCode, String cardNo){
+		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			System.out.println(model.getValueAt(i, 1).toString());
+			System.out.println(model.getValueAt(i, 4).toString());
+			System.out.println(cardNo);
+			if(model.getValueAt(i, 1).toString().equals("Credit Card") && paymentName.equals("Credit Card") && model.getValueAt(i, 4).equals(cardNo)){
+				System.out.println("true");
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Boolean hasCheckNo(Integer paymentCode, String checkNo){
+		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			System.out.println(model.getValueAt(i, 1).toString());
+			System.out.println(model.getValueAt(i, 5).toString());
+			System.out.println(checkNo);
+			if(model.getValueAt(i, 1).toString().equals("Bank Check") && paymentName.equals("Bank Check") && model.getValueAt(i, 5).equals(checkNo)){
+				System.out.println("true");
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Boolean hasGcNo(Integer paymentCode, String gcNo){
+		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			System.out.println(model.getValueAt(i, 1).toString());
+			System.out.println(model.getValueAt(i, 6).toString());
+			System.out.println(gcNo);
+			if(model.getValueAt(i, 1).toString().equals("Gift Certificate") && paymentName.equals("Gift Certificate") && model.getValueAt(i, 6).equals(gcNo)){
+				System.out.println("true");
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void setLoginInformation(String userName, String branchName){
 		jLabel1.setText("Welcome, "+userName);
 		jLabel2.setText(branchName);
