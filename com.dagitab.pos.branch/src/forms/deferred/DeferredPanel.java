@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import javax.swing.BorderFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,7 +58,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 	
 	private void initGUI() {
 		try {
-			setPreferredSize(new Dimension(400, 300));
+			this.setPreferredSize(new java.awt.Dimension(692, 390));
 			AnchorLayout jPanel4Layout = new AnchorLayout();
 			this.setLayout(jPanel4Layout);
 			this.setBackground(new java.awt.Color(255, 255, 255));
@@ -113,6 +114,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 				deferredScrollPane = new JScrollPane();
 				this.add(deferredScrollPane, new AnchorConstraint(115, 966, 781, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				deferredScrollPane.setPreferredSize(new java.awt.Dimension(380, 200));
+				deferredScrollPane.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				{
 					TableModel jTable3Model = new DefaultTableModel(new String[][] {}, new String[] { "OR Number", "Invoice Number", "Product Code", "Product Name", "Quantity","Transaction Date & Time" });
 					deferredTable = new JTable();

@@ -1,6 +1,9 @@
-package forms;
+package forms.returned;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
+import forms.MainWindow;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -35,19 +38,19 @@ import main.DBManager;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class TransactionItems extends javax.swing.JDialog {
-	private JLabel jLabel1;
-	private JLabel jLabel2;
+public class ReturnedItemsDialog extends javax.swing.JDialog {
+	private JLabel titleLabel;
+	private JLabel descriptionLabel;
 	private JLabel jLabel4;
 	private JTable jTable1;
-	private JComboBox jComboBox1;
+	private JComboBox returnReasonComboBox;
 	private JLabel jLabel5;
 	private JButton jButton2;
 	private JTextField jTextField2;
 	private JButton jButton1;
 	private JScrollPane jScrollPane1;
-	private JTextField jTextField1;
-	private JLabel jLabel3;
+	private JTextField orNoTextField;
+	private JLabel orNoLabel;
 	private JLabel jLabel30;
 	private MainWindow form;
 	private DBManager db;
@@ -66,7 +69,7 @@ public class TransactionItems extends javax.swing.JDialog {
 //		inst.setVisible(true);
 	}
 	
-	public TransactionItems(MainWindow frame,DBManager db, String orNum, String storeCode, Vector<Vector<String>> returnTableValues) {
+	public ReturnedItemsDialog(MainWindow frame,DBManager db, String orNum, String storeCode, Vector<Vector<String>> returnTableValues) {
 		super(frame);
 		this.form = frame;
 		this.orNum = orNum;
@@ -85,19 +88,12 @@ public class TransactionItems extends javax.swing.JDialog {
 			this.setTitle("Transaction Items");
 			this.setModal(true);
 			{
-				ResultSet rs = db.executeQuery("SELECT * FROM return_reason_lu");
-				returnReasonCode = new Vector<String>();
-				Vector<String> values = new Vector<String>();
-				while(rs.next()){
-					returnReasonCode.add(rs.getString(1));
-					values.add(rs.getString(2));
-				}
-				ComboBoxModel jComboBox1Model = new DefaultComboBoxModel(
-				values);
-				jComboBox1 = new JComboBox();
-				getContentPane().add(jComboBox1, new AnchorConstraint(754, 495, 812, 242, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jComboBox1.setModel(jComboBox1Model);
-				jComboBox1.setPreferredSize(new java.awt.Dimension(161, 28));
+				
+				ComboBoxModel jComboBox1Model = new DefaultComboBoxModel();
+				returnReasonComboBox = new JComboBox();
+				getContentPane().add(returnReasonComboBox, new AnchorConstraint(751, 479, 809, 228, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				returnReasonComboBox.setModel(jComboBox1Model);
+				returnReasonComboBox.setPreferredSize(new java.awt.Dimension(158, 28));
 			}
 			{
 				jButton2 = new JButton();
@@ -106,14 +102,14 @@ public class TransactionItems extends javax.swing.JDialog {
 				jButton2.setPreferredSize(new java.awt.Dimension(98, 28));
 				jButton2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						TransactionItems.this.dispose();
+						ReturnedItemsDialog.this.dispose();
 					}
 				});
 			}
 			{
 				jTextField2 = new JTextField();
-				getContentPane().add(jTextField2, new AnchorConstraint(754, 967, 812, 781, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jTextField2.setPreferredSize(new java.awt.Dimension(119, 28));
+				getContentPane().add(jTextField2, new AnchorConstraint(753, 967, 811, 843, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jTextField2.setPreferredSize(new java.awt.Dimension(78, 28));
 			}
 			{
 				jButton1 = new JButton();
@@ -141,10 +137,10 @@ public class TransactionItems extends javax.swing.JDialog {
 									values.add(jTable1.getValueAt(jTable1.getSelectedRow(),4).toString());
 									values.add(jTable1.getValueAt(jTable1.getSelectedRow(),5).toString());
 									values.add(jTable1.getValueAt(jTable1.getSelectedRow(),6).toString());
-									values.add(returnReasonCode.get(jComboBox1.getSelectedIndex()));
+									values.add(returnReasonCode.get(returnReasonComboBox.getSelectedIndex()));
 									values.add(returnCosts.get(jTable1.getSelectedRow()));
 									if(!form.hasReturnedItem(jTable1.getValueAt(jTable1.getSelectedRow(),0).toString(),
-															returnReasonCode.get(jComboBox1.getSelectedIndex()))){
+															returnReasonCode.get(returnReasonComboBox.getSelectedIndex()))){
 										form.setReturnedTable(values);
 									}
 									else{
@@ -154,7 +150,7 @@ public class TransactionItems extends javax.swing.JDialog {
 												"Warning",JOptionPane.WARNING_MESSAGE);
 									}
 									
-									TransactionItems.this.dispose();
+									ReturnedItemsDialog.this.dispose();
 									//jTable1.setValueAt(newQuantity, jTable1.getSelectedRow(), 2);
 								}
 							}
@@ -257,58 +253,58 @@ public class TransactionItems extends javax.swing.JDialog {
 				}
 			}
 			{
-				jTextField1 = new JTextField();
-				getContentPane().add(jTextField1, new AnchorConstraint(131, 374, 174, 143, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jTextField1.setPreferredSize(new java.awt.Dimension(147, 21));
+				orNoTextField = new JTextField();
+				getContentPane().add(orNoTextField, new AnchorConstraint(113, 382, 154, 150, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				orNoTextField.setPreferredSize(new java.awt.Dimension(146, 20));
 				String temp = orNum+"";
 				int len = 10-temp.length();
 				for(int i = 0; i<len; i++){
 					temp = "0"+temp;
 				}
-				jTextField1.setText(storeCode +"-"+temp);
-				jTextField1.setEditable(false);
+				orNoTextField.setText(storeCode +"-"+temp);
+				orNoTextField.setEditable(false);
 			}
 			{
-				jLabel3 = new JLabel();
-				getContentPane().add(jLabel3, new AnchorConstraint(116, 143, 203, 22, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel3.setText("OR Number");
-				jLabel3.setPreferredSize(new java.awt.Dimension(77, 42));
-				jLabel3.setFont(new java.awt.Font("Tahoma",1,11));
+				orNoLabel = new JLabel();
+				getContentPane().add(orNoLabel, new AnchorConstraint(92, 150, 179, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				orNoLabel.setText("OR Number");
+				orNoLabel.setPreferredSize(new java.awt.Dimension(76, 42));
+				orNoLabel.setFont(new java.awt.Font("Tahoma",1,11));
 			}
 			{
-				jLabel2 = new JLabel();
-				getContentPane().add(jLabel2, new AnchorConstraint(47, 1011, 94, 66, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel2.setText("you may view items of the transaction indicated by the OR number. You may choose the item which will be returned.");
-				jLabel2.setPreferredSize(new java.awt.Dimension(602, 21));
+				descriptionLabel = new JLabel();
+				getContentPane().add(descriptionLabel, new AnchorConstraint(48, 968, 94, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				descriptionLabel.setText("View items of the transaction indicated by the OR number. You may choose the item which will be returned.");
+				descriptionLabel.setPreferredSize(new java.awt.Dimension(602, 22));
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(16, 506, 63, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Items of Transaction");
-				jLabel1.setPreferredSize(new java.awt.Dimension(315, 21));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
+				titleLabel = new JLabel();
+				getContentPane().add(titleLabel, new AnchorConstraint(16, 506, 63, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				titleLabel.setText("Transaction Items");
+				titleLabel.setPreferredSize(new java.awt.Dimension(315, 21));
+				titleLabel.setFont(new java.awt.Font("Tahoma",0,18));
 			}
 			{
 				jLabel30 = new JLabel();
-				getContentPane().add(jLabel30, new AnchorConstraint(189, 341, 290, 22, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel30.setText("Items of Transaction");
+				getContentPane().add(jLabel30, new AnchorConstraint(179, 350, 281, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jLabel30.setText("Items");
 				jLabel30.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/items.png")));
 				jLabel30.setFont(new java.awt.Font("Tahoma",1,14));
-				jLabel30.setPreferredSize(new java.awt.Dimension(203, 49));
+				jLabel30.setPreferredSize(new java.awt.Dimension(200, 49));
 			}
 			{
 				jLabel4 = new JLabel();
-				getContentPane().add(jLabel4, new AnchorConstraint(754, 770, 812, 550, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel4, new AnchorConstraint(755, 837, 813, 600, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel4.setText("Quantity to be Returned:");
 				jLabel4.setFont(new java.awt.Font("Tahoma",1,11));
-				jLabel4.setPreferredSize(new java.awt.Dimension(140, 28));
+				jLabel4.setPreferredSize(new java.awt.Dimension(149, 28));
 			}
 			{
 				jLabel5 = new JLabel();
-				getContentPane().add(jLabel5, new AnchorConstraint(754, 209, 812, 33, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel5, new AnchorConstraint(753, 209, 811, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel5.setText("Reason For Return:");
 				jLabel5.setFont(new java.awt.Font("Tahoma",1,11));
-				jLabel5.setPreferredSize(new java.awt.Dimension(112, 28));
+				jLabel5.setPreferredSize(new java.awt.Dimension(111, 28));
 			}
 			this.setSize(645, 517);
 		} catch (Exception e) {
