@@ -19,4 +19,17 @@ public class VatService {
 		}
 		return 0;
 	}
+	
+	public static double getVatAmount(){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT VAT from global");
+		try {
+			if(rs.next()){
+				return  rs.getDouble(1);
+			}
+		}catch (SQLException e) {
+		
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

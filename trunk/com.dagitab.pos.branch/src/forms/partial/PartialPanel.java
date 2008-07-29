@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -97,6 +98,7 @@ public class PartialPanel extends javax.swing.JPanel {
 				partialScrollPane = new JScrollPane();
 				this.add(partialScrollPane, new AnchorConstraint(114, 965, 793, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				partialScrollPane.setPreferredSize(new java.awt.Dimension(818, 311));
+				partialScrollPane.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				{
 					TableModel jTable4Model = new DefaultTableModel(new String[][] {},new String[] { "OR Number","Transaction Date & Time" });
 					partialTable = new JTable() {

@@ -168,9 +168,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton29 = new JButton();
-				this.add(jButton29, new AnchorConstraint(468, 439, 511, 317, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton29, new AnchorConstraint(459, 438, 502, 316, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton29.setText("Fast Addition");
-				jButton29.setPreferredSize(new java.awt.Dimension(105, 21));
+				jButton29.setPreferredSize(new java.awt.Dimension(105, 20));
 				jButton29.setEnabled(false);
 				jButton29.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -182,9 +182,9 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton17 = new JButton();
-				this.add(jButton17, new AnchorConstraint(468, 975, 511, 853, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton17, new AnchorConstraint(459, 975, 502, 853, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton17.setText("View Package");
-				jButton17.setPreferredSize(new java.awt.Dimension(105, 21));
+				jButton17.setPreferredSize(new java.awt.Dimension(105, 20));
 				jButton17.setEnabled(false);
 				jButton17.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -206,9 +206,11 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton3 = new JButton();
-				this.add(jButton3, new AnchorConstraint(468, 625, 511, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton3, new AnchorConstraint(459, 625, 502, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton3.setText("Add");
-				jButton3.setPreferredSize(new java.awt.Dimension(63, 21));
+				jButton3.setPreferredSize(new java.awt.Dimension(63, 20));
+				jButton3.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
+				jButton3.setBackground(new java.awt.Color(255,255,255));
 				jButton3.addActionListener(new ActionListener() {
 					
 					public void actionPerformed(ActionEvent evt) {
@@ -448,9 +450,11 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton4 = new JButton();
-				this.add(jButton4, new AnchorConstraint(468, 707, 511, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton4, new AnchorConstraint(459, 705, 502, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton4.setText("Edit");
-				jButton4.setPreferredSize(new java.awt.Dimension(63, 21));
+				jButton4.setPreferredSize(new java.awt.Dimension(62, 20));
+				jButton4.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
+				jButton4.setBackground(new java.awt.Color(255,255,255));
 				jButton4.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						try{
@@ -476,9 +480,11 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton5 = new JButton();
-				this.add(jButton5, new AnchorConstraint(469, 796, 512, 715, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton5, new AnchorConstraint(459, 796, 504, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton5.setText("Delete");
-				jButton5.setPreferredSize(new java.awt.Dimension(70, 21));
+				jButton5.setPreferredSize(new java.awt.Dimension(72, 21));
+				jButton5.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
+				jButton5.setBackground(new java.awt.Color(255,255,255));
 				jButton5.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						try{
@@ -492,9 +498,11 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton6 = new JButton();
-				this.add(jButton6, new AnchorConstraint(822, 625, 865, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton6, new AnchorConstraint(811, 625, 853, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton6.setText("Add");
-				jButton6.setPreferredSize(new java.awt.Dimension(63, 21));
+				jButton6.setPreferredSize(new java.awt.Dimension(63, 20));
+				jButton6.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
+				jButton6.setBackground(new java.awt.Color(255,255,255));
 				jButton6.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(), InvoicePanel.this, "add");
@@ -505,9 +513,11 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton7 = new JButton();
-				this.add(jButton7, new AnchorConstraint(822, 707, 865, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton7, new AnchorConstraint(811, 705, 853, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton7.setText("Edit");
-				jButton7.setPreferredSize(new java.awt.Dimension(63, 21));
+				jButton7.setPreferredSize(new java.awt.Dimension(62, 20));
+				jButton7.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
+				jButton7.setBackground(new java.awt.Color(255,255,255));
 				jButton7.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
@@ -536,9 +546,11 @@ public class InvoicePanel extends javax.swing.JPanel {
 			}
 			{
 				jButton8 = new JButton();
-				this.add(jButton8, new AnchorConstraint(824, 796, 867, 715, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(jButton8, new AnchorConstraint(813, 796, 856, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton8.setText("Delete");
-				jButton8.setPreferredSize(new java.awt.Dimension(70, 21));
+				jButton8.setPreferredSize(new java.awt.Dimension(72, 20));
+				jButton8.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
+				jButton8.setBackground(new java.awt.Color(255,255,255));
 				jButton8.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						try{

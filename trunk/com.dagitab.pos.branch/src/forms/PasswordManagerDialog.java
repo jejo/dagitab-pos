@@ -2,18 +2,14 @@ package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.security.auth.callback.ConfirmationCallback;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
-import main.DBManager;
 import main.Main;
 import bus.ClerkService;
-import connection.DataUtil;
-import connection.LogHandler;
 import domain.Clerk;
 
 /**
@@ -28,6 +24,7 @@ import domain.Clerk;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class PasswordManagerDialog extends javax.swing.JDialog {
 	private JLabel jLabel1;
 	private JPasswordField newPasswordField;
@@ -38,11 +35,7 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 	private JLabel jLabel4;
 	private JPasswordField oldPasswordField;
 	private JLabel jLabel3;
-	private DBManager db;
-	private MainWindow form;
-	private LogHandler cachewriter;
-	private DataUtil datautil;
-
+	
 	{
 		//Set Look & Feel
 		try {
@@ -67,11 +60,8 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 		initGUI();
 	}
 	
-	public PasswordManagerDialog(MainWindow form, DBManager db){
+	public PasswordManagerDialog(MainWindow form){
 		super(form);
-		this.db = db;
-		cachewriter = new LogHandler();
-		datautil = new DataUtil();
 		initGUI();
 	}
 	
@@ -84,7 +74,7 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 				jButton3 = new JButton();
 				getContentPane().add(jButton3);
 				jButton3.setText("Close");
-				jButton3.setBounds(150, 168, 83, 28);
+				jButton3.setBounds(150, 168, 104, 28);
 				jButton3.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						PasswordManagerDialog.this.dispose();
@@ -96,6 +86,7 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 				getContentPane().add(jButton2);
 				jButton2.setText("Change");
 				jButton2.setBounds(55, 168, 89, 28);
+				
 				jButton2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
@@ -179,7 +170,5 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 }

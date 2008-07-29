@@ -89,19 +89,19 @@ public class MainWindow extends javax.swing.JFrame {
 	private JLabel jLabel2;
 
 	private JPasswordField jPasswordField2;
+	
 	private JButton jButton17;
 	private JTable jTable4;
 
 	private JScrollPane jScrollPane4;
 	private JTextField jTextField10;
-	private JPasswordField jPasswordField3;
-
+	
 	private JTable jTable3;
 
 	private JScrollPane jScrollPane3;
 
 	private JTextField jTextField13;
-	private JPasswordField jPasswordField1;
+	
 	private JTable jTable7;
 	private JTextField jTextField19;
 	private JTextField jTextField18;
@@ -133,7 +133,7 @@ public class MainWindow extends javax.swing.JFrame {
 
 	private Vector<Vector<String>> returnedItems;
 	private Vector<Vector<String>> replacedItems;
-	private JScrollPane jScrollPane8;
+	
 
 	private static JPanel pendingPanel;
 	private JPasswordField jPasswordField4;
@@ -142,7 +142,7 @@ public class MainWindow extends javax.swing.JFrame {
 
 	private Vector<PendingTransactionData> pausedData;
 
-	private DataUtil datautil;
+	
 
 	/**
 	 * Auto-generated main method to display this JFrame
@@ -172,7 +172,6 @@ public class MainWindow extends javax.swing.JFrame {
 		super();
 
 		cachewriter = new LogHandler();
-		datautil = new DataUtil();
 		initGUI();
 		pausedData = new Vector<PendingTransactionData>();
 		productItems = new Vector<Vector<String>>();
@@ -287,42 +286,29 @@ public class MainWindow extends javax.swing.JFrame {
 					});
 					{
 						invoicePanel = new InvoicePanel();
-						ImageIcon icon = new ImageIcon(getClass()
-								.getClassLoader().getResource("images/add.png"));
-						jTabbedPane1
-								.addTab("Invoice", icon, invoicePanel, null);
+						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/add.png"));
+						jTabbedPane1.addTab("Invoice", icon, invoicePanel, null);
 
 					}
 					{
 						partialPanel = new PartialPanel(this);
-						ImageIcon icon = new ImageIcon(getClass()
-								.getClassLoader().getResource(
-										"images/partial.png"));
-						jTabbedPane1
-								.addTab("Partial", icon, partialPanel, null);
+						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/partial.png"));
+						jTabbedPane1.addTab("Partial", icon, partialPanel, null);
 
 					}
 					{
 						deferredPanel = new DeferredPanel(this);
-						ImageIcon icon = new ImageIcon(getClass()
-								.getClassLoader().getResource(
-										"images/deferred.png"));
-						jTabbedPane1.addTab("Deferred", icon, deferredPanel,
-								null);
+						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/deferred.png"));
+						jTabbedPane1.addTab("Deferred", icon, deferredPanel,null);
 					}
 					{
 						returnedPanel = new ReturnedPanel();
-						ImageIcon icon = new ImageIcon(getClass()
-								.getClassLoader().getResource(
-										"images/Files-text.png"));
-						// jTabbedPane1.addTab("Returned Items", icon,
-						// returnedPanel, null);
+						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/Files-text.png"));
+						jTabbedPane1.addTab("Returned Items", icon,returnedPanel, null);
 					}
 					{
 						pendingPanel = new PendingPanel();
-						ImageIcon icon = new ImageIcon(getClass()
-								.getClassLoader().getResource(
-										"images/pausepic.png"));
+						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/pausepic.png"));
 						// jTabbedPane1.addTab("Pending
 						// Transactions",icon,pendingPanel,null);
 
@@ -1511,4 +1497,6 @@ public class MainWindow extends javax.swing.JFrame {
 
 		updateAmounts();
 	}
+	
+	
 }
