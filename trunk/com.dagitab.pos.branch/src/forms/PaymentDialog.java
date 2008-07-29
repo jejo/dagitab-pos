@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import bus.PaymentItemService;
 import bus.PaymentTypeService;
 import domain.PaymentItem;
 import forms.invoice.InvoicePanel;
@@ -193,7 +194,19 @@ public class PaymentDialog extends javax.swing.JDialog {
 								InvoicePanel invoicePanel = (InvoicePanel)invoker;
 							
 								if(actionProdCode.equals("add")){
-									if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode())){
+									if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+										invoicePanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!invoicePanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+										invoicePanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!invoicePanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+										invoicePanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!invoicePanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 										invoicePanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
