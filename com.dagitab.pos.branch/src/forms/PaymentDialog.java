@@ -223,14 +223,25 @@ public class PaymentDialog extends javax.swing.JDialog {
 								System.out.println("invoking instance of partial dialog from payment dialog");
 								PartialDialog partialDialog = (PartialDialog)invoker;
 								if(actionProdCode.equals("add")){
-									if(!partialDialog.validatePayment(paymentItem.getPaymentCode())){
+									if(!partialDialog.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+										partialDialog.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!partialDialog.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+										partialDialog.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!partialDialog.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+										partialDialog.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!partialDialog.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 										partialDialog.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
 									else{
 										JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
 									}
-									
 								}
 								else{ //edit
 									partialDialog.editPaymentItem(paymentItem, actionProdCode);
