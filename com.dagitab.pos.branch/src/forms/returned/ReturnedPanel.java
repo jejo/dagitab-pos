@@ -3,6 +3,7 @@ package forms.returned;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,12 +18,20 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import main.Main;
 import util.StringUtility;
 import bus.InvoiceService;
+import bus.ProductService;
+import bus.ReturnReasonService;
 import bus.VatService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
+import domain.Invoice;
+import domain.InvoiceItem;
+import domain.Product;
+import domain.ReturnReason;
 
 
 /**
@@ -82,6 +91,8 @@ public class ReturnedPanel extends javax.swing.JPanel {
 	private JButton editReplacedItemButton;
 	private JButton deleteReplacedItemButton;
 	private JScrollPane returnedItemsScrollPane;
+	private AbstractAction deleteReturnItemAction;
+	private AbstractAction addReturnItemAction;
 	private JLabel jLabel30;
 	private JButton editPaymentItemButton;
 	private JButton deletePaymentItemButton;
@@ -110,6 +121,7 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				deleteReturnItemButton.setPreferredSize(new java.awt.Dimension(79, 22));
 				deleteReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deleteReturnItemButton.setBackground(new java.awt.Color(244,244,244));
+				deleteReturnItemButton.setAction(getDeleteReturnItemAction());
 			}
 			{
 				editReturnItemButton = new JButton();
@@ -126,6 +138,7 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				addReturnItemButton.setPreferredSize(new java.awt.Dimension(61, 22));
 				addReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addReturnItemButton.setBackground(new java.awt.Color(244,244,244));
+				addReturnItemButton.setAction(getAddReturnItemAction());
 			}
 			{
 				greenPanel = new JPanel();
@@ -426,10 +439,10 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				returnedItemsScrollPane.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 				{
 					TableModel returnedItemsTableModel = new DefaultTableModel(new String[][] {}, new String[] {   "Product Code",
-							"Product Name", "Quantity",
-							"Selling Price", "Current Price",
-							"Deferred", "Disc Code",
-							"Reason Code" });
+																													"Product Name", "Quantity",
+																													"Current Price", "Selling Price",
+																													"Deferred", "Disc Code",
+																													"Reason Code" });
 					returnedItemsTable = new JTable();
 					returnedItemsScrollPane.setViewportView(returnedItemsTable);
 					returnedItemsTable.setModel(returnedItemsTableModel);
@@ -465,13 +478,58 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				deletePaymentItemButton.setBackground(new java.awt.Color(244,244,244));
 				deletePaymentItemButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-
+						
 					}
 				});
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private AbstractAction getAddReturnItemAction() {
+		if(addReturnItemAction == null) {
+			addReturnItemAction = new AbstractAction("Add", new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					ReturnedItemsDialog returnedItemsDialog = new ReturnedItemsDialog(Main.getInst());
+					Invoice invoice = InvoiceService.getInvoiceByOr(returnedORTextField.getText());
+					returnedItemsDialog.setInvoice(invoice);
+					returnedItemsDialog.setInvoker(ReturnedPanel.this);
+					returnedItemsDialog.init();
+					returnedItemsDialog.setLocationRelativeTo(null);
+					returnedItemsDialog.setVisible(true);
+					returnedORTextField.setEnabled(false);
+				}
+			};
+		}
+		return addReturnItemAction;
+	}
+	
+	public void addToReturnItemTable(InvoiceItem invoiceItem, String reason){
+		System.out.println("adding item to return list");
+		DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
+//		"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" 
+		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		ReturnReason returnReason = ReturnReasonService.findReturnReasonByName(reason);
+		model.addRow(new String[]{invoiceItem.getProductCode(),
+								  product.getName(),
+								  invoiceItem.getQuantity().toString(),
+								  product.getSellPrice().toString(), 
+								  String.format("%.2f",invoiceItem.getSellPrice()),
+								  invoiceItem.getIsDeferred().toString(),
+								  invoiceItem.getDiscountCode().toString(),
+								  returnReason.getName().toString()});
+	}
+	
+	private AbstractAction getDeleteReturnItemAction() {
+		if(deleteReturnItemAction == null) {
+			deleteReturnItemAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
+				public void actionPerformed(ActionEvent evt) {
+					
+				}
+			};
+		}
+		return deleteReturnItemAction;
 	}
 
 }
