@@ -393,7 +393,7 @@ public class PartialDialog extends javax.swing.JDialog {
 		}
 	}
 	private void refreshItemTable(){
-		ResultSet rs = InvoiceItemService.fetchPartialInvoiceItem(invoice.getOrNo().toString());
+		ResultSet rs = InvoiceItemService.fetchInvoiceItem(invoice.getOrNo().toString());
 		TableUtility.fillTable(itemTable, rs, new String[]{"Product Code", "Product Name", "Quantity", "Current Price", "Selling Price", "Deferred", "Disc Code", "Extension"});
 	}
 	
