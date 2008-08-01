@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -68,6 +69,12 @@ public class LoginDialog extends javax.swing.JDialog {
 		super(frame);
 		initGUI();
 	}
+	
+	protected void processWindowEvent(WindowEvent e) {
+		 if(e.getID() == WindowEvent.WINDOW_CLOSING) {
+			System.exit(0);
+		 }
+	 }
 	
 	private void initGUI() {
 		try {
