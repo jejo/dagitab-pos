@@ -19,7 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import util.StorePropertyHandler;
 import util.TableUtility;
 import util.Validator;
 import bus.DiscountService;
@@ -27,6 +26,7 @@ import bus.ProductService;
 import domain.InvoiceItem;
 import domain.Product;
 import forms.invoice.InvoicePanel;
+import forms.returned.ReturnedPanel;
 
 
 /**
@@ -212,8 +212,23 @@ public class ProductDialog extends javax.swing.JDialog {
 										invoicePanel.editInvoiceItem(invoiceItem, action);
 										productDialog.setVisible(false);
 									}
-										
-									
+								}
+								
+								if(invoker instanceof ReturnedPanel) {
+									ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
+									if(action.equals("add")){
+										if(returnedPanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
+											returnedPanel.addInvoiceItem(invoiceItem);
+											productDialog.setVisible(false);
+										}
+										else{
+											JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+										}
+									}
+									else { //edit
+										returnedPanel.editInvoiceItem(invoiceItem, action);
+										productDialog.setVisible(false);
+									}
 								}
 							}
 						}
