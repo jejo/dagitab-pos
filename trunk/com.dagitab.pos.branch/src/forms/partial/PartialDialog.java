@@ -30,6 +30,7 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.PaymentItem;
 import forms.PaymentDialog;
+import forms.interfaces.Payments;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -43,7 +44,8 @@ import forms.PaymentDialog;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class PartialDialog extends javax.swing.JDialog {
+@SuppressWarnings("serial")
+public class PartialDialog extends javax.swing.JDialog implements Payments {
 
 	{
 		//Set Look & Feel

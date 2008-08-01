@@ -16,6 +16,7 @@ import bus.PaymentTypeService;
 import domain.PaymentItem;
 import forms.invoice.InvoicePanel;
 import forms.partial.PartialDialog;
+import forms.returned.ReturnedPanel;
 
 
 /**
@@ -246,6 +247,35 @@ public class PaymentDialog extends javax.swing.JDialog {
 								else{ //edit
 									partialDialog.editPaymentItem(paymentItem, actionProdCode);
 									paymentDialog.setVisible(false);
+								}
+							}
+							else if(invoker instanceof ReturnedPanel){
+								System.out.println("invoking instance of returned panel from payment dialog");
+								ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
+								if(actionProdCode.equals("add")){
+									if(!returnedPanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+										returnedPanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!returnedPanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+										returnedPanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!returnedPanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+										returnedPanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else if(!returnedPanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+										returnedPanel.addPaymentItem(paymentItem);
+										paymentDialog.setVisible(false);
+									}
+									else{
+										JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else{ //edit
+//									returnedPanel.editPaymentItem(paymentItem, actionProdCode);
+//									paymentDialog.setVisible(false);
 								}
 							}
 						}

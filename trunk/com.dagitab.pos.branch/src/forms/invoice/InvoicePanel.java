@@ -39,6 +39,7 @@ import forms.FastAddition;
 import forms.PackageItems;
 import forms.PaymentDialog;
 import forms.ProductDialog;
+import forms.interfaces.Payments;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
 /**
@@ -54,7 +55,7 @@ import forms.lookup.CustomerLookUp;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 @SuppressWarnings("serial")
-public class InvoicePanel extends javax.swing.JPanel {
+public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 
 	/**
 	* Auto-generated main method to display this 
