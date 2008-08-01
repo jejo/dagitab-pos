@@ -225,9 +225,8 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 						returnedPanel.addToReturnItemTable(invoiceItem, reason);
 					}
 				}
-};
+			};
 		}
 		return returnItemAction;
 	}
-
 }
