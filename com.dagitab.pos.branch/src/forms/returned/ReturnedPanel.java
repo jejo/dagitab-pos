@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -32,6 +33,8 @@ import domain.Invoice;
 import domain.InvoiceItem;
 import domain.Product;
 import domain.ReturnReason;
+import forms.ProductDialog;
+import forms.invoice.InvoicePanel;
 
 
 /**
@@ -91,7 +94,9 @@ public class ReturnedPanel extends javax.swing.JPanel {
 	private JButton editReplacedItemButton;
 	private JButton deleteReplacedItemButton;
 	private JScrollPane returnedItemsScrollPane;
-	private AbstractAction deleteReturnItemAction;
+	private AbstractAction editReturnedItemsAction;
+	private AbstractAction addReplacementItemAction;
+	private AbstractAction deleteReturnedItemsAction;
 	private AbstractAction addReturnItemAction;
 	private JLabel jLabel30;
 	private JButton editPaymentItemButton;
@@ -121,7 +126,7 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				deleteReturnItemButton.setPreferredSize(new java.awt.Dimension(79, 22));
 				deleteReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deleteReturnItemButton.setBackground(new java.awt.Color(244,244,244));
-				deleteReturnItemButton.setAction(getDeleteReturnItemAction());
+				deleteReturnItemButton.setAction(getDeleteReturnedItemsAction());
 			}
 			{
 				editReturnItemButton = new JButton();
@@ -193,6 +198,7 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				addReplacedItemButton.setPreferredSize(new java.awt.Dimension(60, 21));
 				addReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
+				addReplacedItemButton.setAction(getAddReplacementItemAction());
 				addReplacedItemButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 
@@ -414,9 +420,10 @@ public class ReturnedPanel extends javax.swing.JPanel {
 				editReplacedItemButton.setPreferredSize(new java.awt.Dimension(61, 21));
 				editReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
+				editReplacedItemButton.setAction(getEditReturnedItemsAction());
 				editReplacedItemButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-
+						
 					}
 				});
 			}
@@ -521,15 +528,100 @@ public class ReturnedPanel extends javax.swing.JPanel {
 								  returnReason.getName().toString()});
 	}
 	
-	private AbstractAction getDeleteReturnItemAction() {
-		if(deleteReturnItemAction == null) {
-			deleteReturnItemAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
+	private AbstractAction getDeleteReturnedItemsAction() {
+		if(deleteReturnedItemsAction == null) {
+			deleteReturnedItemsAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
 				public void actionPerformed(ActionEvent evt) {
+					int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete these selected items?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+					
+					if(confirm == 0){
+						DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
+						int[] selectedRows = returnedItemsTable.getSelectedRows();
+						for(int i = 0; i < selectedRows.length; i++){
+							model.removeRow(selectedRows[i]);
+						}
+					}
 					
 				}
 			};
 		}
-		return deleteReturnItemAction;
+		return deleteReturnedItemsAction;
+	}
+	
+	private AbstractAction getAddReplacementItemAction() {
+		if(addReplacementItemAction == null) {
+			addReplacementItemAction = new AbstractAction("Add", new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(), ReturnedPanel.this, "add");
+					dialog.clearProductInformation();
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+			};
+		}
+		return addReplacementItemAction;
+	}
+	
+	public void addInvoiceItem(InvoiceItem invoiceItem){
+		DefaultTableModel model = (DefaultTableModel) replacementItemTable.getModel();
+//		"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" 
+		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		model.addRow(new String[]{invoiceItem.getProductCode(),
+								  product.getName(),
+								  invoiceItem.getQuantity().toString(),
+								  product.getSellPrice().toString(),
+								  String.format("%.2f",invoiceItem.getSellPrice()),
+								  (invoiceItem.getIsDeferred()==1)?"Yes":"No",
+								  invoiceItem.getDiscountCode().toString(),
+								  "000"});
+	
+	}
+	
+	public Integer getInvoiceItemRow(String prodCode){
+		DefaultTableModel model = (DefaultTableModel) replacementItemTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			if(model.getValueAt(i, 0).toString().equals(prodCode)){
+				return i;
+			}
+		}
+		return null;
+	}
+	
+	public void editInvoiceItem(InvoiceItem invoiceItem, String productCode){
+		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		int index = getInvoiceItemRow(productCode);
+		DefaultTableModel model = (DefaultTableModel) replacementItemTable.getModel();
+		model.setValueAt(invoiceItem.getProductCode(), index, 0);
+		model.setValueAt(product.getName(), index, 1);
+		model.setValueAt(invoiceItem.getQuantity(), index, 2);
+		model.setValueAt(product.getSellPrice().toString(), index, 3);
+		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
+		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
+		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
+//		updateAmounts();
+	}
+	
+	private AbstractAction getEditReturnedItemsAction() {
+		if(editReturnedItemsAction == null) {
+			editReturnedItemsAction = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					String productCode = returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 0).toString();
+					String quantity = returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 2).toString();
+					int discountCode = Integer.parseInt( returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 6).toString());
+					String deferred = returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 5).toString();
+					
+					ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),ReturnedPanel.this,productCode);
+					dialog.setProductCode(productCode);
+					dialog.setQuantity(quantity);
+					dialog.setDiscount(discountCode);
+					dialog.setDeferredValue(deferred);
+					
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+			};
+		}
+		return editReturnedItemsAction;
 	}
 
 }
