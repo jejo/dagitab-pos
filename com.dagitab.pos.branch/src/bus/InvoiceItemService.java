@@ -98,4 +98,25 @@ public class InvoiceItemService {
 		return 0.0d;
 	}
 	
+	public static ResultSet getInvoiceItem(Long orNo, String productCode){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE FROM invoice_item, products_lu WHERE invoice_item.PROD_CODE = '"+productCode+"' AND invoice_item.OR_NO = "+orNo+" AND invoice_item.PROD_CODE = products_lu.PROD_CODE");
+		return rs;
+	}
+	
+	public static InvoiceItem getInvoiceItemObject(Long orNo, String productCode){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode() );
+		System.out.println("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode());
+		try {
+			if(rs.next()){
+				return toInvoiceItemObject(rs);
+			}
+			else{
+				return null;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

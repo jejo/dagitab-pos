@@ -26,9 +26,11 @@ import javax.swing.table.TableModel;
 
 import main.Main;
 import util.StringUtility;
+import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
 import bus.ProductService;
+import bus.ReturnItemService;
 import bus.ReturnReasonService;
 import bus.VatService;
 
@@ -39,6 +41,7 @@ import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
 import domain.Product;
+import domain.ReturnItem;
 import domain.ReturnReason;
 import forms.PaymentDialog;
 import forms.ProductDialog;
@@ -102,6 +105,10 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	private JButton editReplacedItemButton;
 	private JButton deleteReplacedItemButton;
 	private JScrollPane returnedItemsScrollPane;
+	private AbstractAction processTransactionAction;
+	private AbstractAction editReturnedItemsAction;
+	private AbstractAction resetAction;
+	private JButton resetButton;
 	private AbstractAction deletePaymentItemAction;
 	private AbstractAction editPaymentItemAction;
 	private AbstractAction addPaymentItemAction;
@@ -133,6 +140,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			this.setBackground(new java.awt.Color(255, 255, 255));
 			{
 				deleteReturnItemButton = new JButton();
+				this.add(getResetButton(), new AnchorConstraint(927, 424, 971, 309, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				this.add(deleteReturnItemButton, new AnchorConstraint(267, 765, 311, 673, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				deleteReturnItemButton.setText("Delete");
 				deleteReturnItemButton.setPreferredSize(new java.awt.Dimension(79, 22));
@@ -147,6 +155,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				editReturnItemButton.setPreferredSize(new java.awt.Dimension(61, 22));
 				editReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editReturnItemButton.setBackground(new java.awt.Color(244,244,244));
+				editReturnItemButton.setAction(getEditReturnedItemsAction());
 			}
 			{
 				addReturnItemButton = new JButton();
@@ -184,11 +193,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				processTransactionButton.setText("Process Transaction");
 				processTransactionButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 				processTransactionButton.setPreferredSize(new java.awt.Dimension(172, 28));
-				processTransactionButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-
-					}
-				});
+				processTransactionButton.setAction(getProcessTransactionAction());
 			}
 			{
 				addPaymentItemButton = new JButton();
@@ -496,10 +501,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				deleteReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deleteReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
 				deleteReplacedItemButton.setAction(getDeleteReplacementItemsAction());
-				deleteReplacedItemButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-					}
-				});
+				
 			}
 			{
 				returnedItemsScrollPane = new JScrollPane();
@@ -510,7 +512,12 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 					TableModel returnedItemsTableModel = new DefaultTableModel(new String[][] {}, new String[] {   "Product Code","Product Name","Quantity",
 																													"Current Price","Selling Price","Deferred",
 																													"Disc Code", "Reason Code" });
-					returnedItemsTable = new JTable();
+					returnedItemsTable = new JTable(){
+						@Override
+						public boolean isCellEditable(int row,int column) {
+							return false;
+						}
+					};
 					returnedItemsScrollPane.setViewportView(returnedItemsTable);
 					returnedItemsTable.setModel(returnedItemsTableModel);
 				}
@@ -560,6 +567,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 					Invoice invoice = InvoiceService.getInvoiceByOr(returnedORTextField.getText());
 					returnedItemsDialog.setInvoice(invoice);
 					returnedItemsDialog.setInvoker(ReturnedPanel.this);
+					returnedItemsDialog.setAction("add");
 					returnedItemsDialog.init();
 					returnedItemsDialog.setLocationRelativeTo(null);
 					returnedItemsDialog.setVisible(true);
@@ -584,6 +592,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 								  invoiceItem.getIsDeferred().toString(),
 								  invoiceItem.getDiscountCode().toString(),
 								  returnReason.getName().toString()});
+		updateAmounts();
 	}
 	
 	private AbstractAction getDeleteReturnedItemsAction() {
@@ -600,6 +609,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 						}
 					}
 					
+					updateAmounts();
 				}
 			};
 		}
@@ -631,7 +641,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 								  String.format("%.2f",invoiceItem.getSellPrice()),
 								  (invoiceItem.getIsDeferred()==1)?"Yes":"No",
 								  invoiceItem.getDiscountCode().toString(),
-								  "000"});
+								  new Double(invoiceItem.getQuantity()* product.getSellPrice()).toString()});
+		updateAmounts();
 	}
 	
 	public Integer getInvoiceItemRow(String prodCode){
@@ -655,6 +666,32 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
+		
+		updateAmounts();
+	}
+	public Integer getReturnedItemRow(String prodCode){
+		DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
+		for(int i = 0; i<model.getRowCount(); i++){
+			if(model.getValueAt(i, 0).toString().equals(prodCode)){
+				return i;
+			}
+		}
+		return null;
+	}
+	public void editReturnedItem(InvoiceItem invoiceItem, String reason, String productCode){
+		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		int index = getReturnedItemRow(productCode);
+		System.out.println("Index: "+index);
+		DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
+		model.setValueAt(invoiceItem.getProductCode(), index, 0);
+		model.setValueAt(product.getName(), index, 1);
+		model.setValueAt(invoiceItem.getQuantity(), index, 2);
+		model.setValueAt(product.getSellPrice().toString(), index, 3);
+		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
+		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
+		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
+		model.setValueAt(reason, index, 6);
+		updateAmounts();
 	}
 	
 	private AbstractAction getEditReplacementItemsAction() {
@@ -696,7 +733,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 							int index = getReplacementItemIndex(s);
 							model.removeRow(index);
 						}
+						updateAmounts();
 					}
+					
 				}
 			};
 		}
@@ -886,6 +925,228 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			};
 		}
 		return deletePaymentItemAction;
+	}
+	
+	private JButton getResetButton() {
+		if(resetButton == null) {
+			resetButton = new JButton();
+			resetButton.setText("Reset All");
+			resetButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png")));
+			resetButton.setPreferredSize(new java.awt.Dimension(99, 22));
+			resetButton.setAction(getResetAction());
+		}
+		return resetButton;
+	}
+	
+	private AbstractAction getResetAction() {
+		if(resetAction == null) {
+			resetAction = new AbstractAction("Reset All", new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					reset();
+				}
+			};
+		}
+		return resetAction;
+	}
+	
+	private void  reset(){
+		//activate and clear returnor textfield
+		returnedORTextField.setText("");
+		returnedORTextField.setEnabled(true);
+		
+		//clear return items
+		TableModel returnedItemsTableModel = new DefaultTableModel(new String[][] {}, new String[] {   "Product Code","Product Name","Quantity",
+				"Current Price","Selling Price","Deferred",
+				"Disc Code", "Reason Code" });
+		returnedItemsTable.setModel(returnedItemsTableModel);
+		
+		//clear replacement items
+		TableModel replacementTableModel = new DefaultTableModel(
+				new String[][] {},
+				new String[] { "Product Code","Product Name", "Quantity","Current Price", "Selling Price"," Deferred", "Disc Code","Extension" });
+		replacementItemsTable.setModel(replacementTableModel);
+		
+		//clear payment items
+		TableModel paymentTableModel = new DefaultTableModel(
+				new String[][] {},
+				new String[] { "Payment Code","Payment Type", "Amount","Credit Card Type","Credit Card No", "Bank Check No","Gift Certificate Number" });
+		paymentTable.setModel(paymentTableModel);
+		
+		//clear invoice no field
+		invoiceNoTextField.setText("");
+		
+		
+		//reset OR field
+		orTextField.setPreferredSize(new java.awt.Dimension(126, 21));
+		String nextOR = InvoiceService.getNextORNumber();
+		if(nextOR == null){
+			nextOR = "1";
+		}
+		orTextField.setText(StringUtility.zeroFill(nextOR, 10));
+		
+		updateAmounts();
+		updatePaymentAmounts();
+		
+	}
+	
+	private void updateAmounts(){
+		DefaultTableModel returnedItemsTableModel = (DefaultTableModel) returnedItemsTable.getModel();
+		Double returnedAmounts = 0.0d;
+		for(int i = 0; i<returnedItemsTableModel.getRowCount(); i++){
+			int quantity =  Integer.parseInt(returnedItemsTableModel.getValueAt(i,2).toString());
+			double sellingPrice = Double.parseDouble(returnedItemsTableModel.getValueAt(i, 4).toString());
+			returnedAmounts -= (quantity*sellingPrice);
+		}
+		
+		DefaultTableModel replacementItemsTableModel = (DefaultTableModel) replacementItemsTable.getModel();
+		Double replacedAmounts = 0.0d;
+		for(int i = 0; i<replacementItemsTableModel.getRowCount(); i++){
+			int quantity =  Integer.parseInt(replacementItemsTableModel.getValueAt(i,2).toString());
+			double sellingPrice = Double.parseDouble(replacementItemsTableModel.getValueAt(i, 4).toString());
+			replacedAmounts += (quantity*sellingPrice);
+		}
+		
+		Double amount = replacedAmounts + returnedAmounts;
+		amountLabel.setText(String.format("%.2f", amount));
+		
+		
+		Double vatRate = VatService.getVatRate();
+		double subTotal = amount/vatRate;
+		subTotalTextField.setText(String.format("%.2f", subTotal));
+		vatAmountTextField.setText(String.format("%.2f", (amount - subTotal)));
+	}
+	
+	private AbstractAction getEditReturnedItemsAction() {
+		if(editReturnedItemsAction == null) {
+			editReturnedItemsAction = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					ReturnedItemsDialog returnedItemsDialog = new ReturnedItemsDialog(Main.getInst());
+					Invoice invoice = InvoiceService.getInvoiceByOr(returnedORTextField.getText());
+					String productCode = returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 0).toString();
+					returnedItemsDialog.setInvoice(invoice);
+					returnedItemsDialog.setInvoker(ReturnedPanel.this);
+					returnedItemsDialog.setAction(productCode);
+					returnedItemsDialog.setReturnReason(returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 7).toString());
+					returnedItemsDialog.setReturnedQuantity(returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 2).toString());
+					returnedItemsDialog.init();
+					returnedItemsDialog.setLocationRelativeTo(null);
+					returnedItemsDialog.setVisible(true);
+					returnedORTextField.setEnabled(false);
+				}
+			};
+		}
+		return editReturnedItemsAction;
+	}
+	
+	private AbstractAction getProcessTransactionAction() {
+		if(processTransactionAction == null) {
+			processTransactionAction = new AbstractAction("Process Transaction", new ImageIcon(getClass().getClassLoader().getResource("images/process.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					System.out.println("processing invoice transaction...");
+					int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+					if(confirm == 0){
+						if(hasEnoughPayment()){
+							saveTransaction();
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "You have an insufficient payment amount.", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
+						
+					}
+				}
+			};
+		}
+		return processTransactionAction;
+	}
+	
+	public void saveTransaction(){
+		
+		//Save new invoice entry
+		Invoice invoice = new Invoice();
+		invoice.setOrNo(Long.parseLong(orTextField.getText()));
+		//TODO: validate numeric fields (use Apache commons)
+		if(!invoiceNoTextField.getText().trim().equals("")){
+			invoice.setInvoiceNo(Long.parseLong(invoiceNoTextField.getText()));
+		}
+		invoice.setIsPartial(0);
+		invoice.setEncoderCode(Main.getClerkCode());
+		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+		invoice.setIsReturn(1);
+		InvoiceService.insert(invoice);
+		
+		//save returned items entries
+		DefaultTableModel returnItemsTableModel = (DefaultTableModel) returnedItemsTable.getModel();
+		for(int i = 0; i<returnItemsTableModel.getRowCount(); i++){
+			
+			ReturnItem returnItem = new ReturnItem();
+			returnItem.setOrNo(Integer.parseInt(orTextField.getText()));
+			returnItem.setProductCode(returnItemsTableModel.getValueAt(i, 0).toString());
+			returnItem.setQuantity(Integer.parseInt(returnItemsTableModel.getValueAt(i, 2).toString()));
+			returnItem.setSellPrice(Double.parseDouble(returnItemsTableModel.getValueAt(i, 4).toString()));
+			returnItem.setStoreCode(Integer.parseInt(Main.getStoreCode()));
+			InvoiceItem invoiceItem = InvoiceItemService.getInvoiceItemObject(Long.parseLong(returnedORTextField.getText()), returnItemsTableModel.getValueAt(i,0).toString());
+			returnItem.setCost(invoiceItem.getCost());
+			ReturnReason returnReason = ReturnReasonService.findReturnReasonByName(returnItemsTableModel.getValueAt(i, 7).toString());
+			returnItem.setReturnCode(returnReason.getReturnCode());
+			
+			ReturnItemService.insert(returnItem);
+		}
+		
+		
+		//save replacement items entries
+		DefaultTableModel replacementItemsTableModel = (DefaultTableModel) replacementItemsTable.getModel();
+		for(int i = 0; i<replacementItemsTableModel.getRowCount(); i++){
+			InvoiceItem invoiceItem = new InvoiceItem();
+			invoiceItem.setDiscountCode(Integer.parseInt(replacementItemsTableModel.getValueAt(i, 6).toString()));
+			if(replacementItemsTableModel.getValueAt(i, 5).toString().equals("Yes")){
+				invoiceItem.setIsDeferred(1);
+			}
+			else{
+				invoiceItem.setIsDeferred(0);
+			}
+			invoiceItem.setOrNo(Long.parseLong(orTextField.getText()));
+			invoiceItem.setProductCode(replacementItemsTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setQuantity(Integer.parseInt(replacementItemsTableModel.getValueAt(i, 2).toString()));
+			invoiceItem.setSellPrice(Double.parseDouble(replacementItemsTableModel.getValueAt(i, 4).toString()));
+			invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			Product product = ProductService.getProductById(replacementItemsTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setCost(product.getCost());
+			InvoiceItemService.insert(invoiceItem);
+		}
+		
+		//save payment_item entries
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			PaymentItem paymentItem = new PaymentItem();
+			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
+			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
+			paymentItem.setCardType(paymentTable.getValueAt(i, 3).toString());
+			paymentItem.setCheckNo(paymentTable.getValueAt(i, 5).toString());
+			paymentItem.setGcNo(paymentTable.getValueAt(i, 6).toString());
+			paymentItem.setOrNo(Long.parseLong(orTextField.getText()));
+			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
+			PaymentItemService.insert(paymentItem);
+		}
+		
+		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+		reset();
+		//receipts
+	}
+	
+	private boolean hasEnoughPayment(){
+		//payment item data
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		Double paymentAmount = 0d;
+		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			paymentAmount += Double.parseDouble(paymentTable.getValueAt(i, 2).toString());
+		}
+		Double amount = Double.parseDouble(amountLabel.getText());
+		if(amount > paymentAmount){
+			return false;
+		}
+		return true;
+		
 	}
 
 }

@@ -57,8 +57,9 @@ public class InvoiceService {
 	}
 	
 	public static int insert(Invoice invoice){
-		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
-		String[] columnValues = new String[]{invoice.getInvoiceNo().toString(), 
+		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
+		String[] columnValues = new String[]{invoice.getOrNo().toString(),
+											 invoice.getInvoiceNo().toString(), 
 											 invoice.getEncoderCode().toString(), 
 											 invoice.getAssistantCode().toString(), 
 											 invoice.getCustomerNo().toString(), 
