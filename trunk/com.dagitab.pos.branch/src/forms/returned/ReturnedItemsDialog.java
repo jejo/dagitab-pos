@@ -2,14 +2,15 @@ package forms.returned;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.AbstractAction;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -17,7 +18,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import util.TableUtility;
-
 import bus.InvoiceItemService;
 import bus.ReturnReasonService;
 
@@ -27,7 +27,6 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.ReturnReason;
-
 import forms.MainWindow;
 
 /**
@@ -60,6 +59,7 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 	private JLabel itemsLabel;
 	private Invoice invoice;
 	private Object invoker;
+	private String action;
 	
 
 	/**
@@ -74,12 +74,25 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 		initGUI();
 	}
 	
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+	
 	public void setInvoice(Invoice invoice){
 		this.invoice = invoice;
 	}
 	
 	public void setInvoker(Object invoker){
 		this.invoker = invoker;
+	}
+	
+	public void setReturnReason(String reason){
+		returnReasonComboBox.setSelectedItem(reason);
+	}
+	
+	public void setReturnedQuantity(String quantity){
+		quantityTextField.setText(quantity);
 	}
 	
 	public void init(){
@@ -91,7 +104,12 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 		}
 		ComboBoxModel returnReasonModel = new DefaultComboBoxModel(returnReasons);
 		returnReasonComboBox.setModel(returnReasonModel);
-		TableUtility.fillTable(itemTable, InvoiceItemService.fetchInvoiceItem(invoice.getOrNo().toString()), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"} );
+		if(action.equals("add")){
+			TableUtility.fillTable(itemTable, InvoiceItemService.fetchInvoiceItem(invoice.getOrNo().toString()), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"} );
+		}
+		else{
+			TableUtility.fillTable(itemTable, InvoiceItemService.getInvoiceItem(invoice.getOrNo(), action), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"});
+		}
 	}
 	
 	private void initGUI() {
@@ -214,19 +232,42 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 			returnItemAction = new AbstractAction("Return Item", null) {
 				public void actionPerformed(ActionEvent evt) {
 					if(invoker instanceof ReturnedPanel){
-						ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
-						String reason = returnReasonComboBox.getSelectedItem().toString();
-						InvoiceItem invoiceItem = new InvoiceItem();
-						invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
-						invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
-						invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
-						invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
-						invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
-						returnedPanel.addToReturnItemTable(invoiceItem, reason);
+						
+						if(action.equals("add")){
+							//TODO: validate if theres the same return item already
+							ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
+							String reason = returnReasonComboBox.getSelectedItem().toString();
+							InvoiceItem invoiceItem = new InvoiceItem();
+							invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
+							invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
+							invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
+							invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
+							invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
+							if(returnedPanel.getReturnedItemRow(invoiceItem.getProductCode()) == null){
+								returnedPanel.addToReturnItemTable(invoiceItem, reason);
+							}
+							else{
+								JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+							}
+							
+						}
+						else{
+							ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
+							String reason = returnReasonComboBox.getSelectedItem().toString();
+							InvoiceItem invoiceItem = new InvoiceItem();
+							invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
+							invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
+							invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
+							invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
+							invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
+							System.out.println("Reason: "+reason+ " Product Code: "+ action);
+							returnedPanel.editReturnedItem(invoiceItem, reason, action);
+						}
 					}
 				}
 			};
 		}
 		return returnItemAction;
 	}
+
 }

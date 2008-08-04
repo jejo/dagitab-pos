@@ -676,6 +676,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	public void removeInvoiceItem(){
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		model.removeRow(itemTable.getSelectedRow());
+		updateAmounts();
 		updatePaymentAmounts();
 	}
 	
@@ -835,6 +836,12 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		salesSpecialistTxt.setText("");
 		customerTxt.setText("");
 		
+		//reset OR no
+		String nextOR = InvoiceService.getNextORNumber();
+		if(nextOR == null){
+			nextOR = "1";
+		}
+		
 		//update amounts
 		updateAmounts();
 	}
@@ -859,8 +866,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	}
 	
 	public void saveTransaction(){
-		Invoice invoice = new Invoice();
 		
+		Invoice invoice = new Invoice();
+		invoice.setOrNo(Long.parseLong(orNoTxt.getText()));
 		//TODO: validate numeric fields (use Apache commons)
 		if(!invoiceTxt.getText().trim().equals("")){
 			invoice.setInvoiceNo(Long.parseLong(invoiceTxt.getText()));
