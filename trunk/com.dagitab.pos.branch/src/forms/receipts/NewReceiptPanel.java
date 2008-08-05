@@ -1,4 +1,4 @@
-package print;
+package forms.receipts;
 
 import java.awt.Font;
 import java.awt.Graphics;

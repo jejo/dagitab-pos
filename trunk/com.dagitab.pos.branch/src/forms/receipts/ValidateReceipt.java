@@ -1,4 +1,4 @@
-package print;
+package forms.receipts;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -7,6 +7,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+
+import util.PrintUtilities;
 
 import main.DBManager;
 
@@ -27,11 +29,12 @@ import forms.InvoiceViewer;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class ValidateReceipt extends javax.swing.JDialog {
-	private JScrollPane jScrollPane1;
-	private JButton jButton1;
-	private JLabel jLabel1;
-	private NewReceiptPanel panel;
+	private JScrollPane receiptPanelScrollPane;
+	private JButton printButton;
+	private JLabel receiptLabel;
+	private NewReceiptPanel receiptPanel;
 
 	{
 		//Set Look & Feel
@@ -105,13 +108,13 @@ public class ValidateReceipt extends javax.swing.JDialog {
 	
 	public ValidateReceipt(JFrame frame, Vector<String> headerData, Vector<Vector<String>> itemData,Vector<Vector<String>> paymentData, String vatAmount, String changeAmount, DBManager db, String status ){
 		super(frame);
-		panel = new NewReceiptPanel(headerData, itemData, paymentData, vatAmount, changeAmount, db, status);
+		receiptPanel = new NewReceiptPanel(headerData, itemData, paymentData, vatAmount, changeAmount, db, status);
 		initGUI();
 	}
 	
 	public ValidateReceipt(InvoiceViewer viewer, Vector<String> headerData, Vector<Vector<String>> itemData, Vector<Vector<String>> paymentData, String vatAmount, String changeAmount, DBManager db, String status) {
 		super(viewer);
-		panel = new NewReceiptPanel(headerData, itemData, paymentData, vatAmount, changeAmount, db, status);
+		receiptPanel = new NewReceiptPanel(headerData, itemData, paymentData, vatAmount, changeAmount, db, status);
 		initGUI();
 	}
 
@@ -123,28 +126,28 @@ public class ValidateReceipt extends javax.swing.JDialog {
 			this.setTitle("Validate Receipt");
 			this.setModal(true);
 			{
-				jButton1 = new JButton();
-				getContentPane().add(jButton1, new AnchorConstraint(907, 660, 960, 318, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton1.setText("Print");
-				jButton1.setPreferredSize(new java.awt.Dimension(98, 28));
-				jButton1.addActionListener(new ActionListener() {
+				printButton = new JButton();
+				getContentPane().add(printButton, new AnchorConstraint(907, 660, 960, 318, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				printButton.setText("Print");
+				printButton.setPreferredSize(new java.awt.Dimension(98, 28));
+				printButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						PrintUtilities.printComponent(panel);
+						PrintUtilities.printComponent(receiptPanel);
 					}
 				});
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(27, 806, 80, 99, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Validate Receipt");
-				jLabel1.setPreferredSize(new java.awt.Dimension(203, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
+				receiptLabel = new JLabel();
+				getContentPane().add(receiptLabel, new AnchorConstraint(27, 806, 80, 99, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				receiptLabel.setText("Validate Receipt");
+				receiptLabel.setPreferredSize(new java.awt.Dimension(203, 28));
+				receiptLabel.setFont(new java.awt.Font("Tahoma",1,18));
 			}
 			{
-				jScrollPane1 = new JScrollPane();
-				getContentPane().add(jScrollPane1, new AnchorConstraint(80, 879, 867, 99, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jScrollPane1.setPreferredSize(new java.awt.Dimension(212, 413));
-				jScrollPane1.setViewportView(panel);
+				receiptPanelScrollPane = new JScrollPane();
+				getContentPane().add(receiptPanelScrollPane, new AnchorConstraint(80, 879, 867, 99, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				receiptPanelScrollPane.setPreferredSize(new java.awt.Dimension(212, 413));
+				receiptPanelScrollPane.setViewportView(receiptPanel);
 			}
 			this.setSize(296, 559);
 		} catch (Exception e) {

@@ -1,6 +1,9 @@
-package print;
+package util;
 
 import javax.swing.*;
+
+import print.ExitListener;
+
 import java.awt.*;
 
 /** A few utilities that simplify using windows in Swing.

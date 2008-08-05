@@ -21,10 +21,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
-import print.ValidateReceipt;
 import util.ServerPropertyHandler;
 
 import com.cloudgarden.layout.AnchorConstraint;
+
+import forms.receipts.ValidateReceipt;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
