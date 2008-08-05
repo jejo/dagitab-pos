@@ -29,4 +29,18 @@ public class TableUtility {
 		}
 		table.setModel(aModel);
 	}
+	
+	public static void fillTable(JTable table, Object[][] objects, String[] tableColumnsName){
+		DefaultTableModel aModel = new DefaultTableModel();
+		aModel.setColumnIdentifiers(tableColumnsName);
+		try 
+		{
+			for(Object[] row : objects) {
+				aModel.addRow(row);
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		table.setModel(aModel);
+	}
 }
