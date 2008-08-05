@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
+import java.util.Date;
+
 import javax.swing.AbstractAction;
 
 import javax.swing.ImageIcon;
@@ -40,7 +42,9 @@ import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
 import domain.Product;
+import domain.Transaction;
 import forms.FastAddition;
+import forms.MainWindow;
 import forms.PackageItems;
 import forms.PaymentDialog;
 import forms.ProductDialog;
@@ -127,11 +131,17 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	private JButton jButton9;
 	private JLabel jLabel16;
 	private JButton jButton31;
+	private MainWindow mainWindow;
 	
 	public InvoicePanel() {
 		super();
 		initGUI();
-		
+	}
+	
+	public InvoicePanel(MainWindow mainWindow) {
+		super();
+		initGUI();
+		this.mainWindow = mainWindow;
 	}
 	
 	private void initGUI() {
@@ -628,10 +638,12 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				jButton31.setText("Pause Transaction");
 				jButton31.setPreferredSize(new java.awt.Dimension(147, 21));
 				jButton31.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/pause.png")));
-				jButton31.setEnabled(false);
+				jButton31.setEnabled(true);
 				jButton31.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						
+						Transaction pendingTransaction = savePendingTransaction();
+						mainWindow.getPendingTransactions().add(pendingTransaction);
+						clearInfoValues();	//reset all
 					}
 				});
 				
@@ -643,7 +655,73 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			e.printStackTrace();
 		}
 	}
-	
+	public Transaction savePendingTransaction() {
+		Transaction pendingTransaction = new Transaction();
+		
+		Invoice invoice = new Invoice();
+		invoice.setOrNo(Long.parseLong(orNoTxt.getText()));
+		//TODO: validate numeric fields (use Apache commons)
+		if(!invoiceTxt.getText().trim().equals("")){
+			invoice.setInvoiceNo(Long.parseLong(invoiceTxt.getText()));
+		}
+		if(!salesSpecialistTxt.getText().trim().equals("")){
+			invoice.setAssistantCode(Integer.parseInt(salesSpecialistTxt.getText()));
+		}
+		if(!customerTxt.getText().trim().equals("")){
+			invoice.setCustomerNo(Integer.parseInt(customerTxt.getText()));
+		}
+		if(partialChk.isSelected()){
+			invoice.setIsPartial(1);
+		}
+		else{
+			invoice.setIsPartial(0);
+		}
+		invoice.setEncoderCode(Main.getClerkCode());
+		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+		
+		//InvoiceService.insert(invoice);
+		pendingTransaction.setInvoice(invoice);
+		
+		//invoice item data
+		DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
+		for(int i = 0; i<itemTableModel.getRowCount(); i++){
+			InvoiceItem invoiceItem = new InvoiceItem();
+			invoiceItem.setDiscountCode(Integer.parseInt(itemTableModel.getValueAt(i, 6).toString()));
+			if(itemTableModel.getValueAt(i, 5).toString().equals("Yes")){
+				invoiceItem.setIsDeferred(1);
+			}
+			else{
+				invoiceItem.setIsDeferred(0);
+			}
+			invoiceItem.setOrNo(Long.parseLong(orNoTxt.getText()));
+			invoiceItem.setProductCode(itemTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setQuantity(Integer.parseInt(itemTableModel.getValueAt(i, 2).toString()));
+			invoiceItem.setSellPrice(Double.parseDouble(itemTableModel.getValueAt(i, 4).toString()));
+			invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			Product product = ProductService.getProductById(itemTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setCost(product.getCost());
+			//InvoiceItemService.insert(invoiceItem);
+			pendingTransaction.getInvoiceItems().add(invoiceItem);
+		}
+		
+		//payment item data
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			PaymentItem paymentItem = new PaymentItem();
+			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
+			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
+			paymentItem.setCardType(paymentTable.getValueAt(i, 3).toString());
+			paymentItem.setCheckNo(paymentTable.getValueAt(i, 5).toString());
+			paymentItem.setGcNo(paymentTable.getValueAt(i, 6).toString());
+			paymentItem.setOrNo(Long.parseLong(orNoTxt.getText()));
+			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
+			paymentItem.setPaymentType(paymentTable.getValueAt(i, 1).toString());
+			//PaymentItemService.insert(paymentItem);
+			pendingTransaction.getPaymentItems().add(paymentItem);
+		}
+		return pendingTransaction;
+	}
 
 	public void setAssistantID(String id){
 		salesSpecialistTxt.setText(StringUtility.zeroFill(id, 3));
@@ -961,6 +1039,44 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			};
 		}
 		return addInvoiceItemAction;
+	}
+	
+	
+	public void resumeTransaction(Transaction transaction) {
+		orNoTxt.setText(transaction.getInvoice().getOrNo().toString());
+		invoiceTxt.setText(transaction.getInvoice().getInvoiceNo().toString());
+		salesSpecialistTxt.setText(transaction.getInvoice().getAssistantCode().toString());
+		customerTxt.setText(transaction.getInvoice().getCustomerNo().toString());
+		partialChk.setSelected(transaction.getInvoice().getIsPartial() == 1);
+		Main.setClerkCode(transaction.getInvoice().getEncoderCode());
+		
+		DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
+		for(InvoiceItem invoiceItem : transaction.getInvoiceItems()) {
+			Object[] invoiceItemData = new Object[8];
+			Product product = ProductService.getProductById(invoiceItem.getProductCode());
+			invoiceItemData[0] = invoiceItem.getProductCode();
+			invoiceItemData[1] = product.getName();
+			invoiceItemData[2] = invoiceItem.getQuantity();
+			invoiceItemData[3] = product.getSellPrice();
+			invoiceItemData[4] = invoiceItem.getSellPrice();
+			invoiceItemData[5] = (invoiceItem.getIsDeferred() == 1)?"Yes":"No";
+			invoiceItemData[6] = invoiceItem.getDiscountCode();
+			invoiceItemData[7] = invoiceItem.getQuantity() * invoiceItem.getSellPrice();
+			itemTableModel.addRow(invoiceItemData);
+		}
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		for(PaymentItem paymentItem : transaction.getPaymentItems()) {
+			Object[] paymentItemData = new Object[7];
+			paymentItemData[0] = paymentItem.getPaymentCode();
+			paymentItemData[1] = paymentItem.getPaymentType();
+			paymentItemData[2] = paymentItem.getAmount();
+			paymentItemData[3] = paymentItem.getCardNo();
+			paymentItemData[4] = paymentItem.getCardType();
+			paymentItemData[5] = paymentItem.getCheckNo();
+			paymentItemData[6] = paymentItem.getGcNo();
+			paymentTableModel.addRow(paymentItemData);
+		}
+		updateAmounts();
 	}
 	
 	private AbstractAction getEditItemAction1() {

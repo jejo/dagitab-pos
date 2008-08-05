@@ -8,6 +8,7 @@ public class PaymentItem {
 	private String cardNo;
 	private String gcNo;
 	private String checkNo;
+	private String paymentType;
 	private Integer storeNo;
 	
 	public Double getAmount() {
@@ -57,5 +58,11 @@ public class PaymentItem {
 	}
 	public void setStoreNo(Integer storeNo) {
 		this.storeNo = storeNo;
+	}
+	public String getPaymentType() {
+		return paymentType;
+	}
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 }

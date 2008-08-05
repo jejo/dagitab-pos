@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -37,6 +38,7 @@ import com.cloudgarden.layout.AnchorLayout;
 
 import connection.DataUtil;
 import connection.LogHandler;
+import domain.Transaction;
 import forms.deferred.DeferredPanel;
 import forms.invoice.InvoicePanel;
 import forms.partial.PartialPanel;
@@ -141,8 +143,7 @@ public class MainWindow extends javax.swing.JFrame {
 	private LogHandler cachewriter;
 
 	private Vector<PendingTransactionData> pausedData;
-
-	
+	private ArrayList<Transaction> pendingTransactions;
 
 	/**
 	 * Auto-generated main method to display this JFrame
@@ -179,7 +180,7 @@ public class MainWindow extends javax.swing.JFrame {
 		returnedItems = new Vector<Vector<String>>();
 		replacedItems = new Vector<Vector<String>>();
 		replacedPaymentItems = new Vector<Vector<String>>();
-
+		pendingTransactions = new ArrayList<Transaction>();
 	}
 
 	private void initGUI() {
@@ -281,11 +282,13 @@ public class MainWindow extends javax.swing.JFrame {
 										.refreshDeferredTable();
 							} else if (jTabbedPane1.getSelectedIndex() == 3) { // returned
 							} else if (jTabbedPane1.getSelectedIndex() == 4) { // pending
+								((PendingPanel) pendingPanel)
+										.refreshPendingTable();
 							}
 						}
 					});
 					{
-						invoicePanel = new InvoicePanel();
+						invoicePanel = new InvoicePanel(this);
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/add.png"));
 						jTabbedPane1.addTab("Invoice", icon, invoicePanel, null);
 
@@ -307,7 +310,7 @@ public class MainWindow extends javax.swing.JFrame {
 						jTabbedPane1.addTab("Returned Items", icon,returnedPanel, null);
 					}
 					{
-						pendingPanel = new PendingPanel();
+						pendingPanel = new PendingPanel(this, (InvoicePanel) invoicePanel);
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/pausepic.png"));
 						 jTabbedPane1.addTab("Pending Transactions",icon,pendingPanel,null);
 
@@ -1495,6 +1498,22 @@ public class MainWindow extends javax.swing.JFrame {
 				});
 
 		updateAmounts();
+	}
+
+	public ArrayList<Transaction> getPendingTransactions() {
+		return pendingTransactions;
+	}
+
+	public void setPendingTransactions(ArrayList<Transaction> pendingTransactions) {
+		this.pendingTransactions = pendingTransactions;
+	}
+
+	public JTabbedPane getJTabbedPane1() {
+		return jTabbedPane1;
+	}
+
+	public void setJTabbedPane1(JTabbedPane tabbedPane1) {
+		jTabbedPane1 = tabbedPane1;
 	}
 	
 	
