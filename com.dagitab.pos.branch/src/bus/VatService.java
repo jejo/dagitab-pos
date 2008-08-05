@@ -20,7 +20,7 @@ public class VatService {
 		return 0;
 	}
 	
-	public static double getVatAmount(){
+	public static Double getVatAmount(){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT VAT from global");
 		try {
 			if(rs.next()){
@@ -30,6 +30,6 @@ public class VatService {
 		
 			e.printStackTrace();
 		}
-		return 0;
+		return null;
 	}
 }

@@ -87,7 +87,29 @@ public class InvoiceService {
 		return result;
 	}
 	
-	
+	public static String getTransactionDateOfOR(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT DATE(TRANS_DT) FROM invoice WHERE OR_NO =  "+orNo+" AND STORE_CODE = "+Main.getStoreCode());
+		try {
+			if(rs.next()){
+				return rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	public static String getTransactionTimeOfOR(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT TIME(TRANS_DT) FROM invoice WHERE OR_NO =  "+orNo+" AND STORE_CODE = "+Main.getStoreCode());
+		try {
+			if(rs.next()){
+				return rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	
 
