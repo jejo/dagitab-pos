@@ -2,6 +2,10 @@ package print;
 
 import java.awt.*;
 import javax.swing.*;
+
+import util.PrintUtilities;
+import util.WindowUtilities;
+
 import java.awt.event.*;
 
 /** An example of a printable window in Java 1.2. The key point

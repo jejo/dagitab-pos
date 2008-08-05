@@ -31,7 +31,6 @@ import javax.swing.table.TableModel;
 
 import main.Main;
 import main.PendingTransactionData;
-import print.ValidateReceipt;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -42,6 +41,7 @@ import forms.deferred.DeferredPanel;
 import forms.invoice.InvoicePanel;
 import forms.partial.PartialPanel;
 import forms.pending.PendingPanel;
+import forms.receipts.ValidateReceipt;
 import forms.returned.ReturnedPanel;
 
 /**
@@ -309,8 +309,7 @@ public class MainWindow extends javax.swing.JFrame {
 					{
 						pendingPanel = new PendingPanel();
 						ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/pausepic.png"));
-						// jTabbedPane1.addTab("Pending
-						// Transactions",icon,pendingPanel,null);
+						 jTabbedPane1.addTab("Pending Transactions",icon,pendingPanel,null);
 
 					}
 				}
