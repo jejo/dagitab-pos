@@ -2,6 +2,8 @@ package forms.invoice;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import javax.swing.AbstractAction;
 
@@ -45,6 +47,7 @@ import forms.ProductDialog;
 import forms.interfaces.Payments;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
+import forms.returned.ReturnedPanel;
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -80,6 +83,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	private JLabel jLabel15;
 	private JButton addInvoiceItemButton;
 	private JScrollPane paymentTableScrollPane;
+	private AbstractAction deletePaymentItemAction;
+	private AbstractAction editPaymentItemAction;
+	private AbstractAction addPaymentItemAction;
+	private AbstractAction deleteInvoiceItemAction;
+	private AbstractAction editItemAction1;
 	private AbstractAction addInvoiceItemAction;
 	private JLabel partialLabel;
 	private JTable paymentTable;
@@ -111,11 +119,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	private JLabel jLabel17;
 	private JTextField customerTxt;
 	private JButton jButton10;
-	private JButton jButton4;
-	private JButton jButton5;
-	private JButton jButton6;
-	private JButton jButton7;
-	private JButton jButton8;
+	private JButton editInvoiceItemButton;
+	private JButton deleteInvoiceItemButton;
+	private JButton addPaymentItemButton;
+	private JButton editPaymentItemButton;
+	private JButton deletePaymentItemButton;
 	private JButton jButton9;
 	private JLabel jLabel16;
 	private JButton jButton31;
@@ -239,6 +247,35 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 							return false;
 						}
 					};
+
+					paymentTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "paymentTable");
+					paymentTable.getActionMap().put("paymentTable",getDeletePaymentItemAction() );
+					paymentTable.addMouseListener(new MouseAdapter(){
+						 public void mouseClicked(MouseEvent e){
+							 if (e.getClickCount() == 2){
+							 String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+								String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+								String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+								String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+								String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+								String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+								String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+								
+								
+								PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,paymentCode);
+								
+								dialog.setAmount(paymentAmount);
+								dialog.setPaymentType(paymentType);
+								dialog.setCreditType(creditCardType);
+								dialog.setCreditCard(creditCardNum);
+								dialog.setBankCheck(bankCheckNum);
+								dialog.setGiftCheck(gcNum);
+								
+								dialog.setLocationRelativeTo(null);
+								dialog.setVisible(true);
+					      }
+						 }
+					});
 					paymentTableScrollPane.setViewportView(paymentTable);
 					paymentTable.setModel(jTable2Model);
 				}
@@ -252,7 +289,41 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 					TableModel jTable1Model = new DefaultTableModel(
 						new String[][] {  },
 						new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
-					itemTable = new JTable();
+					
+					itemTable = new JTable(){
+						@Override
+						public boolean isCellEditable(
+							int row,
+							int column) {
+							return false;
+						}
+					};
+					itemTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "itemTable");
+					itemTable.getActionMap().put("itemTable",getDeleteInvoiceItemAction() );
+					itemTable.addMouseListener(new MouseAdapter(){
+						 public void mouseClicked(MouseEvent evt){
+							 if (evt.getClickCount() == 2){
+							 try{
+									String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
+									String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
+									int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
+									String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
+									
+									ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
+									dialog.setProductCode(productCode);
+									dialog.setQuantity(quantity);
+									dialog.setDiscount(discountCode);
+									dialog.setDeferredValue(deferred);
+									
+									dialog.setLocationRelativeTo(null);
+									dialog.setVisible(true);
+								}
+								catch(ArrayIndexOutOfBoundsException e){
+									JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+								}
+							 }
+						 }
+					});
 					itemTableScrollPane.setViewportView(itemTable);
 					itemTable.setModel(jTable1Model);
 				}
@@ -449,119 +520,67 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				}
 			}
 			{
-				jButton4 = new JButton();
-				this.add(jButton4, new AnchorConstraint(459, 705, 502, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton4.setText("Edit");
-				jButton4.setPreferredSize(new java.awt.Dimension(62, 20));
-				jButton4.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
-				jButton4.setBackground(new java.awt.Color(255,255,255));
-				jButton4.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						try{
-							String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
-							String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
-							int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
-							String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
-							
-							ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
-							dialog.setProductCode(productCode);
-							dialog.setQuantity(quantity);
-							dialog.setDiscount(discountCode);
-							dialog.setDeferredValue(deferred);
-							
-							dialog.setLocationRelativeTo(null);
-							dialog.setVisible(true);
-						}
-						catch(ArrayIndexOutOfBoundsException e){
-							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				});
+				editInvoiceItemButton = new JButton();
+				this.add(editInvoiceItemButton, new AnchorConstraint(459, 705, 502, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				editInvoiceItemButton.setText("Edit");
+				editInvoiceItemButton.setPreferredSize(new java.awt.Dimension(62, 20));
+				editInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
+				editInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
+				editInvoiceItemButton.setAction(getEditItemAction1());
+				
+				editInvoiceItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F3"), "editInvoiceItemButton");
+				editInvoiceItemButton.getActionMap().put("editInvoiceItemButton",getEditItemAction1() );
 			}
 			{
-				jButton5 = new JButton();
-				this.add(jButton5, new AnchorConstraint(459, 796, 504, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton5.setText("Delete");
-				jButton5.setPreferredSize(new java.awt.Dimension(72, 21));
-				jButton5.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
-				jButton5.setBackground(new java.awt.Color(255,255,255));
-				jButton5.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						try{
-							removeInvoiceItem();
-						}
-						catch(ArrayIndexOutOfBoundsException e){
-							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				});
+				deleteInvoiceItemButton = new JButton();
+				this.add(deleteInvoiceItemButton, new AnchorConstraint(459, 796, 504, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				deleteInvoiceItemButton.setText("Delete");
+				deleteInvoiceItemButton.setPreferredSize(new java.awt.Dimension(72, 21));
+				deleteInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
+				deleteInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
+				deleteInvoiceItemButton.setAction(getDeleteInvoiceItemAction());
+				
+				deleteInvoiceItemButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "deleteInvoiceItemButton");
+				deleteInvoiceItemButton.getActionMap().put("deleteInvoiceItemButton",getDeleteInvoiceItemAction() );
+				
+				
 			}
 			{
-				jButton6 = new JButton();
-				this.add(jButton6, new AnchorConstraint(811, 625, 853, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton6.setText("Add");
-				jButton6.setPreferredSize(new java.awt.Dimension(63, 20));
-				jButton6.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
-				jButton6.setBackground(new java.awt.Color(255,255,255));
-				jButton6.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(), InvoicePanel.this, "add");
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-					}
-				});
+				addPaymentItemButton = new JButton();
+				this.add(addPaymentItemButton, new AnchorConstraint(811, 625, 853, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				addPaymentItemButton.setText("Add");
+				addPaymentItemButton.setPreferredSize(new java.awt.Dimension(63, 20));
+				addPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
+				addPaymentItemButton.setBackground(new java.awt.Color(255,255,255));
+				addPaymentItemButton.setAction(getAddPaymentItemAction());
+				
+				addPaymentItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F2"), "addPaymentItemButton");
+				addPaymentItemButton.getActionMap().put("addPaymentItemButton",getAddPaymentItemAction() );
+				
 			}
 			{
-				jButton7 = new JButton();
-				this.add(jButton7, new AnchorConstraint(811, 705, 853, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton7.setText("Edit");
-				jButton7.setPreferredSize(new java.awt.Dimension(62, 20));
-				jButton7.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
-				jButton7.setBackground(new java.awt.Color(255,255,255));
-				jButton7.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						
-						String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
-						String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
-						String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
-						String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
-						String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
-						String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
-						String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
-						
-						
-						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,paymentCode);
-						
-						dialog.setAmount(paymentAmount);
-						dialog.setPaymentType(paymentType);
-						dialog.setCreditType(creditCardType);
-						dialog.setCreditCard(creditCardNum);
-						dialog.setBankCheck(bankCheckNum);
-						dialog.setGiftCheck(gcNum);
-						
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-					}
-				});
+				editPaymentItemButton = new JButton();
+				this.add(editPaymentItemButton, new AnchorConstraint(811, 705, 853, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				editPaymentItemButton.setText("Edit");
+				editPaymentItemButton.setPreferredSize(new java.awt.Dimension(62, 20));
+				editPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
+				editPaymentItemButton.setBackground(new java.awt.Color(255,255,255));
+				editPaymentItemButton.setAction(getEditPaymentItemAction());
+				
+				editPaymentItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F4"), "editPaymentItemButton");
+				editPaymentItemButton.getActionMap().put("editPaymentItemButton",getEditPaymentItemAction() );
 			}
 			{
-				jButton8 = new JButton();
-				this.add(jButton8, new AnchorConstraint(813, 796, 856, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton8.setText("Delete");
-				jButton8.setPreferredSize(new java.awt.Dimension(72, 20));
-				jButton8.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
-				jButton8.setBackground(new java.awt.Color(255,255,255));
-				jButton8.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						try{
-							removePaymentItem();
-						}
-						catch(ArrayIndexOutOfBoundsException e){
-							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
-						}
-
-					}
-				});
+				deletePaymentItemButton = new JButton();
+				this.add(deletePaymentItemButton, new AnchorConstraint(813, 796, 856, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				deletePaymentItemButton.setText("Delete");
+				deletePaymentItemButton.setPreferredSize(new java.awt.Dimension(72, 20));
+				deletePaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
+				deletePaymentItemButton.setBackground(new java.awt.Color(255,255,255));
+				deletePaymentItemButton.setAction(getDeletePaymentItemAction());
+				
+				deletePaymentItemButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "deletePaymentItemButton");
+				deletePaymentItemButton.getActionMap().put("deletePaymentItemButton",getDeletePaymentItemAction() );
 			}
 			{
 				jButton9 = new JButton();
@@ -818,7 +837,6 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		TableModel jTable1Model = new DefaultTableModel(
 				new String[][] {  },
 				new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
-		itemTable = new JTable();
 		itemTableScrollPane.setViewportView(itemTable);
 		itemTable.setModel(jTable1Model);
 		
@@ -943,5 +961,109 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			};
 		}
 		return addInvoiceItemAction;
+	}
+	
+	private AbstractAction getEditItemAction1() {
+		if(editItemAction1 == null) {
+			editItemAction1 = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					try{
+						String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
+						String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
+						int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
+						String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
+						
+						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
+						dialog.setProductCode(productCode);
+						dialog.setQuantity(quantity);
+						dialog.setDiscount(discountCode);
+						dialog.setDeferredValue(deferred);
+						
+						dialog.setLocationRelativeTo(null);
+						dialog.setVisible(true);
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			};
+		}
+		return editItemAction1;
+	}
+	
+	private AbstractAction getDeleteInvoiceItemAction() {
+		if(deleteInvoiceItemAction == null) {
+			deleteInvoiceItemAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
+				public void actionPerformed(ActionEvent evt) {
+					try{
+						removeInvoiceItem();
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			};
+		}
+		return deleteInvoiceItemAction;
+	}
+	
+	private AbstractAction getAddPaymentItemAction() {
+		if(addPaymentItemAction == null) {
+			addPaymentItemAction = new AbstractAction("Add", new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(), InvoicePanel.this, "add");
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+			};
+		}
+		return addPaymentItemAction;
+	}
+	
+	private AbstractAction getEditPaymentItemAction() {
+		if(editPaymentItemAction == null) {
+			editPaymentItemAction = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+					String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+					String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+					String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+					String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+					String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+					String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+					
+					
+					PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,paymentCode);
+					
+					dialog.setAmount(paymentAmount);
+					dialog.setPaymentType(paymentType);
+					dialog.setCreditType(creditCardType);
+					dialog.setCreditCard(creditCardNum);
+					dialog.setBankCheck(bankCheckNum);
+					dialog.setGiftCheck(gcNum);
+					
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+			};
+		}
+		return editPaymentItemAction;
+	}
+	
+	private AbstractAction getDeletePaymentItemAction() {
+		if(deletePaymentItemAction == null) {
+			deletePaymentItemAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
+				public void actionPerformed(ActionEvent evt) {
+					try{
+						removePaymentItem();
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+					}
+
+				}
+			};
+		}
+		return deletePaymentItemAction;
 	}
 }
