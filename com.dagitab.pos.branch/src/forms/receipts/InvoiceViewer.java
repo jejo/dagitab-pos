@@ -358,16 +358,11 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							Invoice invoice = InvoiceService.getInvoiceByOr(txtOR.getText());
 							List<InvoiceItem> invoiceItems = InvoiceItemService.findInvoiceItemByOR(Long.parseLong(txtOR.getText()));
 							List<PaymentItem> paymentItems = PaymentItemService.getPaymentItemList(Long.parseLong(txtOR.getText()));
-							
-							ReceiptPanel receiptPanel = new ReceiptPanel();
-							receiptPanel.setInvoice(invoice);
-							receiptPanel.setInvoiceItems(invoiceItems);
-							receiptPanel.setPaymentItems(paymentItems);
-							
-							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this);
-							validateReceiptDialog.setReceiptPanel(receiptPanel);
+							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,"0");
+							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this, receiptPanel);
 							validateReceiptDialog.setLocationRelativeTo(null);
 							validateReceiptDialog.setVisible(true);
+						
 						}
 					});
 				}

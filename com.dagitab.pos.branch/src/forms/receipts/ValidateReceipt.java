@@ -92,8 +92,9 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		inst.setVisible(true);
 	}
 
-	public ValidateReceipt(Window frame) {
+	public ValidateReceipt(Window frame, ReceiptPanel receiptPanel) {
 		super(frame);
+		this.receiptPanel = receiptPanel;
 		initGUI();
 	}
 	

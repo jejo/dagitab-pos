@@ -146,10 +146,17 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		frame.setVisible(true);
 	}
 	
-	public ReceiptPanel() {
+	public ReceiptPanel(Invoice invoice, List<InvoiceItem> invoiceItems, List<PaymentItem> paymentItems, String change) {
 		super();
+		this.invoice = invoice;
+		this.invoiceItems = invoiceItems;
+		this.paymentItems = paymentItems;
+		this.changeAmount = change;
+		
 		initGUI();
 	}
+	
+	
 	
 	@Deprecated
 	public ReceiptPanel(Vector<String> headerData, 
@@ -396,7 +403,10 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 topMarker+=15;
 		
 		 //vat amount 12% of Vatable Sale
-		 vatAmount = String.format("%.2f",vatablePurchase * Double.parseDouble("0."+vatValue));
+		 
+		 Double amt = vatablePurchase * (Double.parseDouble(vatValue)/100);
+		 System.out.println(amt);
+		 vatAmount = String.format("%.2f",amt);
 		 g.drawString("VAT("+vatValue+"%)",5,topMarker);
 		 
 		 //	for right justified compute 190 - string size*5 as first position
@@ -464,13 +474,13 @@ public class ReceiptPanel extends javax.swing.JPanel {
 				 change = "("+change+")";
 			 }
 			 g.drawString("BALANCE", 10, topMarker);
-			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(changeAmount);
+			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", Double.parseDouble(changeAmount)));
 			 g.drawString(change, xpos, topMarker);
 			 topMarker+=30;
 		 }
 		 else{
 			 g.drawString("CHANGE", 10, topMarker);
-			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(changeAmount);
+			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", Double.parseDouble(changeAmount)));
 			 g.drawString(String.format("%.2f", Double.parseDouble(changeAmount)), xpos, topMarker);
 			 topMarker+=30;
 		 }
