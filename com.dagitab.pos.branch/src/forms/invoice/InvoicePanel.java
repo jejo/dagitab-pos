@@ -3,10 +3,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import javax.swing.AbstractAction;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
@@ -75,8 +78,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	private JButton jButton29;
 	private JButton jButton17;
 	private JLabel jLabel15;
-	private JButton jButton3;
+	private JButton addInvoiceItemButton;
 	private JScrollPane paymentTableScrollPane;
+	private AbstractAction addInvoiceItemAction;
 	private JLabel partialLabel;
 	private JTable paymentTable;
 	private JScrollPane itemTableScrollPane;
@@ -206,22 +210,17 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				jLabel15.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/payments.png")));
 			}
 			{
-				jButton3 = new JButton();
-				this.add(jButton3, new AnchorConstraint(459, 625, 502, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton3.setText("Add");
-				jButton3.setPreferredSize(new java.awt.Dimension(63, 20));
-				jButton3.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
-				jButton3.setBackground(new java.awt.Color(255,255,255));
-				jButton3.addActionListener(new ActionListener() {
-					
-					public void actionPerformed(ActionEvent evt) {
-						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,"add");
-						dialog.clearProductInformation();
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-						
-					}
-				});
+				addInvoiceItemButton = new JButton();
+				this.add(addInvoiceItemButton, new AnchorConstraint(459, 625, 502, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				addInvoiceItemButton.setText("Add");
+				addInvoiceItemButton.setPreferredSize(new java.awt.Dimension(63, 20));
+				addInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
+				addInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
+				addInvoiceItemButton.setAction(getAddInvoiceItemAction());
+				
+				addInvoiceItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F1"), "addInvoiceItemButton");
+				addInvoiceItemButton.getActionMap().put("addInvoiceItemButton",getAddInvoiceItemAction() );
+				
 			}
 			{
 				paymentTableScrollPane = new JScrollPane();
@@ -930,5 +929,19 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		clearInfoValues();
 		//receipt
 		
+	}
+	
+	private AbstractAction getAddInvoiceItemAction() {
+		if(addInvoiceItemAction == null) {
+			addInvoiceItemAction = new AbstractAction("Add", new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,"add");
+					dialog.clearProductInformation();
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+			};
+		}
+		return addInvoiceItemAction;
 	}
 }
