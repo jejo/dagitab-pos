@@ -52,7 +52,6 @@ public class ReceiptPanel extends javax.swing.JPanel {
 	private JLabel itemDescriptionLabel;
 	private JLabel timeLabel;
 	private String vatAmount;
-	private String changeAmount;
 	private JLabel babylandHeader2Label;
 	private JLabel unitLabel;
 	private JLabel quantityLabel;
@@ -61,6 +60,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 	private Invoice invoice;
 	private List<InvoiceItem> invoiceItems;
 	private List<PaymentItem> paymentItems;
+	private String changeAmount = "0";
 	
 	/**
 	* Auto-generated main method to display this 

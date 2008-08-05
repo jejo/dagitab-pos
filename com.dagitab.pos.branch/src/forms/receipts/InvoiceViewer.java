@@ -1,11 +1,9 @@
-package forms;
+package forms.receipts;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -22,10 +20,16 @@ import javax.swing.table.TableModel;
 
 import main.Main;
 import util.ServerPropertyHandler;
+import bus.InvoiceItemService;
+import bus.InvoiceService;
+import bus.PaymentItemService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 
-import forms.receipts.ValidateReceipt;
+import domain.Invoice;
+import domain.InvoiceItem;
+import domain.PaymentItem;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -39,6 +43,7 @@ import forms.receipts.ValidateReceipt;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class InvoiceViewer extends javax.swing.JDialog {
 	private JLabel jLabel1;
 	private JLabel jLabel2;
@@ -350,90 +355,19 @@ public class InvoiceViewer extends javax.swing.JDialog {
 					btnPrint.setBounds(308, 476, 154, 28);
 					btnPrint.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							Vector<String> headerData = new Vector<String>();
+							Invoice invoice = InvoiceService.getInvoiceByOr(txtOR.getText());
+							List<InvoiceItem> invoiceItems = InvoiceItemService.findInvoiceItemByOR(Long.parseLong(txtOR.getText()));
+							List<PaymentItem> paymentItems = PaymentItemService.getPaymentItemList(Long.parseLong(txtOR.getText()));
 							
-							ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM store_lu WHERE STORE_CODE =" + Main.getStoreCode());
-							try {
-								if(rs.next()){
-									headerData.add(rs.getString(3));
-								}
-							} catch (SQLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
+							ReceiptPanel receiptPanel = new ReceiptPanel();
+							receiptPanel.setInvoice(invoice);
+							receiptPanel.setInvoiceItems(invoiceItems);
+							receiptPanel.setPaymentItems(paymentItems);
 							
-							try {
-								BufferedReader br = new BufferedReader(new FileReader("data/.tinno"));
-								headerData.add(br.readLine());
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-							String OR_NO = Main.getStoreCode()+"-"+txtOR.getText();
-							headerData.add(OR_NO);
-							
-							rs = Main.getDBManager().executeQuery("SELECT NICK_NAME, LAST_NAME  FROM clerk_lu c, invoice i WHERE c.CLERK_CODE = i.ENCODER_CODE && i.OR_NO = "+txtOR.getText()+" && STORE_CODE = "+Main.getStoreCode());
-							try {
-								if(rs.next()){
-									String name = rs.getString("NICK_NAME")+" "+rs.getString("LAST_NAME");
-									headerData.add(name);
-								}
-							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-							rs = Main.getDBManager().executeQuery("SELECT DATE(TRANS_DT), TIME(TRANS_DT) FROM invoice WHERE OR_NO = "+txtOR.getText()+"&& STORE_CODE = "+Main.getStoreCode());
-							try {
-								if(rs.next()){
-									headerData.add(rs.getString(1));
-									headerData.add(rs.getString(2));
-								}
-							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-							
-							Vector<Vector<String>> itemData = new Vector<Vector<String>>();
-							
-							for(int i = 0; i< prodData.size(); i++){
-								Vector<String> row = new Vector<String>();
-								String prodcode = prodData.get(i).get(0).toString();
-								String prodname = prodData.get(i).get(1).toString();
-								String curPrice = prodData.get(i).get(3).toString();
-								String selPrice = prodData.get(i).get(4).toString();
-								String qty = prodData.get(i).get(2).toString();
-								
-								row.add(prodcode);
-								row.add(prodname);
-								row.add(curPrice);
-								row.add(selPrice);
-								row.add(qty);
-								itemData.add(row);
-							}
-							
-							Vector<Vector<String>> paymentData = new Vector<Vector<String>>();
-							for(int i = 0; i< payData.size(); i++){
-								Vector<String> row = new Vector<String>();
-								String paymentName = payData.get(i).get(1).toString();
-								String amount = payData.get(i).get(2).toString();
-								row.add(paymentName);
-								row.add(amount);
-								paymentData.add(row);
-								
-							}
-							
-							String vatAmount = jTextField3.getText();
-							String changeAmount = "0.00";
-		
-							ValidateReceipt receiptdialog = new ValidateReceipt(InvoiceViewer.this,headerData, itemData, paymentData, vatAmount, changeAmount, Main.getDBManager(),"reg");
-							if(isPartial){
-								receiptdialog = new ValidateReceipt(InvoiceViewer.this,headerData, itemData, paymentData, vatAmount, changeAmount, Main.getDBManager(),"par");
-							}
-							receiptdialog.setLocationRelativeTo(null);
-							receiptdialog.setVisible(true);
+							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this);
+							validateReceiptDialog.setReceiptPanel(receiptPanel);
+							validateReceiptDialog.setLocationRelativeTo(null);
+							validateReceiptDialog.setVisible(true);
 						}
 					});
 				}

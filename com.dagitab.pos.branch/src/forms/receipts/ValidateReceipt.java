@@ -1,5 +1,6 @@
 package forms.receipts;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -9,14 +10,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import util.PrintUtilities;
-
 import main.DBManager;
+import util.PrintUtilities;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
-import forms.InvoiceViewer;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -93,12 +92,14 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		inst.setVisible(true);
 	}
 
-	public ValidateReceipt(JFrame frame) {
+	public ValidateReceipt(Window frame) {
 		super(frame);
-		// panel = new ReceiptPanel();
 		initGUI();
 	}
-
+	
+	
+	
+	@Deprecated
 	public ValidateReceipt(JFrame frame, String[] others, String date,
 			String time, Vector<Vector<String>> data) {
 		super(frame);
@@ -106,6 +107,7 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		initGUI();
 	}
 
+	@Deprecated
 	public ValidateReceipt(JFrame frame, Vector<String> headerData,
 			Vector<Vector<String>> itemData,
 			Vector<Vector<String>> paymentData, String vatAmount,
@@ -115,7 +117,8 @@ public class ValidateReceipt extends javax.swing.JDialog {
 				vatAmount, changeAmount, db, status);
 		initGUI();
 	}
-
+	
+	@Deprecated
 	public ValidateReceipt(InvoiceViewer viewer, Vector<String> headerData,
 			Vector<Vector<String>> itemData,
 			Vector<Vector<String>> paymentData, String vatAmount,
@@ -180,6 +183,10 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setReceiptPanel(ReceiptPanel receiptPanel) {
+		this.receiptPanel = receiptPanel;
 	}
 
 }
