@@ -21,7 +21,7 @@ import javax.swing.JLabel;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class ReceiptPanel extends javax.swing.JPanel {
+public class OldReceiptPanel extends javax.swing.JPanel {
 	private JLabel jLabel1;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
@@ -46,18 +46,18 @@ public class ReceiptPanel extends javax.swing.JPanel {
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.getContentPane().add(new ReceiptPanel());
+		frame.getContentPane().add(new OldReceiptPanel());
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
 	}
 	
-	public ReceiptPanel() {
+	public OldReceiptPanel() {
 		super();
 		initGUI();
 	}
 	
-	public ReceiptPanel(String[] others, String date, String time,Vector<Vector<String>> data) {
+	public OldReceiptPanel(String[] others, String date, String time,Vector<Vector<String>> data) {
 		super();
 		this.time = time;
 		this.data = data;
