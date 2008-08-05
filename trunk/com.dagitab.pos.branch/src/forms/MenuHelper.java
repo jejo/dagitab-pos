@@ -8,6 +8,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import forms.receipts.InvoiceViewer;
+
 import main.Main;
 
 public class MenuHelper {
@@ -63,7 +65,7 @@ public class MenuHelper {
 		
 		
 		CONNECT.setEnabled(false);
-		RE_PRINT_RECEIPT.setEnabled(false);
+		
 		PULL_OUT_MENU.setEnabled(false);
 		DELIVERY_MENU.setEnabled(false);
 		REPORTS_MENU.setEnabled(false);
@@ -75,6 +77,17 @@ public class MenuHelper {
 				ConfigurationDialog configurationDialog = new ConfigurationDialog(Main.getInst());
 				configurationDialog.setLocationRelativeTo(null);
 				configurationDialog.setVisible(true);
+				
+			}
+			
+		});
+		
+		RE_PRINT_RECEIPT.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				InvoiceViewer invoiceViewer = new InvoiceViewer(Main.getInst());
+				invoiceViewer.setLocationRelativeTo(null);
+				invoiceViewer.setVisible(true);
 				
 			}
 			
