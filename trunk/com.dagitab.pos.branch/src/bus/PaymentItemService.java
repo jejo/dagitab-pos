@@ -2,6 +2,8 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import main.Main;
 import domain.PaymentItem;
@@ -80,5 +82,28 @@ public class PaymentItemService {
 		String [] whereColumns = new String[]{"OR_NO","STORE_CODE"};
 		String [] whereValues = new String[]{orNo.toString(),Main.getStoreCode()};
 		Main.getDBManager().delete("payment_item", whereColumns, whereValues);
+	}
+	
+	public static List<PaymentItem> getPaymentItemList(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.OR_NO, pi.STORE_CODE, pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
+		List<PaymentItem> paymentItemList = new ArrayList<PaymentItem>();
+		try {
+			if(rs.next()){
+				PaymentItem paymentItem = new PaymentItem();
+				paymentItem.setAmount(rs.getDouble("AMT"));
+				paymentItem.setCardNo(rs.getString("CARD_NO"));
+				paymentItem.setCardType(rs.getString("CARD_TYPE"));
+				paymentItem.setCheckNo(rs.getString("CHECK_NO"));
+				paymentItem.setGcNo(rs.getString("GC_NO"));
+				paymentItem.setOrNo(rs.getLong("OR_NO"));
+				paymentItem.setPaymentCode(rs.getInt("PT_CODE"));
+				paymentItem.setStoreNo(rs.getInt("STORE_CODE"));
+				paymentItemList.add(paymentItem);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return paymentItemList;
 	}
 }
