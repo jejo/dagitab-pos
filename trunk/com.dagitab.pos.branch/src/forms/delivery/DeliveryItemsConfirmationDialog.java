@@ -1,12 +1,22 @@
 package forms.delivery;
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
+import com.cloudgarden.resource.SWTResourceManager;
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import main.DBManager;
+
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -17,8 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import com.cloudgarden.resource.SWTResourceManager;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -32,22 +40,25 @@ import com.cloudgarden.resource.SWTResourceManager;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-@SuppressWarnings("serial")
-public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
+public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	private JLabel jLabel1;
 	private JLabel jLabel2;
 	private JButton jButton2;
 	private Shell shell1;
 	private Canvas canvas1;
+	private DBManager db;
+	private String storeCode;
 	private DateTime calendar;
 	private String startDate;
 	private JLabel jLabel5;
-	private JButton confirmButton;
+	private JButton jButton1;
 	private JTextField jTextField5;
 	private JLabel jLabel7;
 	private JTextField jTextField4;
 	private JLabel jLabel6;
 	private JTextField jTextField3;
+	private String delitemno;
+	private int quantity;
 	
 	
 
@@ -66,92 +77,97 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		DeliveryItemConfirmationDialog inst = new DeliveryItemConfirmationDialog(frame);
+		DeliveryItemsConfirmationDialog inst = new DeliveryItemsConfirmationDialog(frame);
 		inst.setVisible(true);
 	}
 	
-	public DeliveryItemConfirmationDialog(JFrame parent) {
+	public DeliveryItemsConfirmationDialog(JFrame parent) {
 		super(parent);
 		initSwtAwtGUI();
 	}
 	
 	
+	
 	private void initGUI() {
 		try {
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
-			getContentPane().setLayout(null);
+			AnchorLayout thisLayout = new AnchorLayout();
+			getContentPane().setLayout(thisLayout);
 			this.setTitle("Confirm Delivery Items");
 			{
 				jButton2 = new JButton();
-				getContentPane().add(jButton2);
+				getContentPane().add(jButton2, new AnchorConstraint(858, 707, 940, 576, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton2.setText("Cancel");
-				jButton2.setBounds(251, 450, 90, 28);
+				jButton2.setPreferredSize(new java.awt.Dimension(91, 28));
 				jButton2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						
 						
 					}
 				});
 			}
 			{
 				jLabel2 = new JLabel();
-				getContentPane().add(jLabel2);
+				getContentPane().add(jLabel2, new AnchorConstraint(123, 455, 185, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel2.setText("Date Received");
-				jLabel2.setBounds(187, 40, 85, 22);
+				jLabel2.setPreferredSize(new java.awt.Dimension(294, 21));
 			}
 			{
 				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1);
+				getContentPane().add(jLabel1, new AnchorConstraint(21, 475, 123, 10, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel1.setText("Delivery Item Confirmation");
 				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
-				jLabel1.setPreferredSize(new java.awt.Dimension(227, 34));
-				jLabel1.setBounds(10, 7, 227, 34);
+				jLabel1.setPreferredSize(new java.awt.Dimension(322, 35));
 			}
 			{
 				canvas1 = new Canvas();
-				getContentPane().add(canvas1);
+				getContentPane().add(canvas1, new AnchorConstraint(185, 525, 776, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				canvas1.setPreferredSize(new java.awt.Dimension(343, 203));
 				canvas1.setBackground(new java.awt.Color(255,255,255));
-				canvas1.setBounds(61, 61, 342, 210);
 			}
 			{
 				jLabel5 = new JLabel();
-				getContentPane().add(jLabel5);
+				getContentPane().add(jLabel5, new AnchorConstraint(186, 688, 271, 555, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel5.setText("Accepted Quantity");
-				jLabel5.setBounds(120, 300, 96, 24);
+				jLabel5.setPreferredSize(new java.awt.Dimension(91, 29));
 			}
 			{
 				jTextField3 = new JTextField();
-				getContentPane().add(jTextField3);
-				jTextField3.setBounds(251, 300, 96, 24);
+				getContentPane().add(jTextField3, new AnchorConstraint(186, 848, 259, 721, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jTextField3.setPreferredSize(new java.awt.Dimension(87, 25));
 			}
 			{
 				jLabel6 = new JLabel();
-				getContentPane().add(jLabel6);
+				getContentPane().add(jLabel6, new AnchorConstraint(338, 686, 417, 555, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel6.setText("Missing Quantity");
-				jLabel6.setBounds(120, 340, 96, 24);
+				jLabel6.setPreferredSize(new java.awt.Dimension(90, 27));
 			}
 			{
 				jTextField4 = new JTextField();
-				getContentPane().add(jTextField4);
-				jTextField4.setBounds(251, 335, 96, 24);
+				getContentPane().add(jTextField4, new AnchorConstraint(338, 851, 409, 720, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jTextField4.setPreferredSize(new java.awt.Dimension(90, 24));
 			}
 			{
 				jLabel7 = new JLabel();
-				getContentPane().add(jLabel7);
+				getContentPane().add(jLabel7, new AnchorConstraint(497, 707, 579, 555, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jLabel7.setText("Damaged Quantity");
-				jLabel7.setBounds(120, 375, 96, 24);
+				jLabel7.setPreferredSize(new java.awt.Dimension(104, 28));
 			}
 			{
 				jTextField5 = new JTextField();
-				getContentPane().add(jTextField5);
-				jTextField5.setBounds(251, 370, 96, 24);
+				getContentPane().add(jTextField5, new AnchorConstraint(497, 850, 570, 721, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jTextField5.setPreferredSize(new java.awt.Dimension(88, 25));
 			}
 			{
-				confirmButton = new JButton();
-				getContentPane().add(confirmButton);
-				confirmButton.setText("Confirm");
-				confirmButton.setBounds(120, 450, 110, 28);
-				
+				jButton1 = new JButton();
+				getContentPane().add(jButton1, new AnchorConstraint(858, 525, 940, 364, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				jButton1.setText("Confirm");
+				jButton1.setPreferredSize(new java.awt.Dimension(112, 28));
+				jButton1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						
+						
+					}
+				});
 			}
 			{
 				shell1 = SWT_AWT.new_Shell(Display.getDefault(), canvas1);
@@ -167,8 +183,8 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 				shell1.setLayout(shell1Layout);
 				
 				GridData calendarLData = new GridData();
-				calendarLData.widthHint = 331;
-				calendarLData.heightHint = 198;
+				calendarLData.widthHint = 329;
+				calendarLData.heightHint = 191;
 				calendar = new DateTime (shell1, SWT.CALENDAR);
 				calendar.setLayoutData(calendarLData);
 				
@@ -217,7 +233,7 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 
 				
 			}
-			this.setSize(480, 540);
+			this.setSize(701, 377);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -285,7 +301,9 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 	//===== end of SWT_AWT special handler code =============
 	//$protect<<$
 	
-	 
+	 /**
+	  * Update delivery status if all delivery items have been processed
+	  */
 	
 	
 
