@@ -46,11 +46,11 @@ import domain.Transaction;
 import forms.FastAddition;
 import forms.MainWindow;
 import forms.PackageItems;
-import forms.PaymentDialog;
-import forms.ProductDialog;
 import forms.interfaces.Payments;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
+import forms.lookup.PaymentDialog;
+import forms.lookup.ProductDialog;
 import forms.returned.ReturnedPanel;
 /**
 * This code was edited or generated using CloudGarden's Jigloo

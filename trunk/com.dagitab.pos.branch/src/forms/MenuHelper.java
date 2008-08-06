@@ -8,6 +8,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import forms.delivery.DeliveryDialog;
 import forms.receipts.InvoiceViewer;
 
 import main.Main;
@@ -67,7 +68,6 @@ public class MenuHelper {
 		CONNECT.setEnabled(false);
 		
 		PULL_OUT_MENU.setEnabled(false);
-		DELIVERY_MENU.setEnabled(false);
 		REPORTS_MENU.setEnabled(false);
 		ABOUT_MENU.setEnabled(false);
 		
@@ -109,6 +109,13 @@ public class MenuHelper {
 			Main.hideMainWindow();
 			Main.clearLoginInfo();
 			Main.showLoginDialog();
+		}});
+		
+		DELIVERY_MANAGER.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt) {
+			DeliveryDialog deliveryDialog = new DeliveryDialog(Main.getInst());
+			deliveryDialog.setLocationRelativeTo(null);
+			deliveryDialog.setVisible(true);
 		}});
 	}
 	

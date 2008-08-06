@@ -1,4 +1,4 @@
-package forms;
+package forms.lookup;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

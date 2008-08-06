@@ -29,8 +29,8 @@ import com.cloudgarden.layout.AnchorLayout;
 
 import domain.Invoice;
 import domain.PaymentItem;
-import forms.PaymentDialog;
 import forms.interfaces.Payments;
+import forms.lookup.PaymentDialog;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
