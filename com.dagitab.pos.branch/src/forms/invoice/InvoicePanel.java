@@ -5,10 +5,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -51,7 +51,8 @@ import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
 import forms.lookup.PaymentDialog;
 import forms.lookup.ProductDialog;
-import forms.returned.ReturnedPanel;
+import forms.receipts.ReceiptPanel;
+import forms.receipts.ValidateReceipt;
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -939,6 +940,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		
 		//update amounts
 		updateAmounts();
+		updatePaymentAmounts();
 	}
 	
 	private boolean hasEnoughPayment(){
@@ -985,6 +987,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		
 		InvoiceService.insert(invoice);
 		
+		List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
 		//invoice item data
 		DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
 		for(int i = 0; i<itemTableModel.getRowCount(); i++){
@@ -1004,9 +1007,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			Product product = ProductService.getProductById(itemTableModel.getValueAt(i, 0).toString());
 			invoiceItem.setCost(product.getCost());
 			InvoiceItemService.insert(invoiceItem);
+			invoiceItems.add(invoiceItem);
 		}
 		
 		//payment item data
+		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
 		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
 			PaymentItem paymentItem = new PaymentItem();
@@ -1019,11 +1024,18 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
 			PaymentItemService.insert(paymentItem);
+			paymentItems.add(paymentItem);
 		}
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+		
+		//MAKE RECEIPT
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeField.getText());
+		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
+		validateReceiptDialog.setLocationRelativeTo(null);
+		validateReceiptDialog.setVisible(true);
+		
 		clearInfoValues();
-		//receipt
 		
 	}
 	

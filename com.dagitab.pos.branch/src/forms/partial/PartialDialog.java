@@ -1,7 +1,9 @@
-	package forms.partial;
+package forms.partial;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,9 +30,12 @@ import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
 import domain.Invoice;
+import domain.InvoiceItem;
 import domain.PaymentItem;
 import forms.interfaces.Payments;
 import forms.lookup.PaymentDialog;
+import forms.receipts.ReceiptPanel;
+import forms.receipts.ValidateReceipt;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -545,9 +550,15 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		invoice.setIsPartial(0);
 		InvoiceService.update(invoice);
 		
+		
+		List<InvoiceItem> invoiceItems = InvoiceItemService.findInvoiceItemByOR(Long.parseLong(orTextField.getText()));
+		
+		
+		
 		//clear payment items from db
 		PaymentItemService.removePaymentItem(invoice.getOrNo());
 		
+		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
 		//payment item data
 		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
@@ -561,10 +572,15 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
 			PaymentItemService.insert(paymentItem);
+			paymentItems.add(paymentItem);
 		}
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
 		
+		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
+		validateReceiptDialog.setLocationRelativeTo(null);
+		validateReceiptDialog.setVisible(true);
 	}
 
 }
