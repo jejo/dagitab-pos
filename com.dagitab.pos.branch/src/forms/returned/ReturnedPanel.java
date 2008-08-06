@@ -43,9 +43,9 @@ import domain.PaymentItem;
 import domain.Product;
 import domain.ReturnItem;
 import domain.ReturnReason;
-import forms.PaymentDialog;
-import forms.ProductDialog;
 import forms.interfaces.Payments;
+import forms.lookup.PaymentDialog;
+import forms.lookup.ProductDialog;
 
 
 /**

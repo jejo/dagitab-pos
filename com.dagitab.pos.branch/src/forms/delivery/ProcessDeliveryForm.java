@@ -1,6 +1,8 @@
-package forms;
+package forms.delivery;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -30,6 +32,7 @@ import main.DBManager;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@Deprecated
 public class ProcessDeliveryForm extends javax.swing.JDialog {
 	private DeliveryForm parent;
 	private JLabel jLabel1;
@@ -118,9 +121,9 @@ public class ProcessDeliveryForm extends javax.swing.JDialog {
 						String delitemno = jTable1.getValueAt(jTable1.getSelectedRow(),0).toString();
 						int quantity = Integer.parseInt(jTable1.getValueAt(jTable1.getSelectedRow(), 2).toString());
 						try{
-							ProcessEachDeliveryItem dialog = new ProcessEachDeliveryItem(ProcessDeliveryForm.this,db,storeCode,delitemno,quantity);
-							dialog.setLocationRelativeTo(null);
-							dialog.setVisible(true);
+//							DeliveryItemConfirmationDialog dialog = new DeliveryItemConfirmationDialog(ProcessDeliveryForm.this,db,storeCode,delitemno,quantity);
+//							dialog.setLocationRelativeTo(null);
+//							dialog.setVisible(true);
 						}
 						catch(Exception ex){
 						//	ex.printStackTrace();
