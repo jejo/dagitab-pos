@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -46,6 +48,8 @@ import domain.ReturnReason;
 import forms.interfaces.Payments;
 import forms.lookup.PaymentDialog;
 import forms.lookup.ProductDialog;
+import forms.receipts.ReceiptPanel;
+import forms.receipts.ValidateReceipt;
 
 
 /**
@@ -1074,6 +1078,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		invoice.setIsReturn(1);
 		InvoiceService.insert(invoice);
 		
+		
+		List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+		
 		//save returned items entries
 		DefaultTableModel returnItemsTableModel = (DefaultTableModel) returnedItemsTable.getModel();
 		for(int i = 0; i<returnItemsTableModel.getRowCount(); i++){
@@ -1090,6 +1097,18 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			returnItem.setReturnCode(returnReason.getReturnCode());
 			
 			ReturnItemService.insert(returnItem);
+			
+			InvoiceItem returnedInvoiceItem = new InvoiceItem();
+			returnedInvoiceItem.setCost(returnItem.getCost());
+			returnedInvoiceItem.setDiscountCode(invoiceItem.getDiscountCode());
+			returnedInvoiceItem.setIsDeferred(invoiceItem.getIsDeferred());
+			returnedInvoiceItem.setOrNo(Long.parseLong(returnItem.getOrNo().toString()));
+			returnedInvoiceItem.setProductCode(returnItem.getProductCode());
+			returnedInvoiceItem.setQuantity(returnItem.getQuantity()*-1); //negative quantity coz its a return
+			returnedInvoiceItem.setSellPrice(returnItem.getSellPrice());
+			returnedInvoiceItem.setStoreNo(returnItem.getStoreCode());
+			invoiceItems.add(returnedInvoiceItem);
+			
 		}
 		
 		
@@ -1112,8 +1131,12 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			Product product = ProductService.getProductById(replacementItemsTableModel.getValueAt(i, 0).toString());
 			invoiceItem.setCost(product.getCost());
 			InvoiceItemService.insert(invoiceItem);
+			
+			invoiceItems.add(invoiceItem);
 		}
 		
+		
+		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
 		//save payment_item entries
 		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
@@ -1127,11 +1150,20 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
 			PaymentItemService.insert(paymentItem);
+			
+			paymentItems.add(paymentItem);
 		}
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-		reset();
+		
 		//receipts
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
+		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
+		validateReceiptDialog.setLocationRelativeTo(null);
+		validateReceiptDialog.setVisible(true);
+		
+		
+		reset();
 	}
 	
 	private boolean hasEnoughPayment(){
