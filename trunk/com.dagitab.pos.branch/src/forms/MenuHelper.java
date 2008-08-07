@@ -3,15 +3,16 @@ package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
-
-import forms.delivery.DeliveryDialog;
-import forms.receipts.InvoiceViewer;
+import javax.swing.KeyStroke;
 
 import main.Main;
+import forms.delivery.DeliveryDialog;
+import forms.receipts.InvoiceViewer;
 
 public class MenuHelper {
 	private static JMenuBar MENU_BAR = new JMenuBar();
@@ -71,16 +72,7 @@ public class MenuHelper {
 		REPORTS_MENU.setEnabled(false);
 		ABOUT_MENU.setEnabled(false);
 		
-		CONFIGURATION.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ConfigurationDialog configurationDialog = new ConfigurationDialog(Main.getInst());
-				configurationDialog.setLocationRelativeTo(null);
-				configurationDialog.setVisible(true);
-				
-			}
-			
-		});
+		CONFIGURATION.setAction(getShowConfigurationDialogAbstractAction());
 		
 		RE_PRINT_RECEIPT.addActionListener(new ActionListener(){
 			@Override
@@ -121,5 +113,17 @@ public class MenuHelper {
 	
 	public static JMenuBar getMenuBar(){
 		return MENU_BAR;
+	}
+	
+	private static AbstractAction getShowConfigurationDialogAbstractAction() {
+		AbstractAction showPopupDialogAbstractAction = new AbstractAction("Configuration Settings", null) {
+			public void actionPerformed(ActionEvent evt) {
+				ConfigurationDialog configurationDialog = new ConfigurationDialog(Main.getInst());
+				configurationDialog.setLocationRelativeTo(null);
+				configurationDialog.setVisible(true);
+			}
+		};
+		showPopupDialogAbstractAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed C"));
+		return showPopupDialogAbstractAction;
 	}
 }
