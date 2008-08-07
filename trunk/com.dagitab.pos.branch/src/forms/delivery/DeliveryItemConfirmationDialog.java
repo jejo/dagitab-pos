@@ -1,29 +1,14 @@
 package forms.delivery;
-import bus.DeliveryItemService;
-
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-import com.cloudgarden.resource.SWTResourceManager;
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JButton;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import main.DBManager;
-
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -34,6 +19,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import bus.DeliveryItemService;
+
+import com.cloudgarden.resource.SWTResourceManager;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -47,27 +36,24 @@ import org.eclipse.swt.widgets.Shell;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
+@SuppressWarnings("serial")
+public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 	private JLabel jLabel1;
 	private JLabel jLabel2;
 	private JButton jButton2;
 	private Shell shell1;
 	private Canvas canvas1;
-	private DBManager db;
-	private String storeCode;
 	private DateTime calendar;
 	private String startDate;
 	private JLabel jLabel5;
-	private JButton jButton1;
+	private JButton confirmButton;
 	private JTextField damagedQuantityTextField;
 	private JLabel jLabel7;
 	private JTextField missingQuantityTextField;
 	private JLabel jLabel6;
 	private JTextField acceptedQuantityTextField;
-	private String delitemno;
-	private int quantity;
 	
-	private DeliveryItemsConfirmationDialog deliveryItemsConfirmationDialog;
+	private DeliveryItemConfirmationDialog deliveryItemConfirmationDialog;
 	private Long deliveryItemId;
 	private DeliveryDialog deliveryDialog;
 
@@ -86,104 +72,103 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		DeliveryItemsConfirmationDialog inst = new DeliveryItemsConfirmationDialog(frame);
+		DeliveryItemConfirmationDialog inst = new DeliveryItemConfirmationDialog(frame);
 		inst.setVisible(true);
 	}
 	
-	public DeliveryItemsConfirmationDialog(JFrame parent) {
+	public DeliveryItemConfirmationDialog(JFrame parent) {
 		super(parent);
 		initSwtAwtGUI();
+		this.deliveryItemConfirmationDialog = this;
 	}
 	
-	public DeliveryItemsConfirmationDialog(JFrame parent, DeliveryDialog deliveryDialog, Long deliveryItemId) {
+	public DeliveryItemConfirmationDialog(JFrame parent, DeliveryDialog deliveryDialog, Long deliveryItemId) {
 		super(parent);
 		initSwtAwtGUI();
 		this.deliveryDialog = deliveryDialog;
-		this.deliveryItemsConfirmationDialog = this;
+		this.deliveryItemConfirmationDialog = this;
 		this.deliveryItemId = deliveryItemId;
 	}
+	
 	
 	private void initGUI() {
 		try {
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
-			AnchorLayout thisLayout = new AnchorLayout();
-			getContentPane().setLayout(thisLayout);
+			getContentPane().setLayout(null);
 			this.setTitle("Confirm Delivery Items");
 			{
 				jButton2 = new JButton();
-				getContentPane().add(jButton2, new AnchorConstraint(858, 707, 940, 576, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jButton2);
 				jButton2.setText("Cancel");
-				jButton2.setPreferredSize(new java.awt.Dimension(91, 28));
+				jButton2.setBounds(251, 450, 90, 28);
 				jButton2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						deliveryItemsConfirmationDialog.setVisible(false);
+						deliveryItemConfirmationDialog.setVisible(false);
 					}
 				});
 			}
 			{
 				jLabel2 = new JLabel();
-				getContentPane().add(jLabel2, new AnchorConstraint(123, 455, 185, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel2);
 				jLabel2.setText("Date Received");
-				jLabel2.setPreferredSize(new java.awt.Dimension(294, 21));
+				jLabel2.setBounds(187, 40, 85, 22);
 			}
 			{
 				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(21, 475, 123, 10, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel1);
 				jLabel1.setText("Delivery Item Confirmation");
 				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
-				jLabel1.setPreferredSize(new java.awt.Dimension(322, 35));
+				jLabel1.setPreferredSize(new java.awt.Dimension(227, 34));
+				jLabel1.setBounds(10, 7, 227, 34);
 			}
 			{
 				canvas1 = new Canvas();
-				getContentPane().add(canvas1, new AnchorConstraint(185, 525, 776, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				canvas1.setPreferredSize(new java.awt.Dimension(343, 203));
+				getContentPane().add(canvas1);
 				canvas1.setBackground(new java.awt.Color(255,255,255));
+				canvas1.setBounds(61, 61, 342, 210);
 			}
 			{
 				jLabel5 = new JLabel();
-				getContentPane().add(jLabel5, new AnchorConstraint(186, 688, 271, 555, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel5);
 				jLabel5.setText("Accepted Quantity");
-				jLabel5.setPreferredSize(new java.awt.Dimension(91, 29));
+				jLabel5.setBounds(120, 300, 96, 24);
 			}
 			{
 				acceptedQuantityTextField = new JTextField();
-				getContentPane().add(acceptedQuantityTextField, new AnchorConstraint(186, 848, 259, 721, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				acceptedQuantityTextField.setPreferredSize(new java.awt.Dimension(87, 25));
-				acceptedQuantityTextField.setText("0");
+				getContentPane().add(acceptedQuantityTextField);
+				acceptedQuantityTextField.setBounds(251, 300, 96, 24);
 			}
 			{
 				jLabel6 = new JLabel();
-				getContentPane().add(jLabel6, new AnchorConstraint(338, 686, 417, 555, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel6);
 				jLabel6.setText("Missing Quantity");
-				jLabel6.setPreferredSize(new java.awt.Dimension(90, 27));
+				jLabel6.setBounds(120, 340, 96, 24);
 			}
 			{
 				missingQuantityTextField = new JTextField();
-				getContentPane().add(missingQuantityTextField, new AnchorConstraint(338, 851, 409, 720, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				missingQuantityTextField.setPreferredSize(new java.awt.Dimension(90, 24));
-				missingQuantityTextField.setText("0");
+				getContentPane().add(missingQuantityTextField);
+				missingQuantityTextField.setBounds(251, 335, 96, 24);
 			}
 			{
 				jLabel7 = new JLabel();
-				getContentPane().add(jLabel7, new AnchorConstraint(497, 707, 579, 555, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(jLabel7);
 				jLabel7.setText("Damaged Quantity");
-				jLabel7.setPreferredSize(new java.awt.Dimension(104, 28));
+				jLabel7.setBounds(120, 375, 96, 24);
 			}
 			{
 				damagedQuantityTextField = new JTextField();
-				getContentPane().add(damagedQuantityTextField, new AnchorConstraint(497, 850, 570, 721, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				damagedQuantityTextField.setPreferredSize(new java.awt.Dimension(88, 25));
-				damagedQuantityTextField.setText("0");
+				getContentPane().add(damagedQuantityTextField);
+				damagedQuantityTextField.setBounds(251, 370, 96, 24);
 			}
 			{
-				jButton1 = new JButton();
-				getContentPane().add(jButton1, new AnchorConstraint(858, 525, 940, 364, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton1.setText("Confirm");
-				jButton1.setPreferredSize(new java.awt.Dimension(112, 28));
-				jButton1.addActionListener(new ActionListener() {
+				confirmButton = new JButton();
+				getContentPane().add(confirmButton);
+				confirmButton.setText("Confirm");
+				confirmButton.setBounds(120, 450, 110, 28);
+				confirmButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						updatePendingDeliveryItem(deliveryItemId, Long.parseLong(acceptedQuantityTextField.getText()), Long.parseLong(missingQuantityTextField.getText()), Long.parseLong(damagedQuantityTextField.getText()));
-						deliveryItemsConfirmationDialog.setVisible(false);
+						deliveryItemConfirmationDialog.setVisible(false);
 					}
 				});
 			}
@@ -201,8 +186,8 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 				shell1.setLayout(shell1Layout);
 				
 				GridData calendarLData = new GridData();
-				calendarLData.widthHint = 329;
-				calendarLData.heightHint = 191;
+				calendarLData.widthHint = 331;
+				calendarLData.heightHint = 198;
 				calendar = new DateTime (shell1, SWT.CALENDAR);
 				calendar.setLayoutData(calendarLData);
 				
@@ -251,7 +236,7 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 
 				
 			}
-			this.setSize(701, 377);
+			this.setSize(480, 540);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -316,13 +301,24 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 
 	}
 
-	public DeliveryItemsConfirmationDialog getDeliveryItemsConfirmationDialog() {
-		return deliveryItemsConfirmationDialog;
+	//===== end of SWT_AWT special handler code =============
+	//$protect<<$
+	
+	 
+	
+	public void updatePendingDeliveryItem(Long deliveryItemId, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
+		DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
+		deliveryDialog.refreshCompletedDeliveriesTable();
+		deliveryDialog.refreshPendingDeliveryItemsTable((Long) deliveryDialog.getPendingDeliveryTable().getValueAt(deliveryDialog.getPendingDeliveryTable().getSelectedRow(), 0));
 	}
 
-	public void setDeliveryItemsConfirmationDialog(
-			DeliveryItemsConfirmationDialog deliveryItemsConfirmationDialog) {
-		this.deliveryItemsConfirmationDialog = deliveryItemsConfirmationDialog;
+	public DeliveryItemConfirmationDialog getDeliveryItemConfirmationDialog() {
+		return deliveryItemConfirmationDialog;
+	}
+
+	public void setDeliveryItemConfirmationDialog(
+			DeliveryItemConfirmationDialog deliveryItemConfirmationDialog) {
+		this.deliveryItemConfirmationDialog = deliveryItemConfirmationDialog;
 	}
 
 	public Long getDeliveryItemId() {
@@ -340,48 +336,5 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	public void setDeliveryDialog(DeliveryDialog deliveryDialog) {
 		this.deliveryDialog = deliveryDialog;
 	}
-	
-	public void updatePendingDeliveryItem(Long deliveryItemId, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
-		//SimpleDateFormat sdf = new SimpleDateFormat();
-		//Calendar calendarInstance = Calendar.getInstance();
-		//calendarInstance.set(calendar.getYear(), calendar.getMonth(), calendar.getDay());
-		DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
-		
-		deliveryDialog.refreshPendingDeliveryItemsTable((Long) deliveryDialog.getPendingDeliveryTable().getValueAt(deliveryDialog.getPendingDeliveryTable().getSelectedRow(), 0));
-		deliveryDialog.updateSelectedPendingDelivery();
-	}
-
-	public JTextField getDamagedQuantityTextField() {
-		return damagedQuantityTextField;
-	}
-
-	public void setDamagedQuantityTextField(JTextField damagedQuantityTextField) {
-		this.damagedQuantityTextField = damagedQuantityTextField;
-	}
-
-	public JTextField getMissingQuantityTextField() {
-		return missingQuantityTextField;
-	}
-
-	public void setMissingQuantityTextField(JTextField missingQuantityTextField) {
-		this.missingQuantityTextField = missingQuantityTextField;
-	}
-
-	public JTextField getAcceptedQuantityTextField() {
-		return acceptedQuantityTextField;
-	}
-
-	public void setAcceptedQuantityTextField(JTextField acceptedQuantityTextField) {
-		this.acceptedQuantityTextField = acceptedQuantityTextField;
-	}
-
-	//===== end of SWT_AWT special handler code =============
-	//$protect<<$
-	
-	 /**
-	  * Update delivery status if all delivery items have been processed
-	  */
-	
-	
 
 }

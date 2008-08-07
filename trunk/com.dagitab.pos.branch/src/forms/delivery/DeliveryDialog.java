@@ -1,9 +1,17 @@
 package forms.delivery;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -11,6 +19,16 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
+import main.Main;
+import forms.invoice.InvoicePanel;
+import forms.lookup.PaymentDialog;
+
+import bus.DeliveryItemService;
+import bus.DeliveryService;
+import bus.InvoiceItemService;
+
+import util.TableUtility;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -30,12 +48,12 @@ public class DeliveryDialog extends javax.swing.JDialog {
 	private JPanel completedTab;
 	private JScrollPane jScrollPane2;
 	private JLabel jLabel4;
-	private JTable jTable2;
+	private JTable closedDeliveryItemTable;
 	private JScrollPane closedScrollPane;
 	private JTable closedDeliveryTable;
 	private JLabel jLabel3;
 	private JLabel jLabel2;
-	private JTable jTable1;
+	private JTable completedDeliveryItemTable;
 	private JScrollPane jScrollPane1;
 	private JLabel jLabel1;
 	private JTable completedDeliveryTable;
@@ -51,6 +69,8 @@ public class DeliveryDialog extends javax.swing.JDialog {
 	private JPanel closedTab;
 	private JTabbedPane deliveryTabbedPane;
 
+	private DeliveryDialog deliveryDialog; 
+	private DeliveryItemsConfirmationDialog deliveryItemsConfirmationDialog;
 	{
 		//Set Look & Feel
 		try {
@@ -77,6 +97,11 @@ public class DeliveryDialog extends javax.swing.JDialog {
 	public DeliveryDialog(JFrame frame) {
 		super(frame);
 		initGUI();
+		deliveryDialog = this;
+		//refresh tables
+		refreshPendingDeliveriesTable();
+		refreshCompletedDeliveriesTable();
+		refreshClosedDeliveriesTable();
 	}
 	
 	private void initGUI() {
@@ -109,9 +134,25 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							{
 								TableModel pendingDeliveryTableModel = 
 									new DefaultTableModel(
-											new String[][] { { "One", "Two" }, { "Three", "Four" } },
+											null,
 											new String[] { "Delivery No","Delivery Receipt No","Date Issued","Store From","Clerk Issued" });
-								pendingDeliveryTable = new JTable();
+								pendingDeliveryTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								
+								pendingDeliveryTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(pendingDeliveryTable.getSelectedRow() != -1) {
+											//refresh
+											 refreshPendingDeliveryItemsTable((Long) pendingDeliveryTable.getValueAt(pendingDeliveryTable.getSelectedRow(), 0));
+										 }
+									 }
+								});
 								pendingScrollPane.setViewportView(pendingDeliveryTable);
 								pendingDeliveryTable.setModel(pendingDeliveryTableModel);
 							}
@@ -129,9 +170,24 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							{
 								TableModel pendingDeliveryItemsTableModel = 
 									new DefaultTableModel(
-											new String[][] { { "One", "Two" }, { "Three", "Four" } },
+											null,
 											new String[] { "Delivery Item No", "Product Code","Quantity","Accepted","Missing","Damaged","Process Status" });
-								pendingDeliveryItemsTable = new JTable();
+								pendingDeliveryItemsTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								pendingDeliveryItemsTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(e.getClickCount() == 2) {
+											 processPendingDeliveryItem();
+										 }
+									 }
+								});
+								
 								pendingDeliveryItemsScrollPane.setViewportView(pendingDeliveryItemsTable);
 								pendingDeliveryItemsTable.setModel(pendingDeliveryItemsTableModel);
 							}
@@ -148,6 +204,11 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							processDeliveryButton.setText("Process Item");
 							processDeliveryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 							processDeliveryButton.setBounds(546, 365, 135, 22);
+							processDeliveryButton.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent evt) {
+									processPendingDeliveryItem();
+								}
+							});
 						}
 					}
 					{
@@ -162,9 +223,24 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							{
 								TableModel completeDeliveryTableModel = 
 									new DefaultTableModel(
-											new String[][] { { "One", "Two" }, { "Three", "Four" } },
+											null,
 											new String[] { "Delivery No","Delivery Receipt No","Date Issued","Store From","Clerk Issued" });
-								completedDeliveryTable = new JTable();
+								completedDeliveryTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								completedDeliveryTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(completedDeliveryTable.getSelectedRow() != -1) {
+											//refresh
+											 refreshCompletedDeliveryItemsTable((Long) completedDeliveryTable.getValueAt(completedDeliveryTable.getSelectedRow(), 0));
+										 }
+									 }
+								});
 								completedScrollPane.setViewportView(completedDeliveryTable);
 								completedDeliveryTable.setModel(completeDeliveryTableModel);
 							}
@@ -182,11 +258,18 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							{
 								TableModel jTable1Model = 
 									new DefaultTableModel(
-											new String[][] { { "One", "Two" }, { "Three", "Four" } },
+											null,
 											new String[] { "Delivery Item No", "Product Code","Quantity","Accepted","Missing","Damaged","Process Status" });
-								jTable1 = new JTable();
-								jScrollPane1.setViewportView(jTable1);
-								jTable1.setModel(jTable1Model);
+								completedDeliveryItemTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								jScrollPane1.setViewportView(completedDeliveryItemTable);
+								completedDeliveryItemTable.setModel(jTable1Model);
 							}
 						}
 						{
@@ -214,9 +297,24 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							{
 								TableModel closedDeliveryTableModel = 
 									new DefaultTableModel(
-											new String[][] { { "One", "Two" }, { "Three", "Four" } },
+											null,
 											new String[] { "Delivery No","Delivery Receipt No","Date Issued","Store From","Clerk Issued" });
-								closedDeliveryTable = new JTable();
+								closedDeliveryTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								closedDeliveryTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(closedDeliveryTable.getSelectedRow() != -1) {
+											//refresh
+											 refreshClosedDeliveryItemsTable((Long) closedDeliveryTable.getValueAt(closedDeliveryTable.getSelectedRow(), 0));
+										 }
+									 }
+								});
 								closedScrollPane.setViewportView(closedDeliveryTable);
 								closedDeliveryTable.setModel(closedDeliveryTableModel);
 							}
@@ -228,11 +326,18 @@ public class DeliveryDialog extends javax.swing.JDialog {
 							{
 								TableModel jTable2Model = 
 									new DefaultTableModel(
-											new String[][] { { "One", "Two" }, { "Three", "Four" } },
+											null,
 											new String[] { "Delivery Item No", "Product Code","Quantity","Accepted","Missing","Damaged","Process Status" });
-								jTable2 = new JTable();
-								jScrollPane2.setViewportView(jTable2);
-								jTable2.setModel(jTable2Model);
+								closedDeliveryItemTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								jScrollPane2.setViewportView(closedDeliveryItemTable);
+								closedDeliveryItemTable.setModel(jTable2Model);
 							}
 						}
 						{
@@ -247,7 +352,13 @@ public class DeliveryDialog extends javax.swing.JDialog {
 					closeButton = new JButton();
 					getContentPane().add(closeButton);
 					closeButton.setText("Close");
-					closeButton.setBounds(341, 499, 59, 23);
+					closeButton.setBounds(317, 502, 67, 23);
+					
+					closeButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							deliveryDialog.setVisible(false);
+						}
+					});
 				}
 			}
 			this.setSize(736, 569);
@@ -256,4 +367,71 @@ public class DeliveryDialog extends javax.swing.JDialog {
 		}
 	}
 
+	public void refreshPendingDeliveriesTable() {
+		ResultSet rs = DeliveryService.fetchAllDeliveriesByStatus(DeliveryService.PENDING);
+		TableUtility.fillTable(pendingDeliveryTable, rs, new String[]{"Delivery No","Delivery Receipt No","Date Issued","Store From","Clerk Issued"});
+	}
+	
+	public void refreshCompletedDeliveriesTable() {
+		ResultSet rs = DeliveryService.fetchAllDeliveriesByStatus(DeliveryService.COMPLETE);
+		TableUtility.fillTable(completedDeliveryTable, rs, new String[]{"Delivery No","Delivery Receipt No","Date Issued","Store From","Clerk Issued"});
+	}
+	
+	public void refreshClosedDeliveriesTable() {
+		ResultSet rs = DeliveryService.fetchAllDeliveriesByStatus(DeliveryService.CLOSED);
+		TableUtility.fillTable(closedDeliveryTable, rs, new String[]{"Delivery No","Delivery Receipt No","Date Issued","Store From","Clerk Issued"});
+	}
+	
+	public void refreshPendingDeliveryItemsTable(Long deliveryId) {
+		ResultSet rs =	DeliveryItemService.fetchAllDeliveriesItems(deliveryId); 
+		TableUtility.fillTable(pendingDeliveryItemsTable, rs, new String[]{"Delivery Item No", "Product Code","Quantity","Accepted","Missing","Damaged","Process Status"});
+	}
+	
+	public void refreshCompletedDeliveryItemsTable(Long deliveryId) {
+		ResultSet rs =	DeliveryItemService.fetchAllDeliveriesItems(deliveryId); 
+		TableUtility.fillTable(completedDeliveryItemTable, rs, new String[]{"Delivery Item No", "Product Code","Quantity","Accepted","Missing","Damaged","Process Status"});
+	}
+	
+	public void refreshClosedDeliveryItemsTable(Long deliveryId) {
+		ResultSet rs =	DeliveryItemService.fetchAllDeliveriesItems(deliveryId); 
+		TableUtility.fillTable(closedDeliveryItemTable, rs, new String[]{"Delivery Item No", "Product Code","Quantity","Accepted","Missing","Damaged","Process Status"});
+	}
+
+	public void processPendingDeliveryItem() {
+		if(pendingDeliveryItemsTable.getSelectedRow() != -1) {
+			if(((Integer) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 6)).equals(0) ) {
+				if(deliveryItemsConfirmationDialog == null) {
+					deliveryItemsConfirmationDialog = new DeliveryItemsConfirmationDialog(Main.getInst(), this, (Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0));
+					deliveryItemsConfirmationDialog.setLocationRelativeTo(null);
+					deliveryItemsConfirmationDialog.setVisible(true);
+				}
+				else {
+					deliveryItemsConfirmationDialog.setDeliveryItemId((Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0));
+					deliveryItemsConfirmationDialog.setVisible(true);
+					deliveryItemsConfirmationDialog.getAcceptedQuantityTextField().setText("0");
+					deliveryItemsConfirmationDialog.getMissingQuantityTextField().setText("0");
+					deliveryItemsConfirmationDialog.getDamagedQuantityTextField().setText("0");
+				}
+			}
+		}
+	}
+
+	public JTable getPendingDeliveryTable() {
+		return pendingDeliveryTable;
+	}
+
+	public void setPendingDeliveryTable(JTable pendingDeliveryTable) {
+		this.pendingDeliveryTable = pendingDeliveryTable;
+	}
+	
+	public void updateSelectedPendingDelivery() {
+		Long deliveryId = (Long) pendingDeliveryTable.getValueAt(pendingDeliveryTable.getSelectedRow(), 0);		
+		if(!DeliveryItemService.hasPendingDeliveryItemsToCheck(deliveryId)) {
+			DeliveryService.changeDeliveryStatus(DeliveryService.COMPLETE, deliveryId);
+			JOptionPane.showMessageDialog(null, "Delivery No. " + deliveryId + " is now complete.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+			refreshCompletedDeliveriesTable();
+			refreshPendingDeliveriesTable();
+			TableUtility.clearTable(pendingDeliveryItemsTable);
+		}
+	}
 }
