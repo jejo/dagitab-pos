@@ -43,4 +43,9 @@ public class TableUtility {
 		}
 		table.setModel(aModel);
 	}
+	
+	public static void clearTable(JTable table) {
+		DefaultTableModel aModel = new DefaultTableModel();
+		table.setModel(aModel);
+	}
 }
