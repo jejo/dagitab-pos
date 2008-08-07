@@ -1,12 +1,16 @@
 package forms.partial;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -65,12 +70,15 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	private JLabel jLabel2;
 	private JLabel jLabel3;
 	private JScrollPane invoiceItemScrollPane;
+	private AbstractAction deletePartialPaymentAction;
+	private AbstractAction editPartialPaymentAction;
+	private AbstractAction addPartialPaymentAction;
 	private JTable paymentTable;
 	private JLabel totalAmountLabel;
 	private JScrollPane paymentTableScrollPane;
 	private JButton processButton;
-	private JButton jButton3;
-	private JButton jButton2;
+	private JButton deletePartialPaymentButton;
+	private JButton editPartialButton;
 	private JButton addPaymentButton;
 	private JLabel jLabel15;
 	private JLabel jLabel16;
@@ -155,16 +163,13 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			}
 			{
 				addPaymentButton = new JButton();
-				getContentPane().add(addPaymentButton, new AnchorConstraint(782, 604, 833, 534, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(addPaymentButton, new AnchorConstraint(781, 588, 819, 495, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addPaymentButton.setText("Add");
-				addPaymentButton.setPreferredSize(new java.awt.Dimension(56, 28));
-				addPaymentButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						PaymentDialog dialog = PaymentDialog.getPaymentDialog(PartialDialog.this, PartialDialog.this, "add");
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-					}
-				});
+				addPaymentButton.setPreferredSize(new java.awt.Dimension(74, 21));
+				addPaymentButton.setAction(getAddPartialPaymentAction());
+				addPaymentButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F1"), "addPaymentButton");
+				addPaymentButton.getActionMap().put("addPaymentButton",getAddPartialPaymentAction() );
+				
 			}
 			{
 				jPanel2 = new JPanel();
@@ -303,8 +308,8 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			}
 			{
 				invoiceItemScrollPane = new JScrollPane();
-				getContentPane().add(invoiceItemScrollPane, new AnchorConstraint(156, 974, 455, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				invoiceItemScrollPane.setPreferredSize(new java.awt.Dimension(518, 161));
+				getContentPane().add(invoiceItemScrollPane, new AnchorConstraint(158, 974, 456, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				invoiceItemScrollPane.setPreferredSize(new java.awt.Dimension(518, 163));
 				{
 					TableModel jTable1Model = new DefaultTableModel( new String[][] {  }, new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
 						itemTable = new JTable();
@@ -337,61 +342,72 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			}
 			{
 				paymentTableScrollPane = new JScrollPane();
-				getContentPane().add(paymentTableScrollPane, new AnchorConstraint(520, 974, 767, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				paymentTableScrollPane.setPreferredSize(new java.awt.Dimension(518, 133));
+				getContentPane().add(paymentTableScrollPane, new AnchorConstraint(521, 974, 768, 325, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				paymentTableScrollPane.setPreferredSize(new java.awt.Dimension(518, 135));
 				{
 					TableModel paymentTableModel = new DefaultTableModel( new String[][] { }, new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
-					paymentTable = new JTable();
+					paymentTable = new JTable(){
+						@Override
+						public boolean isCellEditable(
+							int row,
+							int column) {
+							return false;
+						}
+					};
+					paymentTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "paymentTable");
+					paymentTable.getActionMap().put("paymentTable",getDeletePartialPaymentAction() );
 					paymentTableScrollPane.setViewportView(paymentTable);
 					paymentTable.setModel(paymentTableModel);
+					paymentTable.addMouseListener(new MouseAdapter(){
+						 public void mouseClicked(MouseEvent evt){
+							 if (evt.getClickCount() == 2){
+								 String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+								String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+								String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+								String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+								String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+								String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+								String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+								
+								
+								PaymentDialog dialog = PaymentDialog.getPaymentDialog(PartialDialog.this,PartialDialog.this,paymentCode);
+								
+								dialog.setAmount(paymentAmount);
+								dialog.setPaymentType(paymentType);
+								dialog.setCreditType(creditCardType);
+								dialog.setCreditCard(creditCardNum);
+								dialog.setBankCheck(bankCheckNum);
+								dialog.setGiftCheck(gcNum);
+								
+								dialog.setLocationRelativeTo(null);
+								dialog.setVisible(true);
+							 }
+						 }
+				});
 				}
 			
 			}
 			{
-				jButton2 = new JButton();
-				getContentPane().add(jButton2, new AnchorConstraint(780, 693, 832, 623, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton2.setText("Edit");
-				jButton2.setPreferredSize(new java.awt.Dimension(56, 28));
-				jButton2.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
-						String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
-						String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
-						String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
-						String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
-						String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
-						String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
-						
-						
-						PaymentDialog dialog = PaymentDialog.getPaymentDialog(PartialDialog.this,PartialDialog.this,paymentCode);
-						
-						dialog.setAmount(paymentAmount);
-						dialog.setPaymentType(paymentType);
-						dialog.setCreditType(creditCardType);
-						dialog.setCreditCard(creditCardNum);
-						dialog.setBankCheck(bankCheckNum);
-						dialog.setGiftCheck(gcNum);
-						
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-					}
-				});
+				editPartialButton = new JButton();
+				getContentPane().add(editPartialButton, new AnchorConstraint(779, 693, 819, 599, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				editPartialButton.setText("Edit");
+				editPartialButton.setPreferredSize(new java.awt.Dimension(75, 22));
+				editPartialButton.setAction(getEditPartialPaymentAction());
+				editPartialButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F3"), "editPartialButton");
+				editPartialButton.getActionMap().put("editPartialButton",getEditPartialPaymentAction() );
+				
 			}
 			{
-				jButton3 = new JButton();
-				getContentPane().add(jButton3, new AnchorConstraint(780, 807, 832, 711, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton3.setText("Delete");
-				jButton3.setPreferredSize(new java.awt.Dimension(77, 28));
-				jButton3.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						try{
-							removePaymentItem();
-						}
-						catch(ArrayIndexOutOfBoundsException e){
-							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				});
+				deletePartialPaymentButton = new JButton();
+				getContentPane().add(deletePartialPaymentButton, new AnchorConstraint(779, 820, 819, 711, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				deletePartialPaymentButton.setText("Delete");
+				deletePartialPaymentButton.setPreferredSize(new java.awt.Dimension(87, 22));
+				deletePartialPaymentButton.setAction(getDeletePartialPaymentAction());
+				
+
+				deletePartialPaymentButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "deletePartialPaymentButton");
+				deletePartialPaymentButton.getActionMap().put("deletePartialPaymentButton",getDeletePartialPaymentAction() );
+				
 			}
 			this.setSize(806, 573);
 		
@@ -581,6 +597,65 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);
+	}
+	
+	private AbstractAction getAddPartialPaymentAction() {
+		if(addPartialPaymentAction == null) {
+			addPartialPaymentAction = new AbstractAction("Add", new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					PaymentDialog dialog = PaymentDialog.getPaymentDialog(PartialDialog.this, PartialDialog.this, "add");
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+};
+		}
+		return addPartialPaymentAction;
+	}
+	
+	private AbstractAction getEditPartialPaymentAction() {
+		if(editPartialPaymentAction == null) {
+			editPartialPaymentAction = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
+				public void actionPerformed(ActionEvent evt) {
+					String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+					String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+					String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+					String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+					String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+					String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+					String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+					
+					
+					PaymentDialog dialog = PaymentDialog.getPaymentDialog(PartialDialog.this,PartialDialog.this,paymentCode);
+					
+					dialog.setAmount(paymentAmount);
+					dialog.setPaymentType(paymentType);
+					dialog.setCreditType(creditCardType);
+					dialog.setCreditCard(creditCardNum);
+					dialog.setBankCheck(bankCheckNum);
+					dialog.setGiftCheck(gcNum);
+					
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+				}
+};
+		}
+		return editPartialPaymentAction;
+	}
+	
+	private AbstractAction getDeletePartialPaymentAction() {
+		if(deletePartialPaymentAction == null) {
+			deletePartialPaymentAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
+				public void actionPerformed(ActionEvent evt) {
+					try{
+						removePaymentItem();
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+};
+		}
+		return deletePartialPaymentAction;
 	}
 
 }

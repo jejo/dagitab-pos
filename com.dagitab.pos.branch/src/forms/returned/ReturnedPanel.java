@@ -151,6 +151,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				deleteReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deleteReturnItemButton.setBackground(new java.awt.Color(244,244,244));
 				deleteReturnItemButton.setAction(getDeleteReturnedItemsAction());
+				deleteReturnItemButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "deleteReturnItemButton");
+				deleteReturnItemButton.getActionMap().put("deleteReturnItemButton",getDeleteReturnedItemsAction() );
 			}
 			{
 				editReturnItemButton = new JButton();
@@ -160,6 +162,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				editReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editReturnItemButton.setBackground(new java.awt.Color(244,244,244));
 				editReturnItemButton.setAction(getEditReturnedItemsAction());
+				editReturnItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F4"), "editReturnItemButton");
+				editReturnItemButton.getActionMap().put("editReturnItemButton",getEditReturnedItemsAction() );
 			}
 			{
 				addReturnItemButton = new JButton();
@@ -169,6 +173,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				addReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addReturnItemButton.setBackground(new java.awt.Color(244,244,244));
 				addReturnItemButton.setAction(getAddReturnItemAction());
+				addReturnItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F1"), "addReturnItemButton");
+				addReturnItemButton.getActionMap().put("addReturnItemButton",getAddReturnItemAction() );
 			}
 			{
 				greenPanel = new JPanel();
@@ -207,6 +213,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				addPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addPaymentItemButton.setBackground(new java.awt.Color(244,244,244));
 				addPaymentItemButton.setAction(getAddPaymentItemAction());
+				addPaymentItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F3"), "addPaymentItemButton");
+				addPaymentItemButton.getActionMap().put("addPaymentItemButton",getAddPaymentItemAction() );
 
 			}
 			{
@@ -217,6 +225,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				addReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
 				addReplacedItemButton.setAction(getAddReplacementItemAction());
+				addReplacedItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F2"), "addReplacedItemButton");
+				addReplacedItemButton.getActionMap().put("addReplacedItemButton",getAddReplacementItemAction() );
+
 				
 			}
 			{
@@ -495,6 +506,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				editReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
 				editReplacedItemButton.setAction(getEditReplacementItemsAction());
+				editReplacedItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F5"), "editReplacedItemButton");
+				editReplacedItemButton.getActionMap().put("editReplacedItemButton",getEditReplacementItemsAction() );
 				
 			}
 			{
@@ -505,6 +518,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				deleteReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deleteReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
 				deleteReplacedItemButton.setAction(getDeleteReplacementItemsAction());
+
+				deleteReplacedItemButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "deleteReplacedItemButton");
+				deleteReplacedItemButton.getActionMap().put("deleteReplacedItemButton",getDeleteReplacementItemsAction() );
 				
 			}
 			{
@@ -522,6 +538,26 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 							return false;
 						}
 					};
+					returnedItemsTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "returnedItemsTable");
+					returnedItemsTable.getActionMap().put("returnedItemsTable",getDeleteReturnedItemsAction() );
+					returnedItemsTable.addMouseListener(new MouseAdapter(){
+						 public void mouseClicked(MouseEvent e){
+							 if (e.getClickCount() == 2){
+								 ReturnedItemsDialog returnedItemsDialog = new ReturnedItemsDialog(Main.getInst());
+								Invoice invoice = InvoiceService.getInvoiceByOr(returnedORTextField.getText());
+								String productCode = returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 0).toString();
+								returnedItemsDialog.setInvoice(invoice);
+								returnedItemsDialog.setInvoker(ReturnedPanel.this);
+								returnedItemsDialog.setAction(productCode);
+								returnedItemsDialog.setReturnReason(returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 7).toString());
+								returnedItemsDialog.setReturnedQuantity(returnedItemsTable.getValueAt(returnedItemsTable.getSelectedRow(), 2).toString());
+								returnedItemsDialog.init();
+								returnedItemsDialog.setLocationRelativeTo(null);
+								returnedItemsDialog.setVisible(true);
+								returnedORTextField.setEnabled(false);
+							 }
+						 }
+					});
 					returnedItemsScrollPane.setViewportView(returnedItemsTable);
 					returnedItemsTable.setModel(returnedItemsTableModel);
 				}
@@ -542,6 +578,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				editPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editPaymentItemButton.setBackground(new java.awt.Color(244,244,244));
 				editPaymentItemButton.setAction(getEditPaymentItemAction());
+				editPaymentItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F6"), "editPaymentItemButton");
+				editPaymentItemButton.getActionMap().put("editPaymentItemButton",getEditPaymentItemAction() );
 				
 			}
 			{
@@ -552,11 +590,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				deletePaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deletePaymentItemButton.setBackground(new java.awt.Color(244,244,244));
 				deletePaymentItemButton.setAction(getDeletePaymentItemAction());
-				deletePaymentItemButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						
-					}
-				});
+				deletePaymentItemButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "deletePaymentItemButton");
+				deletePaymentItemButton.getActionMap().put("deletePaymentItemButton",getDeletePaymentItemAction() );
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
