@@ -87,6 +87,7 @@ public class PullOutDialog extends javax.swing.JDialog {
 				getContentPane().setLayout(null);
 				getContentPane().setBackground(new java.awt.Color(255,255,255));
 				this.setTitle("Pull Outs");
+				this.setModal(true);
 				{
 					PullOutLabel = new JLabel();
 					getContentPane().add(PullOutLabel);
