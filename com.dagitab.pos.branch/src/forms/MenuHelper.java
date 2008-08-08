@@ -74,46 +74,24 @@ public class MenuHelper {
 		
 		CONFIGURATION.setAction(getShowConfigurationDialogAbstractAction());
 		
-		RE_PRINT_RECEIPT.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				InvoiceViewer invoiceViewer = new InvoiceViewer(Main.getInst());
-				invoiceViewer.setLocationRelativeTo(null);
-				invoiceViewer.setVisible(true);
-				
-			}
-			
-		});
+		RE_PRINT_RECEIPT.setAction(getShowReprintDialogAction());
 		
 		
-		PASSWORD.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				PasswordManagerDialog passwordManagerDialog = new PasswordManagerDialog(Main.getInst());
-				passwordManagerDialog.setLocationRelativeTo(null);
-				passwordManagerDialog.setVisible(true);
-			}
-			
-		});
-		LOGOUT.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent evt) {
-			Main.setClerkCode(null);
-			Main.hideMainWindow();
-			Main.clearLoginInfo();
-			Main.showLoginDialog();
-		}});
+		PASSWORD.setAction(getShowPasswordDialogAction());
 		
-		DELIVERY_MANAGER.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent evt) {
-			DeliveryDialog deliveryDialog = new DeliveryDialog(Main.getInst());
-			deliveryDialog.setLocationRelativeTo(null);
-			deliveryDialog.setVisible(true);
-		}});
+		
+		LOGOUT.setAction(getLogoutAction());
+		
+		DELIVERY_MANAGER.setAction(getDeliveryManagerAction());
 	}
 	
 	public static JMenuBar getMenuBar(){
 		return MENU_BAR;
 	}
+	
+	
+	//Action Declaration starts here
+	
 	
 	private static AbstractAction getShowConfigurationDialogAbstractAction() {
 		AbstractAction showPopupDialogAbstractAction = new AbstractAction("Configuration Settings", null) {
@@ -125,5 +103,54 @@ public class MenuHelper {
 		};
 		showPopupDialogAbstractAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed C"));
 		return showPopupDialogAbstractAction;
+	}
+
+	private static AbstractAction getShowPasswordDialogAction() {
+		AbstractAction showPasswordDialogAction = new AbstractAction("Password Manager", null) {
+			public void actionPerformed(ActionEvent e) {
+				PasswordManagerDialog passwordManagerDialog = new PasswordManagerDialog(Main.getInst());
+				passwordManagerDialog.setLocationRelativeTo(null);
+				passwordManagerDialog.setVisible(true);
+			}
+		};
+		showPasswordDialogAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed W"));
+		return showPasswordDialogAction;
+	}
+
+	private static AbstractAction getShowReprintDialogAction() {
+		AbstractAction showReprintDialogAction = new AbstractAction("Re-Print Receipt", null) {
+			public void actionPerformed(ActionEvent e) {
+				InvoiceViewer invoiceViewer = new InvoiceViewer(Main.getInst());
+				invoiceViewer.setLocationRelativeTo(null);
+				invoiceViewer.setVisible(true);
+			}
+		};
+		showReprintDialogAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed P"));
+		return showReprintDialogAction;
+	}
+
+	private static AbstractAction getLogoutAction() {
+		AbstractAction showLogoutAction = new AbstractAction("Log-out", null) {
+			public void actionPerformed(ActionEvent e) {
+				Main.setClerkCode(null);
+				Main.hideMainWindow();
+				Main.clearLoginInfo();
+				Main.showLoginDialog();
+			}
+		};
+		showLogoutAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed L"));
+		return showLogoutAction;
+	}
+
+	private static AbstractAction getDeliveryManagerAction() {
+		AbstractAction showDeliveryManagerAction = new AbstractAction("Delivery Manager", null) {
+			public void actionPerformed(ActionEvent e) {
+				DeliveryDialog deliveryDialog = new DeliveryDialog(Main.getInst());
+				deliveryDialog.setLocationRelativeTo(null);
+				deliveryDialog.setVisible(true);
+			}
+		};
+		showDeliveryManagerAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
+		return showDeliveryManagerAction;
 	}
 }
