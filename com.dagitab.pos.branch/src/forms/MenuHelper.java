@@ -1,7 +1,6 @@
 package forms;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
@@ -13,6 +12,7 @@ import javax.swing.KeyStroke;
 
 import main.Main;
 import forms.delivery.DeliveryDialog;
+import forms.pullouts.PullOutRequestDialog;
 import forms.receipts.InvoiceViewer;
 
 public class MenuHelper {
@@ -67,10 +67,8 @@ public class MenuHelper {
 	
 	static{
 		
-		
+		PULL_OUT_LIST.setEnabled(false);
 		CONNECT.setEnabled(false);
-		
-		PULL_OUT_MENU.setEnabled(false);
 		REPORTS_MENU.setEnabled(false);
 		ABOUT_MENU.setEnabled(false);
 		
@@ -87,6 +85,9 @@ public class MenuHelper {
 		EXIT.setAction(getExitAction());
 		
 		DELIVERY_MANAGER.setAction(getDeliveryManagerAction());
+		
+		PULL_OUT_REQUEST.setAction(getPullOutRequestAction());
+		
 	}
 	
 	public static JMenuBar getMenuBar(){
@@ -174,5 +175,17 @@ public class MenuHelper {
 		};
 		showExitAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed F4"));
 		return showExitAction;
+	}
+	
+	private static AbstractAction getPullOutRequestAction(){
+		AbstractAction pullOutRequestAction = new AbstractAction("Create Pull Out Request", null) {
+			public void actionPerformed(ActionEvent e) {
+				PullOutRequestDialog pullOutRequestDialog = new PullOutRequestDialog(Main.getInst());
+				pullOutRequestDialog.setLocationRelativeTo(null);
+				pullOutRequestDialog.setVisible(true);
+			}
+		};
+//		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
+		return pullOutRequestAction;
 	}
 }

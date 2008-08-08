@@ -26,6 +26,7 @@ import bus.ProductService;
 import domain.InvoiceItem;
 import domain.Product;
 import forms.invoice.InvoicePanel;
+import forms.pullouts.PullOutRequestDialog;
 import forms.returned.ReturnedPanel;
 
 
@@ -78,6 +79,7 @@ public class ProductDialog extends javax.swing.JDialog {
 		this.invoker = invoker;
 		this.action = action;
 		initGUI();
+		init();
 	}
 	public static ProductDialog getProductDialog(JFrame frame, Object invoker, String action){
 		if(productDialog == null){
@@ -92,6 +94,14 @@ public class ProductDialog extends javax.swing.JDialog {
 		return productDialog;
 	}
 	
+	//special cases onRender
+	private void init(){
+		if(invoker instanceof PullOutRequestDialog) {
+			deferredChk.setEnabled(false);
+			discountCB.setEnabled(false);
+		}
+		
+	}
 	private void initGUI() {
 		try {
 			{
@@ -214,7 +224,7 @@ public class ProductDialog extends javax.swing.JDialog {
 									}
 								}
 								
-								if(invoker instanceof ReturnedPanel) {
+								else if(invoker instanceof ReturnedPanel) {
 									ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
 									if(action.equals("add")){
 										if(returnedPanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
@@ -230,6 +240,24 @@ public class ProductDialog extends javax.swing.JDialog {
 										productDialog.setVisible(false);
 									}
 								}
+								
+								else if(invoker instanceof PullOutRequestDialog) {
+									PullOutRequestDialog pullOutRequestDialog = (PullOutRequestDialog)invoker;
+									if(action.equals("add")){
+										if(pullOutRequestDialog.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
+											pullOutRequestDialog.addInvoiceItem(invoiceItem);
+											productDialog.setVisible(false);
+										}
+										else{
+											JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+										}
+									}
+									else { //edit
+										pullOutRequestDialog.editInvoiceItem(invoiceItem, action);
+										productDialog.setVisible(false);
+									}
+								}
+								
 							}
 						}
 					});
