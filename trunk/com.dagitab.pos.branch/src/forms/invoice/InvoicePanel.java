@@ -195,10 +195,10 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				this.add(jButton29, new AnchorConstraint(459, 438, 502, 316, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jButton29.setText("Fast Addition");
 				jButton29.setPreferredSize(new java.awt.Dimension(105, 20));
-				jButton29.setEnabled(false);
 				jButton29.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						FastAddition dialog = new FastAddition(Main.getInst());
+						dialog.setInvoker(InvoicePanel.this);
 						dialog.setLocationRelativeTo(null);
 						dialog.setVisible(true);
 					}
@@ -738,11 +738,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		model.addRow(new String[]{invoiceItem.getProductCode(),
 								  product.getName(),
 								  invoiceItem.getQuantity().toString(),
-								  product.getSellPrice().toString(),
+								  String.format("%.2f",product.getSellPrice()),
 								  String.format("%.2f",invoiceItem.getSellPrice()),
 								  (invoiceItem.getIsDeferred()==1)?"Yes":"No",
 								  invoiceItem.getDiscountCode().toString(),
-								  "000"});
+								  String.format("%.2f", invoiceItem.getQuantity()*invoiceItem.getSellPrice())});
 		updateAmounts();
 	}
 	
@@ -767,6 +767,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
+		model.setValueAt(String.format("%.2f", invoiceItem.getSellPrice()*invoiceItem.getQuantity()), index, 7);
 		updateAmounts();
 	}
 	
