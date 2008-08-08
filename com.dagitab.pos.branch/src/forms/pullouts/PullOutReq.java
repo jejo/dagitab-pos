@@ -34,6 +34,7 @@ import main.DBManager;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@Deprecated
 public class PullOutReq extends javax.swing.JDialog {
 	private JLabel jLabel1;
 	private JScrollPane jScrollPane1;
