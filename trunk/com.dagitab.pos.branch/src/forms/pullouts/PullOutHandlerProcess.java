@@ -34,6 +34,7 @@ import main.DBManager;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@Deprecated
 public class PullOutHandlerProcess extends javax.swing.JDialog {
 
 	{
