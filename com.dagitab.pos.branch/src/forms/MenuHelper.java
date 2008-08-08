@@ -12,6 +12,7 @@ import javax.swing.KeyStroke;
 
 import main.Main;
 import forms.delivery.DeliveryDialog;
+import forms.pullouts.PullOutDialog;
 import forms.pullouts.PullOutRequestDialog;
 import forms.receipts.InvoiceViewer;
 
@@ -67,7 +68,6 @@ public class MenuHelper {
 	
 	static{
 		
-		PULL_OUT_LIST.setEnabled(false);
 		CONNECT.setEnabled(false);
 		REPORTS_MENU.setEnabled(false);
 		ABOUT_MENU.setEnabled(false);
@@ -88,6 +88,7 @@ public class MenuHelper {
 		
 		PULL_OUT_REQUEST.setAction(getPullOutRequestAction());
 		
+		PULL_OUT_LIST.setAction(getPullOutlistAction());
 	}
 	
 	public static JMenuBar getMenuBar(){
@@ -98,6 +99,19 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	private static AbstractAction getPullOutlistAction() {
+		AbstractAction pullOutRequestAction = new AbstractAction("Browse Pending Pull Outs", null) {
+			public void actionPerformed(ActionEvent e) {
+				PullOutDialog pullOutDialog = new PullOutDialog(Main.getInst());
+				pullOutDialog.setLocationRelativeTo(null);
+				pullOutDialog.setVisible(true);
+			}
+		};
+//		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
+		return pullOutRequestAction;
+	}
+
+
 	private static AbstractAction getShowConfigurationDialogAbstractAction() {
 		AbstractAction showPopupDialogAbstractAction = new AbstractAction("Configuration Settings", null) {
 			public void actionPerformed(ActionEvent evt) {
