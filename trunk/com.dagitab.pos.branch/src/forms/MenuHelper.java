@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
@@ -38,6 +39,7 @@ public class MenuHelper {
 	
 	private static JMenuItem HELP = new JMenuItem("Help");
 	private static JMenuItem ABOUT = new JMenuItem("About");
+	private static MainWindow Window;
 	
 	static{
 		MENU_BAR.add(FILE_MENU);
@@ -81,6 +83,8 @@ public class MenuHelper {
 		
 		
 		LOGOUT.setAction(getLogoutAction());
+		
+		EXIT.setAction(getExitAction());
 		
 		DELIVERY_MANAGER.setAction(getDeliveryManagerAction());
 	}
@@ -152,5 +156,23 @@ public class MenuHelper {
 		};
 		showDeliveryManagerAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
 		return showDeliveryManagerAction;
+	}
+
+	private static AbstractAction getExitAction() {
+		AbstractAction showExitAction = new AbstractAction("Delivery Manager", null) {
+			public void actionPerformed(ActionEvent e) {
+				int n = JOptionPane
+				.showConfirmDialog(
+					Window,
+					"Are you sure you want to exit this application?",
+					"Confirmation",
+					JOptionPane.YES_NO_OPTION);
+				if (n == 0) {
+					System.exit(0);
+				}
+			}
+		};
+		showExitAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed F4"));
+		return showExitAction;
 	}
 }
