@@ -1,6 +1,10 @@
-package forms;
+package forms.pullouts;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
+import forms.MainWindow;
+import forms.NewPullOutReq;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;

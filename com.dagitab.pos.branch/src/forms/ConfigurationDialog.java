@@ -1,20 +1,23 @@
 package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.ServerPropertyHandler;
 import util.StorePropertyHandler;
-
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -44,7 +47,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 	}
 
 	private JTabbedPane jTabbedPane1;
-	private JLabel jLabel1;
+	private JLabel configurationLabel;
 	private JPanel jPanel1;
 	private JLabel jLabel4;
 	private JLabel jLabel5;
@@ -118,11 +121,14 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 				});
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(21, 579, 119, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Configuration Settings");
-				jLabel1.setPreferredSize(new java.awt.Dimension(252, 35));
-				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
+				configurationLabel = new JLabel();
+				getContentPane().add(configurationLabel, new AnchorConstraint(21, 579, 119, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				configurationLabel.setText("Configuration Settings");
+				configurationLabel.setPreferredSize(new java.awt.Dimension(252, 35));
+				configurationLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				configurationLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "configurationLabel");
+				configurationLabel.getActionMap().put("configurationLabel",getConfigurationLabelAbstractAction() );
+				
 			}
 			{
 				jTabbedPane1 = new JTabbedPane();
@@ -384,10 +390,22 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 					}
 				}
 			}
+			
 			this.setSize(682, 356);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private AbstractAction getConfigurationLabelAbstractAction() {
+		AbstractAction confirmationLabelAction = new AbstractAction("Confirmation Dialog", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ConfigurationDialog.this.dispose();
+			}
+		};
+		return confirmationLabelAction;
 	}
 
 }

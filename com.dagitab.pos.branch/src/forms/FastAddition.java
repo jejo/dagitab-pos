@@ -3,11 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,6 +15,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+import util.StringUtility;
+import bus.ProductService;
+import domain.InvoiceItem;
+import domain.Product;
+import forms.invoice.InvoicePanel;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -35,17 +35,18 @@ import main.Main;
 */
 @SuppressWarnings("serial")
 public class FastAddition extends javax.swing.JDialog {
-	private JButton jButton1;
-	private JButton jButton3;
-	private JTable jTable1;
-	private JScrollPane jScrollPane1;
-	private JLabel jLabel3;
-	private JButton jButton2;
-	private JLabel jLabel2;
-	private JLabel jLabel1;
-	private JTextField jTextField1;
-	private Vector<Vector<String>> productItems;
-	private MainWindow frame;
+	private JButton okButton;
+	private JButton deleteButton;
+	private JTable itemListTable;
+	private JScrollPane itemListScrollPane;
+	private JLabel itemListLabel;
+	private JButton insertButton;
+	private JLabel fastAdditionLabel;
+	private JLabel productCodeLabel;
+	private JTextField productCodeTextField;
+	private Object invoker;
+	
+	
 	
 	/**
 	* Auto-generated main method to display this JDialog
@@ -61,12 +62,7 @@ public class FastAddition extends javax.swing.JDialog {
 		initGUI();
 	}
 	
-	public FastAddition(MainWindow frame){
-		super(frame);
-		this.frame = frame;
-		productItems = new Vector<Vector<String>>();
-		initGUI();
-	}
+	
 	
 	private void initGUI() {
 		try {
@@ -79,113 +75,103 @@ public class FastAddition extends javax.swing.JDialog {
 					
 				});
 				{
-					jButton1 = new JButton();
-					getContentPane().add(jButton1);
-					jButton1.setText("OK");
-					jButton1.setBounds(343, 490, 63, 28);
-					jButton1.addActionListener(new ActionListener() {
+					okButton = new JButton();
+					getContentPane().add(okButton);
+					okButton.setText("OK");
+					okButton.setBounds(343, 490, 63, 28);
+					okButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							frame.synchronizeWithFastAddition(productItems);
+							InvoicePanel invoicePanel = (InvoicePanel)invoker; //invoker should be set
+							for(int i = 0; i<itemListTable.getRowCount(); i++){
+								InvoiceItem invoiceItem = new InvoiceItem();
+								Product product = ProductService.getProductById(itemListTable.getValueAt(i, 0).toString());
+								invoiceItem.setCost(product.getCost());
+								invoiceItem.setDiscountCode(Integer.parseInt(itemListTable.getValueAt(i, 6).toString()));
+								invoiceItem.setIsDeferred(0);
+								invoiceItem.setProductCode(itemListTable.getValueAt(i, 0).toString());
+								invoiceItem.setQuantity(Integer.parseInt(itemListTable.getValueAt(i, 2).toString()));
+								invoiceItem.setSellPrice(Double.parseDouble(itemListTable.getValueAt(i, 4).toString()));
+								invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+								if(invoicePanel.getInvoiceItemRow(itemListTable.getValueAt(i, 0).toString()) == null){
+									invoicePanel.addInvoiceItem(invoiceItem);
+								}
+								else{
+									JOptionPane.showMessageDialog(null, "The product "+product.getProdCode()+" is already in the invoice item list. The entry will be replaced with fast addition's entry.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+									invoicePanel.editInvoiceItem(invoiceItem,itemListTable.getValueAt(i, 0).toString() );
+								}
+							}
+							
 							FastAddition.this.dispose();
+
 						}
 					});
 				}
 				{
-					ResultSet rs = Main.getDBManager().executeQuery("SELECT p.PROD_CODE FROM products_lu p, inventory_lu i WHERE p.PROD_CODE = i.PROD_CODE");
-					List<String> list = new ArrayList<String>();
-					
-					while(rs.next()){
-						list.add(rs.getString(1));
-					}
-					
-//					jTextField1 = new Java2sAutoTextField(list);
-					jTextField1 = new JTextField();
-					getContentPane().add(jTextField1);
-					jTextField1.setBounds(245, 56, 224, 28);
-					jTextField1.addKeyListener(new KeyAdapter() {
+					productCodeTextField = new JTextField();
+					getContentPane().add(productCodeTextField);
+					productCodeTextField.setBounds(245, 56, 224, 28);
+					productCodeTextField.addKeyListener(new KeyAdapter() {
 						 @Override
 						public void keyPressed(KeyEvent e) {
 							 int key = e.getKeyCode();
 						     if (key == KeyEvent.VK_ENTER){
-						    	 	checkProductTable();
-						    	 	jTextField1.setText("");
+						    	 insertIntoItemList();
+						    	 productCodeTextField.setText("");
 						     }
 						}
 					});
 				}
 				{
-					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1);
-					jLabel1.setText("Product Code");
-					jLabel1.setBounds(147, 56, 98, 28);
+					productCodeLabel = new JLabel();
+					getContentPane().add(productCodeLabel);
+					productCodeLabel.setText("Product Code");
+					productCodeLabel.setBounds(161, 56, 80, 28);
 				}
 				{
-					jLabel2 = new JLabel();
-					getContentPane().add(jLabel2);
-					jLabel2.setText("Fast Addition");
-					jLabel2.setBounds(14, 14, 182, 28);
-					jLabel2.setFont(new java.awt.Font("Tahoma",1,18));
+					fastAdditionLabel = new JLabel();
+					getContentPane().add(fastAdditionLabel);
+					fastAdditionLabel.setText("Fast Addition");
+					fastAdditionLabel.setBounds(14, 14, 182, 28);
+					fastAdditionLabel.setFont(new java.awt.Font("Tahoma",0,18));
 				}
 				{
-					jButton2 = new JButton();
-					getContentPane().add(jButton2);
-					jButton2.setText("Insert");
-					jButton2.setBounds(476, 56, 63, 28);
-					jButton2.addActionListener(new ActionListener() {
+					insertButton = new JButton();
+					getContentPane().add(insertButton);
+					insertButton.setText("Insert");
+					insertButton.setBounds(476, 56, 63, 28);
+					insertButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							checkProductTable();
+							insertIntoItemList();
 						}
 					});
 				}
 				{
-					jLabel3 = new JLabel();
-					getContentPane().add(jLabel3);
-					jLabel3.setText("Item List");
-					jLabel3.setBounds(14, 91, 63, 28);
-					jLabel3.setFont(new java.awt.Font("Tahoma",1,14));
+					itemListLabel = new JLabel();
+					getContentPane().add(itemListLabel);
+					itemListLabel.setText("Item List");
+					itemListLabel.setBounds(14, 98, 63, 28);
+					itemListLabel.setFont(new java.awt.Font("Tahoma",0,14));
 				}
 				{
-					jScrollPane1 = new JScrollPane();
-					getContentPane().add(jScrollPane1);
-					jScrollPane1.setBounds(14, 126, 728, 322);
+					itemListScrollPane = new JScrollPane();
+					getContentPane().add(itemListScrollPane);
+					itemListScrollPane.setBounds(14, 126, 728, 310);
 					{
-						TableModel jTable1Model = new DefaultTableModel(
-							null,
-									new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code" });
-						jTable1 = new JTable();
-						jScrollPane1.setViewportView(jTable1);
-						jTable1.setModel(jTable1Model);
+						TableModel itemListTableModel = new DefaultTableModel(
+							null,new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
+						itemListTable = new JTable();
+						itemListScrollPane.setViewportView(itemListTable);
+						itemListTable.setModel(itemListTableModel);
 					}
 				}
 				{
-					jButton3 = new JButton();
-					getContentPane().add(jButton3);
-					jButton3.setText("Delete Product");
-					jButton3.setBounds(616, 448, 126, 28);
-					jButton3.addActionListener(new ActionListener() {
+					deleteButton = new JButton();
+					getContentPane().add(deleteButton);
+					deleteButton.setText("Delete Product");
+					deleteButton.setBounds(616, 448, 126, 28);
+					deleteButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							int selected = jTable1.getSelectedRow();
-							int qty = Integer.parseInt(productItems.get(selected).get(2).toString());
-							if(qty == 1){
-								productItems.remove(selected);
-							}
-							else{
-								String input = JOptionPane.showInputDialog(null, "Quantity wished to be removed?");
-								Vector<String>row = productItems.get(selected);
-								int newqty = qty-Integer.parseInt(input);
-								if(newqty>0){
-									row.set(2, newqty+"");
-									productItems.set(selected, row);
-								}
-								else if(newqty == 0){
-									productItems.remove(selected);
-								}
-								else{
-									JOptionPane.showMessageDialog(null, "Please input valid quantity to be removed","Error",JOptionPane.INFORMATION_MESSAGE);
-								}
-								
-							}
-							insertToProdutTable(null);
+							
 						}
 					});
 				}
@@ -196,71 +182,49 @@ public class FastAddition extends javax.swing.JDialog {
 		}
 	}
 	
-	private void insertToProdutTable(Vector<String> row){
-		if(row != null) {
-			productItems.add(row);
-		}
-		
-		Object[][] data = new Object[productItems.size()][7];
-		for(int i = 0; i< productItems.size(); i++)
-		{
-			for(int j=0; j<7; j++){
-				data[i][j] = productItems.get(i).get(j);
+	private void insertIntoItemList(){
+		Product product = ProductService.loadProductOfStore(productCodeTextField.getText());
+		if(product != null){
+			DefaultTableModel itemListTableModel = (DefaultTableModel) itemListTable.getModel();
+			Integer itemListIndex =getItemListIndex(product.getProdCode()); 
+			if(itemListIndex == null){ //new entry
+				String[] row = new String[8];
+				row[0] = product.getProdCode(); //product code
+				row[1] = product.getName(); //product name
+				row[2] = "1"; // every entry has 1 item
+				row[3] = product.getSellPrice().toString(); //current price
+				row[4] = product.getSellPrice().toString(); //selling price = current price
+				row[5] = "No";
+				row[6] = StringUtility.zeroFill("1",10);
+				row[7] = product.getSellPrice().toString();
+				itemListTableModel.addRow(row);
+			}
+			else{ //just update quantity and extension of the entry
+				Integer quantity = Integer.parseInt(itemListTableModel.getValueAt(itemListIndex, 2).toString());
+				itemListTableModel.setValueAt(quantity+1, itemListIndex, 2);
+				Double sellingPrice = Double.parseDouble(itemListTableModel.getValueAt(itemListIndex, 4).toString());
+				Double extension = sellingPrice * (quantity+1);
+				itemListTableModel.setValueAt(String.format("%.2f", extension), itemListIndex, 7);
 			}
 		}
-		
-		TableModel jTable1Model = new DefaultTableModel(
-				data,
-				new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code"  });
-			jTable1 = new JTable(){
-				@Override
-				public boolean isCellEditable(int row, int column)
-				{
-					return false;
-				}
-			};
-			jScrollPane1.setViewportView(jTable1);
-			jTable1.setModel(jTable1Model);
+		else{
+			JOptionPane.showMessageDialog(null, "Product does not exist in store's inventory. Please contact administrator and synchronize inventory list.", "Prompt", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	private Integer getItemListIndex(String productCode){
+		DefaultTableModel itemListTableModel = (DefaultTableModel) itemListTable.getModel();
+		for(int i = 0; i< itemListTableModel.getRowCount(); i++){
+			if(itemListTableModel.getValueAt(i, 0).toString().equals(productCode)){
+				return i;
+			}
+		}
+		return null;
+	}
+
+	public void setInvoker(Object invoker) {
+		this.invoker = invoker;
 	}
 	
-	private void checkProductTable(){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM products_lu WHERE PROD_CODE = \""+jTextField1.getText()+"\"");
-		try {
-			if(rs.next()){
-				
-				boolean hasProductinTable = false;
-				for(int i = 0; i<productItems.size(); i++){
-					if(productItems.get(i).get(0).toString().equals(jTextField1.getText())){
-						int soldquantity = Integer.parseInt(productItems.get(i).get(2));
-						soldquantity++;
-						productItems.get(i).set(2, soldquantity+"");
-						insertToProdutTable(null); //edit table
-						hasProductinTable = true;
-						break;
-						
-					}
-				}
-				if(!hasProductinTable){
-					Vector<String> row = new Vector<String>();
-					row.add(jTextField1.getText());
-					row.add(rs.getString("NAME"));
-					row.add("1");
-					row.add(rs.getString("SELL_PRICE"));
-					row.add(rs.getString("SELL_PRICE"));
-					row.add("No");
-					row.add("1");
-					insertToProdutTable(row);
-				}
-			}
-			else{
-				JOptionPane.showMessageDialog(null, 
-						"Item does not exist", 
-						"Warning",JOptionPane.WARNING_MESSAGE);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 
 }
