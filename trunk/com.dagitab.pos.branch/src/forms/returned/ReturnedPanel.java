@@ -602,15 +602,26 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(addReturnItemAction == null) {
 			addReturnItemAction = new AbstractAction("Add", new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png"))) {
 				public void actionPerformed(ActionEvent evt) {
-					ReturnedItemsDialog returnedItemsDialog = new ReturnedItemsDialog(Main.getInst());
-					Invoice invoice = InvoiceService.getInvoiceByOr(returnedORTextField.getText());
-					returnedItemsDialog.setInvoice(invoice);
-					returnedItemsDialog.setInvoker(ReturnedPanel.this);
-					returnedItemsDialog.setAction("add");
-					returnedItemsDialog.init();
-					returnedItemsDialog.setLocationRelativeTo(null);
-					returnedItemsDialog.setVisible(true);
-					returnedORTextField.setEnabled(false);
+					if(returnedORTextField.getText().trim().length() > 0){
+						
+						ReturnedItemsDialog returnedItemsDialog = new ReturnedItemsDialog(Main.getInst());
+						Invoice invoice = InvoiceService.getInvoiceByOr(returnedORTextField.getText());
+						if(invoice != null){
+							returnedItemsDialog.setInvoice(invoice);
+							returnedItemsDialog.setInvoker(ReturnedPanel.this);
+							returnedItemsDialog.setAction("add");
+							returnedItemsDialog.init();
+							returnedItemsDialog.setLocationRelativeTo(null);
+							returnedItemsDialog.setVisible(true);
+							returnedORTextField.setEnabled(false);
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "Invoice with OR number "+returnedORTextField.getText()+" does not exist", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please input OR Number to return", "Prompt", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			};
 		}
