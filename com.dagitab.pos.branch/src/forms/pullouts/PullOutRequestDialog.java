@@ -1,5 +1,9 @@
 package forms.pullouts;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
@@ -20,8 +24,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.TableUtility;
+
 import main.Main;
+import bus.DeliveryItemService;
+import bus.DeliveryService;
 import bus.ProductService;
+import bus.PullOutReasonService;
+import bus.PullOutRequestItemService;
+import bus.PullOutRequestService;
 import domain.InvoiceItem;
 import domain.Product;
 import forms.lookup.ProductDialog;
@@ -73,6 +84,8 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 	private JPanel newPullOutPanel;
 	private JPanel pullOutListPanel;
 	private JButton closeButton;
+	
+	private PullOutRequestDialog pullOutRequestDialog;
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -89,7 +102,9 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 	
 	public PullOutRequestDialog(JFrame frame) {
 		super(frame);
+		this.pullOutRequestDialog = this; 
 		initGUI();
+		refreshPullOutRequestTable();
 	}
 	
 	private void initGUI() {
@@ -181,8 +196,7 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 						}
 						{
 							ComboBoxModel pullOutReasonComboBoxModel = 
-								new DefaultComboBoxModel(
-										new String[] { "Item One", "Item Two" });
+								new DefaultComboBoxModel( PullOutReasonService.fetchAllPullOutReasons() );
 							pullOutReasonComboBox = new JComboBox();
 							newPullOutPanel.add(pullOutReasonComboBox);
 							pullOutReasonComboBox.setModel(pullOutReasonComboBoxModel);
@@ -199,6 +213,11 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 							newPullOutPanel.add(createButton);
 							createButton.setText("Create New Pull Out Request");
 							createButton.setBounds(263, 273, 184, 26);
+							createButton.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent evt) {
+									createPullOutRequest();
+								}
+							});
 						}
 					}
 				}
@@ -208,6 +227,12 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 					closeButton.setText("Close");
 					closeButton.setBounds(331, 420, 72, 27);
 					closeButton.setAction(getCloseAbstractAction());
+					
+					closeButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							pullOutRequestDialog.setVisible(false);
+						}
+					});
 				}
 			}
 			this.setSize(766, 505);
@@ -233,7 +258,22 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 				new DefaultTableModel(
 						null,
 						new String[] { "Request No", "Date","Clerk Issued","Reason" });
-			pullOutRequestTable = new JTable();
+			pullOutRequestTable = new JTable() {
+				@Override
+				public boolean isCellEditable(
+					int row,
+					int column) {
+					return false;
+				}
+			};
+			pullOutRequestTable.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e){
+					 if(pullOutRequestTable.getSelectedRow() != -1) {
+						//refresh
+						 refreshPullOutRequestItemsTable((Long) pullOutRequestTable.getValueAt(pullOutRequestTable.getSelectedRow(), 0));
+					 }
+				 }
+			});
 			pullOutRequestTable.setModel(pullOutRequestTableModel);
 		}
 		return pullOutRequestTable;
@@ -245,21 +285,33 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 				new DefaultTableModel(
 						null,
 						new String[] { "Product Code", "Product Name","Quantity" });
-			pullOutRequestItemTable = new JTable();
+			pullOutRequestItemTable = new JTable() {
+				@Override
+				public boolean isCellEditable(
+					int row,
+					int column) {
+					return false;
+				}
+			};
 			pullOutRequestItemTable.setModel(pullOutRequestItemTableModel);
 		}
 		return pullOutRequestItemTable;
 	}
 	
 	private JTable getNewPullOutRequestItemTable() {
-		if(newPullOutRequestItemTable == null) {
-			TableModel newPullOutRequestItemTableModel = 
-				new DefaultTableModel(
-						null,
-						new String[] { "Product Code", "Product Name", "Quantity" });
-			newPullOutRequestItemTable = new JTable();
-			newPullOutRequestItemTable.setModel(newPullOutRequestItemTableModel);
-		}
+		TableModel newPullOutRequestItemTableModel = 
+			new DefaultTableModel(
+					null,
+					new String[] { "Product Code", "Product Name", "Quantity" });
+		newPullOutRequestItemTable = new JTable() {
+			@Override
+			public boolean isCellEditable(
+				int row,
+				int column) {
+				return false;
+			}
+		};
+		newPullOutRequestItemTable.setModel(newPullOutRequestItemTableModel);
 		return newPullOutRequestItemTable;
 	}
 	
@@ -359,4 +411,37 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 		
 	}
 
+	public PullOutRequestDialog getPullOutRequestDialog() {
+		return pullOutRequestDialog;
+	}
+
+	public void setPullOutRequestDialog(PullOutRequestDialog pullOutRequestDialog) {
+		this.pullOutRequestDialog = pullOutRequestDialog;
+	}
+
+	public void refreshPullOutRequestTable() {
+		ResultSet rs = PullOutRequestService.fetchAllPullOutRequests();
+		TableUtility.fillTable(pullOutRequestTable, rs, new String[]{"Request No", "Date","Clerk Issued","Reason"});
+	}
+	
+	public void refreshPullOutRequestItemsTable(Long pullOutRequestId) {
+		ResultSet rs =	PullOutRequestItemService.fetchPullOutRequestItems(pullOutRequestId); 
+		TableUtility.fillTable(pullOutRequestItemTable, rs, new String[]{"Product Code", "Product Name","Quantity"});
+	}
+	
+	public void clearNewPullOutRequestItemsTable() {
+		newPullOutRequestItemScrollPane.setViewportView(getNewPullOutRequestItemTable());
+	}
+	
+	public void createPullOutRequest() {
+		PullOutRequestService.createPullOutRequest(pullOutReasonComboBox.getSelectedItem().toString());
+		Long latestPullOutRequestId = PullOutRequestService.getLatestPullOutRequest();  
+		for(int i = 0; i < newPullOutRequestItemTable.getRowCount(); i++) {
+			PullOutRequestItemService.createPullOutRequestItem(latestPullOutRequestId, newPullOutRequestItemTable.getValueAt(i, 0).toString(), newPullOutRequestItemTable.getValueAt(i, 2).toString());
+		}
+		JOptionPane.showMessageDialog(null, "Pull Out Request: " + latestPullOutRequestId + " has been created.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+		refreshPullOutRequestTable();
+		clearNewPullOutRequestItemsTable();
+	}
+	
 }
