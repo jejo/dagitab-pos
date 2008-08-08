@@ -537,10 +537,10 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				editInvoiceItemButton.setPreferredSize(new java.awt.Dimension(62, 20));
 				editInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
-				editInvoiceItemButton.setAction(getEditItemAction1());
+				editInvoiceItemButton.setAction(getEditItemAction());
 				
 				editInvoiceItemButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed F3"), "editInvoiceItemButton");
-				editInvoiceItemButton.getActionMap().put("editInvoiceItemButton",getEditItemAction1() );
+				editInvoiceItemButton.getActionMap().put("editInvoiceItemButton",getEditItemAction() );
 			}
 			{
 				deleteInvoiceItemButton = new JButton();
@@ -1092,7 +1092,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		updateAmounts();
 	}
 	
-	private AbstractAction getEditItemAction1() {
+	private AbstractAction getEditItemAction() {
 		if(editItemAction1 == null) {
 			editItemAction1 = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
 				public void actionPerformed(ActionEvent evt) {
