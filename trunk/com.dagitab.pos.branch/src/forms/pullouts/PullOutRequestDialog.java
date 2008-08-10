@@ -1,6 +1,7 @@
 package forms.pullouts;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -35,6 +36,7 @@ import bus.PullOutRequestItemService;
 import bus.PullOutRequestService;
 import domain.InvoiceItem;
 import domain.Product;
+import forms.About;
 import forms.lookup.ProductDialog;
 
 /**
@@ -60,7 +62,7 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 		}
 	}
 
-	private JLabel jLabel1;
+	private JLabel pullOutRequestDialogLabel;
 	private JTabbedPane pullOutTabbedPane;
 	private JLabel pullOutRequestItemLabel;
 	private AbstractAction deleteAbstractAction;
@@ -114,11 +116,13 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 				getContentPane().setBackground(new java.awt.Color(255,255,255));
 				this.setTitle("Pull Out Request");
 				{
-					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1);
-					jLabel1.setText("Pull Outs");
-					jLabel1.setBounds(12, 12, 125, 16);
-					jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
+					pullOutRequestDialogLabel = new JLabel();
+					getContentPane().add(pullOutRequestDialogLabel);
+					pullOutRequestDialogLabel.setText("Pull Outs");
+					pullOutRequestDialogLabel.setBounds(12, 12, 125, 16);
+					pullOutRequestDialogLabel.setFont(new java.awt.Font("Tahoma",0,18));
+					pullOutRequestDialogLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "pullOutRequestDialogLabel");
+					pullOutRequestDialogLabel.getActionMap().put("pullOutRequestDialogLabel",getPullOutRequestDialogLabelAbstractAction() );
 				}
 				{
 					pullOutTabbedPane = new JTabbedPane();
@@ -442,6 +446,16 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 		JOptionPane.showMessageDialog(null, "Pull Out Request: " + latestPullOutRequestId + " has been created.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 		refreshPullOutRequestTable();
 		clearNewPullOutRequestItemsTable();
+	}
+	
+	private AbstractAction getPullOutRequestDialogLabelAbstractAction() {
+		AbstractAction pullOutLabelAction = new AbstractAction("Pull Outs", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PullOutRequestDialog.this.dispose();
+			}
+		};
+		return pullOutLabelAction;
 	}
 	
 }

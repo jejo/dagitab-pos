@@ -1,12 +1,15 @@
 package forms.receipts;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -29,6 +33,7 @@ import com.cloudgarden.layout.AnchorConstraint;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
+import forms.About;
 
 
 /**
@@ -45,7 +50,7 @@ import domain.PaymentItem;
 */
 @SuppressWarnings("serial")
 public class InvoiceViewer extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel invoiceViewerLabel;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
 	private JPanel jPanel1;
@@ -101,9 +106,9 @@ public class InvoiceViewer extends javax.swing.JDialog {
 				this.setTitle("Invoice Viewer");
 				getContentPane().setLayout(null);
 				{
-					jLabel1 = new JLabel();
+					invoiceViewerLabel = new JLabel();
 					getContentPane().add(
-						jLabel1,
+						invoiceViewerLabel,
 						new AnchorConstraint(
 							38,
 							312,
@@ -113,9 +118,11 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							AnchorConstraint.ANCHOR_REL,
 							AnchorConstraint.ANCHOR_REL,
 							AnchorConstraint.ANCHOR_REL));
-					jLabel1.setText("Invoice Viewer");
-					jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
-					jLabel1.setBounds(14, 7, 182, 35);
+					invoiceViewerLabel.setText("Invoice Viewer");
+					invoiceViewerLabel.setFont(new java.awt.Font("Tahoma",1,18));
+					invoiceViewerLabel.setBounds(14, 7, 182, 35);
+					invoiceViewerLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "invoiceViewerLabel");
+					invoiceViewerLabel.getActionMap().put("invoiceViewerLabel",getInvoiceViewerLabelAbstractAction() );
 				}
 				{
 					txtOR = new JTextField();
@@ -375,6 +382,16 @@ public class InvoiceViewer extends javax.swing.JDialog {
 	
 	public void displayInfo() throws SQLException{
 		
+	}
+	
+	private AbstractAction getInvoiceViewerLabelAbstractAction() {
+		AbstractAction invioceViewerLabelAction = new AbstractAction("Invoice Viewer", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				InvoiceViewer.this.dispose();
+			}
+		};
+		return invioceViewerLabelAction;
 	}
 
 }

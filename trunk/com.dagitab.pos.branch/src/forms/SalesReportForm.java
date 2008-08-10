@@ -5,12 +5,17 @@ import com.cloudgarden.resource.SWTResourceManager;
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JButton;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -39,7 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class SalesReportForm extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel salesReportLabel;
 	private JLabel jLabel2;
 	private JButton jButton1;
 	private JButton jButton2;
@@ -175,11 +180,13 @@ public class SalesReportForm extends javax.swing.JDialog {
 				jLabel2.setPreferredSize(new java.awt.Dimension(294, 21));
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(28, 483, 133, 19, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Sales Report");
-				jLabel1.setPreferredSize(new java.awt.Dimension(182, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
+				salesReportLabel = new JLabel();
+				getContentPane().add(salesReportLabel, new AnchorConstraint(28, 483, 133, 19, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				salesReportLabel.setText("Sales Report");
+				salesReportLabel.setPreferredSize(new java.awt.Dimension(182, 28));
+				salesReportLabel.setFont(new java.awt.Font("Tahoma",1,18));
+				salesReportLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "salesReportLabel");
+				salesReportLabel.getActionMap().put("salesReportLabel",getSalesReportLabelAbstractAction() );
 			}
 			{
 				canvas1 = new Canvas();
@@ -340,6 +347,15 @@ public class SalesReportForm extends javax.swing.JDialog {
         fullDescription += ")";
         return fullDescription;
     }
+	private AbstractAction getSalesReportLabelAbstractAction() {
+		AbstractAction salesReportLabelAction = new AbstractAction("Sales Report", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				SalesReportForm.this.dispose();
+			}
+		};
+		return salesReportLabelAction;
+	}
 	
 
 }

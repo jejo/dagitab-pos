@@ -9,16 +9,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -85,7 +89,7 @@ public class ReportForm extends javax.swing.JDialog {
 	private int reportType;
 	private String storeCode;
 	private DBManager db;
-	private JLabel jLabel4;
+	private JLabel reportFormLabel;
 	private DateTime calendar1;
 	private DateTime calendar2;
 
@@ -124,13 +128,15 @@ public class ReportForm extends javax.swing.JDialog {
 				getContentPane().setLayout(thisLayout);
 				getContentPane().setBackground(new java.awt.Color(255,255,255));
 				{
-					jLabel4 = new JLabel();
+					reportFormLabel = new JLabel();
 					AnchorLayout jLabel4Layout = new AnchorLayout();
-					jLabel4.setLayout(jLabel4Layout);
-					getContentPane().add(jLabel4, new AnchorConstraint(18, 380, 87, 66, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel4.setText("Export Reports");
-					jLabel4.setPreferredSize(new java.awt.Dimension(167, 28));
-					jLabel4.setFont(new java.awt.Font("Tahoma",1,18));
+					reportFormLabel.setLayout(jLabel4Layout);
+					getContentPane().add(reportFormLabel, new AnchorConstraint(18, 380, 87, 66, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					reportFormLabel.setText("Export Reports");
+					reportFormLabel.setPreferredSize(new java.awt.Dimension(167, 28));
+					reportFormLabel.setFont(new java.awt.Font("Tahoma",1,18));
+					reportFormLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "reportFormLabel");
+					reportFormLabel.getActionMap().put("reportFormLabel",getReportFormLabelAbstractAction() );
 				}
 				{
 					jButton2 = new JButton();
@@ -485,5 +491,14 @@ public class ReportForm extends javax.swing.JDialog {
         fullDescription += ")";
         return fullDescription;
     }
+	private AbstractAction getReportFormLabelAbstractAction() {
+		AbstractAction reportFormLabelAction = new AbstractAction("Export Reports", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ReportForm.this.dispose();
+			}
+		};
+		return reportFormLabelAction;
+	}
 
 }

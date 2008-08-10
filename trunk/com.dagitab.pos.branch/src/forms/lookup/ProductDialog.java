@@ -5,17 +5,20 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -25,6 +28,7 @@ import bus.DiscountService;
 import bus.ProductService;
 import domain.InvoiceItem;
 import domain.Product;
+import forms.About;
 import forms.invoice.InvoicePanel;
 import forms.pullouts.PullOutRequestDialog;
 import forms.returned.ReturnedPanel;
@@ -44,7 +48,7 @@ import forms.returned.ReturnedPanel;
 */
 @SuppressWarnings("serial")
 public class ProductDialog extends javax.swing.JDialog {
-	private JLabel lblProduct;
+	private JLabel productDialogLabel;
 	private JScrollPane jScrollPane1;
 	private JCheckBox deferredChk;
 	private JButton jButton1;
@@ -109,11 +113,13 @@ public class ProductDialog extends javax.swing.JDialog {
 				this.setModal(true);
 				getContentPane().setBackground(new java.awt.Color(255,255,255));
 				{
-					lblProduct = new JLabel();
-					getContentPane().add(lblProduct);
-					lblProduct.setText("Search Product");
-					lblProduct.setBounds(12, 12, 164, 21);
-					lblProduct.setFont(new java.awt.Font("Tahoma",0,18));
+					productDialogLabel = new JLabel();
+					getContentPane().add(productDialogLabel);
+					productDialogLabel.setText("Search Product");
+					productDialogLabel.setBounds(12, 12, 164, 21);
+					productDialogLabel.setFont(new java.awt.Font("Tahoma",0,18));
+					productDialogLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "productDialogLabel");
+					productDialogLabel.getActionMap().put("productDialogLabel",getproductDialogLabelAbstractAction() );
 				}
 				{
 					txtProduct = new JTextField();
@@ -335,6 +341,16 @@ public class ProductDialog extends javax.swing.JDialog {
 		discountCB.setSelectedIndex(0);
 		quantityTxt.setText("");
 		deferredChk.setSelected(false);
+	}
+	
+	private AbstractAction getproductDialogLabelAbstractAction() {
+		AbstractAction productDialogLabelAction = new AbstractAction("Search Product", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ProductDialog.this.dispose();
+			}
+		};
+		return productDialogLabelAction;
 	}
 
 }

@@ -1,12 +1,16 @@
 package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.KeyStroke;
 
 import main.Main;
 import bus.ClerkService;
@@ -26,7 +30,7 @@ import domain.Clerk;
 */
 @SuppressWarnings("serial")
 public class PasswordManagerDialog extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel passwordManagerDialogLabel;
 	private JPasswordField newPasswordField;
 	private JLabel jLabel5;
 	private JButton jButton3;
@@ -125,12 +129,14 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 				oldPasswordField.setBounds(130, 45, 150, 21);
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1);
-				jLabel1.setText("Passsword Manager");
-				jLabel1.setPreferredSize(new java.awt.Dimension(231, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
-				jLabel1.setBounds(7, 7, 226, 28);
+				passwordManagerDialogLabel = new JLabel();
+				getContentPane().add(passwordManagerDialogLabel);
+				passwordManagerDialogLabel.setText("Passsword Manager");
+				passwordManagerDialogLabel.setPreferredSize(new java.awt.Dimension(231, 28));
+				passwordManagerDialogLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				passwordManagerDialogLabel.setBounds(7, 7, 226, 28);
+				passwordManagerDialogLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "passwordManagerDialogLabel");
+				passwordManagerDialogLabel.getActionMap().put("passwordManagerDialogLabel",getPasswordManagerDialogLabelAbstractAction() );
 			}
 			{
 				jLabel3 = new JLabel();
@@ -169,6 +175,15 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	private AbstractAction getPasswordManagerDialogLabelAbstractAction() {
+		AbstractAction passwordManagerDialogLabelAction = new AbstractAction("Passsword Manager", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PasswordManagerDialog.this.dispose();
+			}
+		};
+		return passwordManagerDialogLabelAction;
 	}
 
 }

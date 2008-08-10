@@ -2,13 +2,17 @@ package forms.delivery;
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -24,6 +28,8 @@ import bus.DeliveryItemService;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
+import forms.About;
+
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -38,7 +44,7 @@ import com.cloudgarden.resource.SWTResourceManager;
 */
 @SuppressWarnings("serial")
 public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel deliveryItemLabel;
 	private JLabel jLabel2;
 	private JButton jButton2;
 	private Shell shell1;
@@ -114,12 +120,14 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 				jLabel2.setBounds(187, 40, 85, 22);
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1);
-				jLabel1.setText("Delivery Item Confirmation");
-				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
-				jLabel1.setPreferredSize(new java.awt.Dimension(227, 34));
-				jLabel1.setBounds(10, 7, 227, 34);
+				deliveryItemLabel = new JLabel();
+				getContentPane().add(deliveryItemLabel);
+				deliveryItemLabel.setText("Delivery Item Confirmation");
+				deliveryItemLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				deliveryItemLabel.setPreferredSize(new java.awt.Dimension(227, 34));
+				deliveryItemLabel.setBounds(10, 7, 227, 34);
+				deliveryItemLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "deliveryItemLabel");
+				deliveryItemLabel.getActionMap().put("deliveryItemLabel",getDeliveryItemLabelAbstractAction() );
 			}
 			{
 				canvas1 = new Canvas();
@@ -335,6 +343,15 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 
 	public void setDeliveryDialog(DeliveryDialog deliveryDialog) {
 		this.deliveryDialog = deliveryDialog;
+	}
+	private AbstractAction getDeliveryItemLabelAbstractAction() {
+		AbstractAction getDeliveryItemLabelAction = new AbstractAction("Delivery Item Confirmation", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				DeliveryItemConfirmationDialog.this.dispose();
+			}
+		};
+		return getDeliveryItemLabelAction;
 	}
 
 }

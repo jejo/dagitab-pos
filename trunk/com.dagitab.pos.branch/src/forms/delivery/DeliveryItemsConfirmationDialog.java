@@ -4,9 +4,13 @@ import bus.DeliveryItemService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.cloudgarden.resource.SWTResourceManager;
+
+import forms.About;
+
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -17,11 +21,15 @@ import java.util.Date;
 
 import javax.swing.JButton;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
 import main.DBManager;
 
 
@@ -48,7 +56,7 @@ import org.eclipse.swt.widgets.Shell;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel deliveryItemsLabel;
 	private JLabel jLabel2;
 	private JButton jButton2;
 	private Shell shell1;
@@ -127,11 +135,13 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 				jLabel2.setPreferredSize(new java.awt.Dimension(294, 21));
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(21, 475, 123, 10, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Delivery Item Confirmation");
-				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
-				jLabel1.setPreferredSize(new java.awt.Dimension(322, 35));
+				deliveryItemsLabel = new JLabel();
+				getContentPane().add(deliveryItemsLabel, new AnchorConstraint(21, 475, 123, 10, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				deliveryItemsLabel.setText("Delivery Item Confirmation");
+				deliveryItemsLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				deliveryItemsLabel.setPreferredSize(new java.awt.Dimension(322, 35));
+				deliveryItemsLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "deliveryItemsLabel");
+				deliveryItemsLabel.getActionMap().put("deliveryItemsLabel",getDeliveryItemsLabelAbstractAction() );
 			}
 			{
 				canvas1 = new Canvas();
@@ -255,6 +265,15 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	private AbstractAction getDeliveryItemsLabelAbstractAction() {
+		AbstractAction deliveryItemsLabelAction = new AbstractAction("Delivery Item Confirmation", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				DeliveryItemsConfirmationDialog.this.dispose();
+			}
+		};
+		return deliveryItemsLabelAction;
 	}
 
 	//$protect>>$

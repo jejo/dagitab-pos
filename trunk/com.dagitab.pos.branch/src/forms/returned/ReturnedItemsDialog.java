@@ -1,6 +1,7 @@
 package forms.returned;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -9,11 +10,13 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -27,6 +30,7 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.ReturnReason;
+import forms.About;
 import forms.MainWindow;
 
 /**
@@ -43,7 +47,7 @@ import forms.MainWindow;
 */
 @SuppressWarnings("serial")
 public class ReturnedItemsDialog extends javax.swing.JDialog {
-	private JLabel titleLabel;
+	private JLabel returnedItemsLabel;
 	private JLabel descriptionLabel;
 	private AbstractAction returnItemAction;
 	private JLabel quantityLabel;
@@ -193,11 +197,13 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 				descriptionLabel.setPreferredSize(new java.awt.Dimension(602, 22));
 			}
 			{
-				titleLabel = new JLabel();
-				getContentPane().add(titleLabel, new AnchorConstraint(16, 506, 63, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				titleLabel.setText("Transaction Items");
-				titleLabel.setPreferredSize(new java.awt.Dimension(315, 21));
-				titleLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				returnedItemsLabel = new JLabel();
+				getContentPane().add(returnedItemsLabel, new AnchorConstraint(16, 506, 63, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				returnedItemsLabel.setText("Transaction Items");
+				returnedItemsLabel.setPreferredSize(new java.awt.Dimension(315, 21));
+				returnedItemsLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				returnedItemsLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "returnedItemsLabel");
+				returnedItemsLabel.getActionMap().put("returnedItemsLabel",getReturnedItemsLabelAbstractAction() );
 			}
 			{
 				itemsLabel = new JLabel();
@@ -268,6 +274,16 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 			};
 		}
 		return returnItemAction;
+	}
+	
+	private AbstractAction getReturnedItemsLabelAbstractAction() {
+		AbstractAction returnedItemsLabelAction = new AbstractAction("Transaction Items", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ReturnedItemsDialog.this.dispose();
+			}
+		};
+		return returnedItemsLabelAction;
 	}
 
 }

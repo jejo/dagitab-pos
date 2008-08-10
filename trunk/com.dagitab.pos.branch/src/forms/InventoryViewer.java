@@ -3,18 +3,22 @@ import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JButton;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -35,7 +39,7 @@ import main.DBManager;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class InventoryViewer extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel inventoryViewerLabel;
 	private JLabel jLabel2;
 	private JButton jButton1;
 	private JLabel jLabel3;
@@ -234,11 +238,13 @@ public class InventoryViewer extends javax.swing.JDialog {
 					jLabel2.setPreferredSize(new java.awt.Dimension(112, 28));
 				}
 				{
-					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1, new AnchorConstraint(18, 361, 102, 18, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel1.setText("View Current Inventory");
-					jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
-					jLabel1.setPreferredSize(new java.awt.Dimension(266, 35));
+					inventoryViewerLabel = new JLabel();
+					getContentPane().add(inventoryViewerLabel, new AnchorConstraint(18, 361, 102, 18, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					inventoryViewerLabel.setText("View Current Inventory");
+					inventoryViewerLabel.setFont(new java.awt.Font("Tahoma",1,18));
+					inventoryViewerLabel.setPreferredSize(new java.awt.Dimension(266, 35));
+					inventoryViewerLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "inventoryViewerLabel");
+					inventoryViewerLabel.getActionMap().put("inventoryViewerLabel",getInventoryViewerLabelAbstractAction() );
 				}
 				{
 					jLabel3 = new JLabel();
@@ -359,6 +365,15 @@ public class InventoryViewer extends javax.swing.JDialog {
         fullDescription += ")";
         return fullDescription;
     }
+	private AbstractAction getInventoryViewerLabelAbstractAction() {
+		AbstractAction inventoryViewerLabelAction = new AbstractAction("View Current Inventory", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				InventoryViewer.this.dispose();
+			}
+		};
+		return inventoryViewerLabelAction;
+	}
 	
 
 }

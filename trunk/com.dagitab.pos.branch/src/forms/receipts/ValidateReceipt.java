@@ -3,18 +3,24 @@ package forms.receipts;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 import main.DBManager;
 import util.PrintUtilities;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
+import forms.About;
 
 
 /**
@@ -166,6 +172,8 @@ public class ValidateReceipt extends javax.swing.JDialog {
 				receiptLabel.setText("Validate Receipt");
 				receiptLabel.setPreferredSize(new java.awt.Dimension(203, 28));
 				receiptLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
+				receiptLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "receiptLabel");
+				receiptLabel.getActionMap().put("receiptLabel",getReceiptLabelAbstractAction() );
 			}
 			{
 				receiptPanelScrollPane = new JScrollPane();
@@ -184,6 +192,16 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private AbstractAction getReceiptLabelAbstractAction() {
+		AbstractAction receiptLabelAction = new AbstractAction("Validate Receipt", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ValidateReceipt.this.dispose();
+			}
+		};
+		return receiptLabelAction;
 	}
 
 	public void setReceiptPanel(ReceiptPanel receiptPanel) {

@@ -4,6 +4,7 @@ import com.cloudgarden.layout.AnchorLayout;
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -12,6 +13,8 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -61,7 +65,7 @@ import com.cloudgarden.resource.SWTResourceManager;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class SalesClerkProductionForm extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel salesClerkLabel;
 	private JTextField txtClerk;
 	private JLabel jLabel2;
 	private JTable jTable1;
@@ -147,11 +151,13 @@ public class SalesClerkProductionForm extends javax.swing.JDialog {
 					jLabel3.setPreferredSize(new java.awt.Dimension(63, 28));
 				}
 				{
-					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1, new AnchorConstraint(37, 420, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel1.setText("Sales Clerk Production");
-					jLabel1.setFont(new java.awt.Font("Tahoma",1,14));
-					jLabel1.setPreferredSize(new java.awt.Dimension(217, 28));
+					salesClerkLabel = new JLabel();
+					getContentPane().add(salesClerkLabel, new AnchorConstraint(37, 420, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					salesClerkLabel.setText("Sales Clerk Production");
+					salesClerkLabel.setFont(new java.awt.Font("Tahoma",1,14));
+					salesClerkLabel.setPreferredSize(new java.awt.Dimension(217, 28));
+					salesClerkLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "salesClerkLabel");
+					salesClerkLabel.getActionMap().put("salesClerkLabel",getSalesClerkLabelAbstractAction() );
 				}
 				
 				{
@@ -359,6 +365,16 @@ public class SalesClerkProductionForm extends javax.swing.JDialog {
         fullDescription += ")";
         return fullDescription;
     }
+	
+	private AbstractAction getSalesClerkLabelAbstractAction() {
+		AbstractAction salesClerkLabelAction = new AbstractAction("Sales Clerk Production", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				SalesClerkProductionForm.this.dispose();
+			}
+		};
+		return salesClerkLabelAction;
+	}
 
 	//$protect>>$
 	//===== start of SWT_AWT special handler code =============

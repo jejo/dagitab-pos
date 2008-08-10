@@ -4,13 +4,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -133,6 +136,8 @@ public class FastAddition extends javax.swing.JDialog {
 					fastAdditionLabel.setText("Fast Addition");
 					fastAdditionLabel.setBounds(14, 14, 182, 28);
 					fastAdditionLabel.setFont(new java.awt.Font("Tahoma",0,18));
+					fastAdditionLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "fastAdditionLabel");
+					fastAdditionLabel.getActionMap().put("fastAdditionLabel",getFastAdditionLabelAbstractAction() );
 				}
 				{
 					insertButton = new JButton();
@@ -223,6 +228,15 @@ public class FastAddition extends javax.swing.JDialog {
 
 	public void setInvoker(Object invoker) {
 		this.invoker = invoker;
+	}
+	private AbstractAction getFastAdditionLabelAbstractAction() {
+		AbstractAction fastAdditionLabelAction = new AbstractAction("Fast Addition", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				FastAddition.this.dispose();
+			}
+		};
+		return fastAdditionLabelAction;
 	}
 	
 	
