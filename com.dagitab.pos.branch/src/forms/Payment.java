@@ -3,16 +3,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import main.Main;
 
@@ -39,7 +43,7 @@ import forms.partial.PartialDialog;
 @SuppressWarnings("serial")
 public class Payment extends javax.swing.JDialog {
 	private JLabel jLabel1;
-	private JLabel jLabel2;
+	private JLabel paymentLabel;
 	private JLabel jLabel4;
 	private JButton jButton2;
 	private JButton jButton1;
@@ -272,11 +276,13 @@ public class Payment extends javax.swing.JDialog {
 					jTextField1.setPreferredSize(new java.awt.Dimension(368, 18));
 				}
 				{
-					jLabel2 = new JLabel();
-					getContentPane().add(jLabel2, new AnchorConstraint(30, 422, 76, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel2.setText("Add Payments");
-					jLabel2.setPreferredSize(new java.awt.Dimension(153, 19));
-					jLabel2.setFont(new java.awt.Font("Tahoma",1,16));
+					paymentLabel = new JLabel();
+					getContentPane().add(paymentLabel, new AnchorConstraint(30, 422, 76, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					paymentLabel.setText("Add Payments");
+					paymentLabel.setPreferredSize(new java.awt.Dimension(153, 19));
+					paymentLabel.setFont(new java.awt.Font("Tahoma",1,16));
+					paymentLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "paymentLabel");
+					paymentLabel.getActionMap().put("paymentLabel",getPaymentLabelAbstractAction() );
 				}
 				{
 					jLabel1 = new JLabel();
@@ -342,6 +348,15 @@ public class Payment extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	private AbstractAction getPaymentLabelAbstractAction() {
+		AbstractAction paymentLabelAction = new AbstractAction("Add Payments", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				Payment.this.dispose();
+			}
+		};
+		return paymentLabelAction;
 	}
 
 }

@@ -3,8 +3,13 @@ import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,7 +27,7 @@ import javax.swing.JLabel;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class About extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel aboutLabel;
 	private JLabel jLabel2;
 	private JButton jButton1;
 	private JLabel jLabel5;
@@ -96,16 +101,28 @@ public class About extends javax.swing.JDialog {
 				jLabel2.setPreferredSize(new java.awt.Dimension(154, 224));
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(53, 798, 155, 250, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("About Babyland POS Application");
-				jLabel1.setPreferredSize(new java.awt.Dimension(322, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
+				aboutLabel = new JLabel();
+				getContentPane().add(aboutLabel, new AnchorConstraint(53, 798, 155, 250, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				aboutLabel.setText("About Babyland POS Application");
+				aboutLabel.setPreferredSize(new java.awt.Dimension(322, 28));
+				aboutLabel.setFont(new java.awt.Font("Tahoma",1,18));
+				aboutLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "aboutLabel");
+				aboutLabel.getActionMap().put("aboutLabel",getAboutLabelAbstractAction() );
 			}
 			this.setSize(596, 307);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private AbstractAction getAboutLabelAbstractAction() {
+		AbstractAction aboutLabelAction = new AbstractAction("About Babyland POS Application", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				About.this.dispose();
+			}
+		};
+		return aboutLabelAction;
 	}
 
 }

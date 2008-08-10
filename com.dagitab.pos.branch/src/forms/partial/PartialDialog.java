@@ -1,6 +1,7 @@
 package forms.partial;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -37,6 +38,7 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
+import forms.About;
 import forms.interfaces.Payments;
 import forms.lookup.PaymentDialog;
 import forms.receipts.ReceiptPanel;
@@ -66,7 +68,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		}
 	}
 
-	private JLabel jLabel1;
+	private JLabel partialDialogLabel;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
 	private JScrollPane invoiceItemScrollPane;
@@ -318,11 +320,13 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 				}
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(18, 353, 89, 19, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Partial Transaction");
-				jLabel1.setPreferredSize(new java.awt.Dimension(245, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
+				partialDialogLabel = new JLabel();
+				getContentPane().add(partialDialogLabel, new AnchorConstraint(18, 353, 89, 19, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				partialDialogLabel.setText("Partial Transaction");
+				partialDialogLabel.setPreferredSize(new java.awt.Dimension(245, 28));
+				partialDialogLabel.setFont(new java.awt.Font("Tahoma",1,18));
+				partialDialogLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "partialDialogLabel");
+				partialDialogLabel.getActionMap().put("partialDialogLabel",getPartialDialogLabelAbstractAction() );
 			}
 			{
 				jLabel16 = new JLabel();
@@ -653,9 +657,19 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-};
+			};
 		}
 		return deletePartialPaymentAction;
+	}
+	
+	private AbstractAction getPartialDialogLabelAbstractAction() {
+		AbstractAction partialDialogLabelAction = new AbstractAction("Patial Transaction", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PartialDialog.this.dispose();
+			}
+		};
+		return partialDialogLabelAction;
 	}
 
 }

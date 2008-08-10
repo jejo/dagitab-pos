@@ -1,17 +1,22 @@
 package forms.pullouts;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
+import forms.About;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -94,6 +99,8 @@ public class PullOutDialog extends javax.swing.JDialog {
 					PullOutLabel.setText("Pull Outs");
 					PullOutLabel.setBounds(10, 11, 105, 14);
 					PullOutLabel.setFont(new java.awt.Font("Tahoma",0,18));
+					PullOutLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "PullOutLabel");
+					PullOutLabel.getActionMap().put("PullOutLabel",getPullOutLabelAbstractAction() );
 				}
 				{
 					pullOutTabbedPane = new JTabbedPane();
@@ -269,6 +276,16 @@ public class PullOutDialog extends javax.swing.JDialog {
 			};
 		}
 		return closeAbstractAction;
+	}
+	
+	private AbstractAction getPullOutLabelAbstractAction() {
+		AbstractAction pullOutDialogLabelAction = new AbstractAction("Pull Outs", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PullOutDialog.this.dispose();
+			}
+		};
+		return pullOutDialogLabelAction;
 	}
 
 }

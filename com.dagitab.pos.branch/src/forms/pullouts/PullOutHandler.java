@@ -6,16 +6,22 @@ import java.util.Vector;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.About;
 import forms.MainWindow;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JButton;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -35,7 +41,7 @@ import main.DBManager;
 */
 @Deprecated
 public class PullOutHandler extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel pullOutHandlerLabel;
 	private JScrollPane jScrollPane1;
 	private JScrollPane jScrollPane2;
 	private JButton jButton1;
@@ -182,11 +188,13 @@ public class PullOutHandler extends javax.swing.JDialog {
 				}
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(16, 512, 62, 23, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Pull Out Handler");
-				jLabel1.setPreferredSize(new java.awt.Dimension(301, 21));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,16));
+				pullOutHandlerLabel = new JLabel();
+				getContentPane().add(pullOutHandlerLabel, new AnchorConstraint(16, 512, 62, 23, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				pullOutHandlerLabel.setText("Pull Out Handler");
+				pullOutHandlerLabel.setPreferredSize(new java.awt.Dimension(301, 21));
+				pullOutHandlerLabel.setFont(new java.awt.Font("Tahoma",1,16));
+				pullOutHandlerLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "pullOutHandlerLabel");
+				pullOutHandlerLabel.getActionMap().put("pullOutHandlerLabel",getPullOutHandlerLabelAbstractAction() );
 			}
 			{
 				jLabel3 = new JLabel();
@@ -314,6 +322,16 @@ public class PullOutHandler extends javax.swing.JDialog {
 		jTable2 = new JTable();
 		jScrollPane2.setViewportView(jTable2);
 		jTable2.setModel(jTable2Model);
+	}
+	
+	private AbstractAction getPullOutHandlerLabelAbstractAction() {
+		AbstractAction pullOutHandlerLabelAction = new AbstractAction("Pull Out Handler", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PullOutHandler.this.dispose();
+			}
+		};
+		return pullOutHandlerLabelAction;
 	}
 
 }

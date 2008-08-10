@@ -4,19 +4,24 @@ import com.cloudgarden.layout.AnchorLayout;
 
 import connection.DataUtil;
 import connection.LogHandler;
+import forms.About;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -50,7 +55,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 	private JButton jButton1;
 	private JTable jTable1;
 	private JButton jButton2;
-	private JLabel jLabel1;
+	private JLabel pullOutProcessLabel;
 	private DBManager db;
 	private String pulloutcode;
 	private LogHandler cachewriter;
@@ -190,11 +195,13 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 					});
 				}
 				{
-					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1, new AnchorConstraint(26, 408, 126, 13, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel1.setText("Process Pull Outs");
-					jLabel1.setPreferredSize(new java.awt.Dimension(224, 28));
-					jLabel1.setFont(new java.awt.Font("Tahoma",1,16));
+					pullOutProcessLabel = new JLabel();
+					getContentPane().add(pullOutProcessLabel, new AnchorConstraint(26, 408, 126, 13, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					pullOutProcessLabel.setText("Process Pull Outs");
+					pullOutProcessLabel.setPreferredSize(new java.awt.Dimension(224, 28));
+					pullOutProcessLabel.setFont(new java.awt.Font("Tahoma",1,16));
+					pullOutProcessLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "pullOutProcessLabel");
+					pullOutProcessLabel.getActionMap().put("pullOutProcessLabel",getPullOutProcessLabelAbstractAction() );
 				}
 				{
 					jScrollPane1 = new JScrollPane();
@@ -294,6 +301,16 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 		jTable1 = new JTable();
 		jScrollPane1.setViewportView(jTable1);
 		jTable1.setModel(jTable1Model);
+	}
+	
+	private AbstractAction getPullOutProcessLabelAbstractAction() {
+		AbstractAction pullOutProcessLabelAction = new AbstractAction("Process Pull Outs", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PullOutHandlerProcess.this.dispose();
+			}
+		};
+		return pullOutProcessLabelAction;
 	}
 
 }

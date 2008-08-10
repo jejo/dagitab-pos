@@ -2,21 +2,26 @@ package forms.pullouts;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.About;
 import forms.MainWindow;
 import forms.NewPullOutReq;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JButton;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -36,7 +41,7 @@ import main.DBManager;
 */
 @Deprecated
 public class PullOutReq extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel pullOutReqLabel;
 	private JScrollPane jScrollPane1;
 	private JButton jButton1;
 	private JTable jTable1;
@@ -157,11 +162,13 @@ public class PullOutReq extends javax.swing.JDialog {
 					}
 				}
 				{
-					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1, new AnchorConstraint(28, 349, 133, 24, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jLabel1.setText("Pull Out Requests");
-					jLabel1.setPreferredSize(new java.awt.Dimension(189, 28));
-					jLabel1.setFont(new java.awt.Font("Tahoma",1,16));
+					pullOutReqLabel = new JLabel();
+					getContentPane().add(pullOutReqLabel, new AnchorConstraint(28, 349, 133, 24, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					pullOutReqLabel.setText("Pull Out Requests");
+					pullOutReqLabel.setPreferredSize(new java.awt.Dimension(189, 28));
+					pullOutReqLabel.setFont(new java.awt.Font("Tahoma",1,16));
+					pullOutReqLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "pullOutReqLabel");
+					pullOutReqLabel.getActionMap().put("pullOutReqLabel",getPullOutReqLabelAbstractAction() );
 				}
 				{
 					jLabel2 = new JLabel();
@@ -190,6 +197,16 @@ public class PullOutReq extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private AbstractAction getPullOutReqLabelAbstractAction() {
+		AbstractAction pullOutReqLabelAction = new AbstractAction("Pull Out Requests", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PullOutReq.this.dispose();
+			}
+		};
+		return pullOutReqLabelAction;
 	}
 	
 	public void refreshList() throws SQLException{

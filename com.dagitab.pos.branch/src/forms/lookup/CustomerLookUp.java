@@ -5,12 +5,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -20,6 +23,7 @@ import bus.CustomerService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.About;
 import forms.invoice.InvoicePanel;
 
 /**
@@ -36,7 +40,7 @@ import forms.invoice.InvoicePanel;
 */
 @SuppressWarnings("serial")
 public class CustomerLookUp extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel customerLookUpLabel;
 	private JLabel jLabel2;
 	private JButton jButton2;
 	private JTable jTable1;
@@ -132,11 +136,13 @@ public class CustomerLookUp extends javax.swing.JDialog {
 				jLabel2.setPreferredSize(new java.awt.Dimension(105, 19));
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(23, 976, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("Customer Search");
-				jLabel1.setPreferredSize(new java.awt.Dimension(387, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
+				customerLookUpLabel = new JLabel();
+				getContentPane().add(customerLookUpLabel, new AnchorConstraint(23, 976, 87, 37, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				customerLookUpLabel.setText("Customer Search");
+				customerLookUpLabel.setPreferredSize(new java.awt.Dimension(387, 28));
+				customerLookUpLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				customerLookUpLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "customerLookUpLabel");
+				customerLookUpLabel.getActionMap().put("customerLookUpLabel",getCustomerLookUpLabelAbstractAction() );
 			}
 			{
 				jButton3 = new JButton();
@@ -157,6 +163,16 @@ public class CustomerLookUp extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private AbstractAction getCustomerLookUpLabelAbstractAction() {
+		AbstractAction customerLookUpLabelAction = new AbstractAction("Customer Search", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				CustomerLookUp.this.dispose();
+			}
+		};
+		return customerLookUpLabelAction;
 	}
 
 	private static Object getInvoker() {

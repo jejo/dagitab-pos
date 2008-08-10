@@ -5,12 +5,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -20,6 +23,7 @@ import bus.ClerkService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import forms.About;
 import forms.invoice.InvoicePanel;
 
 /**
@@ -36,7 +40,7 @@ import forms.invoice.InvoicePanel;
 */
 @SuppressWarnings("serial")
 public class ClerkLookUp extends javax.swing.JDialog {
-	private JLabel jLabel1;
+	private JLabel clerkLookUpLabel;
 	private JLabel jLabel2;
 	private JButton jButton2;
 	private JTable jTable1;
@@ -141,12 +145,14 @@ public class ClerkLookUp extends javax.swing.JDialog {
 				jLabel2.setBounds(18, 34, 105, 19);
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1);
-				jLabel1.setText("Clerk Search");
-				jLabel1.setPreferredSize(new java.awt.Dimension(383, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",0,18));
-				jLabel1.setBounds(15, 10, 383, 28);
+				clerkLookUpLabel = new JLabel();
+				getContentPane().add(clerkLookUpLabel);
+				clerkLookUpLabel.setText("Clerk Search");
+				clerkLookUpLabel.setPreferredSize(new java.awt.Dimension(383, 28));
+				clerkLookUpLabel.setFont(new java.awt.Font("Tahoma",0,18));
+				clerkLookUpLabel.setBounds(15, 10, 383, 28);
+				clerkLookUpLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clerkLookUpLabel");
+				clerkLookUpLabel.getActionMap().put("clerkLookUpLabel",getClerkLookUpLabelAbstractAction() );
 			}
 			{
 				jButton3 = new JButton();
@@ -168,6 +174,16 @@ public class ClerkLookUp extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private AbstractAction getClerkLookUpLabelAbstractAction() {
+		AbstractAction clerkLookUpLabelAction = new AbstractAction("Clerk Search", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ClerkLookUp.this.dispose();
+			}
+		};
+		return clerkLookUpLabelAction;
 	}
 
 	private static Object getInvoker() {

@@ -1,14 +1,18 @@
 package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -34,7 +38,7 @@ public class PackageItems extends javax.swing.JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JLabel jLabel1;
+	private JLabel packageItemsLabel;
 	private JScrollPane jScrollPane1;
 	private JButton jButton1;
 	private JTable jTable1;
@@ -118,16 +122,27 @@ public class PackageItems extends javax.swing.JDialog {
 				}
 			}
 			{
-				jLabel1 = new JLabel();
-				getContentPane().add(jLabel1, new AnchorConstraint(23, 309, 113, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel1.setText("View Package Items");
-				jLabel1.setPreferredSize(new java.awt.Dimension(196, 28));
-				jLabel1.setFont(new java.awt.Font("Tahoma",1,18));
+				packageItemsLabel = new JLabel();
+				getContentPane().add(packageItemsLabel, new AnchorConstraint(23, 309, 113, 11, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				packageItemsLabel.setText("View Package Items");
+				packageItemsLabel.setPreferredSize(new java.awt.Dimension(196, 28));
+				packageItemsLabel.setFont(new java.awt.Font("Tahoma",1,18));
+				packageItemsLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "packageItemsLabel");
+				packageItemsLabel.getActionMap().put("packageItemsLabel",getPackageItemsLabelAbstractAction() );
 			}
 			this.setSize(666, 347);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	private AbstractAction getPackageItemsLabelAbstractAction() {
+		AbstractAction packageItemsLabelAction = new AbstractAction("View Package Items", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				PackageItems.this.dispose();
+			}
+		};
+		return packageItemsLabelAction;
 	}
 
 }

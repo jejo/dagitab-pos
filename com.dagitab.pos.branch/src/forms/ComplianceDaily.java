@@ -3,15 +3,19 @@ import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,7 +47,7 @@ public class ComplianceDaily extends javax.swing.JDialog {
 	private JButton jButton2;
 	private JComboBox jComboBox2;
 	private JComboBox jComboBox1;
-	private JLabel jLabel1;
+	private JLabel complianceDailyLabel;
 	DBManager db;
 	String storeCode;
 	String status;
@@ -260,9 +264,9 @@ public class ComplianceDaily extends javax.swing.JDialog {
 					jLabel2.setPreferredSize(new java.awt.Dimension(63, 28));
 				}
 				{
-					jLabel1 = new JLabel();
+					complianceDailyLabel = new JLabel();
 					getContentPane().add(
-						jLabel1,
+						complianceDailyLabel,
 						new AnchorConstraint(
 							54,
 							197,
@@ -272,8 +276,10 @@ public class ComplianceDaily extends javax.swing.JDialog {
 							AnchorConstraint.ANCHOR_REL,
 							AnchorConstraint.ANCHOR_REL,
 							AnchorConstraint.ANCHOR_REL));
-					jLabel1.setText("Choose Date");
-					jLabel1.setPreferredSize(new java.awt.Dimension(63, 28));
+					complianceDailyLabel.setText("Choose Date");
+					complianceDailyLabel.setPreferredSize(new java.awt.Dimension(63, 28));
+					complianceDailyLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "complianceDailyLabel");
+					complianceDailyLabel.getActionMap().put("complianceDailyLabel",getComplianceDailyLabelAbstractAction() );
 				}
 				{
 					String[] nomonths = new String[13];
@@ -302,6 +308,15 @@ public class ComplianceDaily extends javax.swing.JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	private AbstractAction getComplianceDailyLabelAbstractAction() {
+		AbstractAction complianceDailyLabelAction = new AbstractAction("Choose Date", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				ComplianceDaily.this.dispose();
+			}
+		};
+		return complianceDailyLabelAction;
 	}
 
 }
