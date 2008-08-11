@@ -439,6 +439,7 @@ public class DeliveryDialog extends javax.swing.JDialog {
 			refreshCompletedDeliveriesTable();
 			refreshPendingDeliveriesTable();
 			TableUtility.clearTable(pendingDeliveryItemsTable);
+			TableUtility.clearTable(completedDeliveryItemTable);
 		}
 	}
 	private AbstractAction getDeliveryTitleLabelAbstractAction() {

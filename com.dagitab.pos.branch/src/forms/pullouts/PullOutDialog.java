@@ -1,12 +1,17 @@
 package forms.pullouts;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -15,6 +20,12 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
+import util.TableUtility;
+import bus.DeliveryItemService;
+import bus.DeliveryService;
+import bus.PullOutItemService;
+import bus.PullOutService;
 
 import forms.About;
 
@@ -58,6 +69,8 @@ public class PullOutDialog extends javax.swing.JDialog {
 	private JPanel completedPullOutsPanel;
 	private JTabbedPane pullOutTabbedPane;
 
+	private PullOutDialog pullOutDialog;
+	
 	{
 		//Set Look & Feel
 		try {
@@ -84,6 +97,10 @@ public class PullOutDialog extends javax.swing.JDialog {
 	public PullOutDialog(JFrame frame) {
 		super(frame);
 		initGUI();
+		setPullOutDialog(this);
+		refreshPendingPullOutTables();
+		refreshCompletedPullOutTables();
+		refreshClosedPullOutTables();
 	}
 	
 	private void initGUI() {
@@ -121,7 +138,23 @@ public class PullOutDialog extends javax.swing.JDialog {
 									new DefaultTableModel(
 											null,
 											new String[] { "Pull Out No", "Issue Date","Issue Clerk","Pull Out Reason" });
-								pendingPullOutTable = new JTable();
+								pendingPullOutTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								
+								pendingPullOutTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(pendingPullOutTable.getSelectedRow() != -1) {
+											//refresh
+											 refreshPendingPullOutItemsTable((Long) pendingPullOutTable.getValueAt(pendingPullOutTable.getSelectedRow(), 0));
+										 }
+									 }
+								});
 								pendingScrollPane.setViewportView(pendingPullOutTable);
 								pendingPullOutTable.setModel(pendingPullOutTableModel);
 							}
@@ -141,7 +174,14 @@ public class PullOutDialog extends javax.swing.JDialog {
 									new DefaultTableModel(
 											null,
 											new String[] { "Pull Out Item No", "Product Code","Product Name","Quantity","Processed Status" });
-								pendingPullOutItemTable = new JTable();
+								pendingPullOutItemTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
 								pullOutItemScrollPane.setViewportView(pendingPullOutItemTable);
 								pendingPullOutItemTable.setModel(pendingPullOutItemTableModel);
 							}
@@ -156,7 +196,12 @@ public class PullOutDialog extends javax.swing.JDialog {
 							processPullOutItemButton = new JButton();
 							pendingPullOutsPanel.add(processPullOutItemButton);
 							processPullOutItemButton.setText("Process Pull Out Item");
-							processPullOutItemButton.setBounds(610, 358, 135, 23);
+							processPullOutItemButton.setBounds(605, 358, 140, 23);
+							
+							processPullOutItemButton.addActionListener( new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								processPendingPullOutItem();
+							}});
 						}
 					}
 					{
@@ -180,7 +225,24 @@ public class PullOutDialog extends javax.swing.JDialog {
 									new DefaultTableModel(
 											null,
 											new String[] { "Pull Out No", "Issue Date","Issue Clerk","Pull Out Reason" });
-								completedPullOutTable = new JTable();
+								completedPullOutTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								
+								completedPullOutTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(completedPullOutTable.getSelectedRow() != -1) {
+											//refresh
+											 refreshCompletedPullOutItemsTable((Long) completedPullOutTable.getValueAt(completedPullOutTable.getSelectedRow(), 0));
+										 }
+									 }
+								});
+								
 								completedPullOutScrollPane.setViewportView(completedPullOutTable);
 								completedPullOutTable.setModel(completedPullOutTableModel);
 							}
@@ -200,7 +262,14 @@ public class PullOutDialog extends javax.swing.JDialog {
 									new DefaultTableModel(
 											null,
 											new String[] { "Pull Out Item No", "Product Code","Product Name","Quantity","Processed Status" });
-								completedPullOutItemTable = new JTable();
+								completedPullOutItemTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
 								completedPullOutItemScrollPane.setViewportView(completedPullOutItemTable);
 								completedPullOutItemTable.setModel(completePullOutItemTableModel);
 							}
@@ -211,6 +280,7 @@ public class PullOutDialog extends javax.swing.JDialog {
 						pullOutTabbedPane.addTab("Closed", null, closedPullOutsPanel, null);
 						closedPullOutsPanel.setBackground(new java.awt.Color(255,255,255));
 						closedPullOutsPanel.setLayout(null);
+						closedPullOutsPanel.setPreferredSize(new java.awt.Dimension(755, 399));
 						{
 							closedPullOutLabel = new JLabel();
 							closedPullOutsPanel.add(closedPullOutLabel);
@@ -226,7 +296,24 @@ public class PullOutDialog extends javax.swing.JDialog {
 									new DefaultTableModel(
 											null,
 											new String[] { "Pull Out No", "Issue Date","Issue Clerk","Pull Out Reason" });
-								closedPullOutTable = new JTable();
+								closedPullOutTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
+								
+								closedPullOutTable.addMouseListener(new MouseAdapter(){
+									 public void mouseClicked(MouseEvent e){
+										 if(closedPullOutTable.getSelectedRow() != -1) {
+											//refresh
+											 refreshClosedPullOutItemsTable((Long) closedPullOutTable.getValueAt(closedPullOutTable.getSelectedRow(), 0));
+										 }
+									 }
+								});
+								
 								closedPullOutScrollPane.setViewportView(closedPullOutTable);
 								closedPullOutTable.setModel(closedPullOutTableModel);
 							}
@@ -246,7 +333,14 @@ public class PullOutDialog extends javax.swing.JDialog {
 									new DefaultTableModel(
 											null,
 											new String[] { "Pull Out Item No", "Product Code","Product Name","Quantity","Processed Status" });
-								closedPullOutItemTable = new JTable();
+								closedPullOutItemTable = new JTable() {
+									@Override
+									public boolean isCellEditable(
+										int row,
+										int column) {
+										return false;
+									}
+								};
 								closedPullOutItemScrollPane.setViewportView(closedPullOutItemTable);
 								closedPullOutItemTable.setModel(closedPullOutItemTableModel);
 							}
@@ -257,8 +351,13 @@ public class PullOutDialog extends javax.swing.JDialog {
 					closeButton = new JButton();
 					getContentPane().add(closeButton);
 					closeButton.setText("Close");
-					closeButton.setBounds(370, 478, 59, 23);
+					closeButton.setBounds(365, 478, 61, 23);
 					closeButton.setAction(getCloseAbstractAction());
+					closeButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							getPullOutDialog().setVisible(false);
+						}
+					});
 				}
 			}
 			this.setSize(796, 553);
@@ -288,4 +387,60 @@ public class PullOutDialog extends javax.swing.JDialog {
 		return pullOutDialogLabelAction;
 	}
 
+	public PullOutDialog getPullOutDialog() {
+		return pullOutDialog;
+	}
+
+	public void setPullOutDialog(PullOutDialog pullOutDialog) {
+		this.pullOutDialog = pullOutDialog;
+	}
+
+	public void refreshPendingPullOutTables() {
+		ResultSet rs = PullOutService.fetchAllPullOutsByStatus(PullOutService.PENDING);
+		TableUtility.fillTable(pendingPullOutTable, rs, new String[]{"Pull Out No", "Issue Date","Issue Clerk","Pull Out Reason"});
+	}
+	
+	public void refreshCompletedPullOutTables() {
+		ResultSet rs = PullOutService.fetchAllPullOutsByStatus(PullOutService.COMPLETE);
+		TableUtility.fillTable(completedPullOutTable, rs, new String[]{"Pull Out No", "Issue Date","Issue Clerk","Pull Out Reason"});
+	}
+	
+	public void refreshClosedPullOutTables() {
+		ResultSet rs = PullOutService.fetchAllPullOutsByStatus(PullOutService.CLOSED);
+		TableUtility.fillTable(closedPullOutTable, rs, new String[]{"Pull Out No", "Issue Date","Issue Clerk","Pull Out Reason"});
+	}
+	
+	public void refreshPendingPullOutItemsTable(Long pullOutId) {
+		ResultSet rs =	PullOutItemService.fetchAllPullOutItems(pullOutId); 
+		TableUtility.fillTable(pendingPullOutItemTable, rs, new String[]{"Pull Out Item No", "Product Code","Product Name","Quantity","Processed Status"});
+	}
+	
+	public void refreshCompletedPullOutItemsTable(Long pullOutId) {
+		ResultSet rs =	PullOutItemService.fetchAllPullOutItems(pullOutId); 
+		TableUtility.fillTable(completedPullOutItemTable, rs, new String[]{"Pull Out Item No", "Product Code","Product Name","Quantity","Processed Status"});
+	}
+	
+	public void refreshClosedPullOutItemsTable(Long pullOutId) {
+		ResultSet rs =	PullOutItemService.fetchAllPullOutItems(pullOutId); 
+		TableUtility.fillTable(closedPullOutItemTable, rs, new String[]{"Pull Out Item No", "Product Code","Product Name","Quantity","Processed Status"});
+	}
+	
+	public void processPendingPullOutItem() {
+		if(pendingPullOutItemTable.getSelectedRow() != -1) {
+			Long pullOutItemId = (Long) pendingPullOutItemTable.getValueAt(pendingPullOutItemTable.getSelectedRow(), 0);
+			PullOutItemService.updatePullOutItem(pullOutItemId);
+			Long pendingPullOutId = (Long) pendingPullOutTable.getValueAt(pendingPullOutTable.getSelectedRow(), 0);	
+			if(!(PullOutItemService.hasPendingPullOutItemsToCheck(pendingPullOutId))) {
+				PullOutService.changePullOutStatus(PullOutService.COMPLETE, pendingPullOutId);
+				JOptionPane.showMessageDialog(null, "Pull Out No. " + pendingPullOutId + " is now complete.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+				refreshCompletedPullOutTables();
+				refreshPendingPullOutTables();
+				TableUtility.clearTable(pendingPullOutItemTable);
+				TableUtility.clearTable(completedPullOutItemTable);
+			}
+			else {
+				refreshPendingPullOutItemsTable(pendingPullOutId);
+			}
+		}
+	}
 }
