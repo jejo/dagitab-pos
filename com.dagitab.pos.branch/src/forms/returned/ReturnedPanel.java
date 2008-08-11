@@ -650,20 +650,32 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			deleteReturnedItemsAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
 				public void actionPerformed(ActionEvent evt) {
 					int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete these selected items?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-					
 					if(confirm == 0){
 						DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
 						int[] selectedRows = returnedItemsTable.getSelectedRows();
-						for(int i = 0; i < selectedRows.length; i++){
-							model.removeRow(selectedRows[i]);
+						String[] productCodes = new String[selectedRows.length];
+						for(int i=0; i<selectedRows.length; i++){
+							productCodes[i] = returnedItemsTable.getValueAt(selectedRows[i], 0).toString();
 						}
+						for(String s: productCodes){
+							int index = getReturnedItemIndex(s);
+							model.removeRow(index);
+						}
+						updateAmounts();
 					}
-					
-					updateAmounts();
 				}
 			};
 		}
 		return deleteReturnedItemsAction;
+	}
+	
+	private Integer getReturnedItemIndex(String productCode){
+		for(int i =0; i<returnedItemsTable.getRowCount(); i++){
+			if(returnedItemsTable.getValueAt(i, 0).toString().equals(productCode)){
+				return i;
+			}
+		}
+		return null;
 	}
 	
 	private AbstractAction getAddReplacementItemAction() {
