@@ -174,6 +174,8 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 					};
 					itemTableScrollPane.setViewportView(itemTable);
 					itemTable.setModel(itemTableModel);
+					itemTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0), "itemTable");
+					itemTable.getActionMap().put("itemTable",getTabItemScrollPaneAction() );
 				}
 			}
 			{
@@ -284,6 +286,16 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 			}
 		};
 		return returnedItemsLabelAction;
+	}
+	
+	private AbstractAction getTabItemScrollPaneAction(){
+		AbstractAction tabItemsScrollPaneAction = new AbstractAction("Search Product", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				returnReasonComboBox.requestFocusInWindow();
+			}
+		};
+		return tabItemsScrollPaneAction;
 	}
 
 }

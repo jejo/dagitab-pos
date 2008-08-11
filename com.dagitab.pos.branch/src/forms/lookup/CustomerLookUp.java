@@ -42,10 +42,10 @@ import forms.invoice.InvoicePanel;
 public class CustomerLookUp extends javax.swing.JDialog {
 	private JLabel customerLookUpLabel;
 	private JLabel jLabel2;
-	private JButton jButton2;
-	private JTable jTable1;
+	private JButton customerLookUpOkButton;
+	private JTable customerLookUpTable;
 	private JButton jButton3;
-	private JScrollPane jScrollPane1;
+	private JScrollPane customerLookUpScrollPane;
 	private JTextField jTextField1;
 	private static Object invoker;
 	private static CustomerLookUp customerLookUp; 
@@ -81,14 +81,14 @@ public class CustomerLookUp extends javax.swing.JDialog {
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
 			this.setModal(true);
 			{
-				jButton2 = new JButton();
-				getContentPane().add(jButton2, new AnchorConstraint(896, 450, 957, 302, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton2.setText("OK");
-				jButton2.setPreferredSize(new java.awt.Dimension(61, 27));
-				jButton2.addActionListener(new ActionListener() {
+				customerLookUpOkButton = new JButton();
+				getContentPane().add(customerLookUpOkButton, new AnchorConstraint(896, 450, 957, 302, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				customerLookUpOkButton.setText("OK");
+				customerLookUpOkButton.setPreferredSize(new java.awt.Dimension(61, 27));
+				customerLookUpOkButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
-						String selected = jTable1.getValueAt(jTable1.getSelectedRow(),0).toString();
+						String selected = customerLookUpTable.getValueAt(customerLookUpTable.getSelectedRow(),0).toString();
 						if(invoker instanceof InvoicePanel){
 							InvoicePanel invoicePanel = ((InvoicePanel)invoker);
 							invoicePanel.setCustomerID(selected);
@@ -99,22 +99,24 @@ public class CustomerLookUp extends javax.swing.JDialog {
 				});
 			}
 			{
-				jScrollPane1 = new JScrollPane();
-				getContentPane().add(jScrollPane1, new AnchorConstraint(197, 972, 841, 40, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jScrollPane1.setPreferredSize(new java.awt.Dimension(384, 282));
+				customerLookUpScrollPane = new JScrollPane();
+				getContentPane().add(customerLookUpScrollPane, new AnchorConstraint(197, 972, 841, 40, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				customerLookUpScrollPane.setPreferredSize(new java.awt.Dimension(384, 282));
 				{
 					TableModel jTable1Model = new DefaultTableModel(
 						new String[][] { },
 						new String[] { "Customer No", "First Name","Last Name","Nick Name","Birthdate" });
-					jTable1 = new JTable(){
+					customerLookUpTable = new JTable(){
 						@Override
 						public boolean isCellEditable(int row, int column)
 						{
 							return false;
 						}
 					};
-					jScrollPane1.setViewportView(jTable1);
-					jTable1.setModel(jTable1Model);
+					customerLookUpScrollPane.setViewportView(customerLookUpTable);
+					customerLookUpTable.setModel(jTable1Model);
+					customerLookUpTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0), "customerLookUpTable");
+					customerLookUpTable.getActionMap().put("customerLookUpTable",getTabCustomerLookUpScrollPaneAction() );
 				}
 			}
 			{
@@ -124,7 +126,7 @@ public class CustomerLookUp extends javax.swing.JDialog {
 				jTextField1.addKeyListener(new KeyAdapter() {
 					public void keyTyped(KeyEvent evt) {
 						ResultSet rs = CustomerService.filterCustomer(jTextField1.getText());
-						TableUtility.fillTable(jTable1, rs, new String[]{"Customer No", "First Name","Last Name","Nick Name","Birthdate"});
+						TableUtility.fillTable(customerLookUpTable, rs, new String[]{"Customer No", "First Name","Last Name","Nick Name","Birthdate"});
 					}
 				});
 
@@ -158,7 +160,7 @@ public class CustomerLookUp extends javax.swing.JDialog {
 			this.setSize(428, 474);
 			
 			ResultSet rs = CustomerService.getAllCustomers();
-			TableUtility.fillTable(jTable1, rs, new String[]{"Customer No", "First Name","Last Name","Nick Name","Birthdate"});
+			TableUtility.fillTable(customerLookUpTable, rs, new String[]{"Customer No", "First Name","Last Name","Nick Name","Birthdate"});
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -181,6 +183,16 @@ public class CustomerLookUp extends javax.swing.JDialog {
 
 	public  static String getFieldName() {
 		return fieldName;
+	}
+	
+	private AbstractAction getTabCustomerLookUpScrollPaneAction(){
+		AbstractAction tabCustomerLookUpScrollPaneAction = new AbstractAction("Customer Search", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				customerLookUpOkButton.requestFocusInWindow();
+			}
+		};
+		return tabCustomerLookUpScrollPaneAction;
 	}
 
 	
