@@ -1124,16 +1124,34 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		if(deleteInvoiceItemAction == null) {
 			deleteInvoiceItemAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
 				public void actionPerformed(ActionEvent evt) {
-					try{
-						removeInvoiceItem();
-					}
-					catch(ArrayIndexOutOfBoundsException e){
-						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+					
+					int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete these selected items?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+					if(confirm == 0){
+						DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+						int[] selectedRows = itemTable.getSelectedRows();
+						String[] productCodes = new String[selectedRows.length];
+						for(int i=0; i<selectedRows.length; i++){
+							productCodes[i] = itemTable.getValueAt(selectedRows[i], 0).toString();
+						}
+						for(String s: productCodes){
+							int index = getInvoiceItemIndex(s);
+							model.removeRow(index);
+						}
+						updateAmounts();
 					}
 				}
 			};
 		}
 		return deleteInvoiceItemAction;
+	}
+	
+	private Integer getInvoiceItemIndex(String productCode){
+		for(int i =0; i<itemTable.getRowCount(); i++){
+			if(itemTable.getValueAt(i, 0).toString().equals(productCode)){
+				return i;
+			}
+		}
+		return null;
 	}
 	
 	private AbstractAction getAddPaymentItemAction() {
