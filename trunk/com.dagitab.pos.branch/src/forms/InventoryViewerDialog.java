@@ -1,21 +1,19 @@
 package forms;
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 
 import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -28,6 +26,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.DBManager;
+import main.Main;
+import util.TableUtility;
+import bus.ProductService;
+import bus.StoreService;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -50,7 +55,7 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 	private JButton jButton3;
 	private JButton jButton2;
 	private JScrollPane productScrollPane;
-	private JTextField jTextField1;
+	private JTextField productTextField;
 	@SuppressWarnings("unused")
 	private MainWindow form;
 	private DBManager db;
@@ -67,13 +72,10 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 //		inst.setVisible(true);
 	}
 	
-	public InventoryViewerDialog(MainWindow frame, DBManager db, String storeCode) {
+	public InventoryViewerDialog(JFrame frame) {
 		super(frame);
-		this.form = frame;
-		this.db = db;
-		this.storeCode = storeCode;
-		
 		initGUI();
+		init();
 	}
 	
 	private void initGUI() {
@@ -86,8 +88,8 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 				this.setModal(true);
 				{
 					jButton3 = new JButton();
-					getContentPane().add(getStoreLabel(), new AnchorConstraint(105, 848, 142, 805, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					getContentPane().add(getStoreComboBox(), new AnchorConstraint(99, 985, 149, 865, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(getStoreLabel(), new AnchorConstraint(105, 782, 142, 739, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(getStoreComboBox(), new AnchorConstraint(99, 986, 149, 789, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					getContentPane().add(jButton3, new AnchorConstraint(912, 571, 976, 471, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton3.setText("Close");
 					jButton3.setPreferredSize(new java.awt.Dimension(95, 28));
@@ -157,9 +159,16 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 					}
 				}
 				{
-					jTextField1 = new JTextField();
-					getContentPane().add(jTextField1, new AnchorConstraint(99, 502, 149, 147, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jTextField1.setPreferredSize(new java.awt.Dimension(337, 22));
+					productTextField = new JTextField();
+					getContentPane().add(productTextField, new AnchorConstraint(99, 502, 149, 147, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					productTextField.setPreferredSize(new java.awt.Dimension(337, 22));
+					productTextField.addKeyListener(new KeyAdapter() {
+						public void keyTyped(KeyEvent evt) {
+							String storeCode = storeComboBox.getSelectedItem().toString().split("-")[0];
+							ResultSet rs = ProductService.filterProductInventory(productTextField.getText(),storeCode);
+							TableUtility.fillTable(productTable,rs, new String[]{ "Product Code", "Product Name", "Selling Price" , "Available Quantity","Deferred Quantity"});
+						}
+					});
 				}
 				{
 					jLabel2 = new JLabel();
@@ -217,10 +226,19 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 	
 	private JComboBox getStoreComboBox() {
 		if(storeComboBox == null) {
-			ComboBoxModel storeComboBoxModel = new DefaultComboBoxModel(new String[] { "Item One", "Item Two" });
+			String[] stores = StoreService.getAllStores();
+			ComboBoxModel storeComboBoxModel = new DefaultComboBoxModel(stores);
 			storeComboBox = new JComboBox();
 			storeComboBox.setModel(storeComboBoxModel);
-			storeComboBox.setPreferredSize(new java.awt.Dimension(114, 22));
+			storeComboBox.setPreferredSize(new java.awt.Dimension(188, 22));
+			
+			for(String store: stores){
+				String storeCode = store.split("-")[0];
+				if(storeCode.equals(Main.getStoreCode())){
+					storeComboBox.setSelectedItem(store);
+					break;
+				}
+			}
 		}
 		return storeComboBox;
 	}
@@ -229,9 +247,14 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 		if(storeLabel == null) {
 			storeLabel = new JLabel();
 			storeLabel.setText("Store");
-			storeLabel.setPreferredSize(new java.awt.Dimension(40, 16));
+			storeLabel.setPreferredSize(new java.awt.Dimension(41, 16));
 		}
 		return storeLabel;
+	}
+	
+	public void init(){
+		TableUtility.fillTable(productTable, ProductService.filterProductInventory(productTextField.getText(), Main.getStoreCode()),new String[] { 
+											"Product Code", "Product Name", "Selling Price" , "Available Quantity","Deferred Quantity"});
 	}
 
 }
