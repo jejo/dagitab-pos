@@ -28,7 +28,6 @@ import bus.DiscountService;
 import bus.ProductService;
 import domain.InvoiceItem;
 import domain.Product;
-import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 import forms.pullouts.PullOutRequestDialog;
 import forms.returned.ReturnedPanel;
@@ -49,10 +48,10 @@ import forms.returned.ReturnedPanel;
 @SuppressWarnings("serial")
 public class ProductDialog extends javax.swing.JDialog {
 	private JLabel productDialogLabel;
-	private JScrollPane jScrollPane1;
+	private JScrollPane productScrollPane;
 	private JCheckBox deferredChk;
 	private JButton jButton1;
-	private JTable jTable1;
+	private JTable productTable;
 	private JButton jButton2;
 	private JLabel jLabel3;
 	private JTextField quantityTxt;
@@ -128,7 +127,8 @@ public class ProductDialog extends javax.swing.JDialog {
 					txtProduct.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							ResultSet rs = ProductService.filterProducts(txtProduct.getText());
-							TableUtility.fillTable(jTable1,rs, new String[]{ "Product Code","Product Name","Product Price"});
+							TableUtility.fillTable(productTable,rs, new String[]{ "Product Code","Product Name","Product Price"});
+							
 						}
 					});
 				}
@@ -139,16 +139,20 @@ public class ProductDialog extends javax.swing.JDialog {
 					jLabel1.setBounds(14, 33, 116, 16);
 				}
 				{
-					jScrollPane1 = new JScrollPane();
-					getContentPane().add(jScrollPane1);
-					jScrollPane1.setBounds(15, 80, 523, 235);
+					productScrollPane = new JScrollPane();
+					getContentPane().add(productScrollPane);
+					productScrollPane.setBounds(15, 80, 523, 235);
 					{
 						TableModel jTable1Model = new DefaultTableModel(
 								new String[][] { },
 								new String[] { "Product Code", "Product Name","Product Price" });
-						jTable1 = new JTable();
-						jScrollPane1.setViewportView(jTable1);
-						jTable1.setModel(jTable1Model);
+						productTable = new JTable();
+						productScrollPane.setViewportView(productTable);
+						productTable.setModel(jTable1Model);
+						productTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0), "productTable");
+						productTable.getActionMap().put("productTable",getTabProductScrollPaneAction() );
+						
+						
 					}
 				}
 				{
@@ -157,6 +161,7 @@ public class ProductDialog extends javax.swing.JDialog {
 					getContentPane().add(discountCB);
 					discountCB.setModel(jComboBox1Model);
 					discountCB.setBounds(15, 340, 249, 22);
+					
 				}
 				{
 					jLabel2 = new JLabel();
@@ -185,7 +190,7 @@ public class ProductDialog extends javax.swing.JDialog {
 							
 							String selected = "";
 							try{
-								selected = jTable1.getValueAt(jTable1.getSelectedRow(),0).toString();
+								selected = productTable.getValueAt(productTable.getSelectedRow(),0).toString();
 							}
 							catch(ArrayIndexOutOfBoundsException e){
 								JOptionPane.showMessageDialog(ProductDialog.this,"Please select product from the list","Prompt",JOptionPane.ERROR_MESSAGE);
@@ -287,7 +292,7 @@ public class ProductDialog extends javax.swing.JDialog {
 					deferredChk.setBackground(new java.awt.Color(255,255,255));
 				}
 
-				TableUtility.fillTable(jTable1, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
+				TableUtility.fillTable(productTable, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
 			}
 			this.setSize(567, 517);
 		} catch (Exception e) {
@@ -306,7 +311,9 @@ public class ProductDialog extends javax.swing.JDialog {
 	public void setProductCode(String prodCode){
 		txtProduct.setText(prodCode);
 		ResultSet rs = ProductService.filterProducts(txtProduct.getText());
-		TableUtility.fillTable(jTable1,rs, new String[]{ "Product Code","Product Name","Product Price"});
+		TableUtility.fillTable(productTable,rs, new String[]{ "Product Code","Product Name","Product Price"});
+		productTable.selectAll();
+		txtProduct.setEditable(false);
 	}
 	
 	public void setDeferredValue(String value){
@@ -337,7 +344,7 @@ public class ProductDialog extends javax.swing.JDialog {
 	
 	public void clearProductInformation(){
 		txtProduct.setText("");
-		TableUtility.fillTable(jTable1, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
+		TableUtility.fillTable(productTable, ProductService.getAllProducts(), new String[]{ "Product Code","Product Name","Product Price"});
 		discountCB.setSelectedIndex(0);
 		quantityTxt.setText("");
 		deferredChk.setSelected(false);
@@ -352,5 +359,16 @@ public class ProductDialog extends javax.swing.JDialog {
 		};
 		return productDialogLabelAction;
 	}
+	
+	private AbstractAction getTabProductScrollPaneAction(){
+		AbstractAction tabProductScrollPaneAction = new AbstractAction("Search Product", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				discountCB.requestFocusInWindow();
+			}
+		};
+		return tabProductScrollPaneAction;
+	}
+	
 
 }
