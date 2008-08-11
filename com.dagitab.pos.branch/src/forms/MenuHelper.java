@@ -38,8 +38,15 @@ public class MenuHelper {
 	private static JMenuItem PULL_OUT_REQUEST = new JMenuItem("Create Pull-Out Request");
 	private static JMenuItem PULL_OUT_LIST = new JMenuItem("Browse Pending Pull-Outs");
 	
-	private static JMenuItem HELP = new JMenuItem("Help");
+	
+	private static JMenuItem INVENTORY = new JMenuItem("Inventory");
+	
+	
+	
+//	private static JMenuItem HELP = new JMenuItem("Help");
 	private static JMenuItem ABOUT = new JMenuItem("About");
+	
+	
 	private static MainWindow Window;
 	
 	static{
@@ -62,8 +69,10 @@ public class MenuHelper {
 		PULL_OUT_MENU.add(PULL_OUT_REQUEST);
 		PULL_OUT_MENU.add(PULL_OUT_LIST);
 		
-		ABOUT_MENU.add(HELP);
+//		ABOUT_MENU.add(HELP);
 		ABOUT_MENU.add(ABOUT);
+		
+		REPORTS_MENU.add(INVENTORY);
 	}
 	
 	static{
@@ -91,6 +100,10 @@ public class MenuHelper {
 		PULL_OUT_LIST.setAction(getPullOutlistAction());
 		
 		ABOUT.setAction(getAboutAction());
+		
+		INVENTORY.setAction(getInventoryAction());
+		
+		
 	}
 	
 	public static JMenuBar getMenuBar(){
@@ -218,5 +231,17 @@ public class MenuHelper {
 		};
 		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed R"));
 		return pullOutRequestAction;
+	}
+	
+	private static AbstractAction getInventoryAction(){
+		AbstractAction inventoryAbstractAction = new AbstractAction("Inventory", null) {
+			public void actionPerformed(ActionEvent e) {
+				InventoryViewerDialog inventoryViewerDialog = new InventoryViewerDialog(Main.getInst());
+				inventoryViewerDialog.setLocationRelativeTo(null);
+				inventoryViewerDialog.setVisible(true);
+			}
+		};
+//		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
+		return inventoryAbstractAction;
 	}
 }
