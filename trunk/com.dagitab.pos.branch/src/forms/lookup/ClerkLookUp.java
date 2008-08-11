@@ -42,10 +42,10 @@ import forms.invoice.InvoicePanel;
 public class ClerkLookUp extends javax.swing.JDialog {
 	private JLabel clerkLookUpLabel;
 	private JLabel jLabel2;
-	private JButton jButton2;
-	private JTable jTable1;
+	private JButton clerkLookUpOkButton;
+	private JTable clerkLookUpTable;
 	private JButton jButton3;
-	private JScrollPane jScrollPane1;
+	private JScrollPane clerkLookUpScrollPane;
 	private JTextField jTextField1;
 	private static Object invoker;
 	private static ClerkLookUp clerkLookUp; 
@@ -80,15 +80,15 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			getContentPane().setBackground(new java.awt.Color(255,255,255));
 			this.setModal(true);
 			{
-				jButton2 = new JButton();
-				getContentPane().add(jButton2);
-				jButton2.setText("OK");
-				jButton2.setPreferredSize(new java.awt.Dimension(61, 27));
-				jButton2.setBounds(124, 392, 61, 27);
-				jButton2.addActionListener(new ActionListener() {
+				clerkLookUpOkButton = new JButton();
+				getContentPane().add(clerkLookUpOkButton);
+				clerkLookUpOkButton.setText("OK");
+				clerkLookUpOkButton.setPreferredSize(new java.awt.Dimension(61, 27));
+				clerkLookUpOkButton.setBounds(124, 392, 61, 27);
+				clerkLookUpOkButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
-						String selected = jTable1.getValueAt(jTable1.getSelectedRow(),0).toString();
+						String selected = clerkLookUpTable.getValueAt(clerkLookUpTable.getSelectedRow(),0).toString();
 						if(invoker instanceof InvoicePanel){
 						
 							InvoicePanel invoicePanel = ((InvoicePanel)invoker);
@@ -105,23 +105,25 @@ public class ClerkLookUp extends javax.swing.JDialog {
 				});
 			}
 			{
-				jScrollPane1 = new JScrollPane();
-				getContentPane().add(jScrollPane1);
-				jScrollPane1.setPreferredSize(new java.awt.Dimension(384, 282));
-				jScrollPane1.setBounds(16, 86, 384, 282);
+				clerkLookUpScrollPane = new JScrollPane();
+				getContentPane().add(clerkLookUpScrollPane);
+				clerkLookUpScrollPane.setPreferredSize(new java.awt.Dimension(384, 282));
+				clerkLookUpScrollPane.setBounds(16, 86, 384, 282);
 				{
 					TableModel jTable1Model = new DefaultTableModel(
 						new String[][] { },
 						new String[] { "Clerk ID", "Clerk Last Name","Clerk First Name" });
-					jTable1 = new JTable(){
+					clerkLookUpTable = new JTable(){
 						@Override
 						public boolean isCellEditable(int row, int column)
 						{
 							return false;
 						}
 					};
-					jScrollPane1.setViewportView(jTable1);
-					jTable1.setModel(jTable1Model);
+					clerkLookUpScrollPane.setViewportView(clerkLookUpTable);
+					clerkLookUpTable.setModel(jTable1Model);
+					clerkLookUpTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0), "clerkLookUpTable");
+					clerkLookUpTable.getActionMap().put("clerkLookUpTable",getTabClerkLookUpScrollPaneAction() );
 				}
 			}
 			{
@@ -132,7 +134,7 @@ public class ClerkLookUp extends javax.swing.JDialog {
 				jTextField1.addKeyListener(new KeyAdapter() {
 					public void keyTyped(KeyEvent evt) {
 						ResultSet rs = ClerkService.filterClerk(jTextField1.getText());
-						TableUtility.fillTable(jTable1, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
+						TableUtility.fillTable(clerkLookUpTable, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
 					}
 				});
 
@@ -169,7 +171,7 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			this.setSize(428, 474);
 			
 			ResultSet rs = ClerkService.getAllClerks();
-			TableUtility.fillTable(jTable1, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
+			TableUtility.fillTable(clerkLookUpTable, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -192,6 +194,16 @@ public class ClerkLookUp extends javax.swing.JDialog {
 
 	public  static String getFieldName() {
 		return fieldName;
+	}
+	
+	private AbstractAction getTabClerkLookUpScrollPaneAction(){
+		AbstractAction tabProductScrollPaneAction = new AbstractAction("Clerk Search", null) {
+			
+			public void actionPerformed(ActionEvent evt) {
+				clerkLookUpOkButton.requestFocusInWindow();
+			}
+		};
+		return tabProductScrollPaneAction;
 	}
 
 	
