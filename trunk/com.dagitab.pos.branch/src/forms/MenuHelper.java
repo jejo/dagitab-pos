@@ -111,6 +111,7 @@ public class MenuHelper {
 				aboutDialog.setVisible(true);
 			}
 		};
+		aboutAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed B"));
 		return aboutAction;
 	}
 
@@ -123,7 +124,7 @@ public class MenuHelper {
 				pullOutDialog.setVisible(true);
 			}
 		};
-//		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
+		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed H"));
 		return pullOutRequestAction;
 	}
 
@@ -148,7 +149,7 @@ public class MenuHelper {
 				passwordManagerDialog.setVisible(true);
 			}
 		};
-		showPasswordDialogAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed W"));
+		showPasswordDialogAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed P"));
 		return showPasswordDialogAction;
 	}
 
@@ -160,7 +161,7 @@ public class MenuHelper {
 				invoiceViewer.setVisible(true);
 			}
 		};
-		showReprintDialogAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed P"));
+		showReprintDialogAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed T"));
 		return showReprintDialogAction;
 	}
 
@@ -215,7 +216,7 @@ public class MenuHelper {
 				pullOutRequestDialog.setVisible(true);
 			}
 		};
-//		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed D"));
+		pullOutRequestAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed R"));
 		return pullOutRequestAction;
 	}
 }
