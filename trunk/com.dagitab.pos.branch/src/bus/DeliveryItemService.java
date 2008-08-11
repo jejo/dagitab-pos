@@ -16,14 +16,14 @@ public class DeliveryItemService {
 	public static void updateDeliveryItem(Long deliveryItemId, String date, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
 		Main.getDBManager().executeUpdate("update delivery_items set PROCESSED_STAT = 1, RCVD_DATE = '" + date + " 00:00:00',ACCEPTED_QTY = " + acceptedQuantity + ", MISSING_QTY = " + missingQuantity + ", DAMAGED_QTY = " + damagedQuantity + " where DEL_ITEM_NO = " + deliveryItemId + ";");
 	}
-	
 
 	public static boolean hasPendingDeliveryItemsToCheck(Long pendingDeliveryId) {
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT DEL_ITEM_NO FROM delivery_items d WHERE PROCESSED_STAT = '0';");		
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT COUNT(DEL_ITEM_NO) AS NUM FROM delivery_items WHERE PROCESSED_STAT = '0' AND DEL_NO = '" + pendingDeliveryId + "';");		
 		try {
-			return rs.getFetchSize() > 0;
+			if(rs.next()) {
+				return rs.getInt("NUM") > 0;
+			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
