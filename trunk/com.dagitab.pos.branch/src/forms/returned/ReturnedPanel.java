@@ -1,7 +1,6 @@
 package forms.returned;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -1038,6 +1037,14 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		invoiceNoTextField.setText("");
 		
 		
+		resetORNumber();
+		
+		updateAmounts();
+		updatePaymentAmounts();
+		
+	}
+	
+	public void resetORNumber(){
 		//reset OR field
 		orTextField.setPreferredSize(new java.awt.Dimension(126, 21));
 		String nextOR = InvoiceService.getNextORNumber();
@@ -1045,10 +1052,6 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			nextOR = "1";
 		}
 		orTextField.setText(StringUtility.zeroFill(nextOR, 10));
-		
-		updateAmounts();
-		updatePaymentAmounts();
-		
 	}
 	
 	private void updateAmounts(){

@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
-import forms.About;
+import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 import forms.lookup.PaymentDialog;
 

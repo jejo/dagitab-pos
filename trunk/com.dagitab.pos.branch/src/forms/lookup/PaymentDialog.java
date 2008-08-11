@@ -18,7 +18,7 @@ import javax.swing.KeyStroke;
 import bus.PaymentItemService;
 import bus.PaymentTypeService;
 import domain.PaymentItem;
-import forms.About;
+import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 import forms.partial.PartialDialog;
 import forms.returned.ReturnedPanel;

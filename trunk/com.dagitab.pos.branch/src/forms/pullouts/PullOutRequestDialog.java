@@ -36,7 +36,7 @@ import bus.PullOutRequestItemService;
 import bus.PullOutRequestService;
 import domain.InvoiceItem;
 import domain.Product;
-import forms.About;
+import forms.AboutDialog;
 import forms.lookup.ProductDialog;
 
 /**

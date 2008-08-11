@@ -30,7 +30,7 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.ReturnReason;
-import forms.About;
+import forms.AboutDialog;
 import forms.MainWindow;
 
 /**

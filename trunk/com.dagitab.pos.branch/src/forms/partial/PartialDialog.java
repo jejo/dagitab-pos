@@ -38,7 +38,7 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
-import forms.About;
+import forms.AboutDialog;
 import forms.interfaces.Payments;
 import forms.lookup.PaymentDialog;
 import forms.receipts.ReceiptPanel;

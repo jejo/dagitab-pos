@@ -18,6 +18,7 @@ import javax.swing.JProgressBar;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class InstallProgress extends javax.swing.JDialog {
 	private JProgressBar jProgressBar1;
 	private JLabel jLabel1;

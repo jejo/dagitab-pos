@@ -43,12 +43,12 @@ import domain.InvoiceItem;
 import domain.PaymentItem;
 import domain.Product;
 import domain.Transaction;
-import forms.FastAddition;
 import forms.MainWindow;
 import forms.PackageItems;
 import forms.interfaces.Payments;
 import forms.lookup.ClerkLookUp;
 import forms.lookup.CustomerLookUp;
+import forms.lookup.FastAddition;
 import forms.lookup.PaymentDialog;
 import forms.lookup.ProductDialog;
 import forms.receipts.ReceiptPanel;
@@ -933,15 +933,21 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		salesSpecialistTxt.setText("");
 		customerTxt.setText("");
 		
+		resetORNumber();
+		
+		
+		//update amounts
+		updateAmounts();
+		updatePaymentAmounts();
+	}
+	
+	public void resetORNumber(){
 		//reset OR no
 		String nextOR = InvoiceService.getNextORNumber();
 		if(nextOR == null){
 			nextOR = "1";
 		}
-		
-		//update amounts
-		updateAmounts();
-		updatePaymentAmounts();
+		orNoTxt.setText(StringUtility.zeroFill(nextOR, 10));
 	}
 	
 	private boolean hasEnoughPayment(){
@@ -1003,9 +1009,10 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			invoiceItem.setOrNo(Long.parseLong(orNoTxt.getText()));
 			invoiceItem.setProductCode(itemTableModel.getValueAt(i, 0).toString());
 			invoiceItem.setQuantity(Integer.parseInt(itemTableModel.getValueAt(i, 2).toString()));
-			invoiceItem.setSellPrice(Double.parseDouble(itemTableModel.getValueAt(i, 4).toString()));
+//			invoiceItem.setSellPrice(Double.parseDouble(itemTableModel.getValueAt(i, 4).toString())); // assumed selling price is with disc
 			invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			Product product = ProductService.getProductById(itemTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setSellPrice(product.getSellPrice());
 			invoiceItem.setCost(product.getCost());
 			InvoiceItemService.insert(invoiceItem);
 			invoiceItems.add(invoiceItem);

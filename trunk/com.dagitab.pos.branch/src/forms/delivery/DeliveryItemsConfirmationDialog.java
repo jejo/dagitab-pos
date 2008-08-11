@@ -5,7 +5,7 @@ import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.cloudgarden.resource.SWTResourceManager;
 
-import forms.About;
+import forms.AboutDialog;
 
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
