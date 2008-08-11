@@ -69,8 +69,8 @@ public class MenuHelper {
 	static{
 		
 		CONNECT.setEnabled(false);
-		REPORTS_MENU.setEnabled(false);
-		ABOUT_MENU.setEnabled(false);
+		
+//		REPORTS_MENU.setEnabled(false);
 		
 		CONFIGURATION.setAction(getShowConfigurationDialogAbstractAction());
 		
@@ -89,6 +89,8 @@ public class MenuHelper {
 		PULL_OUT_REQUEST.setAction(getPullOutRequestAction());
 		
 		PULL_OUT_LIST.setAction(getPullOutlistAction());
+		
+		ABOUT.setAction(getAboutAction());
 	}
 	
 	public static JMenuBar getMenuBar(){
@@ -99,6 +101,20 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	@SuppressWarnings("serial")
+	private static AbstractAction getAboutAction() {
+		AbstractAction aboutAction  = new AbstractAction("About",null){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				AboutDialog aboutDialog = new AboutDialog(Main.getInst());
+				aboutDialog.setLocationRelativeTo(null);
+				aboutDialog.setVisible(true);
+			}
+		};
+		return aboutAction;
+	}
+
+
 	private static AbstractAction getPullOutlistAction() {
 		AbstractAction pullOutRequestAction = new AbstractAction("Browse Pending Pull Outs", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -174,7 +190,7 @@ public class MenuHelper {
 	}
 
 	private static AbstractAction getExitAction() {
-		AbstractAction showExitAction = new AbstractAction("Delivery Manager", null) {
+		AbstractAction showExitAction = new AbstractAction("Exit", null) {
 			public void actionPerformed(ActionEvent e) {
 				int n = JOptionPane
 				.showConfirmDialog(

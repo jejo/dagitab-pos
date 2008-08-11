@@ -5,7 +5,7 @@ import java.util.Vector;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
-import forms.About;
+import forms.AboutDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

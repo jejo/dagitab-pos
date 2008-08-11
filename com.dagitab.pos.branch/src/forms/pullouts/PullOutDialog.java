@@ -27,7 +27,7 @@ import bus.DeliveryService;
 import bus.PullOutItemService;
 import bus.PullOutService;
 
-import forms.About;
+import forms.AboutDialog;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo

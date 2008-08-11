@@ -4,7 +4,7 @@ import com.cloudgarden.layout.AnchorLayout;
 
 import connection.DataUtil;
 import connection.LogHandler;
-import forms.About;
+import forms.AboutDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -2,12 +2,12 @@ package forms.receipts;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -22,18 +22,18 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import main.Main;
 import util.ServerPropertyHandler;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
+import bus.ProductService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
-import forms.About;
+import domain.Product;
 
 
 /**
@@ -55,17 +55,22 @@ public class InvoiceViewer extends javax.swing.JDialog {
 	private JLabel jLabel3;
 	private JPanel jPanel1;
 	private JLabel jLabel4;
-	private JScrollPane jScrollPane1;
+	private JScrollPane itemScrollPane;
 	private JLabel jLabel5;
+	private JTextField totalPaymentTextField;
+	private JLabel totalPaymentLabel;
+	private AbstractAction viewInformationAbstractAction;
 	private JButton btnPrint;
-	private JScrollPane jScrollPane2;
-	private JTextField jTextField3;
+	private JScrollPane paymentItemScrollPane;
+	private JTextField vatTextField;
+	private JTextField changeTextField;
+	private JLabel changeLabel;
 	private JLabel jLabel7;
-	private JTextField jTextField2;
+	private JTextField subTotalTextField;
 	private JLabel jLabel6;
-	private JTable jTable2;
-	private JTable jTable1;
-	private JTextField jTextField1;
+	private JTable paymentItemTable;
+	private JTable itemTable;
+	private JTextField amountDueTextField;
 	private JButton btnView;
 	private JTextField txtOR;
 	private ServerPropertyHandler config;
@@ -139,146 +144,21 @@ public class InvoiceViewer extends javax.swing.JDialog {
 					btnView = new JButton();
 					getContentPane().add(btnView);
 					btnView.setText("View Information");
-					btnView.setBounds(238, 48, 119, 21);
-					btnView.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							boolean isValid =(txtOR.getText().length() > 0) && txtOR.getText().matches("^[0-9]*$"); 
-							if(isValid){
-								ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice WHERE OR_NO = "+txtOR.getText()+" && "+"STORE_CODE = "+Main.getStoreCode());
-								try {
-									if(rs.next()){
-										txtOR.setText(rs.getString("OR_NO"));
-										if(rs.getString("PARTIAL") == "1"){
-											isPartial = true;
-										}
-										rs = Main.getDBManager().executeQuery("SELECT SUM((i.SELL_PRICE - (i.SELL_PRICE * 0.01 * d.DISC_RATE ))* i.QUANTITY) FROM invoice_item i, discount_lu d WHERE i.DISC_CODE = d.DISC_NO AND i.OR_NO = "+txtOR.getText()+" && "+"i.STORE_CODE = "+Main.getStoreCode());
-										if(rs.next()){
-											
-											String amtDue = String.format("%.2f", rs.getDouble(1));
-											jTextField1.setText(amtDue);
-											rs = Main.getDBManager().executeQuery("SELECT VAT FROM global");
-											if(rs.next()){
-												double subTotal = Double.parseDouble(amtDue)/(1+(rs.getDouble("VAT")*0.01));
-												double VAT = Double.parseDouble(amtDue) - subTotal;
-												jTextField2.setText(String.format("%.2f",subTotal));
-												jTextField3.setText(String.format("%.2f",VAT));
-												
-											}
-											
-											rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item i, products_lu p, discount_lu d WHERE i.PROD_CODE = p.PROD_CODE && d.DISC_NO = i.DISC_CODE && OR_NO="+txtOR.getText()+" && "+"i.STORE_CODE = "+Main.getStoreCode());
-											prodData = new Vector<Vector<String>>();
-											Vector<String> colNames = new Vector<String>();  
-															colNames.add("Product Code"); 
-															colNames.add("Product Name");
-															colNames.add("Quantity");
-															colNames.add("Current Price");
-															colNames.add("Selling Price");
-															colNames.add("Deferred");
-															colNames.add("Disc Code");
-															colNames.add("Extension");
-															
-															
-											
-											while(rs.next()){
-												Vector<String> rowData = new Vector<String>();
-												rowData.add(rs.getString("PROD_CODE"));
-												rowData.add(rs.getString("NAME"));
-												rowData.add(rs.getString("QUANTITY"));
-												rowData.add(rs.getString("SELL_PRICE"));
-												double sellingPrice = rs.getDouble("SELL_PRICE") - (0.01 * rs.getDouble("SELL_PRICE") * rs.getDouble("DISC_RATE"));
-												rowData.add(String.format("%.2f", sellingPrice));
-												if(rs.getInt("DEFERRED") == 0){
-													rowData.add("No");
-												}
-												else{
-													rowData.add("Yes");
-												}
-												
-												rowData.add(rs.getString("DISC_NO"));
-												double ext = sellingPrice * rs.getInt("QUANTITY");
-												rowData.add(String.format("%.2f",ext));
-												
-												prodData.add(rowData);
-											}
-											
-//											update product table
-											TableModel jTable1Model = new DefaultTableModel(prodData,colNames);
-											jTable1 = new JTable(){
-												public boolean isCellEditable(int row, int column)
-												{
-													return false;
-												}
-											};
-											jScrollPane1.setViewportView(jTable1);
-											jTable1.setModel(jTable1Model);
-											
-											//update payment table
-											payData = new Vector<Vector<String>>();
-											Vector<String> pcolNames = new Vector<String>();
-											pcolNames.add("Payment Code");
-											pcolNames.add("Payment Type");
-											pcolNames.add("Amount");
-											pcolNames.add("Credit Card Type");
-											pcolNames.add("Credit Card No");
-											pcolNames.add("Bank Check No");
-											pcolNames.add("Gift Certificate Number");
-											
-											rs = Main.getDBManager().executeQuery("SELECT * FROM payment_item p, pay_type_lu pl WHERE p.PT_CODE = pl.PT_CODE && p.OR_NO="+txtOR.getText()+" && "+"p.STORE_CODE = "+Main.getStoreCode());
-											
-											while(rs.next()){
-												Vector<String> rowData = new Vector<String>();
-												rowData.add(rs.getString("PT_CODE"));
-												rowData.add(rs.getString("NAME"));
-												rowData.add(rs.getString("AMT"));
-												rowData.add(rs.getString("CARD_TYPE"));
-												rowData.add(rs.getString("CARD_NO"));
-												rowData.add(rs.getString("CHECK_NO"));
-												rowData.add(rs.getString("GC_NO"));
-												payData.add(rowData);
-											}
-											
-												
-											
-//											update product table
-											TableModel jTable1Mode2 = new DefaultTableModel(payData,pcolNames);
-											jTable2 = new JTable(){
-												public boolean isCellEditable(int row, int column)
-												{
-													return false;
-												}
-											};
-											jScrollPane2.setViewportView(jTable2);
-											jTable2.setModel(jTable1Mode2);
-										}
-										
-									}else{
-										JOptionPane.showMessageDialog(null, "OR Number does not exist in the database.","Prompt",JOptionPane.WARNING_MESSAGE);
-									}
-									
-								} catch (SQLException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-							else{
-								JOptionPane.showMessageDialog(null, "Please input a valid OR number.","Prompt",JOptionPane.WARNING_MESSAGE);
-							}
-							
-							
-						}
-					});
+					btnView.setBounds(238, 48, 140, 21);
+					btnView.setAction(getViewInformationAbstractAction());
+					
 				}
 				{
 					jLabel3 = new JLabel();
 					getContentPane().add(jLabel3);
 					jLabel3.setText("Items");
-					jLabel3.setBounds(21, 154, 63, 28);
+					jLabel3.setBounds(21, 188, 63, 28);
 					jLabel3.setFont(new java.awt.Font("Tahoma",1,14));
 				}
 				{
 					jPanel1 = new JPanel();
 					getContentPane().add(jPanel1);
-					jPanel1.setBounds(21, 84, 693, 56);
+					jPanel1.setBounds(21, 84, 693, 104);
 					jPanel1.setBackground(new java.awt.Color(234,254,255));
 					jPanel1.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 					jPanel1.setLayout(null);
@@ -286,51 +166,62 @@ public class InvoiceViewer extends javax.swing.JDialog {
 						jLabel4 = new JLabel();
 						jPanel1.add(jLabel4);
 						jLabel4.setText("Amount Due");
-						jLabel4.setBounds(14, 21, 105, 14);
+						jLabel4.setBounds(8, 13, 105, 14);
 						jLabel4.setFont(new java.awt.Font("Tahoma",1,14));
 					}
 					{
-						jTextField1 = new JTextField();
-						jPanel1.add(jTextField1);
-						jTextField1.setBounds(140, 21, 112, 21);
-						jTextField1.setEditable(false);
+						amountDueTextField = new JTextField();
+						jPanel1.add(amountDueTextField);
+						amountDueTextField.setBounds(123, 12, 112, 21);
+						amountDueTextField.setEditable(false);
 					}
 					{
 						jLabel6 = new JLabel();
 						jPanel1.add(jLabel6);
 						jLabel6.setText("Sub Total");
-						jLabel6.setBounds(308, 21, 63, 28);
+						jLabel6.setBounds(8, 33, 63, 28);
 					}
 					{
-						jTextField2 = new JTextField();
-						jPanel1.add(jTextField2);
-						jTextField2.setBounds(364, 21, 112, 21);
-						jTextField2.setEditable(false);
+						subTotalTextField = new JTextField();
+						jPanel1.add(subTotalTextField);
+						subTotalTextField.setBounds(123, 37, 112, 21);
+						subTotalTextField.setEditable(false);
 					}
 					{
 						jLabel7 = new JLabel();
 						jPanel1.add(jLabel7);
 						jLabel7.setText("VAT");
-						jLabel7.setBounds(511, 28, 49, 14);
+						jLabel7.setBounds(11, 67, 49, 14);
 					}
 					{
-						jTextField3 = new JTextField();
-						jPanel1.add(jTextField3);
-						jTextField3.setEditable(false);
-						jTextField3.setBounds(539, 21, 112, 21);
+						vatTextField = new JTextField();
+						jPanel1.add(vatTextField);
+						jPanel1.add(getTotalPaymentLabel());
+						jPanel1.add(getTotalPaymentTextField());
+						jPanel1.add(getChangeLabel());
+						jPanel1.add(getChangeTextField());
+						vatTextField.setEditable(false);
+						vatTextField.setBounds(123, 64, 112, 21);
 					}
 				}
 				{
-					jScrollPane1 = new JScrollPane();
-					getContentPane().add(jScrollPane1);
-					jScrollPane1.setBounds(21, 182, 693, 126);
+					itemScrollPane = new JScrollPane();
+					getContentPane().add(itemScrollPane);
+					itemScrollPane.setBounds(21, 216, 690, 131);
 					{
-						TableModel jTable1Model = new DefaultTableModel(
+						TableModel itemTableModel = new DefaultTableModel(
 								new String[][] {  },
-								new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
-							jTable1 = new JTable();
-							jScrollPane1.setViewportView(jTable1);
-							jTable1.setModel(jTable1Model);
+								new String[] { "Product Code", 
+											   "Product Name",
+											   "Quantity",
+											   "Current Price",
+											   "Selling Price",
+											   "Deferred",
+											   "Disc Code",
+											   "Extension" });
+							itemTable = new JTable();
+							itemScrollPane.setViewportView(itemTable);
+							itemTable.setModel(itemTableModel);
 					}
 				}
 				{
@@ -338,19 +229,19 @@ public class InvoiceViewer extends javax.swing.JDialog {
 					getContentPane().add(jLabel5);
 					jLabel5.setText("Payments");
 					jLabel5.setFont(new java.awt.Font("Tahoma",1,14));
-					jLabel5.setBounds(21, 322, 147, 28);
+					jLabel5.setBounds(24, 357, 147, 28);
 				}
 				{
-					jScrollPane2 = new JScrollPane();
-					getContentPane().add(jScrollPane2);
-					jScrollPane2.setBounds(21, 350, 693, 70);
+					paymentItemScrollPane = new JScrollPane();
+					getContentPane().add(paymentItemScrollPane);
+					paymentItemScrollPane.setBounds(24, 384, 686, 90);
 					{
-						TableModel jTable2Model = new DefaultTableModel(
+						TableModel paymentItemTableModel = new DefaultTableModel(
 								new String[][] { },
 								new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
-							jTable2 = new JTable();
-							jScrollPane2.setViewportView(jTable2);
-							jTable2.setModel(jTable2Model);
+							paymentItemTable = new JTable();
+							paymentItemScrollPane.setViewportView(paymentItemTable);
+							paymentItemTable.setModel(paymentItemTableModel);
 							
 							
 					}
@@ -359,13 +250,13 @@ public class InvoiceViewer extends javax.swing.JDialog {
 					btnPrint = new JButton();
 					getContentPane().add(btnPrint);
 					btnPrint.setText("Print Receipt");
-					btnPrint.setBounds(308, 476, 154, 28);
+					btnPrint.setBounds(309, 494, 154, 28);
 					btnPrint.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							Invoice invoice = InvoiceService.getInvoiceByOr(txtOR.getText());
 							List<InvoiceItem> invoiceItems = InvoiceItemService.findInvoiceItemByOR(Long.parseLong(txtOR.getText()));
 							List<PaymentItem> paymentItems = PaymentItemService.getPaymentItemList(Long.parseLong(txtOR.getText()));
-							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,"0");
+							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
 							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this, receiptPanel);
 							validateReceiptDialog.setLocationRelativeTo(null);
 							validateReceiptDialog.setVisible(true);
@@ -392,6 +283,104 @@ public class InvoiceViewer extends javax.swing.JDialog {
 			}
 		};
 		return invioceViewerLabelAction;
+	}
+	
+	private AbstractAction getViewInformationAbstractAction() {
+		if(viewInformationAbstractAction == null) {
+			viewInformationAbstractAction = new AbstractAction("View Information", new ImageIcon(getClass().getClassLoader().getResource("images/Search.PNG"))) {
+				public void actionPerformed(ActionEvent evt) {
+					boolean isValid =(txtOR.getText().length() > 0) && txtOR.getText().matches("^[0-9]*$"); 
+					if(isValid){
+						Invoice invoice = InvoiceService.getInvoiceByOr(txtOR.getText());
+						Double invoiceAmount =  InvoiceService.getInvoiceAmount(invoice.getOrNo());
+						Double subTotalAmount = InvoiceService.getSubTotal(invoiceAmount);
+						Double vatAmount = invoiceAmount - subTotalAmount;
+						Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo());
+						Double changeAmount =  totalPaymentAmount- invoiceAmount;
+						amountDueTextField.setText(String.format("%.2f", invoiceAmount));
+						subTotalTextField.setText(String.format("%.2f", subTotalAmount));
+						vatTextField.setText(String.format("%.2f", vatAmount));
+						totalPaymentTextField.setText(String.format("%.2f", totalPaymentAmount));
+						changeTextField.setText(String.format("%.2f", changeAmount));
+						
+						List<InvoiceItem> listInvoiceItems = InvoiceItemService.findInvoiceItemByOR(invoice.getOrNo());
+						DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
+						for(InvoiceItem invoiceItem: listInvoiceItems){
+							String[] rowData = new String[8];
+							rowData[0] = invoiceItem.getProductCode(); //product code
+							Product product = ProductService.getProductById(invoiceItem.getProductCode());
+							rowData[1] = product.getName(); //product name
+							rowData[2] = invoiceItem.getQuantity().toString(); //quantity
+							rowData[3] = String.format("%.2f",invoiceItem.getSellPrice()); //current price
+							Double discountedAmount = InvoiceItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()); 
+							rowData[4] = String.format("%.2f", discountedAmount); //selling price
+							rowData[5] = invoiceItem.getIsDeferred().toString(); //deferred
+							rowData[6] = invoiceItem.getDiscountCode().toString(); //discount code
+							Double extension = invoiceItem.getQuantity() * discountedAmount; 
+							rowData[7] = extension.toString(); // extensino
+							itemTableModel.addRow(rowData);
+						}
+						
+						DefaultTableModel paymentItemTableModel = (DefaultTableModel) paymentItemTable.getModel();
+						List<PaymentItem> listPaymentItems = PaymentItemService.getPaymentItemList(invoice.getOrNo());
+						for(PaymentItem paymentItem: listPaymentItems){
+//							new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
+							String[] rowData = new String[7];
+							rowData[0] = paymentItem.getPaymentCode().toString();
+							String paymentName = PaymentItemService.getPaymentType(paymentItem.getPaymentCode());
+							rowData[1] = paymentName;
+							rowData[2] = String.format("%.2f",paymentItem.getAmount());
+							rowData[3] = paymentItem.getCardType();
+							rowData[4] = paymentItem.getCardNo();
+							rowData[5] = paymentItem.getCheckNo();
+							rowData[6] = paymentItem.getGcNo();
+							
+							paymentItemTableModel.addRow(rowData);
+						}
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please input a valid OR number.","Prompt",JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			};
+		}
+		return viewInformationAbstractAction;
+	}
+	
+	private JLabel getTotalPaymentLabel() {
+		if(totalPaymentLabel == null) {
+			totalPaymentLabel = new JLabel();
+			totalPaymentLabel.setText("Total Payment");
+			totalPaymentLabel.setBounds(380, 13, 77, 16);
+		}
+		return totalPaymentLabel;
+	}
+	
+	private JTextField getTotalPaymentTextField() {
+		if(totalPaymentTextField == null) {
+			totalPaymentTextField = new JTextField();
+			totalPaymentTextField.setBounds(486, 10, 112, 22);
+			totalPaymentTextField.setEditable(false);
+		}
+		return totalPaymentTextField;
+	}
+	
+	private JLabel getChangeLabel() {
+		if(changeLabel == null) {
+			changeLabel = new JLabel();
+			changeLabel.setText("Change");
+			changeLabel.setBounds(380, 41, 41, 16);
+		}
+		return changeLabel;
+	}
+	
+	private JTextField getChangeTextField() {
+		if(changeTextField == null) {
+			changeTextField = new JTextField();
+			changeTextField.setBounds(486, 38, 112, 22);
+			changeTextField.setEditable(false);
+		}
+		return changeTextField;
 	}
 
 }

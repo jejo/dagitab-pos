@@ -271,17 +271,18 @@ public class MainWindow extends javax.swing.JFrame {
 						public void stateChanged(ChangeEvent evt) {
 
 							if (jTabbedPane1.getSelectedIndex() == 0) { // regular
-
+								InvoicePanel invoicePanel = (InvoicePanel)MainWindow.this.getInvoicePanel();
+								invoicePanel.resetORNumber();
 							} else if (jTabbedPane1.getSelectedIndex() == 1) { // partial
-								((PartialPanel) partialPanel)
-										.refreshPartialTable();
+								((PartialPanel) partialPanel).refreshPartialTable();
 							} else if (jTabbedPane1.getSelectedIndex() == 2) { // deferred
-								((DeferredPanel) deferredPanel)
-										.refreshDeferredTable();
+								((DeferredPanel) deferredPanel).refreshDeferredTable();
 							} else if (jTabbedPane1.getSelectedIndex() == 3) { // returned
+								ReturnedPanel returnedPanel = (ReturnedPanel) MainWindow.this.getReturnedPanel();
+								returnedPanel.resetORNumber();
 							} else if (jTabbedPane1.getSelectedIndex() == 4) { // pending
-								((PendingPanel) pendingPanel)
-										.refreshPendingTable();
+								
+								((PendingPanel) pendingPanel).refreshPendingTable();
 							}
 						}
 					});
@@ -327,6 +328,9 @@ public class MainWindow extends javax.swing.JFrame {
 
 	public JPanel getInvoicePanel() {
 		return invoicePanel;
+	}
+	public JPanel getReturnedPanel(){
+		return returnedPanel;
 	}
 
 	/*

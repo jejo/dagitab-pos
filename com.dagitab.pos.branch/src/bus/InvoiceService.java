@@ -111,6 +111,41 @@ public class InvoiceService {
 		return null;
 	}
 	
+	public static Double getInvoiceAmount(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode());
+		Double invoiceAmount = 0.0d;
+		try {
+			while(rs.next()){
+				Double discRate = DiscountService.getDiscRate(rs.getInt("DISC_CODE"));
+				Double sellingPrice = rs.getDouble("SELL_PRICE");
+				Double amount = sellingPrice - (sellingPrice*discRate);
+				invoiceAmount += amount;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return invoiceAmount;
+	}
+	
+	public static Double getSubTotal(Double invoiceAmount){
+		Double vatRate = VatService.getVatRate();
+		Double subTotal = invoiceAmount/vatRate;
+		return subTotal;
+	}
+	
+	public static Double getTotalPaymentAmount(Long orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(AMT) FROM payment_item WHERE OR_NO = "+orNo);
+		try {
+			if(rs.next()){
+				return rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	
 
 }

@@ -28,7 +28,7 @@ import bus.DiscountService;
 import bus.ProductService;
 import domain.InvoiceItem;
 import domain.Product;
-import forms.About;
+import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 import forms.pullouts.PullOutRequestDialog;
 import forms.returned.ReturnedPanel;

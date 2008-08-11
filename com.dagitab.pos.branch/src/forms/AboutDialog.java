@@ -1,6 +1,4 @@
 package forms;
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,10 +7,12 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.KeyStroke;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -26,7 +26,9 @@ import javax.swing.JLabel;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class About extends javax.swing.JDialog {
+
+@SuppressWarnings("serial")
+public class AboutDialog extends javax.swing.JDialog {
 	private JLabel aboutLabel;
 	private JLabel jLabel2;
 	private JButton jButton1;
@@ -49,11 +51,11 @@ public class About extends javax.swing.JDialog {
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		About inst = new About(frame);
+		AboutDialog inst = new AboutDialog(frame);
 		inst.setVisible(true);
 	}
 	
-	public About(JFrame frame) {
+	public AboutDialog(JFrame frame) {
 		super(frame);
 		initGUI();
 	}
@@ -90,7 +92,7 @@ public class About extends javax.swing.JDialog {
 				jButton1.setPreferredSize(new java.awt.Dimension(91, 28));
 				jButton1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						About.this.dispose();
+						AboutDialog.this.dispose();
 					}
 				});
 			}
@@ -119,7 +121,7 @@ public class About extends javax.swing.JDialog {
 		AbstractAction aboutLabelAction = new AbstractAction("About Babyland POS Application", null) {
 			
 			public void actionPerformed(ActionEvent evt) {
-				About.this.dispose();
+				AboutDialog.this.dispose();
 			}
 		};
 		return aboutLabelAction;

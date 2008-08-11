@@ -17,6 +17,7 @@ import util.ReceiptUtilities;
 import util.StorePropertyHandler;
 import util.StringUtility;
 import bus.ClerkService;
+import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentTypeService;
 import bus.ProductService;
@@ -324,7 +325,8 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			
 			//issue if selling price of product has changed
 			double currentPriceQuantityAmount = product.getSellPrice() * invoiceItem.getQuantity();
-			double sellingPriceQuantityAmount = invoiceItem.getSellPrice() * invoiceItem.getQuantity();
+			double sellingPriceQuantityAmount = InvoiceItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
+			
 			System.out.println("Product Code: "+product.getProdCode()+" Product Name: "+product.getName());
 			System.out.println("current price*quantity: "+currentPriceQuantityAmount);
 			System.out.println("selling price*quantity: "+sellingPriceQuantityAmount);
@@ -381,9 +383,9 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 
 		 
 		 Double totalDiscount = currentSubTotal - sellingSubTotal;
-		 Double netSaleAmount = Double.parseDouble(String.format("%.2f",currentSubTotal)) - Double.parseDouble(String.format("%.2f",totalDiscount));
-		 System.out.println("Net Sale Amount: "+netSaleAmount);
-		 System.out.println("NEW SUB TOTAL:"+sellingSubTotal);
+//		 Double netSaleAmount = Double.parseDouble(String.format("%.2f",currentSubTotal)) - Double.parseDouble(String.format("%.2f",totalDiscount));
+//		 System.out.println("Net Sale Amount: "+netSaleAmount);
+		 System.out.println("SUB TOTAL:"+sellingSubTotal);
 		 
 		 Double vatRate = VatService.getVatRate();
 		 double vatablePurchase = sellingSubTotal/vatRate;

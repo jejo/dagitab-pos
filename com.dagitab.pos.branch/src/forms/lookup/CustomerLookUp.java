@@ -23,7 +23,7 @@ import bus.CustomerService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
-import forms.About;
+import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 
 /**

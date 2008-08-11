@@ -28,7 +28,7 @@ import bus.DeliveryItemService;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
-import forms.About;
+import forms.AboutDialog;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
