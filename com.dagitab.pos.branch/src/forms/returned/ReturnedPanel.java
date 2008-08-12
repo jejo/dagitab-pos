@@ -827,7 +827,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 
 	@Override
 	public Boolean hasCardNo(Integer paymentCode, String cardNo) {
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -843,7 +843,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 
 	@Override
 	public Boolean hasCashPayment(Integer paymentCode) {
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -856,7 +856,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 
 	@Override
 	public Boolean hasCheckNo(Integer paymentCode, String checkNo) {
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -872,7 +872,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 
 	@Override
 	public Boolean hasGcNo(Integer paymentCode, String gcNo) {
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -890,7 +890,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	public void addPaymentItem(PaymentItem paymentItem) {
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		model.addRow(new String[]{paymentItem.getPaymentCode().toString(),
-								  PaymentItemService.getPaymentType(paymentItem.getPaymentCode()),
+								  PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()),
 								  paymentItem.getAmount().toString(),
 								  paymentItem.getCardType(),
 								  paymentItem.getCardNo(),
@@ -904,7 +904,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode) {
 		int index = getPaymentItemRow(Integer.parseInt(paymentCode));
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
-		model.setValueAt(PaymentItemService.getPaymentType(paymentItem.getPaymentCode()), index, 1);
+		model.setValueAt(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()), index, 1);
 		model.setValueAt(paymentItem.getAmount(), index, 2);
 		model.setValueAt(paymentItem.getCardType().toString(), index, 3);
 		model.setValueAt(paymentItem.getCardNo().toString(), index, 4);
@@ -1152,7 +1152,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			returnItem.setQuantity(Integer.parseInt(returnItemsTableModel.getValueAt(i, 2).toString()));
 			returnItem.setSellPrice(Double.parseDouble(returnItemsTableModel.getValueAt(i, 4).toString()));
 			returnItem.setStoreCode(Integer.parseInt(Main.getStoreCode()));
-			InvoiceItem invoiceItem = InvoiceItemService.getInvoiceItemObject(Long.parseLong(returnedORTextField.getText()), returnItemsTableModel.getValueAt(i,0).toString());
+			InvoiceItem invoiceItem = InvoiceItemService.getInstance().getInvoiceItemObject(Long.parseLong(returnedORTextField.getText()), returnItemsTableModel.getValueAt(i,0).toString());
 			returnItem.setCost(invoiceItem.getCost());
 			ReturnReason returnReason = ReturnReasonService.findReturnReasonByName(returnItemsTableModel.getValueAt(i, 7).toString());
 			returnItem.setReturnCode(returnReason.getReturnCode());
@@ -1191,7 +1191,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			Product product = ProductService.getProductById(replacementItemsTableModel.getValueAt(i, 0).toString());
 			invoiceItem.setCost(product.getCost());
-			InvoiceItemService.insert(invoiceItem);
+			InvoiceItemService.getInstance().insert(invoiceItem);
 			
 			invoiceItems.add(invoiceItem);
 		}
@@ -1210,7 +1210,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			paymentItem.setOrNo(Long.parseLong(orTextField.getText()));
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
-			PaymentItemService.insert(paymentItem);
+			PaymentItemService.getInstance().insert(paymentItem);
 			
 			paymentItems.add(paymentItem);
 		}

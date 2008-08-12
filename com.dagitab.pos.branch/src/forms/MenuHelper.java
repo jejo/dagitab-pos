@@ -3,6 +3,7 @@ package forms;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -77,10 +78,6 @@ public class MenuHelper {
 	
 	static{
 		
-		CONNECT.setEnabled(false);
-		
-//		REPORTS_MENU.setEnabled(false);
-		
 		CONFIGURATION.setAction(getShowConfigurationDialogAbstractAction());
 		
 		RE_PRINT_RECEIPT.setAction(getShowReprintDialogAction());
@@ -103,6 +100,8 @@ public class MenuHelper {
 		
 		INVENTORY.setAction(getInventoryAction());
 		
+		CONNECT.setAction(getConnectAction());
+		
 		
 	}
 	
@@ -114,6 +113,22 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	private static AbstractAction getConnectAction() {
+		AbstractAction connectAction  = new AbstractAction("Connect",null){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SyncProgressDialog syncProgressDialog = new SyncProgressDialog(Main.getInst());
+				syncProgressDialog.setLocationRelativeTo(null);
+				syncProgressDialog.setVisible(true);
+				
+//				syncProgressDialog.setSyncRate(80);
+			}
+		};
+//		connectAction.putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt pressed B"));
+		return connectAction;
+	}
+
+
 	@SuppressWarnings("serial")
 	private static AbstractAction getAboutAction() {
 		AbstractAction aboutAction  = new AbstractAction("About",null){

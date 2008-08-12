@@ -109,10 +109,10 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 		ComboBoxModel returnReasonModel = new DefaultComboBoxModel(returnReasons);
 		returnReasonComboBox.setModel(returnReasonModel);
 		if(action.equals("add")){
-			TableUtility.fillTable(itemTable, InvoiceItemService.fetchInvoiceItem(invoice.getOrNo().toString()), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"} );
+			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().fetchInvoiceItem(invoice.getOrNo().toString()), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"} );
 		}
 		else{
-			TableUtility.fillTable(itemTable, InvoiceItemService.getInvoiceItem(invoice.getOrNo(), action), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"});
+			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().getInvoiceItem(invoice.getOrNo(), action), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"});
 		}
 	}
 	

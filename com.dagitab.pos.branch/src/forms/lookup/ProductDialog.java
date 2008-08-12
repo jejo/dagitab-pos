@@ -93,6 +93,7 @@ public class ProductDialog extends javax.swing.JDialog {
 				productDialog = null;
 				productDialog = new ProductDialog(frame, invoker,action);
 			}
+			
 		}
 		return productDialog;
 	}
@@ -146,7 +147,12 @@ public class ProductDialog extends javax.swing.JDialog {
 						TableModel jTable1Model = new DefaultTableModel(
 								new String[][] { },
 								new String[] { "Product Code", "Product Name","Product Price" });
-						productTable = new JTable();
+						productTable = new JTable(){
+							@Override
+							public boolean isCellEditable(int row,int column) {
+								return false;
+							}
+						};
 						productScrollPane.setViewportView(productTable);
 						productTable.setModel(jTable1Model);
 						productTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0), "productTable");

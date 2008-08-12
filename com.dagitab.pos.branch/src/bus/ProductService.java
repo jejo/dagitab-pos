@@ -67,7 +67,6 @@ public class ProductService {
 	}
 	
 	public static ResultSet filterProductInventory(String query, String storeCode){
-		System.out.println("SELECT p.PROD_CODE, p.NAME, p.SELL_PRICE, i.QUANTITY, i.DEFERRED_QTY FROM products_lu p, inventory_lu i WHERE p.PROD_CODE = i.PROD_CODE AND (p.PROD_CODE LIKE \"%"+query+"%\" OR p.NAME LIKE \"%"+query+"%\") AND i.STORE_CODE = "+storeCode);
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT p.PROD_CODE, p.NAME, p.SELL_PRICE, i.QUANTITY, i.DEFERRED_QTY FROM products_lu p, inventory_lu i WHERE p.PROD_CODE = i.PROD_CODE AND (p.PROD_CODE LIKE \"%"+query+"%\" OR p.NAME LIKE \"%"+query+"%\") AND i.STORE_CODE = "+storeCode);
 		
 		return rs;

@@ -155,7 +155,12 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 						TableModel productTableModel = new DefaultTableModel(
 							new String[][] { },
 							new String[] { "Product Code", "Product Name", "Selling Price" , "Available Quantity","Deferred Quantity" });
-						productTable = new JTable();
+						productTable = new JTable(){
+							@Override
+							public boolean isCellEditable(int row,int column) {
+								return false;
+							}
+						};
 						productScrollPane.setViewportView(productTable);
 						productTable.setModel(productTableModel);
 					}

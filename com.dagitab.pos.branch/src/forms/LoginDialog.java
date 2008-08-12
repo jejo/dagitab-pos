@@ -15,6 +15,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
 import util.Validator;
 import bus.ClerkService;
 import bus.StoreService;
@@ -33,6 +36,7 @@ import domain.Clerk;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class LoginDialog extends javax.swing.JDialog {
 	private JLabel jLabel1;
 	private JTextField jTextField1;
@@ -40,6 +44,7 @@ public class LoginDialog extends javax.swing.JDialog {
 	private JLabel jLabel3;
 	private JButton jButton1;
 	private JPasswordField jPasswordField1;
+	private static Logger logger = Logger.getLogger(LoginDialog.class);
 
 	{
 		//Set Look & Feel
@@ -148,7 +153,7 @@ public class LoginDialog extends javax.swing.JDialog {
 	public void login(){
 		String clerkCode = jTextField1.getText();
 		String password = new String(jPasswordField1.getPassword());
-		System.out.println("Clerk Logging in as: "+clerkCode+" with password: "+password);
+		logger.info("Clerk Logging in as: "+clerkCode);
 		if(Validator.isNumeric(clerkCode)){
 			if(ClerkService.isValid(clerkCode, password)){
 				Main.setClerkCode(Integer.parseInt(clerkCode));

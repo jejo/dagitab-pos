@@ -77,6 +77,7 @@ public class PartialPanel extends javax.swing.JPanel {
 					public void actionPerformed(ActionEvent evt) {
 						Invoice invoice = InvoiceService.getInvoiceByOr(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
 						partialDialog = new PartialDialog(Main.getInst(), invoice);
+						partialDialog.setInvoker(PartialPanel.this);
 						partialDialog.setLocationRelativeTo(null);
 						partialDialog.setVisible(true);
 					}

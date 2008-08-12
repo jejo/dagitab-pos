@@ -254,8 +254,8 @@ public class InvoiceViewer extends javax.swing.JDialog {
 					btnPrint.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							Invoice invoice = InvoiceService.getInvoiceByOr(txtOR.getText());
-							List<InvoiceItem> invoiceItems = InvoiceItemService.findInvoiceItemByOR(Long.parseLong(txtOR.getText()));
-							List<PaymentItem> paymentItems = PaymentItemService.getPaymentItemList(Long.parseLong(txtOR.getText()));
+							List<InvoiceItem> invoiceItems = InvoiceItemService.getInstance().findInvoiceItemByOR(Long.parseLong(txtOR.getText()));
+							List<PaymentItem> paymentItems = PaymentItemService.getInstance().getPaymentItemList(Long.parseLong(txtOR.getText()));
 							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
 							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this, receiptPanel);
 							validateReceiptDialog.setLocationRelativeTo(null);
@@ -303,7 +303,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 						totalPaymentTextField.setText(String.format("%.2f", totalPaymentAmount));
 						changeTextField.setText(String.format("%.2f", changeAmount));
 						
-						List<InvoiceItem> listInvoiceItems = InvoiceItemService.findInvoiceItemByOR(invoice.getOrNo());
+						List<InvoiceItem> listInvoiceItems = InvoiceItemService.getInstance().findInvoiceItemByOR(invoice.getOrNo());
 						DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
 						for(InvoiceItem invoiceItem: listInvoiceItems){
 							String[] rowData = new String[8];
@@ -312,7 +312,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							rowData[1] = product.getName(); //product name
 							rowData[2] = invoiceItem.getQuantity().toString(); //quantity
 							rowData[3] = String.format("%.2f",invoiceItem.getSellPrice()); //current price
-							Double discountedAmount = InvoiceItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()); 
+							Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()); 
 							rowData[4] = String.format("%.2f", discountedAmount); //selling price
 							rowData[5] = invoiceItem.getIsDeferred().toString(); //deferred
 							rowData[6] = invoiceItem.getDiscountCode().toString(); //discount code
@@ -322,12 +322,12 @@ public class InvoiceViewer extends javax.swing.JDialog {
 						}
 						
 						DefaultTableModel paymentItemTableModel = (DefaultTableModel) paymentItemTable.getModel();
-						List<PaymentItem> listPaymentItems = PaymentItemService.getPaymentItemList(invoice.getOrNo());
+						List<PaymentItem> listPaymentItems = PaymentItemService.getInstance().getPaymentItemList(invoice.getOrNo());
 						for(PaymentItem paymentItem: listPaymentItems){
 //							new String[] { "Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number" });
 							String[] rowData = new String[7];
 							rowData[0] = paymentItem.getPaymentCode().toString();
-							String paymentName = PaymentItemService.getPaymentType(paymentItem.getPaymentCode());
+							String paymentName = PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode());
 							rowData[1] = paymentName;
 							rowData[2] = String.format("%.2f",paymentItem.getAmount());
 							rowData[3] = paymentItem.getCardType();
