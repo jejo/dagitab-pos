@@ -18,7 +18,6 @@ import javax.swing.KeyStroke;
 import bus.PaymentItemService;
 import bus.PaymentTypeService;
 import domain.PaymentItem;
-import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 import forms.partial.PartialDialog;
 import forms.returned.ReturnedPanel;
@@ -87,6 +86,9 @@ public class PaymentDialog extends javax.swing.JDialog {
 			if(!invoker.equals(getInvoker()) || !action.equals(getAction())){
 				paymentDialog = null;
 				paymentDialog = new PaymentDialog(parentWindow, invoker,action);
+			}
+			else{
+				paymentDialog.clearPaymentInformation();
 			}
 		}
 		return paymentDialog;
@@ -202,19 +204,19 @@ public class PaymentDialog extends javax.swing.JDialog {
 								InvoicePanel invoicePanel = (InvoicePanel)invoker;
 							
 								if(actionProdCode.equals("add")){
-									if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+									if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
 										invoicePanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!invoicePanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+									else if(!invoicePanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
 										invoicePanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!invoicePanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+									else if(!invoicePanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
 										invoicePanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!invoicePanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+									else if(!invoicePanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 										invoicePanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
@@ -231,19 +233,19 @@ public class PaymentDialog extends javax.swing.JDialog {
 								System.out.println("invoking instance of partial dialog from payment dialog");
 								PartialDialog partialDialog = (PartialDialog)invoker;
 								if(actionProdCode.equals("add")){
-									if(!partialDialog.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+									if(!partialDialog.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
 										partialDialog.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!partialDialog.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+									else if(!partialDialog.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
 										partialDialog.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!partialDialog.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+									else if(!partialDialog.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
 										partialDialog.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!partialDialog.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+									else if(!partialDialog.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 										partialDialog.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
@@ -260,19 +262,19 @@ public class PaymentDialog extends javax.swing.JDialog {
 								System.out.println("invoking instance of returned panel from payment dialog");
 								ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
 								if(actionProdCode.equals("add")){
-									if(!returnedPanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+									if(!returnedPanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
 										returnedPanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!returnedPanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+									else if(!returnedPanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
 										returnedPanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!returnedPanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+									else if(!returnedPanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
 										returnedPanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
-									else if(!returnedPanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+									else if(!returnedPanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 										returnedPanel.addPaymentItem(paymentItem);
 										paymentDialog.setVisible(false);
 									}
@@ -281,8 +283,8 @@ public class PaymentDialog extends javax.swing.JDialog {
 									}
 								}
 								else{ //edit
-//									returnedPanel.editPaymentItem(paymentItem, actionProdCode);
-//									paymentDialog.setVisible(false);
+									returnedPanel.editPaymentItem(paymentItem, actionProdCode);
+									paymentDialog.setVisible(false);
 								}
 							}
 						}
@@ -398,6 +400,15 @@ public class PaymentDialog extends javax.swing.JDialog {
 	
 	public void setGiftCheck(String s){
 		txtGiftCertificate.setText(s);
+	}
+	
+	public void clearPaymentInformation(){
+		paymentTypeComboBox.setSelectedIndex(0);
+		txtAmount.setText("");
+		txtBankCheck.setText("");
+		txtCreditCard.setText("");
+		txtGiftCertificate.setText("");
+		cbCreditCardType.setSelectedIndex(0);
 	}
 	
 	private AbstractAction getPaymentDialogLabelAbstractAction() {

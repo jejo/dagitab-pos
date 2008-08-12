@@ -6,15 +6,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
 import domain.InvoiceItem;
 
 public class InvoiceItemService {
-	public static ResultSet fetchAllDeferredInvoiceItems() {
+	
+	private static Logger logger = Logger.getLogger(InvoiceItemService.class);
+	private static InvoiceItemService invoiceItemService = new InvoiceItemService();
+	private InvoiceItemService(){
+		
+	}
+	public static InvoiceItemService getInstance(){
+		return invoiceItemService;
+	}
+	
+	public ResultSet fetchAllDeferredInvoiceItems() {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.OR_NO, INVOICE_NO, products_lu.PROD_CODE, products_lu.NAME, QUANTITY, TRANS_DT FROM invoice_item, invoice, products_lu WHERE invoice_item.OR_NO=invoice.OR_NO AND invoice_item.STORE_CODE = invoice.STORE_CODE AND invoice_item.PROD_CODE = products_lu.PROD_CODE AND invoice_item.DEFERRED = 1 AND invoice_item.STORE_CODE = "+Main.getStoreCode());		
 		return rs;
 	}
 	
-	public static InvoiceItem toInvoiceItemObject(ResultSet rs) throws SQLException {
+	public InvoiceItem toInvoiceItemObject(ResultSet rs) throws SQLException {
 		InvoiceItem invoiceItem = new InvoiceItem();
 		invoiceItem.setCost(rs.getDouble("COST"));
 		invoiceItem.setDiscountCode(rs.getInt("DISC_CODE"));
@@ -27,7 +40,7 @@ public class InvoiceItemService {
 		return invoiceItem;
 	}
 	
-	public static ResultSet fetchInvoiceItem(String orNo){
+	public ResultSet fetchInvoiceItem(String orNo){
 	//	"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension"
 		//TODO: Check selling price should be the price with discount
 		ResultSet rs = Main.getDBManager().executeQuery("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
@@ -36,17 +49,30 @@ public class InvoiceItemService {
 		
 	}
 	
-	
-	public static int processDeferredItem(Long orNo, String prodCode, String storeCode){
-		int result = Main.getDBManager().executeUpdate("UPDATE invoice_item SET DEFERRED = 0 WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+prodCode+"' AND STORE_CODE = "+storeCode);
-		System.out.println("UPDATE invoice_item SET DEFERRED = 1 WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+prodCode+"' AND STORE_CODE = "+storeCode);
-		System.out.println("Result From Process Deferred Item: "+result);
+	/**
+	 * Updates invoice_item entry marking deferred
+	 * Deduct quantity to store's inventory_lu
+	 * @param invoiceItem
+	 * @return affected row
+	 */
+	public int processDeferredItem(Long orNo, String prodCode, String storeCode){
+		String[] columns = new String[]{"DEFERRED"};
+		String[] columnValues = new String[]{"0"};
+		String[] whereColumns = new String[]{"OR_NO","PROD_CODE","STORE_CODE"};
+		String[] whereValues = new String[]{orNo.toString(),prodCode, storeCode};
+		int result = Main.getDBManager().update(columns, columnValues, "invoice_item", whereColumns, whereValues);
+		InvoiceItem invoiceItem = getInvoiceItemObject(orNo, prodCode);
+		InventoryService.getInstance().deductFromInventory(invoiceItem.getQuantity(), invoiceItem.getProductCode());
 		return result;
-		
 	}
 	
-	
-	public static int insert(InvoiceItem invoiceItem){
+	/**
+	 * Adds entry to invoice item 
+	 * Deduct quantity to store's inventory_lu
+	 * @param invoiceItem
+	 * @return affected rows
+	 */
+	public int insert(InvoiceItem invoiceItem){
 		String[] columns = new String[]{"OR_NO","PROD_CODE","DISC_CODE","QUANTITY","DEFERRED","SELL_PRICE","COST","STORE_CODE"};
 		String[] columnValues = new String[]{invoiceItem.getOrNo().toString(),
 											 invoiceItem.getProductCode().toString(),
@@ -58,10 +84,14 @@ public class InvoiceItemService {
 											 invoiceItem.getStoreNo().toString()
 											 };
 		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice_item", null, null);
+		logger.info("Added new invoice item entry. Affected: "+result);
+		
+		InventoryService.getInstance().deductFromInventory(invoiceItem.getQuantity(), invoiceItem.getProductCode());
+		
 		return result;
 	}
 	
-	public static List<InvoiceItem> findInvoiceItemByOR(Long orNo){
+	public List<InvoiceItem> findInvoiceItemByOR(Long orNo){
 		
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO	= "+orNo+" AND STORE_CODE = "+Main.getStoreCode() );
 		try {
@@ -86,7 +116,7 @@ public class InvoiceItemService {
 		return null;
 	}
 	
-	public static Double getInvoiceItemAmount(Long orNo){
+	public  Double getInvoiceItemAmount(Long orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(SELL_PRICE * QUANTITY) FROM invoice_item WHERE OR_NO	= "+orNo+" AND STORE_CODE = "+Main.getStoreCode() );
 		try {
 			if(rs.next()){
@@ -98,12 +128,14 @@ public class InvoiceItemService {
 		return 0.0d;
 	}
 	
-	public static ResultSet getInvoiceItem(Long orNo, String productCode){
+	public ResultSet getInvoiceItem(Long orNo, String productCode){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE FROM invoice_item, products_lu WHERE invoice_item.PROD_CODE = '"+productCode+"' AND invoice_item.OR_NO = "+orNo+" AND invoice_item.PROD_CODE = products_lu.PROD_CODE");
 		return rs;
 	}
 	
-	public static InvoiceItem getInvoiceItemObject(Long orNo, String productCode){
+	
+	
+	public InvoiceItem getInvoiceItemObject(Long orNo, String productCode){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode() );
 		System.out.println("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode());
 		try {
@@ -120,7 +152,7 @@ public class InvoiceItemService {
 	}
 	
 	
-	public static Double getDiscountedAmount(Long orNo, String productCode){
+	public Double getDiscountedAmount(Long orNo, String productCode){
 		InvoiceItem invoiceItem = getInvoiceItemObject(orNo, productCode);
 		Double discRate = DiscountService.getDiscRate(invoiceItem.getDiscountCode());
 		Double discountedAmount = invoiceItem.getSellPrice() - (invoiceItem.getSellPrice() * discRate);

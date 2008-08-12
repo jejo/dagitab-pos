@@ -1,10 +1,8 @@
 package forms.deferred;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import javax.swing.BorderFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -93,7 +91,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 							invoiceItem.setProductCode(deferredTable.getValueAt(deferredTable.getSelectedRow(), 2).toString());
 							int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Deferred Prompt", JOptionPane.INFORMATION_MESSAGE);
 							if(result == 0){ //yes
-								int success = InvoiceItemService.processDeferredItem(invoiceItem.getOrNo(), invoiceItem.getProductCode(), Main.getStoreCode());
+								int success = InvoiceItemService.getInstance().processDeferredItem(invoiceItem.getOrNo(), invoiceItem.getProductCode(), Main.getStoreCode());
 								if(success > 0){
 									JOptionPane.showMessageDialog(null, "Successfully processed deferred item.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 									refreshDeferredTable();
@@ -136,7 +134,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 	}
 	
 	public void refreshDeferredTable() {
-		ResultSet rs = InvoiceItemService.fetchAllDeferredInvoiceItems();
+		ResultSet rs = InvoiceItemService.getInstance().fetchAllDeferredInvoiceItems();
 		TableUtility.fillTable(deferredTable, rs, new String[]{"OR Number", "Invoice No", "Product Code", "Product Name", "Quantity", "Transaction Date & Time"});
 	}
 

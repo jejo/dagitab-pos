@@ -69,8 +69,11 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-			logger.info("DELETE FROM `" + table + "` " + whereSt);
-			statement.execute("DELETE FROM `" + table + "` " + whereSt);
+			String sql = "DELETE FROM `" + table + "` " + whereSt;
+			logger.info(sql);
+			statement.execute(sql);
+			Main.getSyncManager().record(sql);
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -216,9 +219,14 @@ public class DBManager {
 				}
 			}
 			
-			logger.info("UPDATE " + table + " SET " + updateSt + " "+ whereSt);
-			return statement.executeUpdate("UPDATE " + table + " SET " + updateSt
-					+ " " + whereSt);
+			String sql = "UPDATE " + table + " SET " + updateSt + " "+ whereSt; 
+			logger.info(sql);
+			int result =  statement.executeUpdate(sql);
+			if(result > 0){
+				Main.getSyncManager().record(sql);
+			}
+			return result;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
@@ -257,10 +265,15 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-			logger.info("INSERT INTO " + table + columnsSt + " VALUES "
-					+ valuesSt + " " + whereSt);
-			return statement.executeUpdate("INSERT INTO " + table + columnsSt
-					+ " VALUES " + valuesSt + " " + whereSt);
+			
+			String sql = "INSERT INTO " + table + columnsSt + " VALUES "+ valuesSt + " " + whereSt; 
+			
+			logger.info(sql);
+			int result =  statement.executeUpdate(sql);
+			if(result > 0){
+				Main.getSyncManager().record(sql);
+			}
+			return result;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

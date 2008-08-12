@@ -7,8 +7,8 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.AbstractAction;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -38,7 +38,6 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
-import forms.AboutDialog;
 import forms.interfaces.Payments;
 import forms.lookup.PaymentDialog;
 import forms.receipts.ReceiptPanel;
@@ -104,6 +103,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	private JTable itemTable;
 	private Invoice invoice;
 	private static PartialDialog partialDialog;
+	private Object invoker; 
 	/**
 	* Auto-generated main method to display this JDialog
 	*/
@@ -420,18 +420,21 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		}
 	}
 	private void refreshItemTable(){
-		ResultSet rs = InvoiceItemService.fetchInvoiceItem(invoice.getOrNo().toString());
+		ResultSet rs = InvoiceItemService.getInstance().fetchInvoiceItem(invoice.getOrNo().toString());
 		TableUtility.fillTable(itemTable, rs, new String[]{"Product Code", "Product Name", "Quantity", "Current Price", "Selling Price", "Deferred", "Disc Code", "Extension"});
 	}
 	
 	private void updateAmounts(){
-		Double amount = InvoiceItemService.getInvoiceItemAmount(invoice.getOrNo());
+		Double amount = InvoiceItemService.getInstance().getInvoiceItemAmount(invoice.getOrNo());
 		Double vat = VatService.getVatRate();
 		Double subTotal = amount/vat;
 		totalAmountLabel.setText(String.format("%.2f", amount));
 		subTotalTextField.setText(String.format("%.2f", subTotal));
 		vatTextField.setText(String.format("%.2f", new Double(amount-subTotal)));
-		totalPaymentTextField.setText(String.format("%.2f",PaymentItemService.getTotalPaymentAmount(invoice.getOrNo())));
+		Double totalPaymentAmount = PaymentItemService.getInstance().getTotalPaymentAmount(invoice.getOrNo());
+		totalPaymentTextField.setText(String.format("%.2f",totalPaymentAmount));
+		Double change = totalPaymentAmount - amount;
+		changeTextField.setText(String.format("%.2f", change));
 	}
 	
 	public void updatePaymentAmounts(){
@@ -449,14 +452,14 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	}
 	
 	private void refreshPaymentTable(){
-		ResultSet rs = PaymentItemService.findPaymentItems(invoice.getOrNo());
+		ResultSet rs = PaymentItemService.getInstance().findPaymentItems(invoice.getOrNo());
 		TableUtility.fillTable(paymentTable, rs, new String[]{"Payment Code", "Payment Type","Amount","Credit Card Type","Credit Card No","Bank Check No","Gift Certificate Number"});
 	}
 	
 	public void addPaymentItem(PaymentItem paymentItem){
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		model.addRow(new String[]{paymentItem.getPaymentCode().toString(),
-								  PaymentItemService.getPaymentType(paymentItem.getPaymentCode()),
+								  PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()),
 								  paymentItem.getAmount().toString(),
 								  paymentItem.getCardType(),
 								  paymentItem.getCardNo(),
@@ -469,7 +472,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode){
 		int index = getPaymentItemRow(Integer.parseInt(paymentCode));
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
-		model.setValueAt(PaymentItemService.getPaymentType(paymentItem.getPaymentCode()), index, 1);
+		model.setValueAt(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()), index, 1);
 		model.setValueAt(paymentItem.getAmount(), index, 2);
 		model.setValueAt(paymentItem.getCardType().toString(), index, 3);
 		model.setValueAt(paymentItem.getCardNo().toString(), index, 4);
@@ -493,7 +496,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		return null;
 	}
 	public Boolean hasCashPayment(Integer paymentCode){
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -505,7 +508,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	}
 	
 	public Boolean hasCardNo(Integer paymentCode, String cardNo){
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -520,7 +523,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	}
 	
 	public Boolean hasCheckNo(Integer paymentCode, String checkNo){
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -535,7 +538,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	}
 	
 	public Boolean hasGcNo(Integer paymentCode, String gcNo){
-		String paymentName = PaymentItemService.getPaymentType(paymentCode);
+		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
 			System.out.println(model.getValueAt(i, 1).toString());
@@ -571,12 +574,12 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		InvoiceService.update(invoice);
 		
 		
-		List<InvoiceItem> invoiceItems = InvoiceItemService.findInvoiceItemByOR(Long.parseLong(orTextField.getText()));
+		List<InvoiceItem> invoiceItems = InvoiceItemService.getInstance().findInvoiceItemByOR(Long.parseLong(orTextField.getText()));
 		
 		
 		
 		//clear payment items from db
-		PaymentItemService.removePaymentItem(invoice.getOrNo());
+		PaymentItemService.getInstance().removePaymentItem(invoice.getOrNo());
 		
 		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
 		//payment item data
@@ -591,7 +594,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			paymentItem.setOrNo(invoice.getOrNo());
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
-			PaymentItemService.insert(paymentItem);
+			PaymentItemService.getInstance().insert(paymentItem);
 			paymentItems.add(paymentItem);
 		}
 		
@@ -601,6 +604,9 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);
+		
+		PartialPanel partialPanel = (PartialPanel) invoker;
+		partialPanel.refreshPartialTable();
 	}
 	
 	private AbstractAction getAddPartialPaymentAction() {
@@ -670,6 +676,10 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			}
 		};
 		return partialDialogLabelAction;
+	}
+
+	public void setInvoker(Object invoker) {
+		this.invoker = invoker;
 	}
 
 }

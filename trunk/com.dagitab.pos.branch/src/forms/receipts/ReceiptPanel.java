@@ -325,7 +325,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			
 			//issue if selling price of product has changed
 			double currentPriceQuantityAmount = product.getSellPrice() * invoiceItem.getQuantity();
-			double sellingPriceQuantityAmount = InvoiceItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
+			double sellingPriceQuantityAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
 			
 			System.out.println("Product Code: "+product.getProdCode()+" Product Name: "+product.getName());
 			System.out.println("current price*quantity: "+currentPriceQuantityAmount);

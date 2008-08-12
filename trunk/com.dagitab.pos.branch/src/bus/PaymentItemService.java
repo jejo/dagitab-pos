@@ -9,7 +9,16 @@ import main.Main;
 import domain.PaymentItem;
 
 public class PaymentItemService {
-	public static String getPaymentType(Integer id){
+	
+	private static PaymentItemService paymentItemService = new PaymentItemService();
+	
+	private PaymentItemService(){}
+	
+	public static PaymentItemService getInstance(){
+		return paymentItemService;
+	}
+	
+	public String getPaymentType(Integer id){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT NAME FROM pay_type_lu WHERE pt_code = '"+id+"'");
 		try {
 			if(rs.next())
@@ -23,7 +32,7 @@ public class PaymentItemService {
 	}
 	
 	
-	public static PaymentItem getPaymentItemById(Integer id){
+	public PaymentItem getPaymentItemById(Integer id){
 		PaymentItem paymentItem = new PaymentItem();
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
 		System.out.println("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
@@ -44,7 +53,7 @@ public class PaymentItemService {
 		return paymentItem;
 	}
 	
-	public static int insert(PaymentItem paymentItem){
+	public int insert(PaymentItem paymentItem){
 		String[] columns = new String[]{"OR_NO","PT_CODE","AMT","CARD_TYPE","CARD_NO","GC_NO","CHECK_NO","STORE_CODE"};
 		String[] columnValues = new String[]{paymentItem.getOrNo().toString(),
 											 paymentItem.getPaymentCode().toString(),
@@ -60,7 +69,7 @@ public class PaymentItemService {
 	}
 	
 	
-	public static Double getTotalPaymentAmount(Long orNo){
+	public Double getTotalPaymentAmount(Long orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(AMT) FROM payment_item WHERE OR_NO	= "+orNo+" AND STORE_CODE = "+Main.getStoreCode() );
 		try {
 			if(rs.next()){
@@ -72,19 +81,19 @@ public class PaymentItemService {
 		return 0.0d;
 	}
 	
-	public static ResultSet findPaymentItems(Long orNo){
+	public ResultSet findPaymentItems(Long orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		System.out.println("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		return rs;
 	}
 	
-	public static void removePaymentItem(Long orNo){
+	public void removePaymentItem(Long orNo){
 		String [] whereColumns = new String[]{"OR_NO","STORE_CODE"};
 		String [] whereValues = new String[]{orNo.toString(),Main.getStoreCode()};
 		Main.getDBManager().delete("payment_item", whereColumns, whereValues);
 	}
 	
-	public static List<PaymentItem> getPaymentItemList(Long orNo){
+	public List<PaymentItem> getPaymentItemList(Long orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.OR_NO, pi.STORE_CODE, pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		List<PaymentItem> paymentItemList = new ArrayList<PaymentItem>();
 		try {

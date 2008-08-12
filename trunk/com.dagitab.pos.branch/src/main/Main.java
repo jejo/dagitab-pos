@@ -8,6 +8,9 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import com.babyland.sync.SyncManager;
+import com.babyland.sync.SyncProgressListener;
+
 import forms.LoginDialog;
 import forms.MainWindow;
 import forms.invoice.InvoicePanel;
@@ -19,7 +22,38 @@ public class Main {
 	private static LoginDialog loginDialog;
 	private static Integer clerkCode = null;
 	private static Logger logger = Logger.getLogger(Main.class);
+	private static int percentage = 0;
 	
+	
+	private static SyncManager syncManager;
+	
+	static{
+		Properties props = new Properties();
+		props.setProperty("clientId", "CLIENT1");
+		props.setProperty("localRoot", "C:\\Users\\Jejo\\Desktop\\test-pos");
+		props.setProperty("remotePath", "test-pos");
+		props.setProperty("ftpServer", "ftp.dagitab.com");
+		props.setProperty("ftpUser", "rocky@dagitab.com");
+		props.setProperty("ftpPassword", "b4ti64d");
+
+		syncManager = new SyncManager(props);
+		syncManager.addListener(new SyncProgressListener(){
+
+			@Override
+			public void updateProgress(double arg0) {
+				percentage = (int)(arg0*100);
+				logger.info("percentage: "+ percentage);
+				
+			}
+
+			@Override
+			public void onSqlRead(String arg0) {
+//				logger.info("SQL READ: "+arg0);
+				
+		}});
+		
+		
+	}
 	public static Integer getClerkCode() {
 		return clerkCode;
 	}
@@ -106,6 +140,14 @@ public class Main {
 	public static void clearInvoiceInformation(){
 		InvoicePanel invoicePanel = (InvoicePanel) mainWindow.getInvoicePanel();
 		invoicePanel.clearInfoValues();
+	}
+
+	public static int getPercentage() {
+		return percentage;
+	}
+
+	public static SyncManager getSyncManager() {
+		return syncManager;
 	}
 	
 	
