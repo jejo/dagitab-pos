@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import forms.LoginDialog;
 import forms.MainWindow;
 import forms.invoice.InvoicePanel;
@@ -16,6 +18,7 @@ public class Main {
 	private static MainWindow mainWindow;
 	private static LoginDialog loginDialog;
 	private static Integer clerkCode = null;
+	private static Logger logger = Logger.getLogger(Main.class);
 	
 	public static Integer getClerkCode() {
 		return clerkCode;
@@ -45,9 +48,7 @@ public class Main {
 			String dbSchema = properties.getProperty("db.schema");
 			String dbUser = properties.getProperty("db.user");
 			String dbPass = properties.getProperty("db.pass");
-			
-			
-			System.out.println("DB Configuration settings: dp.ip="+dbIP+" db.schema="+dbSchema+" db.user="+dbUser+" db.pass="+dbPass);
+			logger.info("DB Configuration settings: dp.ip="+dbIP+" db.schema="+dbSchema+" db.user="+dbUser+" db.pass="+dbPass);
 			
 			dbMan = new DBManager();
 			
@@ -56,15 +57,12 @@ public class Main {
 			
 			properties.load(new FileInputStream("store.properties"));
 			storeCode = properties.getProperty("store.no");
-			
-			System.out.println("Store Configuration settings: store.no="+storeCode);
+			logger.info("Store Configuration settings: store.no="+storeCode);
 			
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
