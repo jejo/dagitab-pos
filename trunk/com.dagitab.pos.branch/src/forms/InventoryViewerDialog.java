@@ -46,8 +46,10 @@ import com.cloudgarden.layout.AnchorLayout;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class InventoryViewerDialog extends javax.swing.JDialog {
 	private JLabel inventoryViewerLabel;
+	private AbstractAction storeTextFieldAbstractAction;
 	private JLabel storeLabel;
 	private JComboBox storeComboBox;
 	private JLabel jLabel2;
@@ -89,7 +91,7 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 				{
 					jButton3 = new JButton();
 					getContentPane().add(getStoreLabel(), new AnchorConstraint(105, 782, 142, 739, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					getContentPane().add(getStoreComboBox(), new AnchorConstraint(99, 986, 149, 789, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					
 					getContentPane().add(jButton3, new AnchorConstraint(912, 571, 976, 471, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton3.setText("Close");
 					jButton3.setPreferredSize(new java.awt.Dimension(95, 28));
@@ -185,6 +187,22 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 					inventoryViewerLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "inventoryViewerLabel");
 					inventoryViewerLabel.getActionMap().put("inventoryViewerLabel",getInventoryViewerLabelAbstractAction() );
 				}
+				{
+					String[] stores = StoreService.getAllStores();
+					ComboBoxModel storeComboBoxModel = new DefaultComboBoxModel(stores);
+					storeComboBox = new JComboBox();
+					getContentPane().add(storeComboBox, new AnchorConstraint(99, 986, 149, 789, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					storeComboBox.setModel(storeComboBoxModel);
+					storeComboBox.setPreferredSize(new java.awt.Dimension(188, 22));
+					for(String store: stores){
+						String storeCode = store.split("-")[0];
+						if(storeCode.equals(Main.getStoreCode())){
+							storeComboBox.setSelectedItem(store);
+							break;
+						}
+					}
+					storeComboBox.setAction(getStoreTextFieldAbstractAction());
+				}
 			}
 			this.setSize(967, 475);
 		} catch (Exception e) {
@@ -223,25 +241,7 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 		};
 		return inventoryViewerLabelAction;
 	}
-	
-	private JComboBox getStoreComboBox() {
-		if(storeComboBox == null) {
-			String[] stores = StoreService.getAllStores();
-			ComboBoxModel storeComboBoxModel = new DefaultComboBoxModel(stores);
-			storeComboBox = new JComboBox();
-			storeComboBox.setModel(storeComboBoxModel);
-			storeComboBox.setPreferredSize(new java.awt.Dimension(188, 22));
-			
-			for(String store: stores){
-				String storeCode = store.split("-")[0];
-				if(storeCode.equals(Main.getStoreCode())){
-					storeComboBox.setSelectedItem(store);
-					break;
-				}
-			}
-		}
-		return storeComboBox;
-	}
+
 	
 	private JLabel getStoreLabel() {
 		if(storeLabel == null) {
@@ -255,6 +255,19 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 	public void init(){
 		TableUtility.fillTable(productTable, ProductService.filterProductInventory(productTextField.getText(), Main.getStoreCode()),new String[] { 
 											"Product Code", "Product Name", "Selling Price" , "Available Quantity","Deferred Quantity"});
+	}
+	
+	private AbstractAction getStoreTextFieldAbstractAction() {
+		if(storeTextFieldAbstractAction == null) {
+			storeTextFieldAbstractAction = new AbstractAction("", null) {
+				public void actionPerformed(ActionEvent evt) {
+					String storeCode = storeComboBox.getSelectedItem().toString().split("-")[0];
+					ResultSet rs = ProductService.filterProductInventory(productTextField.getText(),storeCode);
+					TableUtility.fillTable(productTable,rs, new String[]{ "Product Code", "Product Name", "Selling Price" , "Available Quantity","Deferred Quantity"});
+				}
+			};
+		}
+		return storeTextFieldAbstractAction;
 	}
 
 }

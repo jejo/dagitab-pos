@@ -6,9 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.Logger;
+
+
 public class DBManager {
 	private static Statement statement;
 	private static Connection connection;
+	private static Logger logger = Logger.getLogger(DBManager.class);
 
 	public DBManager() {
 		try {
@@ -27,10 +31,10 @@ public class DBManager {
 	public static boolean connect(String url) {
 		try {
 			connection = DriverManager.getConnection(url, "root", "root");
-			System.out.println("Connection @ " + url + "\n");
+			logger.info("Connection @ " + url + "\n");
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Unable to connect to: " + url + "\n");
+			logger.error("Unable to connect to: " + url + "\n");
 			e.printStackTrace();
 			return false;
 		}
@@ -40,10 +44,11 @@ public class DBManager {
 		String url = "jdbc:mysql://"+dbIP+"/"+dbSchema;
 		try {
 			connection = DriverManager.getConnection(url, dbUser, dbPass);
-			System.out.println("Connection @ " + url + "\n");
+			logger.info("Connection @ " + url + "\n");
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Unable to connect to: " + url + "\n");
+			logger.error("Unable to connect to: " + url + "\n");
 			e.printStackTrace();
 			return false;
 		}
@@ -64,7 +69,7 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-			System.out.println("DELETE FROM `" + table + "` " + whereSt);
+			logger.info("DELETE FROM `" + table + "` " + whereSt);
 			statement.execute("DELETE FROM `" + table + "` " + whereSt);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -210,8 +215,8 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-			System.out.println("UPDATE " + table + " SET " + updateSt + " "
-					+ whereSt);
+			
+			logger.info("UPDATE " + table + " SET " + updateSt + " "+ whereSt);
 			return statement.executeUpdate("UPDATE " + table + " SET " + updateSt
 					+ " " + whereSt);
 		} catch (SQLException e) {
@@ -252,8 +257,7 @@ public class DBManager {
 						whereSt += " AND ";
 				}
 			}
-			System.out.println("auto commit: "+connection.getAutoCommit());
-			System.out.println("INSERT INTO " + table + columnsSt + " VALUES "
+			logger.info("INSERT INTO " + table + columnsSt + " VALUES "
 					+ valuesSt + " " + whereSt);
 			return statement.executeUpdate("INSERT INTO " + table + columnsSt
 					+ " VALUES " + valuesSt + " " + whereSt);
@@ -281,7 +285,6 @@ public class DBManager {
 			statement = connection.createStatement();
 			return statement.executeUpdate(query);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return 0;
