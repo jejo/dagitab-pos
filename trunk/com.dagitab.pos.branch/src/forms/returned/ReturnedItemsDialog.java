@@ -246,30 +246,42 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 							ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
 							String reason = returnReasonComboBox.getSelectedItem().toString();
 							InvoiceItem invoiceItem = new InvoiceItem();
+							int quantity = Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString());
 							invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
 							invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
 							invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
 							invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
 							invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
-							if(returnedPanel.getReturnedItemRow(invoiceItem.getProductCode()) == null){
-								returnedPanel.addToReturnItemTable(invoiceItem, reason);
+							if(quantity >= Integer.parseInt(quantityTextField.getText())){
+								if(returnedPanel.getReturnedItemRow(invoiceItem.getProductCode()) == null){
+									returnedPanel.addToReturnItemTable(invoiceItem, reason);
+								}
+								else{
+									JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+								}
 							}
 							else{
-								JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Returned Quantity is greater than quantity of selected product.","Prompt",JOptionPane.ERROR_MESSAGE);
 							}
 							
 						}
 						else{
-							ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
-							String reason = returnReasonComboBox.getSelectedItem().toString();
-							InvoiceItem invoiceItem = new InvoiceItem();
-							invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
-							invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
-							invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
-							invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
-							invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
-							System.out.println("Reason: "+reason+ " Product Code: "+ action);
-							returnedPanel.editReturnedItem(invoiceItem, reason, action);
+							int quantity = Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString());
+							if(quantity >= Integer.parseInt(quantityTextField.getText())){
+								ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
+								String reason = returnReasonComboBox.getSelectedItem().toString();
+								InvoiceItem invoiceItem = new InvoiceItem();
+								invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
+								invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
+								invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
+								invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
+								invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
+								System.out.println("Reason: "+reason+ " Product Code: "+ action);
+								returnedPanel.editReturnedItem(invoiceItem, reason, action);
+							}
+							else{
+								JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Returned Quantity is greater than quantity of selected product.","Prompt",JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					}
 				}
