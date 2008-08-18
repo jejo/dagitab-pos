@@ -217,28 +217,4 @@ public class ReportUtil {
 		style.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);
 
 	}
-
-	// public static void setBorderRegion(HSSFWorkbook wb,HSSFSheet sheet,Region
-	// r) {
-	// boolean top,bottom,left,right;
-	// System.out.println(r.getRowFrom() + " - " + r.getRowTo() + " , " +
-	// r.getColumnFrom() + " - "+ r.getColumnTo());
-	// for(int i=r.getRowFrom();i<=r.getRowTo();i++) {
-	// HSSFRow row = sheet.getRow(i);
-	// if(row == null)row = sheet.createRow(i);
-	// for(int j=r.getColumnFrom();j<=r.getColumnTo();j++) {
-	// HSSFCell cell = row.getCell((short)j);
-	// boolean b = cell == null;
-	// if(b) cell = row.createCell((short)j);
-	// top=false;bottom=false;left=false;right=false;
-	// if(i == r.getRowFrom()) top = true;
-	// if(i == r.getRowTo()) bottom = true;
-	// if(j == r.getColumnFrom()) left = true;
-	// if(j == r.getColumnTo()) right = true;
-	// HSSFCellStyle style = cell.getCellStyle();
-	// setBorder(style, top,left,bottom,right);
-	// cell.setCellStyle(style);
-	// }
-	// }
-	// }
 }
