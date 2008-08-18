@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +32,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import main.DBManager;
+import main.OLEViewer;
 import main.ResourceManager;
 
 import org.eclipse.swt.SWT;
@@ -80,10 +82,11 @@ public class ReportFormDialog extends javax.swing.JDialog {
 	private JComboBox jComboBox1;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
-	private JButton jButton1;
+	private JButton exportButton;
 	private Canvas canvas1;
 	private JButton jButton2;
 	private String startDate; 
+	private AbstractAction exportAbstractAction;
 	private Shell shell1;
 	private String endDate;
 	private int reportType;
@@ -150,95 +153,12 @@ public class ReportFormDialog extends javax.swing.JDialog {
 					});
 				}
 				{
-					jButton1 = new JButton();
-					getContentPane().add(jButton1, new AnchorConstraint(808, 953, 860, 758, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jButton1.setText("Export Report");
-					jButton1.setPreferredSize(new java.awt.Dimension(102, 21));
-					jButton1.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							
-							if(startDate == null){
-								startDate = getCurrentDate();
-							}
-							if(endDate == null){
-								endDate = getCurrentDate();
-							}
-							
-							JFileChooser fc = new JFileChooser();
-							fc.setDialogType(JFileChooser.SAVE_DIALOG);
-							FileFilter filter = createFileFilter("Excel Files Only",true,new String[]{"xls"});
-						  	fc.setFileFilter(filter);
-						  	
-						  	int returnVal = fc.showSaveDialog(ReportFormDialog.this);
-						    if(returnVal == JFileChooser.APPROVE_OPTION) {
-						    	String filename = fc.getSelectedFile().getAbsolutePath()+".xls";
-						    	switch(reportType){
-									case 0: //daily sales
-										
-										boolean success = DailySalesReport.generate(filename, db, storeCode, startDate, endDate);
-										if(success){
-									    	   JOptionPane.showMessageDialog(null, 
-														"The report is saved.", 
-														"Saved",JOptionPane.INFORMATION_MESSAGE);
-								        }
-								        else{
-								    	   JOptionPane.showMessageDialog(null, 
-													"Cannot save file", 
-													"Error",JOptionPane.ERROR_MESSAGE);
-								        }
-									break;
-									
-									case 1://daily sales summary
-										 success = DailySales.generate(filename, db, storeCode, startDate, endDate);
-										if(success){
-									    	   JOptionPane.showMessageDialog(null, 
-														"The report is saved.", 
-														"Saved",JOptionPane.INFORMATION_MESSAGE);
-								        }
-								        else{
-								    	   JOptionPane.showMessageDialog(null, 
-													"Cannot save file", 
-													"Error",JOptionPane.ERROR_MESSAGE);
-								        }
-										
-									break;
-									
-									
-									case 2: //pullouts
-										success = PullOutReport.generate(filename, db, storeCode, startDate, endDate);
-										if(success){
-									    	   JOptionPane.showMessageDialog(null, 
-														"The report is saved.", 
-														"Saved",JOptionPane.INFORMATION_MESSAGE);
-								        }
-								        else{
-								    	   JOptionPane.showMessageDialog(null, 
-													"Cannot save file", 
-													"Error",JOptionPane.ERROR_MESSAGE);
-								        }
-									break;
-									
-									case 3:
-										success = TotalMerchandise.generate(filename, db, storeCode, startDate, endDate);
-										if(success){
-									    	   JOptionPane.showMessageDialog(null, 
-														"The report is saved.", 
-														"Saved",JOptionPane.INFORMATION_MESSAGE);
-								        }
-								        else{
-								    	   JOptionPane.showMessageDialog(null, 
-													"Cannot save file", 
-													"Error",JOptionPane.ERROR_MESSAGE);
-								        }
-									break;
-									
-									
-										
-								}
-						    }
-							
-						}
-					});
+					exportButton = new JButton();
+					getContentPane().add(exportButton, new AnchorConstraint(808, 953, 860, 758, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					exportButton.setText("Export Report");
+					exportButton.setPreferredSize(new java.awt.Dimension(102, 21));
+					exportButton.setAction(getExportAbstractAction());
+
 				}
 				{
 					jLabel3 = new JLabel();
@@ -499,6 +419,102 @@ public class ReportFormDialog extends javax.swing.JDialog {
 			}
 		};
 		return reportFormLabelAction;
+	}
+	
+	private AbstractAction getExportAbstractAction() {
+		if(exportAbstractAction == null) {
+			exportAbstractAction = new AbstractAction("Export Report", null) {
+				public void actionPerformed(ActionEvent evt) {
+//					if(startDate == null){
+//						startDate = getCurrentDate();
+//					}
+//					if(endDate == null){
+//						endDate = getCurrentDate();
+//					}
+//					
+//					JFileChooser fc = new JFileChooser();
+//					fc.setDialogType(JFileChooser.SAVE_DIALOG);
+//					FileFilter filter = createFileFilter("Excel Files Only",true,new String[]{"xls"});
+//				  	fc.setFileFilter(filter);
+//				  	
+//				  	int returnVal = fc.showSaveDialog(ReportFormDialog.this);
+//				    if(returnVal == JFileChooser.APPROVE_OPTION) {
+//				    	String filename = fc.getSelectedFile().getAbsolutePath()+".xls";
+//				    	switch(reportType){
+//							case 0: //daily sales
+//								
+//								boolean success = DailySalesReport.generate(filename, db, storeCode, startDate, endDate);
+//								if(success){
+//							    	   JOptionPane.showMessageDialog(null, 
+//												"The report is saved.", 
+//												"Saved",JOptionPane.INFORMATION_MESSAGE);
+//						        }
+//						        else{
+//						    	   JOptionPane.showMessageDialog(null, 
+//											"Cannot save file", 
+//											"Error",JOptionPane.ERROR_MESSAGE);
+//						        }
+//							break;
+//							
+//							case 1://daily sales summary
+//								 success = DailySales.generate(filename, db, storeCode, startDate, endDate);
+//								if(success){
+//							    	   JOptionPane.showMessageDialog(null, 
+//												"The report is saved.", 
+//												"Saved",JOptionPane.INFORMATION_MESSAGE);
+//						        }
+//						        else{
+//						    	   JOptionPane.showMessageDialog(null, 
+//											"Cannot save file", 
+//											"Error",JOptionPane.ERROR_MESSAGE);
+//						        }
+//								
+//							break;
+//							
+//							
+//							case 2: //pullouts
+//								success = PullOutReport.generate(filename, db, storeCode, startDate, endDate);
+//								if(success){
+//							    	   JOptionPane.showMessageDialog(null, 
+//												"The report is saved.", 
+//												"Saved",JOptionPane.INFORMATION_MESSAGE);
+//						        }
+//						        else{
+//						    	   JOptionPane.showMessageDialog(null, 
+//											"Cannot save file", 
+//											"Error",JOptionPane.ERROR_MESSAGE);
+//						        }
+//							break;
+//							
+//							case 3:
+//								success = TotalMerchandise.generate(filename, db, storeCode, startDate, endDate);
+//								if(success){
+//							    	   JOptionPane.showMessageDialog(null, 
+//												"The report is saved.", 
+//												"Saved",JOptionPane.INFORMATION_MESSAGE);
+//						        }
+//						        else{
+//						    	   JOptionPane.showMessageDialog(null, 
+//											"Cannot save file", 
+//											"Error",JOptionPane.ERROR_MESSAGE);
+//						        }
+//							break;
+//							
+//							
+//								
+//						}
+//				    }
+					
+					
+					try {
+						OLEViewer.open2("C:\\Users\\Jejo\\Desktop\\temp.xls");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+		}
+		return exportAbstractAction;
 	}
 
 }
