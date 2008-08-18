@@ -314,7 +314,14 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 				invoiceItemScrollPane.setPreferredSize(new java.awt.Dimension(518, 163));
 				{
 					TableModel jTable1Model = new DefaultTableModel( new String[][] {  }, new String[] { "Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" });
-						itemTable = new JTable();
+						itemTable = new JTable(){
+							@Override
+							public boolean isCellEditable(
+								int row,
+								int column) {
+								return false;
+							}
+						};
 						invoiceItemScrollPane.setViewportView(itemTable);
 						itemTable.setModel(jTable1Model);
 				}
@@ -657,7 +664,19 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			deletePartialPaymentAction = new AbstractAction("Delete", new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif"))) {
 				public void actionPerformed(ActionEvent evt) {
 					try{
+						String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+						String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+						String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+						String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+						String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+						String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+						String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+						if((PaymentItemService.getInstance().checkPaymentItemByType(Integer.parseInt((invoice.getOrNo().toString())), paymentCode, paymentType, paymentAmount, creditCardType, creditCardNum, bankCheckNum, gcNum)) >=1){
+							JOptionPane.showMessageDialog(null, "Payment cannot be deleted.", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
+						else{
 						removePaymentItem();
+						}
 					}
 					catch(ArrayIndexOutOfBoundsException e){
 						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
