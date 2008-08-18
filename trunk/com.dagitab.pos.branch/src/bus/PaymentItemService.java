@@ -115,4 +115,53 @@ public class PaymentItemService {
 		
 		return paymentItemList;
 	}
+	
+	public Integer checkPaymentItemByType(Integer orNo, String paymentCode, String paymentType, String amount, String ccType, String ccNum, String bcNum, String gcNum ){
+		if(paymentType.equals("Cash")){
+			System.out.println("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode);
+			ResultSet rs = Main.getDBManager().executeQuery("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode);
+			try {
+				if(rs.next()){
+					return rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if(paymentType.equals("Bank Check")){
+			System.out.println("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + ", PT_Code = "+paymentCode+" and Check_No="+bcNum);
+			ResultSet rs = Main.getDBManager().executeQuery("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode+" and Check_No="+bcNum);
+			try {
+				if(rs.next()){
+					return rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if(paymentType.equals("Credit Card")){
+			ResultSet rs = Main.getDBManager().executeQuery("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode+" and Card_no="+ccNum);
+			try {
+				if(rs.next()){
+					return rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if(paymentType.equals("Gift Check")){
+			ResultSet rs = Main.getDBManager().executeQuery("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode+" and GC_no="+gcNum);
+			try {
+				if(rs.next()){
+					return rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else{
+			return 0;
+		}
+		return null;
+	}
 }
