@@ -3,7 +3,6 @@ package forms;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -16,6 +15,8 @@ import forms.delivery.DeliveryDialog;
 import forms.pullouts.PullOutDialog;
 import forms.pullouts.PullOutRequestDialog;
 import forms.receipts.InvoiceViewer;
+import forms.reports.InventoryViewerDialog;
+import forms.reports.ReportFormDialog;
 
 public class MenuHelper {
 	private static JMenuBar MENU_BAR = new JMenuBar();
@@ -41,6 +42,7 @@ public class MenuHelper {
 	
 	
 	private static JMenuItem INVENTORY = new JMenuItem("Inventory");
+	private static JMenuItem REPORT_FORM = new JMenuItem("Export Reports");
 	
 	
 	
@@ -74,6 +76,7 @@ public class MenuHelper {
 		ABOUT_MENU.add(ABOUT);
 		
 		REPORTS_MENU.add(INVENTORY);
+		REPORTS_MENU.add(REPORT_FORM);
 	}
 	
 	static{
@@ -103,6 +106,9 @@ public class MenuHelper {
 		CONNECT.setAction(getConnectAction());
 		
 		
+		REPORT_FORM.setAction(getReportAction());
+		
+		
 	}
 	
 	public static JMenuBar getMenuBar(){
@@ -113,6 +119,21 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	@SuppressWarnings("serial")
+	private static AbstractAction getReportAction() {
+		AbstractAction connectAction  = new AbstractAction("Export Reports",null){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ReportFormDialog reportFormDialog = new ReportFormDialog(Main.getInst());
+				reportFormDialog.setLocationRelativeTo(null);
+				reportFormDialog.setVisible(true);
+			}
+		};
+		return connectAction;
+	}
+
+
+	@SuppressWarnings("serial")
 	private static AbstractAction getConnectAction() {
 		AbstractAction connectAction  = new AbstractAction("Connect",null){
 			@Override
@@ -144,6 +165,7 @@ public class MenuHelper {
 	}
 
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getPullOutlistAction() {
 		AbstractAction pullOutRequestAction = new AbstractAction("Browse Pending Pull Outs", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -157,6 +179,7 @@ public class MenuHelper {
 	}
 
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getShowConfigurationDialogAbstractAction() {
 		AbstractAction showPopupDialogAbstractAction = new AbstractAction("Configuration Settings", null) {
 			public void actionPerformed(ActionEvent evt) {
@@ -169,6 +192,7 @@ public class MenuHelper {
 		return showPopupDialogAbstractAction;
 	}
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getShowPasswordDialogAction() {
 		AbstractAction showPasswordDialogAction = new AbstractAction("Password Manager", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -181,6 +205,7 @@ public class MenuHelper {
 		return showPasswordDialogAction;
 	}
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getShowReprintDialogAction() {
 		AbstractAction showReprintDialogAction = new AbstractAction("Re-Print Receipt", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -193,6 +218,7 @@ public class MenuHelper {
 		return showReprintDialogAction;
 	}
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getLogoutAction() {
 		AbstractAction showLogoutAction = new AbstractAction("Log-out", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -206,6 +232,7 @@ public class MenuHelper {
 		return showLogoutAction;
 	}
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getDeliveryManagerAction() {
 		AbstractAction showDeliveryManagerAction = new AbstractAction("Delivery Manager", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -218,6 +245,7 @@ public class MenuHelper {
 		return showDeliveryManagerAction;
 	}
 
+	@SuppressWarnings("serial")
 	private static AbstractAction getExitAction() {
 		AbstractAction showExitAction = new AbstractAction("Exit", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -236,6 +264,7 @@ public class MenuHelper {
 		return showExitAction;
 	}
 	
+	@SuppressWarnings("serial")
 	private static AbstractAction getPullOutRequestAction(){
 		AbstractAction pullOutRequestAction = new AbstractAction("Create Pull Out Request", null) {
 			public void actionPerformed(ActionEvent e) {
@@ -248,6 +277,7 @@ public class MenuHelper {
 		return pullOutRequestAction;
 	}
 	
+	@SuppressWarnings("serial")
 	private static AbstractAction getInventoryAction(){
 		AbstractAction inventoryAbstractAction = new AbstractAction("Inventory", null) {
 			public void actionPerformed(ActionEvent e) {

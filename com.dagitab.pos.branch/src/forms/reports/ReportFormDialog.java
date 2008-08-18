@@ -1,4 +1,4 @@
-package forms;
+package forms.reports;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.cloudgarden.resource.SWTResourceManager;
@@ -65,7 +65,7 @@ import reports.TotalMerchandise;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class ReportForm extends javax.swing.JDialog {
+public class ReportFormDialog extends javax.swing.JDialog {
 
 	{
 		//Set Look & Feel
@@ -98,21 +98,21 @@ public class ReportForm extends javax.swing.JDialog {
 	*/
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		ReportForm inst = new ReportForm(frame);
+		ReportFormDialog inst = new ReportFormDialog(frame);
 		inst.setVisible(true);
 	}
 	
-	public ReportForm(JFrame frame) {
+	public ReportFormDialog(JFrame frame) {
 		super(frame);
 		initSwtAwtGUI();
 	}
 	
-	public ReportForm(JFrame frame, DBManager db, String storeCode){
+	public ReportFormDialog(JFrame frame, DBManager db, String storeCode){
 		this(frame);
 		this.storeCode = storeCode;
 		this.db = db;
 	}
-	public ReportForm(JFrame frame, DBManager db, String storeCode, int type){
+	public ReportFormDialog(JFrame frame, DBManager db, String storeCode, int type){
 		this(frame,db,storeCode);
 		this.reportType = type;
 		
@@ -131,29 +131,29 @@ public class ReportForm extends javax.swing.JDialog {
 					reportFormLabel = new JLabel();
 					AnchorLayout jLabel4Layout = new AnchorLayout();
 					reportFormLabel.setLayout(jLabel4Layout);
-					getContentPane().add(reportFormLabel, new AnchorConstraint(18, 380, 87, 66, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(reportFormLabel, new AnchorConstraint(23, 344, 92, 27, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportFormLabel.setText("Export Reports");
-					reportFormLabel.setPreferredSize(new java.awt.Dimension(167, 28));
-					reportFormLabel.setFont(new java.awt.Font("Tahoma",1,18));
+					reportFormLabel.setPreferredSize(new java.awt.Dimension(166, 28));
+					reportFormLabel.setFont(new java.awt.Font("Tahoma",0,18));
 					reportFormLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "reportFormLabel");
 					reportFormLabel.getActionMap().put("reportFormLabel",getReportFormLabelAbstractAction() );
 				}
 				{
 					jButton2 = new JButton();
-					getContentPane().add(jButton2, new AnchorConstraint(863, 908, 932, 764, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jButton2, new AnchorConstraint(877, 579, 934, 436, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton2.setText("Close");
-					jButton2.setPreferredSize(new java.awt.Dimension(77, 28));
+					jButton2.setPreferredSize(new java.awt.Dimension(75, 23));
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							ReportForm.this.dispose();
+							ReportFormDialog.this.dispose();
 						}
 					});
 				}
 				{
 					jButton1 = new JButton();
-					getContentPane().add(jButton1, new AnchorConstraint(863, 303, 932, 93, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jButton1, new AnchorConstraint(808, 953, 860, 758, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jButton1.setText("Export Report");
-					jButton1.setPreferredSize(new java.awt.Dimension(112, 28));
+					jButton1.setPreferredSize(new java.awt.Dimension(102, 21));
 					jButton1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							
@@ -169,7 +169,7 @@ public class ReportForm extends javax.swing.JDialog {
 							FileFilter filter = createFileFilter("Excel Files Only",true,new String[]{"xls"});
 						  	fc.setFileFilter(filter);
 						  	
-						  	int returnVal = fc.showSaveDialog(ReportForm.this);
+						  	int returnVal = fc.showSaveDialog(ReportFormDialog.this);
 						    if(returnVal == JFileChooser.APPROVE_OPTION) {
 						    	String filename = fc.getSelectedFile().getAbsolutePath()+".xls";
 						    	switch(reportType){
@@ -242,44 +242,44 @@ public class ReportForm extends javax.swing.JDialog {
 				}
 				{
 					jLabel3 = new JLabel();
-					getContentPane().add(jLabel3, new AnchorConstraint(225, 777, 277, 658, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel3, new AnchorConstraint(267, 800, 329, 678, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel3.setText("End Date");
 					jLabel3.setFont(new java.awt.Font("Tahoma",1,12));
-					jLabel3.setPreferredSize(new java.awt.Dimension(63, 21));
+					jLabel3.setPreferredSize(new java.awt.Dimension(64, 25));
 				}
 				{
 					jLabel2 = new JLabel();
-					getContentPane().add(jLabel2, new AnchorConstraint(225, 277, 277, 119, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel2, new AnchorConstraint(272, 359, 324, 197, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel2.setText("Start Date");
 					jLabel2.setFont(new java.awt.Font("Tahoma",1,12));
-					jLabel2.setPreferredSize(new java.awt.Dimension(84, 21));
+					jLabel2.setPreferredSize(new java.awt.Dimension(85, 21));
 				}
 				{
 					ComboBoxModel jComboBox1Model = new DefaultComboBoxModel(
 						new String[] { "Daily Sales", "Daily Sales Summary", "Total Pullouts","Total Merchandise" });
 					jComboBox1 = new JComboBox();
-					getContentPane().add(jComboBox1, new AnchorConstraint(101, 619, 158, 250, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jComboBox1, new AnchorConstraint(95, 960, 161, 222, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jComboBox1.setModel(jComboBox1Model);
 					jComboBox1.addItemListener(new ItemListener() {
 						public void itemStateChanged(ItemEvent evt) {
 							reportType = jComboBox1.getSelectedIndex();
 						}
 					});
-					
-					jComboBox1.setPreferredSize(new java.awt.Dimension(196, 28));
+
+					jComboBox1.setPreferredSize(new java.awt.Dimension(387, 27));
 				}
 				{
 					jLabel1 = new JLabel();
-					getContentPane().add(jLabel1, new AnchorConstraint(101, 277, 158, 66, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(jLabel1, new AnchorConstraint(92, 241, 164, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel1.setText("Report Type");
-					jLabel1.setFont(new java.awt.Font("Tahoma",1,12));
-					
-					jLabel1.setPreferredSize(new java.awt.Dimension(112, 28));
+					jLabel1.setFont(new java.awt.Font("Tahoma",0,12));
+
+					jLabel1.setPreferredSize(new java.awt.Dimension(111, 29));
 				}
 				{
 					canvas1 = new Canvas();
-					getContentPane().add(canvas1, new AnchorConstraint(294, 961, 828, 27, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					canvas1.setPreferredSize(new java.awt.Dimension(497, 217));
+					getContentPane().add(canvas1, new AnchorConstraint(324, 972, 771, 31, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					canvas1.setPreferredSize(new java.awt.Dimension(493, 181));
 				}
 				{
 					shell1 = SWT_AWT.new_Shell(Display.getDefault(), canvas1);
@@ -294,8 +294,8 @@ public class ReportForm extends javax.swing.JDialog {
 				shell1.setLayout(shell1Layout);
 				
 				FormData calendarLData = new FormData();
-				calendarLData.width = 246;
-				calendarLData.height = 201;
+				calendarLData.width = 249;
+				calendarLData.height = 181;
 				calendarLData.left =  new FormAttachment(1, 1000, 0);
 				calendarLData.right =  new FormAttachment(508, 1000, 0);
 				calendarLData.top =  new FormAttachment(2, 1000, 0);
@@ -347,8 +347,8 @@ public class ReportForm extends javax.swing.JDialog {
 					
 				
 				FormData calendarLData1 = new FormData();
-				calendarLData1.width = 239;
-				calendarLData1.height = 201;
+				calendarLData1.width = 242;
+				calendarLData1.height = 181;
 				calendarLData1.left =  new FormAttachment(508, 1000, 0);
 				calendarLData1.right =  new FormAttachment(1001, 1000, 0);
 				calendarLData1.top =  new FormAttachment(2, 1000, 0);
@@ -397,7 +397,7 @@ public class ReportForm extends javax.swing.JDialog {
 				}
 
 			}
-			this.setSize(540, 517);
+			this.setSize(540, 441);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -495,7 +495,7 @@ public class ReportForm extends javax.swing.JDialog {
 		AbstractAction reportFormLabelAction = new AbstractAction("Export Reports", null) {
 			
 			public void actionPerformed(ActionEvent evt) {
-				ReportForm.this.dispose();
+				ReportFormDialog.this.dispose();
 			}
 		};
 		return reportFormLabelAction;

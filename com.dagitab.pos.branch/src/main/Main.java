@@ -28,31 +28,14 @@ public class Main {
 	private static SyncManager syncManager;
 	
 	static{
-		Properties props = new Properties();
-		props.setProperty("clientId", "CLIENT1");
-		props.setProperty("localRoot", "C:\\Users\\Jejo\\Desktop\\test-pos");
-		props.setProperty("remotePath", "test-pos");
-		props.setProperty("ftpServer", "ftp.dagitab.com");
-		props.setProperty("ftpUser", "rocky@dagitab.com");
-		props.setProperty("ftpPassword", "b4ti64d");
+//		Properties props = new Properties();
+//		props.setProperty("clientId", "CLIENT1");
+//		props.setProperty("localRoot", "C:\\Users\\Jejo\\Desktop\\test-pos");
+//		props.setProperty("remotePath", "test-pos");
+//		props.setProperty("ftpServer", "ftp.dagitab.com");
+//		props.setProperty("ftpUser", "rocky@dagitab.com");
+//		props.setProperty("ftpPassword", "b4ti64d");
 
-		syncManager = new SyncManager(props);
-		syncManager.addListener(new SyncProgressListener(){
-
-			@Override
-			public void updateProgress(double arg0) {
-				percentage = (int)(arg0*100);
-				logger.info("percentage: "+ percentage);
-				
-			}
-
-			@Override
-			public void onSqlRead(String arg0) {
-//				logger.info("SQL READ: "+arg0);
-				
-		}});
-		
-		
 	}
 	public static Integer getClerkCode() {
 		return clerkCode;
@@ -92,6 +75,24 @@ public class Main {
 			properties.load(new FileInputStream("store.properties"));
 			storeCode = properties.getProperty("store.no");
 			logger.info("Store Configuration settings: store.no="+storeCode);
+			logger.info(properties.getProperty("localRoot"));
+			
+			syncManager = new SyncManager(properties);
+			syncManager.addListener(new SyncProgressListener(){
+
+				@Override
+				public void updateProgress(double arg0) {
+					percentage = (int)(arg0*100);
+					logger.info("percentage: "+ percentage);
+					
+				}
+
+				@Override
+				public void onSqlRead(String arg0) {
+//					logger.info("SQL READ: "+arg0);
+					
+			}});
+			
 			
 			
 		} catch (FileNotFoundException e) {
