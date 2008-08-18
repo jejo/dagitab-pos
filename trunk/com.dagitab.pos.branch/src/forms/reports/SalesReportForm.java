@@ -1,7 +1,10 @@
-package forms;
+package forms.reports;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.cloudgarden.resource.SWTResourceManager;
+
+import forms.MainWindow;
+
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

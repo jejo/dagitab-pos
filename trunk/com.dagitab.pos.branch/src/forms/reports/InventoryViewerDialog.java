@@ -1,4 +1,4 @@
-package forms;
+package forms.reports;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -33,6 +33,8 @@ import bus.StoreService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
+import forms.MainWindow;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo

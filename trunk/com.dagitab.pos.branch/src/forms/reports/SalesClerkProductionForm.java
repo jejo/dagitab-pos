@@ -1,4 +1,4 @@
-package forms;
+package forms.reports;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import java.awt.Canvas;
