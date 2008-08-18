@@ -114,6 +114,17 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 		else{
 			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().getInvoiceItem(invoice.getOrNo(), action), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"});
 		}
+		
+		
+		if(!action.equals("add")){
+			Integer index = getItemIndex(action);
+			if(index != null){
+				itemTable.getSelectionModel().setSelectionInterval(index, index);
+			}
+			
+		}
+		
+		
 	}
 	
 	private void initGUI() {
@@ -308,6 +319,17 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 			}
 		};
 		return tabItemsScrollPaneAction;
+	}
+	
+	private Integer getItemIndex(String productCode){
+		DefaultTableModel defaultTableModel  = (DefaultTableModel) itemTable.getModel();
+		for(int i =0; i< defaultTableModel.getRowCount(); i++){
+			String itemCode = defaultTableModel.getValueAt(i, 0).toString();
+			if(productCode.equals(itemCode)){
+				return i; 
+			}
+		}
+		return null;
 	}
 
 }
