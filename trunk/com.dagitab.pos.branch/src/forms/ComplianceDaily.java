@@ -21,8 +21,8 @@ import javax.swing.KeyStroke;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import reports.compliance.ayala.AyalaCompliance;
-import reports.compliance.ayala.AyalaHourlyCompliance;
+import reports.AyalaCompliance;
+import reports.AyalaHourlyCompliance;
 
 
 import main.DBManager;

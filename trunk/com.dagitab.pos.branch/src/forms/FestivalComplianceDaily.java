@@ -21,8 +21,8 @@ import javax.swing.KeyStroke;
 
 import javax.swing.JLabel;
 
-import reports.compliance.festival.FestivalDailyReport;
-import reports.compliance.festival.FestivalHourlyReport;
+import reports.FestivalDailyReport;
+import reports.FestivalHourlyReport;
 
 
 import main.DBManager;
