@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -20,8 +21,9 @@ import javax.swing.KeyStroke;
 
 import javax.swing.JLabel;
 
-import reports.FestivalDailyReport;
-import reports.FestivalHourlyReport;
+import reports.compliance.festival.FestivalDailyReport;
+import reports.compliance.festival.FestivalHourlyReport;
+
 
 import main.DBManager;
 
