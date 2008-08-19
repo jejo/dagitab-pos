@@ -1,6 +1,7 @@
 package forms;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -20,8 +21,9 @@ import javax.swing.KeyStroke;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import reports.AyalaCompliance;
-import reports.AyalaHourlyCompliance;
+import reports.compliance.ayala.AyalaCompliance;
+import reports.compliance.ayala.AyalaHourlyCompliance;
+
 
 import main.DBManager;
 
