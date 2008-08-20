@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
@@ -75,11 +76,17 @@ public class PartialPanel extends javax.swing.JPanel {
 				processButton.setPreferredSize(new java.awt.Dimension(189,28));
 				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						Invoice invoice = InvoiceService.getInvoiceByOr(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
-						partialDialog = new PartialDialog(Main.getInst(), invoice);
-						partialDialog.setInvoker(PartialPanel.this);
-						partialDialog.setLocationRelativeTo(null);
-						partialDialog.setVisible(true);
+						if(partialTable.getSelectedRowCount()>0){
+							Invoice invoice = InvoiceService.getInvoiceByOr(partialTable.getValueAt(partialTable.getSelectedRow(), 0).toString());
+							partialDialog = new PartialDialog(Main.getInst(), invoice);
+							partialDialog.setInvoker(PartialPanel.this);
+							partialDialog.setLocationRelativeTo(null);
+							partialDialog.setVisible(true);
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 			}
