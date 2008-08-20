@@ -85,8 +85,9 @@ public class InvoiceItemService {
 											 };
 		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice_item", null, null);
 		logger.info("Added new invoice item entry. Affected: "+result);
-		
-		InventoryService.getInstance().deductFromInventory(invoiceItem.getQuantity(), invoiceItem.getProductCode());
+		if(invoiceItem.getIsDeferred()==0){
+			InventoryService.getInstance().deductFromInventory(invoiceItem.getQuantity(), invoiceItem.getProductCode());
+		}
 		
 		return result;
 	}

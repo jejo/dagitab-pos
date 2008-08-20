@@ -222,57 +222,61 @@ public class ProductDialog extends javax.swing.JDialog {
 								invoiceItem.setQuantity(Integer.parseInt(quantityTxt.getText()));
 								invoiceItem.setSellPrice(sellingPrice);
 								
-								if(invoker instanceof InvoicePanel){
-									System.out.println("invoking...");
-									InvoicePanel invoicePanel = (InvoicePanel)invoker;
-								
-									if(action.equals("add")){
-										if(invoicePanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
-											invoicePanel.addInvoiceItem(invoiceItem);
+								if(Integer.parseInt(quantityTxt.getText())>0){
+									if(invoker instanceof InvoicePanel){
+										System.out.println("invoking...");
+										InvoicePanel invoicePanel = (InvoicePanel)invoker;
+										if(action.equals("add")){
+											if(invoicePanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
+												invoicePanel.addInvoiceItem(invoiceItem);
+												productDialog.setVisible(false);
+											}
+											else{
+												JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
+										}
+										else { //edit
+											invoicePanel.editInvoiceItem(invoiceItem, action);
 											productDialog.setVisible(false);
 										}
-										else{
-											JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+									}
+								
+									else if(invoker instanceof ReturnedPanel) {
+										ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
+										if(action.equals("add")){
+											if(returnedPanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
+												returnedPanel.addInvoiceItem(invoiceItem);
+												productDialog.setVisible(false);
+											}
+											else{
+												JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
+										}
+										else { //edit
+											returnedPanel.editInvoiceItem(invoiceItem, action);
+											productDialog.setVisible(false);
 										}
 									}
-									else { //edit
-										invoicePanel.editInvoiceItem(invoiceItem, action);
-										productDialog.setVisible(false);
+									
+									else if(invoker instanceof PullOutRequestDialog) {
+										PullOutRequestDialog pullOutRequestDialog = (PullOutRequestDialog)invoker;
+										if(action.equals("add")){
+											if(pullOutRequestDialog.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
+												pullOutRequestDialog.addInvoiceItem(invoiceItem);
+												productDialog.setVisible(false);
+											}
+											else{
+												JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
+										}
+										else { //edit
+											pullOutRequestDialog.editInvoiceItem(invoiceItem, action);
+											productDialog.setVisible(false);
+										}
 									}
 								}
-								
-								else if(invoker instanceof ReturnedPanel) {
-									ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
-									if(action.equals("add")){
-										if(returnedPanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
-											returnedPanel.addInvoiceItem(invoiceItem);
-											productDialog.setVisible(false);
-										}
-										else{
-											JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
-										}
-									}
-									else { //edit
-										returnedPanel.editInvoiceItem(invoiceItem, action);
-										productDialog.setVisible(false);
-									}
-								}
-								
-								else if(invoker instanceof PullOutRequestDialog) {
-									PullOutRequestDialog pullOutRequestDialog = (PullOutRequestDialog)invoker;
-									if(action.equals("add")){
-										if(pullOutRequestDialog.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
-											pullOutRequestDialog.addInvoiceItem(invoiceItem);
-											productDialog.setVisible(false);
-										}
-										else{
-											JOptionPane.showMessageDialog(ProductDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
-										}
-									}
-									else { //edit
-										pullOutRequestDialog.editInvoiceItem(invoiceItem, action);
-										productDialog.setVisible(false);
-									}
+								else{
+									JOptionPane.showMessageDialog(ProductDialog.this,"Product Quantity not valid.","Prompt",JOptionPane.ERROR_MESSAGE);
 								}
 								
 							}
