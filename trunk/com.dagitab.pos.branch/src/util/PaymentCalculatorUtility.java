@@ -15,9 +15,46 @@ public class PaymentCalculatorUtility {
 	}
 	
 	public List<PaymentItem> getCalculatedPaymentItems(List<PaymentItem> paymentItems, Double transactionAmount){
-		return null;
-		
-		
+		Double amount = transactionAmount;
+		Double amountToBe=null;
+		for(int i=0; i<=paymentItems.size();i++){
+			String payType = paymentItems.get(i).getPaymentType();
+			Double paymentAmount = paymentItems.get(i).getAmount();
+			if(payType.equals("Gift Certificate")){
+				if(amount > paymentAmount){
+					amountToBe = paymentAmount;
+					amount -= paymentAmount;
+				}
+				else
+					amountToBe = paymentAmount;
+			}
+			else if(payType.equals("Credit Card")){
+				if(amount > paymentAmount){
+					amountToBe = paymentAmount;
+					amount-= paymentAmount;
+				}
+				else
+					amountToBe = amount;
+			}
+			else if(payType.equals("Check")){
+				if(amount > paymentAmount){
+					amountToBe = paymentAmount;
+					amount-=paymentAmount;
+				}
+				else
+					amountToBe = amount;
+			}
+			else{
+				if(amount > paymentAmount){
+					amountToBe = paymentAmount;
+					amount -= paymentAmount;
+				}
+				else 
+					amountToBe = amount;
+			}
+			paymentItems.get(i).setAmount(amountToBe);
+		}
+		return paymentItems;
 	}
 	
 	
