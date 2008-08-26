@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import main.Main;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class ComplianceService {
 	
 	private static ComplianceService complianceService = new ComplianceService();
+	private static Logger logger = Logger.getLogger(ComplianceService.class);
 	
 	private ComplianceService(){}
 	
@@ -31,7 +33,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Raw Gross: "+dailySale);
+		logger.info("Raw Gross: "+dailySale);
 		return dailySale;
 	}
 	
@@ -48,7 +50,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("New Grand Total: "+amount);
+		logger.info("New Grand Total: "+amount);
 		return amount;
 	}
 	
@@ -67,7 +69,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Old Grand Total: "+amount);
+		logger.info("Old Grand Total: "+amount);
 		return amount;
 	}
 	
@@ -75,7 +77,7 @@ public class ComplianceService {
 		System.out.println();
 //		Double amount = getDailySale(month, year, day, storeCode) - getTotDisc(month, year, day, storeCode)+getVat(month, day, year, storeCode); 
 		Double amount = getRawGross(month, day, year, storeCode)/getVatRate();
-		System.out.println("Raw Gross: "+amount);
+		logger.info("Raw Gross: "+amount);
 		return  amount;
 //		return dailySale+totDisc+vat;
 	}
@@ -98,7 +100,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("TOTAL DISCOUNT: "+ amount);
+		logger.info("TOTAL DISCOUNT: "+ amount);
 		return amount;
 	}
 	
@@ -113,7 +115,7 @@ public class ComplianceService {
 				"               and i.DISC_CODE != 1 )         " +
 				"AND o.STORE_CODE = '"+storeCode+"'";
 		
-		System.out.println("getNoOfDisc="+query);
+		logger.info("getNoOfDisc="+query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		
 		Integer count = 0;
@@ -124,7 +126,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("TOTAL NO OF DISCOUNT: "+ count);
+		logger.info("TOTAL NO OF DISCOUNT: "+ count);
 		return count;
 	}
 	
@@ -133,7 +135,7 @@ public class ComplianceService {
 		Double dlysale = amt/getVatRate();
 		Double vat = amt - dlysale; 
 		
-		System.out.println("VAT: "+vat);
+		logger.info("VAT: "+vat);
 		return vat;
 	}
 	
@@ -142,7 +144,7 @@ public class ComplianceService {
 		Double dlysale = amt/getVatRate();
 		Double vat = amt - dlysale; 
 		
-		System.out.println("CREDIT VAT: "+vat);
+		logger.info("CREDIT VAT: "+vat);
 		return vat;
 	}
 	
@@ -166,7 +168,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("CREDIT SALES: "+amt);
+		logger.info("CREDIT SALES: "+amt);
 		return amt;
 	}
 	
@@ -183,7 +185,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Vat Rate: "+subtractor);
+		logger.info("Vat Rate: "+subtractor);
 		return subtractor;
 	}
 	
@@ -200,7 +202,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Returned Items Amount: "+returnedItemsAmount);
+		logger.info("Returned Items Amount: "+returnedItemsAmount);
 		return returnedItemsAmount;
 	}
 	
@@ -215,7 +217,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Returned Items Quantity: "+returnedItemsQuantity);
+		logger.info("Returned Items Quantity: "+returnedItemsQuantity);
 		return returnedItemsQuantity;
 	}
 }
