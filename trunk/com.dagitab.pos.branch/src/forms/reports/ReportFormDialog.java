@@ -332,45 +332,45 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						logger.info("Generating report: "+reportType+" filename: "+fileName+" startdate: "+startDate+" enddate: "+endDate);
 						switch(reportType){
 							case 0: //daily sales
-	//							boolean success = DailySalesReport.generate(filename,startDate, endDate);
-	//							if(success){
-	//								JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
-	//					        }
-	//					        else{
-	//					    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
-	//					        }
+								boolean success = DailySalesReport.generate(fileName,startDate, endDate);
+								if(success){
+//									JOptionPane.showMessageDialog(null,"Successfully saved daily sales report.","Saved",JOptionPane.INFORMATION_MESSAGE);
+						        }
+						        else{
+						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+						        }
 							break;
 							
 							case 1://daily sales summary
-	//							success = DailySales.generate(filename,startDate, endDate);
-	//							if(success){
-	//						    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
-	//					        }
-	//					        else{
-	//					    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
-	//					        }
+								success = DailySales.generate(fileName,startDate, endDate);
+								if(success){
+//									JOptionPane.showMessageDialog(null,"Successfully saved daily sales summary report.","Saved",JOptionPane.INFORMATION_MESSAGE);
+								}
+								else{
+									JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+								}
 								
 							break;
 							
 							
 							case 2: //pullouts
-	//							success = PullOutReport.generate(filename, startDate, endDate);
-	//							if(success){
-	//						    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
-	//					        }
-	//					        else{
-	//					    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
-	//					        }
+								success = PullOutReport.generate(fileName, startDate, endDate);
+								if(success){
+//							    	   JOptionPane.showMessageDialog(null,"Successfully saved pull-outs report.","Saved",JOptionPane.INFORMATION_MESSAGE);
+						        }
+						        else{
+						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+						        }
 							break;
 							
 							case 3:
-	//							success = TotalMerchandise.generate(filename, startDate, endDate);
-	//							if(success){
-	//						    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
-	//					        }
-	//					        else{
-	//					    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
-	//					        }
+								success = TotalMerchandise.generate(fileName, startDate, endDate);
+								if(success){
+//							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
+						        }
+						        else{
+						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+						        }
 							break;
 						}
 						OLEViewer.open2(fileName);
