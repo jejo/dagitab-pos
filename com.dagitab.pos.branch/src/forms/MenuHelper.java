@@ -17,6 +17,7 @@ import forms.pullouts.PullOutRequestDialog;
 import forms.receipts.InvoiceViewer;
 import forms.reports.InventoryViewerDialog;
 import forms.reports.ReportFormDialog;
+import forms.reports.RobinsonsComplianceDialog;
 
 public class MenuHelper {
 	private static JMenuBar MENU_BAR = new JMenuBar();
@@ -25,6 +26,7 @@ public class MenuHelper {
 	private static JMenu PULL_OUT_MENU = new JMenu("Pull Outs");
 	private static JMenu DELIVERY_MENU = new JMenu("Deliveries");
 	private static JMenu REPORTS_MENU = new JMenu("Reports");
+	private static JMenu COMPLIANCE_MENU = new JMenu("Compliance");
 	private static JMenu ABOUT_MENU = new JMenu("About");
 	
 	private static JMenuItem CONFIGURATION = new JMenuItem("Configuration Settings");
@@ -44,6 +46,7 @@ public class MenuHelper {
 	private static JMenuItem INVENTORY = new JMenuItem("Inventory");
 	private static JMenuItem REPORT_FORM = new JMenuItem("Export Reports");
 	
+	private static JMenuItem ROBINSONS_COMPLIANCE_FORM = new JMenuItem("Robinsons Compliance");
 	
 	
 //	private static JMenuItem HELP = new JMenuItem("Help");
@@ -57,7 +60,9 @@ public class MenuHelper {
 		MENU_BAR.add(DELIVERY_MENU);
 		MENU_BAR.add(PULL_OUT_MENU);
 		MENU_BAR.add(REPORTS_MENU);
+		MENU_BAR.add(COMPLIANCE_MENU);
 		MENU_BAR.add(ABOUT_MENU);
+		
 		
 		FILE_MENU.add(CONFIGURATION);
 		FILE_MENU.add(PASSWORD);
@@ -77,6 +82,10 @@ public class MenuHelper {
 		
 		REPORTS_MENU.add(INVENTORY);
 		REPORTS_MENU.add(REPORT_FORM);
+		
+		COMPLIANCE_MENU.add(ROBINSONS_COMPLIANCE_FORM);
+		
+		
 	}
 	
 	static{
@@ -103,6 +112,9 @@ public class MenuHelper {
 		
 		INVENTORY.setAction(getInventoryAction());
 		
+		
+		ROBINSONS_COMPLIANCE_FORM.setAction(getRobinsonsComplianceAction());
+		
 		CONNECT.setAction(getConnectAction());
 		
 		
@@ -119,6 +131,25 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	
+	
+	
+	@SuppressWarnings("serial")
+	private static AbstractAction getRobinsonsComplianceAction() {
+		AbstractAction robinsonsComplianceAction  = new AbstractAction("Robinsons Compliance",null){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				RobinsonsComplianceDialog robinsonsComplianceDialog = new RobinsonsComplianceDialog(Main.getInst());
+				robinsonsComplianceDialog.setLocationRelativeTo(null);
+				robinsonsComplianceDialog.setVisible(true);
+				
+			}
+		};
+		return robinsonsComplianceAction;
+		
+	}
+
+
 	@SuppressWarnings("serial")
 	private static AbstractAction getReportAction() {
 		AbstractAction connectAction  = new AbstractAction("Export Reports",null){
