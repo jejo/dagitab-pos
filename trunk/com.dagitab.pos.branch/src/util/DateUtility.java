@@ -24,4 +24,55 @@ public class DateUtility {
 		String year = dateTime.getYear()+"";
 		return year+"-"+month+"-"+day;
 	}
+	
+	public String[] getAllMonths(){
+		return new String[]{"Jan","Feb","Mar",
+							"Apr","May","Jun",
+							"Jul","Aug","Sept",
+							"Oct","Nov","Dec"};
+	}
+	public String[] getDaysOfMonth(int month, int year){
+		if(month == 3 || month == 5 || month == 8 || month == 10){
+			String[] days = new String[30];
+			for(int i = 0; i<30; i++){
+				days[i]= (i+1)+"";
+			}
+			return days;
+		}
+		else if(month == 1){
+			if(year%4 == 0){ //leap year
+				String[] days = new String[29];
+				for(int i = 0; i<29; i++){
+					days[i]= (i+1)+"";
+				}
+				return days;
+			}
+			else{
+				String[] days = new String[28];
+				for(int i = 0; i<28; i++){
+					days[i]= (i+1)+"";
+				}
+				return days;
+			}
+		}
+		else{
+			String[] days = new String[31];
+			for(int i = 0; i<31; i++){
+				days[i]= (i+1)+"";
+			}
+			return days;
+		}
+	}
+	
+	public String[] getYears(){
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR);
+		System.out.println(year-2005);
+		String[] years = new String[year-2005];
+		int index = 0;
+		for(int i = year; i>2005; i--){
+			years[index++] = i+"";
+		}
+		return years;
+	}
 }

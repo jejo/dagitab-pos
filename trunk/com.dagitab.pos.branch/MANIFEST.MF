@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Class-Path: . swt.jar jdbf.jar poi-2.5.1-final-20040804.jar mysql-connector-java-3.1.13-bin.jar babyland-sync-08122008.jar commons-net-1.4.1.jar commons-logging.jar log4j-1.2.14.jar jakarta-oro-2.0.8.jar  
-Main-Class: forms.main
+Main-Class: main.Main
 
