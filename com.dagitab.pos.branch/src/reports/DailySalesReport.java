@@ -2,14 +2,12 @@ package reports;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import main.DBManager;
+import javax.swing.JOptionPane;
+
 import main.Main;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -162,6 +160,7 @@ public class DailySalesReport {
 			return true;
 			
 		} catch (FileNotFoundException e) {
+			
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
