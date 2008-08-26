@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import main.Main;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -63,6 +65,7 @@ public class ReportUtility {
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "File is in use.", "Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}		
 	}

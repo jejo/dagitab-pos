@@ -1022,6 +1022,8 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
 		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			
+		
 			PaymentItem paymentItem = new PaymentItem();
 			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
 			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
