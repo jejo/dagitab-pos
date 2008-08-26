@@ -21,6 +21,7 @@ import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentTypeService;
 import bus.ProductService;
+import bus.ReturnItemService;
 import bus.StoreService;
 import bus.VatService;
 import domain.Clerk;
@@ -325,7 +326,13 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			
 			//issue if selling price of product has changed
 			double currentPriceQuantityAmount = product.getSellPrice() * invoiceItem.getQuantity();
-			double sellingPriceQuantityAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
+			double sellingPriceQuantityAmount = 0;
+			if(!invoiceItem.getIsReturned()){
+				 sellingPriceQuantityAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()) * invoiceItem.getQuantity();
+			}
+			else{
+				sellingPriceQuantityAmount = ReturnItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()) * invoiceItem.getQuantity();
+			}
 			
 			System.out.println("Product Code: "+product.getProdCode()+" Product Name: "+product.getName());
 			System.out.println("current price*quantity: "+currentPriceQuantityAmount);

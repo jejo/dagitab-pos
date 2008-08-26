@@ -49,6 +49,12 @@ public class InvoiceItemService {
 		
 	}
 	
+	public ResultSet fetchDiscountedInvoiceItem(String orNo){
+		ResultSet rs = Main.getDBManager().executeQuery("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY,invoice_item.SELL_PRICE  - (invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01)), products_lu.SELL_PRICE , invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu, discount_lu where invoice_item.OR_NO = "+orNo+" and invoice_item.PROD_CODE = products_lu.PROD_CODE and invoice_item.DISC_CODE = discount_lu.DISC_NO");
+//		System.out.println("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
+		return rs;
+	}
+	
 	/**
 	 * Updates invoice_item entry marking deferred
 	 * Deduct quantity to store's inventory_lu
@@ -134,7 +140,10 @@ public class InvoiceItemService {
 		return rs;
 	}
 	
-	
+	public ResultSet getDiscountedInvoiceItem(Long orNo, String productCode){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, invoice_item.SELL_PRICE - (invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01)) ,products_lu.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE FROM invoice_item, products_lu, discount_lu WHERE invoice_item.PROD_CODE = '"+productCode+"' AND invoice_item.OR_NO = "+orNo+" AND invoice_item.PROD_CODE = products_lu.PROD_CODE AND invoice_item.DISC_CODE = discount_lu.DISC_NO");
+		return rs;
+	}
 	
 	public InvoiceItem getInvoiceItemObject(Long orNo, String productCode){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode() );
@@ -157,7 +166,6 @@ public class InvoiceItemService {
 		InvoiceItem invoiceItem = getInvoiceItemObject(orNo, productCode);
 		Double discRate = DiscountService.getDiscRate(invoiceItem.getDiscountCode());
 		Double discountedAmount = invoiceItem.getSellPrice() - (invoiceItem.getSellPrice() * discRate);
-		System.out.println("discounted amount = "+discountedAmount);
 		return discountedAmount;
 	}
 }
