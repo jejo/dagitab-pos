@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+import util.PaymentCalculatorUtility;
 import util.StringUtility;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
@@ -796,16 +797,29 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	
 	public void updatePaymentAmounts(){
 		
-		Double payment = 0.0d;
+		Double totalPaymentAmount = 0.0d;
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			double quantity =  Double.parseDouble(model.getValueAt(i,2).toString());
-			payment += quantity;
+			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
+			totalPaymentAmount += paymentAmount;
 		}
 		String amountString = lblAmount.getText();
 		double amount = Double.parseDouble(amountString);
-		totalPayment.setText(String.format("%.2f", payment));
-		changeField.setText(String.format("%.2f", (payment-amount)));
+		totalPayment.setText(String.format("%.2f", totalPaymentAmount));
+		
+		
+		//for recording change amount, gift certificate should not be considered for change
+		totalPaymentAmount = 0.0d;
+		for(int i = 0; i<model.getRowCount(); i++){
+			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
+			if(!model.getValueAt(i,1).toString().equals("Gift Certificate")){
+				totalPaymentAmount += paymentAmount;
+				
+			}
+		}
+		Double changeAmount = totalPaymentAmount-amount;
+		if(changeAmount < 0 ) changeAmount = 0.0d;
+		changeField.setText(String.format("%.2f", changeAmount));
 	}
 	
 	public void addPaymentItem(PaymentItem paymentItem){
@@ -1022,8 +1036,6 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
 		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
-			
-		
 			PaymentItem paymentItem = new PaymentItem();
 			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
 			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
@@ -1033,8 +1045,14 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			paymentItem.setOrNo(Long.parseLong(orNoTxt.getText()));
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
-			PaymentItemService.getInstance().insert(paymentItem);
+			paymentItem.setPaymentType(paymentTable.getValueAt(i, 1).toString());
+//			PaymentItemService.getInstance().insert(paymentItem);
 			paymentItems.add(paymentItem);
+		}
+		
+		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(lblAmount.getText()));
+		for(PaymentItem paymentItem: calculatedPaymentItems){
+			PaymentItemService.getInstance().insert(paymentItem);
 		}
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
@@ -1180,26 +1198,30 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		if(editPaymentItemAction == null) {
 			editPaymentItemAction = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
 				public void actionPerformed(ActionEvent evt) {
-					String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
-					String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
-					String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
-					String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
-					String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
-					String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
-					String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
-					
-					
-					PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,paymentCode);
-					
-					dialog.setAmount(paymentAmount);
-					dialog.setPaymentType(paymentType);
-					dialog.setCreditType(creditCardType);
-					dialog.setCreditCard(creditCardNum);
-					dialog.setBankCheck(bankCheckNum);
-					dialog.setGiftCheck(gcNum);
-					
-					dialog.setLocationRelativeTo(null);
-					dialog.setVisible(true);
+					try{
+						String paymentCode = paymentTable.getValueAt(paymentTable.getSelectedRow(), 0).toString();
+						String paymentType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 1).toString();
+						String paymentAmount = paymentTable.getValueAt(paymentTable.getSelectedRow(), 2).toString();
+						String creditCardType = paymentTable.getValueAt(paymentTable.getSelectedRow(), 3).toString();
+						String creditCardNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 4).toString();
+						String bankCheckNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 5).toString();
+						String gcNum = paymentTable.getValueAt(paymentTable.getSelectedRow(), 6).toString();
+						
+						PaymentDialog dialog = PaymentDialog.getPaymentDialog(Main.getInst(),InvoicePanel.this,paymentCode);
+						
+						dialog.setAmount(paymentAmount);
+						dialog.setPaymentType(paymentType);
+						dialog.setCreditType(creditCardType);
+						dialog.setCreditCard(creditCardNum);
+						dialog.setBankCheck(bankCheckNum);
+						dialog.setGiftCheck(gcNum);
+						
+						dialog.setLocationRelativeTo(null);
+						dialog.setVisible(true);
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			};
 		}

@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+import util.PaymentCalculatorUtility;
 import util.StringUtility;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
@@ -927,16 +928,28 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 
 	@Override
 	public void updatePaymentAmounts() {
-		Double payment = 0.0d;
+		Double totalPaymentAmount = 0.0d;
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			double quantity =  Double.parseDouble(model.getValueAt(i,2).toString());
-			payment += quantity;
+			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
+			totalPaymentAmount += paymentAmount;
 		}
 		String amountString = amountLabel.getText();
 		double amount = Double.parseDouble(amountString);
-		totalPaymentTextField.setText(String.format("%.2f", payment));
-		changeTextField.setText(String.format("%.2f", (payment-amount)));
+		totalPaymentTextField.setText(String.format("%.2f", totalPaymentAmount));
+		
+		//for recording change amount, gift certificate should not be considered for change
+		totalPaymentAmount = 0.0d;
+		for(int i = 0; i<model.getRowCount(); i++){
+			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
+			if(!model.getValueAt(i,1).toString().equals("Gift Certificate")){
+				totalPaymentAmount += paymentAmount;
+				
+			}
+		}
+		Double changeAmount = totalPaymentAmount-amount;
+		if(changeAmount < 0 ) changeAmount = 0.0d;
+		changeTextField.setText(String.format("%.2f", changeAmount));
 		
 	}
 	
@@ -1168,6 +1181,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			returnedInvoiceItem.setQuantity(returnItem.getQuantity()*-1); //negative quantity coz its a return
 			returnedInvoiceItem.setSellPrice(returnItem.getSellPrice());
 			returnedInvoiceItem.setStoreNo(returnItem.getStoreCode());
+			returnedInvoiceItem.setIsReturned(true);
 			invoiceItems.add(returnedInvoiceItem);
 			
 		}
@@ -1210,10 +1224,16 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			paymentItem.setOrNo(Long.parseLong(orTextField.getText()));
 			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
-			PaymentItemService.getInstance().insert(paymentItem);
-			
+			paymentItem.setPaymentType(paymentTable.getValueAt(i, 1).toString());
+//			PaymentItemService.getInstance().insert(paymentItem);
 			paymentItems.add(paymentItem);
 		}
+		
+		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(amountLabel.getText()));
+		for(PaymentItem paymentItem: calculatedPaymentItems){
+			PaymentItemService.getInstance().insert(paymentItem);
+		}
+		
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 		

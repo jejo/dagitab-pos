@@ -199,7 +199,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 							paymentItem.setCheckNo(("".equals(bankCheck)?"N/A":bankCheck));
 							paymentItem.setGcNo(("".equals(giftCertificate)?"N/A":giftCertificate));
 							
-							if(Integer.parseInt(txtAmount.getText())>0){
+							if(Double.parseDouble(txtAmount.getText())>0){
 								if(invoker instanceof InvoicePanel){
 									System.out.println("invoking instance of invoice panel from payment dialog");
 									InvoicePanel invoicePanel = (InvoicePanel)invoker;
