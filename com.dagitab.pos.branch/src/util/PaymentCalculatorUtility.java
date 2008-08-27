@@ -10,6 +10,8 @@ import domain.PaymentItem;
 
 public class PaymentCalculatorUtility {
 	
+	
+	
 	public static PaymentCalculatorUtility paymentCalculatorUtility = new PaymentCalculatorUtility();
 	
 	private PaymentCalculatorUtility(){}
@@ -20,16 +22,15 @@ public class PaymentCalculatorUtility {
 	
 	public List<PaymentItem> getCalculatedPaymentItems(List<PaymentItem> items, Double transactionAmount){
 		//Copy paymentItems to new list to eliminate pointer problem!
-		List<PaymentItem> calculatedPaymentItems = new ArrayList<PaymentItem>(items.size());
-		Collections.copy( items, calculatedPaymentItems);
-		
+		List<PaymentItem> calculatedPaymentItems = copy(items);
+		System.out.println(calculatedPaymentItems.size());
 		sortPaymentItems(calculatedPaymentItems);
 		Double amount = transactionAmount;
 		Double amountToBe=null;
 		
-		for(PaymentItem paymentItem: calculatedPaymentItems){
-			String payType = paymentItem.getPaymentType();
-			Double paymentAmount = paymentItem.getAmount();
+		for(int i =0; i < calculatedPaymentItems.size(); i++){
+			String payType = calculatedPaymentItems.get(i).getPaymentType();
+			Double paymentAmount = calculatedPaymentItems.get(i).getAmount();
 			if(payType.equals("Gift Certificate")){
 				if(amount > paymentAmount){
 					amountToBe = paymentAmount;
@@ -62,11 +63,23 @@ public class PaymentCalculatorUtility {
 				else 
 					amountToBe = amount;
 			}
-			paymentItem.setAmount(amountToBe);
+			calculatedPaymentItems.get(i).setAmount(amountToBe);
 		}
 		
-	
+		for(PaymentItem paymentItem: calculatedPaymentItems){
+			System.out.println(paymentItem.getPaymentType());
+		}
 		return calculatedPaymentItems;
+	}
+	
+	public List<PaymentItem> copy(List<PaymentItem> paymentItems){
+		List<PaymentItem> listPaymentItem = new ArrayList<PaymentItem>();
+		for(PaymentItem paymentItem: paymentItems){
+			PaymentItem newPaymentItem = new PaymentItem();
+			newPaymentItem = paymentItem;
+			listPaymentItem.add(newPaymentItem);
+		}
+		return listPaymentItem;
 	}
 	
 	public void sortPaymentItems(List<PaymentItem> items){
