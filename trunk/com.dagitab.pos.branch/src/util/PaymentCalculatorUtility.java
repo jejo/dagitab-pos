@@ -6,13 +6,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import domain.PaymentItem;
 
 public class PaymentCalculatorUtility {
 	
-	
-	
 	public static PaymentCalculatorUtility paymentCalculatorUtility = new PaymentCalculatorUtility();
+	private static Logger logger = Logger.getLogger(PaymentCalculatorUtility.class);
 	
 	private PaymentCalculatorUtility(){}
 	
@@ -27,6 +28,12 @@ public class PaymentCalculatorUtility {
 		sortPaymentItems(calculatedPaymentItems);
 		Double amount = transactionAmount;
 		Double amountToBe=null;
+		for(PaymentItem paymentItem: items){
+			logger.info(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+		}
+		
+		
+		
 		
 		for(int i =0; i < calculatedPaymentItems.size(); i++){
 			String payType = calculatedPaymentItems.get(i).getPaymentType();
@@ -66,6 +73,10 @@ public class PaymentCalculatorUtility {
 			calculatedPaymentItems.get(i).setAmount(amountToBe);
 		}
 		
+		for(PaymentItem paymentItem: items){
+			logger.info(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+		}
+		
 		for(PaymentItem paymentItem: calculatedPaymentItems){
 			System.out.println(paymentItem.getPaymentType());
 		}
@@ -75,8 +86,7 @@ public class PaymentCalculatorUtility {
 	public List<PaymentItem> copy(List<PaymentItem> paymentItems){
 		List<PaymentItem> listPaymentItem = new ArrayList<PaymentItem>();
 		for(PaymentItem paymentItem: paymentItems){
-			PaymentItem newPaymentItem = new PaymentItem();
-			newPaymentItem = paymentItem;
+			PaymentItem newPaymentItem = (PaymentItem) paymentItem.clone();
 			listPaymentItem.add(newPaymentItem);
 		}
 		return listPaymentItem;

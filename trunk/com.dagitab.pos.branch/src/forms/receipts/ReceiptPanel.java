@@ -480,7 +480,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 if(invoice.getIsPartial() == 1){ 
 			 String change = String.format("%.2f", Double.parseDouble(changeAmount));
 			 if(Double.parseDouble(changeAmount) < 0 ){
-				 change = "("+change+")";
+				 change = "("+Math.abs(Double.parseDouble(changeAmount))+")";
 			 }
 			 g.drawString("BALANCE", 10, topMarker);
 			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", Double.parseDouble(changeAmount)));

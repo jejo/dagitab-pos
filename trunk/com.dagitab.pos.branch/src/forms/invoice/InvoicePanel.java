@@ -745,6 +745,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 								  invoiceItem.getDiscountCode().toString(),
 								  String.format("%.2f", invoiceItem.getQuantity()*invoiceItem.getSellPrice())});
 		updateAmounts();
+		updatePaymentAmounts();
 	}
 	
 	public Integer getInvoiceItemRow(String prodCode){
@@ -770,6 +771,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
 		model.setValueAt(String.format("%.2f", invoiceItem.getSellPrice()*invoiceItem.getQuantity()), index, 7);
 		updateAmounts();
+		updatePaymentAmounts();
 	}
 	
 	public void removeInvoiceItem(){
@@ -806,7 +808,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String amountString = lblAmount.getText();
 		double amount = Double.parseDouble(amountString);
 		totalPayment.setText(String.format("%.2f", totalPaymentAmount));
-		
+		System.out.println("amount: "+amount);
 		
 		//for recording change amount, gift certificate should not be considered for change
 		totalPaymentAmount = 0.0d;
@@ -814,11 +816,10 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
 			if(!model.getValueAt(i,1).toString().equals("Gift Certificate")){
 				totalPaymentAmount += paymentAmount;
-				
 			}
 		}
 		Double changeAmount = totalPaymentAmount-amount;
-		if(changeAmount < 0 ) changeAmount = 0.0d;
+		System.out.println("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
 		changeField.setText(String.format("%.2f", changeAmount));
 	}
 	
