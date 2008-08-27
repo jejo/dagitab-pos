@@ -57,17 +57,18 @@ public class InvoiceService {
 	}
 	
 	public static int insert(Invoice invoice){
-		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
+		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL","`RETURN`"};
 		String[] columnValues = new String[]{invoice.getOrNo().toString(),
 											 invoice.getInvoiceNo().toString(), 
 											 invoice.getEncoderCode().toString(), 
 											 invoice.getAssistantCode().toString(), 
 											 invoice.getCustomerNo().toString(), 
 											 invoice.getStoreNo().toString(), 
-											 invoice.getIsPartial().toString()};
+											 invoice.getIsPartial().toString(),
+											 invoice.getIsReturn().toString()};
 		
 		
-		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);
+		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);	
 		return result;
 	}
 	
@@ -119,7 +120,7 @@ public class InvoiceService {
 				Double discRate = DiscountService.getDiscRate(rs.getInt("DISC_CODE"));
 				Double sellingPrice = rs.getDouble("SELL_PRICE");
 				Double amount = sellingPrice - (sellingPrice*discRate);
-				invoiceAmount += amount;
+				invoiceAmount += (amount*rs.getInt("QUANTITY"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

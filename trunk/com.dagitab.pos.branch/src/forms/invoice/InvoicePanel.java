@@ -1052,6 +1052,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		
 		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(lblAmount.getText()));
 		for(PaymentItem paymentItem: calculatedPaymentItems){
+			System.out.println("Inserting payment item");
 			PaymentItemService.getInstance().insert(paymentItem);
 		}
 		
