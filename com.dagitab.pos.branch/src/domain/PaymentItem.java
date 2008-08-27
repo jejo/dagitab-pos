@@ -1,6 +1,6 @@
 package domain;
 
-public class PaymentItem {
+public class PaymentItem implements Cloneable {
 	private Long orNo;
 	private Integer paymentCode;
 	private Double amount;
@@ -65,4 +65,18 @@ public class PaymentItem {
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
 	}
+	public Object clone(){
+		PaymentItem pi = new PaymentItem();
+		pi.setAmount(this.amount);
+		pi.setCardNo(this.cardNo);
+		pi.setCardType(this.cardType);
+		pi.setCheckNo(this.checkNo);
+		pi.setGcNo(this.gcNo);
+		pi.setOrNo(this.orNo);
+		pi.setPaymentCode(this.paymentCode);
+		pi.setPaymentType(this.paymentType);
+		pi.setStoreNo(this.storeNo);
+		return pi;
+	}
+	
 }
