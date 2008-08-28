@@ -37,6 +37,7 @@ public class InvoiceService {
 		invoice.setCustomerNo(rs.getInt("CUST_NO"));
 		invoice.setAssistantCode(rs.getInt("ASSIST_CODE"));
 		invoice.setTransactionDate(rs.getString("TRANS_DT"));
+		invoice.setChangeAmount(rs.getDouble("CHANGE_AMOUNT"));
 		return invoice;
 	}
 
@@ -57,7 +58,7 @@ public class InvoiceService {
 	}
 	
 	public static int insert(Invoice invoice){
-		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL","`RETURN`"};
+		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL","`RETURN`","CHANGE_AMOUNT"};
 		String[] columnValues = new String[]{invoice.getOrNo().toString(),
 											 invoice.getInvoiceNo().toString(), 
 											 invoice.getEncoderCode().toString(), 
@@ -65,7 +66,8 @@ public class InvoiceService {
 											 invoice.getCustomerNo().toString(), 
 											 invoice.getStoreNo().toString(), 
 											 invoice.getIsPartial().toString(),
-											 invoice.getIsReturn().toString()};
+											 invoice.getIsReturn().toString(),
+											 invoice.getChangeAmount().toString()};
 		
 		
 		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);	
@@ -73,13 +75,14 @@ public class InvoiceService {
 	}
 	
 	public static int update(Invoice invoice){
-		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL"};
+		String[] columns = new String[]{"INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL","CHANGE_AMOUNT"};
 		String[] columnValues = new String[]{invoice.getInvoiceNo().toString(), 
 											 invoice.getEncoderCode().toString(), 
 											 invoice.getAssistantCode().toString(), 
 											 invoice.getCustomerNo().toString(), 
 											 invoice.getStoreNo().toString(), 
-											 invoice.getIsPartial().toString()};
+											 invoice.getIsPartial().toString(),
+											 invoice.getChangeAmount().toString()};
 		String[] whereColumns = new String[]{"OR_NO","STORE_CODE"};
 		String[] whereValues = new String[]{invoice.getOrNo().toString(),Main.getStoreCode()};
 		
