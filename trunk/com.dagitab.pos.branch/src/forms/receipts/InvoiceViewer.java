@@ -281,6 +281,15 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							}
 							
 							List<PaymentItem> paymentItems = PaymentItemService.getInstance().getPaymentItemList(Long.parseLong(txtOR.getText()));
+							
+							//edit payment item which is cash, derive how much the customer gave by adding the change to the exact cash value amount
+							for(PaymentItem paymentItem: paymentItems){
+								if(paymentItem.getPaymentType().equals("Cash")){
+									Double originalAmount = paymentItem.getAmount() + invoice.getChangeAmount();
+									paymentItem.setAmount(originalAmount);
+								}
+							}
+							
 							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
 							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this, receiptPanel);
 							validateReceiptDialog.setLocationRelativeTo(null);
@@ -356,7 +365,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							subTotalTextField.setText(String.format("%.2f", subTotalAmount));
 							vatTextField.setText(String.format("%.2f", vatAmount));
 							totalPaymentTextField.setText(String.format("%.2f", totalPaymentAmount));
-							changeTextField.setText(String.format("%.2f", changeAmount*1.0));
+							changeTextField.setText(String.format("%.2f", invoice.getChangeAmount()));
 							
 							List<ReturnItem> returnedItems = ReturnItemService.getReturnedItems(invoice.getOrNo());
 							for(ReturnItem returnItem : returnedItems){
@@ -385,7 +394,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							subTotalTextField.setText(String.format("%.2f", subTotalAmount));
 							vatTextField.setText(String.format("%.2f", vatAmount));
 							totalPaymentTextField.setText(String.format("%.2f", totalPaymentAmount));
-							changeTextField.setText(String.format("%.2f", changeAmount*1.0));
+							changeTextField.setText(String.format("%.2f", invoice.getChangeAmount()));
 						}
 						
 						List<InvoiceItem> listInvoiceItems = InvoiceItemService.getInstance().findInvoiceItemByOR(invoice.getOrNo());
@@ -413,7 +422,12 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							rowData[0] = paymentItem.getPaymentCode().toString();
 							String paymentName = PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode());
 							rowData[1] = paymentName;
-							rowData[2] = String.format("%.2f",paymentItem.getAmount());
+							if(paymentName.equals("Cash")){
+								rowData[2] = String.format("%.2f",paymentItem.getAmount() + invoice.getChangeAmount()) ;
+							}
+							else{
+								rowData[2] = String.format("%.2f",paymentItem.getAmount());
+							}
 							rowData[3] = paymentItem.getCardType();
 							rowData[4] = paymentItem.getCardNo();
 							rowData[5] = paymentItem.getCheckNo();

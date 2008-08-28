@@ -10,9 +10,13 @@ public class Invoice {
 	private Integer isPartial = 0;
 	private Integer isReturn = 0;
 	private String transactionDate;
+	private Double changeAmount = 0.0d;
 	
 	public Integer getAssistantCode() {
 		return assistantCode;
+	}
+	public Double getChangeAmount() {
+		return changeAmount;
 	}
 	public Integer getCustomerNo() {
 		return customerNo;
@@ -40,6 +44,9 @@ public class Invoice {
 	}
 	public void setAssistantCode(Integer assistantCode) {
 		this.assistantCode = assistantCode;
+	}
+	public void setChangeAmount(Double changeAmount) {
+		this.changeAmount = changeAmount;
 	}
 	public void setCustomerNo(Integer customerNo) {
 		this.customerNo = customerNo;

@@ -1006,6 +1006,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		}
 		invoice.setEncoderCode(Main.getClerkCode());
 		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+		invoice.setChangeAmount(Double.parseDouble(changeField.getText()));
 		
 		InvoiceService.insert(invoice);
 		
@@ -1167,6 +1168,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 							model.removeRow(index);
 						}
 						updateAmounts();
+						updatePaymentAmounts();
 					}
 				}
 			};

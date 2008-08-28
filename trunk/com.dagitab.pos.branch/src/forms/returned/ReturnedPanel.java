@@ -637,7 +637,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		model.addRow(new String[]{invoiceItem.getProductCode(),
 								  product.getName(),
 								  invoiceItem.getQuantity().toString(),
-								  product.getSellPrice().toString(), 
+								  String.format("%.2f",product.getSellPrice()), 
 								  String.format("%.2f",invoiceItem.getSellPrice()),
 								  invoiceItem.getIsDeferred().toString(),
 								  invoiceItem.getDiscountCode().toString(),
@@ -662,6 +662,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 							model.removeRow(index);
 						}
 						updateAmounts();
+						updatePaymentAmounts();
 					}
 				}
 			};
@@ -699,11 +700,11 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		model.addRow(new String[]{invoiceItem.getProductCode(),
 								  product.getName(),
 								  invoiceItem.getQuantity().toString(),
-								  product.getSellPrice().toString(),
+								  String.format("%.2f",product.getSellPrice()),
 								  String.format("%.2f",invoiceItem.getSellPrice()),
 								  (invoiceItem.getIsDeferred()==1)?"Yes":"No",
 								  invoiceItem.getDiscountCode().toString(),
-								  new Double(invoiceItem.getQuantity()* product.getSellPrice()).toString()});
+								  new Double(invoiceItem.getQuantity()* invoiceItem.getSellPrice()).toString()});
 		updateAmounts();
 	}
 	
@@ -724,10 +725,11 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
 		model.setValueAt(invoiceItem.getQuantity(), index, 2);
-		model.setValueAt(product.getSellPrice().toString(), index, 3);
-		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
+		model.setValueAt(String.format("%.2f",product.getSellPrice()), index, 3);
+		model.setValueAt(String.format("%.2f",invoiceItem.getSellPrice()), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
+		model.setValueAt( new Double(invoiceItem.getQuantity()* invoiceItem.getSellPrice()).toString(), index, 7);
 		
 		updateAmounts();
 	}
@@ -748,11 +750,11 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
 		model.setValueAt(invoiceItem.getQuantity(), index, 2);
-		model.setValueAt(product.getSellPrice().toString(), index, 3);
-		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
+		model.setValueAt(String.format("%.2f",product.getSellPrice()), index, 3);
+		model.setValueAt(String.format("%.2f",invoiceItem.getSellPrice()), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
-		model.setValueAt(reason, index, 6);
+		model.setValueAt(reason, index, 7);
 		updateAmounts();
 	}
 	
@@ -796,6 +798,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 							model.removeRow(index);
 						}
 						updateAmounts();
+						updatePaymentAmounts();
 					}
 					
 				}
@@ -1150,6 +1153,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		invoice.setEncoderCode(Main.getClerkCode());
 		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 		invoice.setIsReturn(1);
+		invoice.setChangeAmount(Double.parseDouble(changeTextField.getText()));
 		InvoiceService.insert(invoice);
 		
 		

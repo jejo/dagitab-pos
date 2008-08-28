@@ -99,6 +99,7 @@ public class PaymentItemService {
 		try {
 			if(rs.next()){
 				PaymentItem paymentItem = new PaymentItem();
+				paymentItem.setPaymentType(rs.getString("NAME"));
 				paymentItem.setAmount(rs.getDouble("AMT"));
 				paymentItem.setCardNo(rs.getString("CARD_NO"));
 				paymentItem.setCardType(rs.getString("CARD_TYPE"));

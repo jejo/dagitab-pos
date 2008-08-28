@@ -25,6 +25,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.log4j.Logger;
+
 import main.Main;
 import util.PaymentCalculatorUtility;
 import util.TableUtility;
@@ -52,7 +54,7 @@ import forms.receipts.ValidateReceipt;
 * should purchase a license for each developer using Jigloo.
 * Please visit www.cloudgarden.com for details.
 * Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR`
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
@@ -67,7 +69,8 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			e.printStackTrace();
 		}
 	}
-
+	
+	private static Logger logger = Logger.getLogger(PartialDialog.class);
 	private JLabel partialDialogLabel;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
@@ -428,12 +431,13 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		}
 	}
 	private void refreshItemTable(){
-		ResultSet rs = InvoiceItemService.getInstance().fetchInvoiceItem(invoice.getOrNo().toString());
+		ResultSet rs = InvoiceItemService.getInstance().fetchDiscountedInvoiceItem(invoice.getOrNo().toString());
 		TableUtility.fillTable(itemTable, rs, new String[]{"Product Code", "Product Name", "Quantity", "Current Price", "Selling Price", "Deferred", "Disc Code", "Extension"});
 	}
 	
 	private void updateAmounts(){
-		Double amount = InvoiceItemService.getInstance().getInvoiceItemAmount(invoice.getOrNo());
+		Double amount = InvoiceItemService.getInstance().getDiscountedInvoiceItemAmount(invoice.getOrNo());
+		logger.info("amount: "+amount);
 		Double vat = VatService.getVatRate();
 		Double subTotal = amount/vat;
 		totalAmountLabel.setText(String.format("%.2f", amount));
@@ -591,12 +595,11 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	private void saveTransaction(){
 		Invoice invoice = InvoiceService.getInvoiceByOr(orTextField.getText());
 		invoice.setIsPartial(0);
+		invoice.setChangeAmount(Double.parseDouble(changeTextField.getText()));
+		
 		InvoiceService.update(invoice);
 		
-		
 		List<InvoiceItem> invoiceItems = InvoiceItemService.getInstance().findInvoiceItemByOR(Long.parseLong(orTextField.getText()));
-		
-		
 		
 		//clear payment items from db
 		PaymentItemService.getInstance().removePaymentItem(invoice.getOrNo());

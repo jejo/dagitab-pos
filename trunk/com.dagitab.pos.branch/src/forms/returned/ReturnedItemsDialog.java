@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import util.TableUtility;
+import util.Validator;
 import bus.InvoiceItemService;
 import bus.ReturnReasonService;
 
@@ -30,7 +31,6 @@ import com.cloudgarden.layout.AnchorLayout;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.ReturnReason;
-import forms.AboutDialog;
 import forms.MainWindow;
 
 /**
@@ -254,25 +254,43 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 						
 						if(action.equals("add")){
 							//TODO: validate if theres the same return item already
-							ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
-							String reason = returnReasonComboBox.getSelectedItem().toString();
-							InvoiceItem invoiceItem = new InvoiceItem();
-							int quantity = Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString());
-							invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
-							invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
-							invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
-							invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
-							invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
-							if(quantity >= Integer.parseInt(quantityTextField.getText())){
-								if(returnedPanel.getReturnedItemRow(invoiceItem.getProductCode()) == null){
-									returnedPanel.addToReturnItemTable(invoiceItem, reason);
+							try{
+								
+								if(!Validator.isEmpty("Quantity", quantityTextField.getText()) && Validator.isNumeric(quantityTextField.getText())){
+									if(Integer.parseInt(quantityTextField.getText()) > 0){
+										ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
+										String reason = returnReasonComboBox.getSelectedItem().toString();
+										InvoiceItem invoiceItem = new InvoiceItem();
+										int quantity = Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString());
+										invoiceItem.setProductCode(itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString());
+										invoiceItem.setQuantity(Integer.parseInt(quantityTextField.getText()));
+										invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
+										invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
+										invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
+										if(quantity >= Integer.parseInt(quantityTextField.getText())){
+											if(returnedPanel.getReturnedItemRow(invoiceItem.getProductCode()) == null){
+												returnedPanel.addToReturnItemTable(invoiceItem, reason);
+											}
+											else{
+												JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
+										}
+										else{
+											JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Returned Quantity is greater than quantity of selected product.","Prompt",JOptionPane.ERROR_MESSAGE);
+										}
+									}
+									else{
+										JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Returned Quantity is zero.","Prompt",JOptionPane.ERROR_MESSAGE);
+									}
 								}
 								else{
-									JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Product already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(null,"Product Quantity not valid.","Prompt",JOptionPane.ERROR_MESSAGE);
 								}
+								
+								
 							}
-							else{
-								JOptionPane.showMessageDialog(ReturnedItemsDialog.this,"Returned Quantity is greater than quantity of selected product.","Prompt",JOptionPane.ERROR_MESSAGE);
+							catch(ArrayIndexOutOfBoundsException e){
+								JOptionPane.showMessageDialog(null, "Please select item from the list.", "Error", JOptionPane.ERROR_MESSAGE);
 							}
 							
 						}
