@@ -765,8 +765,8 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
 		model.setValueAt(invoiceItem.getQuantity(), index, 2);
-		model.setValueAt(product.getSellPrice().toString(), index, 3);
-		model.setValueAt(invoiceItem.getSellPrice().toString(), index, 4);
+		model.setValueAt( String.format("%.2f",product.getSellPrice()), index, 3);
+		model.setValueAt(String.format("%.2f",invoiceItem.getSellPrice()), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
 		model.setValueAt(String.format("%.2f", invoiceItem.getSellPrice()*invoiceItem.getQuantity()), index, 7);
