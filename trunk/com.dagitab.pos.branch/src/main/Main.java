@@ -89,7 +89,7 @@ public class Main {
 
 				@Override
 				public void onSqlRead(String arg0) {
-//					logger.info("SQL READ: "+arg0);
+					logger.info("SQL READ: "+arg0);
 					
 			}});
 			

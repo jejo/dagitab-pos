@@ -12,19 +12,17 @@ import java.util.Date;
 import java.util.Vector;
 
 import main.DBManager;
+import main.Main;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-
-import forms.reports.SalesClerkProductionForm;
-
 public class SalesCerkProduction {
 	private static int topMarker = 7;
 	private static HSSFWorkbook wb;
-	private static DBManager db; 
 	private static Vector<Vector<String>> grid = new Vector<Vector<String>>();
 	
 	
@@ -120,11 +118,9 @@ public class SalesCerkProduction {
 
 	}
 
-	public static boolean generatePerClerk(String fileName, DBManager db, String storeCode, String startDate, String endDate, String[] clerk_codes) {
+	public static boolean generatePerClerk(String fileName,String startDate, String endDate, String[] clerk_codes) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
-		
-		SalesCerkProduction.db = db;
 		
 		try {
 			
@@ -145,7 +141,7 @@ public class SalesCerkProduction {
 			row = sheet.getRow(2);
 			cell = HSSFUtil.createStringCell(wb,row, (short) 1,false,false);
 			
-			ResultSet rs1 = db.executeQuery("SELECT name FROM store_lu WHERE store_code="+storeCode);
+			ResultSet rs1 = Main.getDBManager().executeQuery("SELECT name FROM store_lu WHERE store_code="+Main.getStoreCode());
 			if(rs1.next()) {
 				cell.setCellValue(rs1.getString(1));
 			}			
@@ -156,7 +152,7 @@ public class SalesCerkProduction {
 			cell = HSSFUtil.createStringCell(wb,row, (short) 1,false,false);
 			cell.setCellValue(startDate+ " - "+endDate);
 			
-			String branchClause=" && a.store_code="+storeCode;
+			String branchClause=" && a.store_code="+Main.getStoreCode();
 			String dateClause = " DATE(a.TRANS_DT) >= \""+startDate+"\" && DATE(a.TRANS_DT) <= \""+endDate+"\" ";
 
 			//data
@@ -212,7 +208,7 @@ public class SalesCerkProduction {
 			
 			
 			String q2 = "select concat(clerk.first_name, clerk.last_name)  from clerk_lu clerk where clerk_code in ("+clerkPhrase+") order by clerk_code";
-			ResultSet rs2 = db.executeQuery(q2);
+			ResultSet rs2 = Main.getDBManager().executeQuery(q2);
 			int col = 1;
 			
 			row = sheet.getRow(5);
@@ -288,7 +284,7 @@ public class SalesCerkProduction {
 	private static void populateVector(String q, String [] clerk_codes, String date) throws NumberFormatException, SQLException{
 		
 		
-		ResultSet rs = db.executeQuery(q);
+		ResultSet rs = Main.getDBManager().executeQuery(q);
 
 		if(rs.next()){
 			Vector<String> dataRow = new Vector<String>();

@@ -8,9 +8,9 @@
 	<classpathentry kind="lib" path="swt.jar"/>
 	<classpathentry kind="lib" path="commons-logging.jar"/>
 	<classpathentry kind="lib" path="log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="babyland-sync-08122008.jar"/>
 	<classpathentry kind="lib" path="commons-net-1.4.1.jar"/>
 	<classpathentry kind="lib" path="jakarta-oro-2.0.8.jar"/>
 	<classpathentry kind="lib" path="commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="com.babyland.sync-08292008.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
