@@ -8,6 +8,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.log4j.Logger;
 
 
 public class FtpUtility {
@@ -18,6 +19,7 @@ public class FtpUtility {
 	private String workingDirectory;
 	private String remoteDirectory;
 	private FTPClient ftp;
+	private static Logger logger = Logger.getLogger(FtpUtility.class);
 	
 	public FtpUtility(String host, String username, String password) {
 		this.host = host;
@@ -84,18 +86,18 @@ public class FtpUtility {
 	}
 	
 	public void sendFile(String file, String workingDirectory) {
-		System.out.println("Transferring " + file + "...");
+		logger.info("Transferring " + file + "...");
 		try {
 			ftp.changeWorkingDirectory(remoteDirectory);
 			ftp.storeFile(file, new FileInputStream(workingDirectory + file));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		System.out.println(file + " has been transferred.");
+		logger.info(file + " has been transferred.");
 	}
 
 	public boolean connect() {
@@ -107,7 +109,7 @@ public class FtpUtility {
 			
 			ftp.login(getUsername(), getPassword());
 			
-			System.out.println("Connected to " + getHost() + ".");
+			logger.info("Connected to " + getHost() + ".");
 			System.out.print(ftp.getReplyString());
 			
 			// After connection attempt, you should check the reply code to verify
@@ -121,7 +123,7 @@ public class FtpUtility {
 			}
 		} catch(IOException e) {
 			error = true;
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return !error;
 	}

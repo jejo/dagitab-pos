@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class PullOutItemService {
 
@@ -23,7 +24,7 @@ public class PullOutItemService {
 				return rs.getInt("NUM") > 0;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return false;
 	}

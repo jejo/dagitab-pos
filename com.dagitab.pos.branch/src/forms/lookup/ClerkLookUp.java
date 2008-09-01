@@ -17,13 +17,9 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.LoggerUtility;
 import util.TableUtility;
 import bus.ClerkService;
-
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-
-import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 
 /**
@@ -174,7 +170,7 @@ public class ClerkLookUp extends javax.swing.JDialog {
 			TableUtility.fillTable(clerkLookUpTable, rs, new String[]{"Clerk ID", "Clerk First Name","Clerk Last Name"});
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

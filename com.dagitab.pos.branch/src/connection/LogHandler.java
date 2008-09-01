@@ -7,10 +7,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
+@Deprecated
 public class LogHandler {
 	
 	File file;
-	DataUtil du; 
+	DataUtil du;
+	
+	private static Logger logger = Logger.getLogger(LogHandler.class);
 	public LogHandler(){
 		file = new File("1.CAC");
 		du = new DataUtil();
@@ -20,7 +27,7 @@ public class LogHandler {
 			try{
 				file.createNewFile();
 			}catch(IOException ex){
-				System.out.println(ex.getMessage());
+				logger.info(ex.getMessage());
 			}
 		}
 	}
@@ -31,7 +38,7 @@ public class LogHandler {
 		String s;
 		while((s=br.readLine()) != null)
 		{
-			System.out.println(s);
+			logger.info(s);
 		}
 		lh.deleteContent();
 	}
@@ -47,7 +54,7 @@ public class LogHandler {
 		}
 		catch(IOException ex)
 		{
-			System.out.println(ex.getMessage());
+			logger.info(ex.getMessage());
 		}
 		
 	}
@@ -61,7 +68,7 @@ public class LogHandler {
 			}
 		}
 		catch(IOException ex){
-			System.out.println(ex.getMessage());
+			logger.info(ex.getMessage());
 		}
 		return null;
 	}
@@ -71,7 +78,7 @@ public class LogHandler {
 		try {
 			file.createNewFile();
 		}catch(IOException e){
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 }

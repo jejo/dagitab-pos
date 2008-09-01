@@ -8,6 +8,8 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
+import util.LoggerUtility;
+
 
 public class DBManager {
 	private static Statement statement;
@@ -18,7 +20,7 @@ public class DBManager {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -31,11 +33,11 @@ public class DBManager {
 	public static boolean connect(String url) {
 		try {
 			connection = DriverManager.getConnection(url, "root", "root");
-			logger.info("Connection @ " + url + "\n");
+			logger.info("Connection @ " + url);
 			return true;
 		} catch (SQLException e) {
 			logger.error("Unable to connect to: " + url + "\n");
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 	}
@@ -44,14 +46,17 @@ public class DBManager {
 		String url = "jdbc:mysql://"+dbIP+"/"+dbSchema;
 		try {
 			connection = DriverManager.getConnection(url, dbUser, dbPass);
-			logger.info("Connection @ " + url + "\n");
+			logger.info("Connection @ " + url);
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Unable to connect to: " + url + "\n");
-			logger.error("Unable to connect to: " + url + "\n");
-			e.printStackTrace();
+			logger.error("Unable to connect to: " + url );
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
+	}
+	
+	public Connection getConnection(){
+		return connection;
 	}
 
 	public void delete(String table, String[] whereColumns, String[] whereValues) {
@@ -76,7 +81,7 @@ public class DBManager {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 
 	}
@@ -89,7 +94,7 @@ public class DBManager {
 					+ primary + "=\"" + id + "\"");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return null;
 		}
 	}
@@ -142,12 +147,12 @@ public class DBManager {
 			else
 				whereSt += " WHERE delete_flag=0";
 
-////			System.out.println("SELECT " + columnSt + " FROM `" + table + "` "
+////			logger.info("SELECT " + columnSt + " FROM `" + table + "` "
 //					+ whereSt);
 			return statement.executeQuery("SELECT " + columnSt + " FROM `" + table
 					+ "` " + whereSt + orderBy);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return null;
 		}
 
@@ -181,12 +186,12 @@ public class DBManager {
 				whereSt += " AND delete_flag=0";
 			else
 				whereSt += " WHERE delete_flag=0";
-//			System.out.println("SELECT " + columnSt + " FROM `" + table + "` "
+//			logger.info("SELECT " + columnSt + " FROM `" + table + "` "
 //					+ whereSt + orderBy);
 			return statement.executeQuery("SELECT " + columnSt + " FROM `" + table
 					+ "` " + whereSt + orderBy);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return null;
 		}
 
@@ -228,7 +233,7 @@ public class DBManager {
 			return result;
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return -1;
 		}
 	}
@@ -276,7 +281,7 @@ public class DBManager {
 			return result;
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return -1;
 		}
 	}
@@ -288,7 +293,7 @@ public class DBManager {
 			return statement.executeQuery(s);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return null;
 		}
 	}
@@ -298,10 +303,12 @@ public class DBManager {
 			statement = connection.createStatement();
 			return statement.executeUpdate(query);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0;
 	}
+	
+
 
 	public void execute(String s) {
 		try {
@@ -309,7 +316,7 @@ public class DBManager {
 					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.execute(s);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -318,7 +325,7 @@ public class DBManager {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 	}
@@ -351,7 +358,7 @@ public class DBManager {
 			return statement.executeQuery("SELECT " + columnSt + " FROM `" + table
 					+ "` " + whereSt+orderBy);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return null;
 		}
 
@@ -362,6 +369,5 @@ public class DBManager {
 	public static void main(String args[]) throws Exception {
 		DBManager dbMan = new DBManager();
 		dbMan.connect();
-		
 	}
 }

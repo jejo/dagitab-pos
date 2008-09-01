@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.Main;
+import util.LoggerUtility;
 import domain.ReturnItem;
 
 public class ReturnItemService {
@@ -39,7 +40,7 @@ public class ReturnItemService {
 				returnedItems.add(returnItem);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return returnedItems;
 	}
@@ -59,7 +60,7 @@ public class ReturnItemService {
 				return returnItem;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -77,7 +78,7 @@ public class ReturnItemService {
 				return rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0.0d;
 	}

@@ -2,6 +2,8 @@ package main;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 public class PendingTransactionData {
 
 	/**
@@ -10,6 +12,7 @@ public class PendingTransactionData {
 	public String date; 
 	public String time; 
 	public Vector<Vector<String>> prodItems;
+	private static Logger logger = Logger.getLogger(PendingTransactionData.class);
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -19,12 +22,12 @@ public class PendingTransactionData {
 		this.date = date;
 		this.time = time;
 		this.prodItems = prodItems;
-		System.out.println(prodItems.size()+"rcvd data");
+		logger.info(prodItems.size()+"rcvd data");
 		
 	}
 	
 	public Vector<Vector<String>> getProdItems(){
-		System.out.println(prodItems.size()+"xprt data");
+		logger.info(prodItems.size()+"xprt data");
 		return prodItems;
 	}
 	

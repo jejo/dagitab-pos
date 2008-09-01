@@ -1,13 +1,13 @@
 package bus;
 
-import domain.ReturnReason;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import main.Main;
+import util.LoggerUtility;
+import domain.ReturnReason;
 
 public class ReturnReasonService {
 	
@@ -23,7 +23,7 @@ public class ReturnReasonService {
 				listReturnReason.add(returnReason);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return listReturnReason;
 	}
@@ -41,7 +41,7 @@ public class ReturnReasonService {
 			}
 				
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 		

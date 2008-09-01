@@ -2,10 +2,10 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class PullOutReasonService {
 	public static Vector<String> fetchAllPullOutReasons() {
@@ -16,11 +16,11 @@ public class PullOutReasonService {
 				try {
 					reasons.add(rs.getString("NAME"));
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return reasons;
 	}

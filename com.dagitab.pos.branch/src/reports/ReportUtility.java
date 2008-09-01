@@ -17,6 +17,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import util.LoggerUtility;
+
 
 public class ReportUtility {
 	static void writeDateGenerated(HSSFWorkbook wb) {
@@ -40,7 +42,7 @@ public class ReportUtility {
 				cell.setCellValue("ALL BRANCHES");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -62,11 +64,11 @@ public class ReportUtility {
 				wb.write(fileOut);
 				fileOut.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "File is in use.", "Error", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}		
 	}
 }

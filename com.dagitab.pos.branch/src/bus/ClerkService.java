@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 import domain.Clerk;
 
 public class ClerkService {
@@ -30,8 +31,8 @@ public class ClerkService {
 				}
 			}
 		} catch (SQLException e) {
-		
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return false;
 	}
@@ -52,7 +53,7 @@ public class ClerkService {
 				return clerk;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}

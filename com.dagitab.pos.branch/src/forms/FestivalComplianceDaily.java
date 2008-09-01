@@ -1,14 +1,10 @@
 package forms;
-import java.sql.ResultSet;
-import java.util.Calendar;
-import java.util.Date;
-
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
@@ -17,15 +13,16 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
-import javax.swing.JLabel;
-
+import main.DBManager;
 import reports.FestivalDailyReport;
 import reports.FestivalHourlyReport;
+import util.LoggerUtility;
 
-
-import main.DBManager;
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -59,7 +56,7 @@ public class FestivalComplianceDaily extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -291,7 +288,7 @@ public class FestivalComplianceDaily extends javax.swing.JDialog {
 			}
 			setSize(400, 300);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	private AbstractAction getFestivalComplianceLabelAction() {

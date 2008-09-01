@@ -13,6 +13,7 @@ import javax.swing.JPasswordField;
 import javax.swing.KeyStroke;
 
 import main.Main;
+import util.LoggerUtility;
 import bus.ClerkService;
 import domain.Clerk;
 
@@ -45,7 +46,7 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -173,7 +174,7 @@ public class PasswordManagerDialog extends javax.swing.JDialog {
 			}
 			this.setSize(321, 263);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	private AbstractAction getPasswordManagerDialogLabelAbstractAction() {

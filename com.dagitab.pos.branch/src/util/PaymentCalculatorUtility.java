@@ -24,7 +24,7 @@ public class PaymentCalculatorUtility {
 	public List<PaymentItem> getCalculatedPaymentItems(List<PaymentItem> items, Double transactionAmount){
 		//Copy paymentItems to new list to eliminate pointer problem!
 		List<PaymentItem> calculatedPaymentItems = copy(items);
-		System.out.println(calculatedPaymentItems.size());
+		logger.info(calculatedPaymentItems.size());
 		sortPaymentItems(calculatedPaymentItems);
 		Double amount = transactionAmount;
 		Double amountToBe=null;
@@ -78,7 +78,7 @@ public class PaymentCalculatorUtility {
 		}
 		
 		for(PaymentItem paymentItem: calculatedPaymentItems){
-			System.out.println(paymentItem.getPaymentType());
+			logger.info(paymentItem.getPaymentType());
 		}
 		return calculatedPaymentItems;
 	}
@@ -95,7 +95,7 @@ public class PaymentCalculatorUtility {
 	public void sortPaymentItems(List<PaymentItem> items){
 		Collections.sort(items, new Comparator<PaymentItem>() {@Override
 			public int compare(PaymentItem o1, PaymentItem o2) {
-				System.out.println("comparing: "+o1.getPaymentType()+" with "+o2.getPaymentType());
+				logger.info("comparing: "+o1.getPaymentType()+" with "+o2.getPaymentType());
 				return o2.getPaymentType().compareTo(o1.getPaymentType());
 			}});
 	}
@@ -113,7 +113,7 @@ public class PaymentCalculatorUtility {
 		paymentCalculatorUtility.sortPaymentItems(listPaymentItem);
 		
 		for(PaymentItem paymentItem: listPaymentItem){
-			System.out.println(paymentItem.getPaymentType());
+			logger.info(paymentItem.getPaymentType());
 		}
 		
 	}

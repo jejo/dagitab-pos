@@ -8,10 +8,13 @@ import main.Main;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import util.LoggerUtility;
+
 public class ComplianceService {
 	
 	private static ComplianceService complianceService = new ComplianceService();
 	private static Logger logger = Logger.getLogger(ComplianceService.class);
+	
 	
 	private ComplianceService(){}
 	
@@ -31,7 +34,7 @@ public class ComplianceService {
 				dailySale = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("Raw Gross: "+dailySale);
 		return dailySale;
@@ -48,7 +51,7 @@ public class ComplianceService {
 				amount = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("New Grand Total: "+amount);
 		return amount;
@@ -60,21 +63,21 @@ public class ComplianceService {
 		//ResultSet rs = main.getDb().executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE D (o.TRANS_DT) != '"+month+"' || YEAR(o.TRANS_DT) != '"+year+"' || DAY(o.TRANS_DT) != '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		String date = year + "-" + StringUtils.leftPad(month + "", 2, "0") + "-" + StringUtils.leftPad(day + "", 2,"0");
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE DATE (p.TRANS_DT) < str_to_date('"+date+"','%Y-%m-%d') AND p.STORE_CODE = '"+storeCode+"' AND p.PT_CODE!=4");
-		//System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+		//logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		Double amount = 0.0d;
 		try {
 			if(rs.next()){
 				amount = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("Old Grand Total: "+amount);
 		return amount;
 	}
 	
 	public Double getDailySaleWithoutVat(int month, int day, int year, int storeCode) {
-		System.out.println();
+		
 //		Double amount = getDailySale(month, year, day, storeCode) - getTotDisc(month, year, day, storeCode)+getVat(month, day, year, storeCode); 
 		Double amount = getRawGross(month, day, year, storeCode)/getVatRate();
 		logger.info("Raw Gross: "+amount);
@@ -98,7 +101,7 @@ public class ComplianceService {
 				amount = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("TOTAL DISCOUNT: "+ amount);
 		return amount;
@@ -124,7 +127,7 @@ public class ComplianceService {
 				count = rs.getInt("COUNT");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("TOTAL NO OF DISCOUNT: "+ count);
 		return count;
@@ -159,14 +162,14 @@ public class ComplianceService {
 				                                   "  AND p.PT_CODE = 3"
 				                                   
 				                                   );
-		//System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+		//logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		Double amt = 0.0d;
 		try {
 			while(rs.next()){
 				amt = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("CREDIT SALES: "+amt);
 		return amt;
@@ -183,7 +186,7 @@ public class ComplianceService {
 				subtractor = Double.parseDouble(temp);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("Vat Rate: "+subtractor);
 		return subtractor;
@@ -200,7 +203,7 @@ public class ComplianceService {
 				returnedItemsAmount = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("Returned Items Amount: "+returnedItemsAmount);
 		return returnedItemsAmount;
@@ -215,7 +218,7 @@ public class ComplianceService {
 				returnedItemsQuantity = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		logger.info("Returned Items Quantity: "+returnedItemsQuantity);
 		return returnedItemsQuantity;

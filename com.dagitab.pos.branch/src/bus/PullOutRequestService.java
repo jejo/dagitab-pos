@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class PullOutRequestService {
 	
@@ -19,11 +20,11 @@ public class PullOutRequestService {
 				try {
 					Main.getDBManager().insert(new String[] { "STO_TO_CODE", "ISSUE_CLERK", "PO_REASON_CODE" }, new String[] { Main.getStoreCode(), Main.getClerkCode().toString(), rs.getString("PO_REASON_CODE") }, "pull_out_requests", null, null);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 	}
@@ -35,11 +36,11 @@ public class PullOutRequestService {
 				try {
 					return rs.getLong("MAX");
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}

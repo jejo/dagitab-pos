@@ -7,9 +7,16 @@ import java.sql.SQLException;
 
 import main.Main;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
+@Deprecated
 public class DataUtil {
 	
 	private static DataUtil dataUtil = null;
+	private static Logger logger = Logger.getLogger(DataUtil.class);
+	
 	
 	public DataUtil(){
 		
@@ -30,7 +37,7 @@ public class DataUtil {
 		while((s= br.readLine()) != null){
 			DataUtil.getDataUtil().dataToRow(s);
 		}
-//		System.out.println(rowToData("ADD","supplier_lu",new String[] { "supplier_code"}, new String[] { "1" }));
+//		logger.info(rowToData("ADD","supplier_lu",new String[] { "supplier_code"}, new String[] { "1" }));
 		
 //		BufferedReader reader = new BufferedReader(new FileReader("dump.txt"));
 //		String s;
@@ -54,7 +61,7 @@ public class DataUtil {
 		
 		
 		
-		System.out.println("SELECT * FROM "+tableName+ whereClause + " LIMIT 1");
+		logger.info("SELECT * FROM "+tableName+ whereClause + " LIMIT 1");
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM "+tableName+ whereClause + " LIMIT 1");	
 		
 		try {
@@ -102,7 +109,7 @@ public class DataUtil {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		return s;
@@ -129,7 +136,7 @@ public class DataUtil {
 				whereClause += " AND ";
 			}
 		}
-		System.out.println("SELECT * FROM "+ss[1] + whereClause + " LIMIT 1");
+		logger.info("SELECT * FROM "+ss[1] + whereClause + " LIMIT 1");
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM "+ss[1] + whereClause + " LIMIT 1");
 //		ResultSet rs = Main.getDBManager().query("SELECT * FROM "+ss[1] + whereClause + " LIMIT 1");
 		

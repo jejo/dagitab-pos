@@ -12,11 +12,15 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
+import main.DBManager;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
 import com.svcon.jdbf.DBFWriter;
 import com.svcon.jdbf.JDBFException;
 import com.svcon.jdbf.JDBField;
-
-import main.DBManager;
 
 public class AyalaHourlyCompliance {
 	DBManager db;
@@ -24,6 +28,7 @@ public class AyalaHourlyCompliance {
 	String tenantCode;
 	String dirName = "C:\\Ayala\\";
 	String fileName; 
+	private static Logger logger = Logger.getLogger(AyalaHourlyCompliance.class);
 	
 	public AyalaHourlyCompliance(DBManager db, String storeCode){
 		this.db = db;
@@ -33,7 +38,7 @@ public class AyalaHourlyCompliance {
 			tenantCode = br.readLine().trim();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -45,11 +50,11 @@ public class AyalaHourlyCompliance {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		boolean created = new File(dirName).mkdir();
-		System.out.println("Directory created: "+ created);
+		logger.info("Directory created: "+ created);
 	}
 	
 	public void createDBFFile(Date date){
@@ -75,7 +80,7 @@ public class AyalaHourlyCompliance {
 				f.createNewFile();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 	}
@@ -97,33 +102,33 @@ public class AyalaHourlyCompliance {
 		
 		String startHour = "";
 		
-		System.out.println("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT ASC LIMIT 1");
+		logger.info("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT ASC LIMIT 1");
 		ResultSet rs = db.executeQuery("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT ASC LIMIT 1");
 		
 		try {
 			if(rs.next()){
-//				System.out.println(rs.getString(1));
+//				logger.info(rs.getString(1));
 				startHour = rs.getString(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		
 		String endHour = "";
 		
-		System.out.println("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT DESC LIMIT 1");
+		logger.info("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT DESC LIMIT 1");
 		rs = db.executeQuery("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT DESC LIMIT 1");
 		
 		try {
 			if(rs.next()){
-//				System.out.println(rs.getString(1));
+//				logger.info(rs.getString(1));
 				endHour = rs.getString(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		
@@ -172,11 +177,11 @@ public class AyalaHourlyCompliance {
 				try {
 					while(rs.next()){
 						sales += (rs.getDouble(2)*rs.getDouble(3));
-						System.out.println(rs.getDouble(2)+" * "+rs.getDouble(3));
+						logger.info(rs.getDouble(2)+" * "+rs.getDouble(3));
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 				
 				dataRecord[2] = sales;
@@ -194,7 +199,7 @@ public class AyalaHourlyCompliance {
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 				
 				dataRecord[4] = tenantCode;
@@ -209,7 +214,7 @@ public class AyalaHourlyCompliance {
 			
 		}catch(JDBFException e){
 			JOptionPane.showMessageDialog(null,"You have not exported a compliance report","Error",JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	
 		
@@ -218,7 +223,7 @@ public class AyalaHourlyCompliance {
 	public static void main(String[] args){
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(new Date());
-		System.out.println(cal.get(Calendar.HOUR_OF_DAY));
-		System.out.println(cal.get(Calendar.MINUTE));
+		logger.info(cal.get(Calendar.HOUR_OF_DAY));
+		logger.info(cal.get(Calendar.MINUTE));
 	}
 }

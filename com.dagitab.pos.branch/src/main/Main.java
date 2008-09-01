@@ -4,9 +4,15 @@ package main;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 
 import com.babyland.sync.SyncManager;
 import com.babyland.sync.SyncProgressListener;
@@ -77,9 +83,10 @@ public class Main {
 			logger.info("Store Configuration settings: store.no="+storeCode);
 			logger.info(properties.getProperty("localRoot"));
 			
+			
+			
 			syncManager = new SyncManager(properties);
 			syncManager.addListener(new SyncProgressListener(){
-
 				@Override
 				public void updateProgress(double arg0) {
 					percentage = (int)(arg0*100);
@@ -89,16 +96,20 @@ public class Main {
 
 				@Override
 				public void onSqlRead(String arg0) {
-					logger.info("SQL READ: "+arg0);
+					 try {
+						Statement statement = Main.getDBManager().getConnection().createStatement();
+						statement.executeUpdate(arg0);
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(null, "There was an error encountered with the sql statement. This synchronization might not be successful. Please contact administrator.", "System Error", JOptionPane.ERROR_MESSAGE);
+						LoggerUtility.getInstance().logStackTrace(e);
+					}
 					
 			}});
 			
-			
-			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		mainWindow = new MainWindow();

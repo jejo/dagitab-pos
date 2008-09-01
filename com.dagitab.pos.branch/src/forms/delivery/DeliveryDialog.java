@@ -5,12 +5,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,15 +23,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
-import forms.AboutDialog;
-import forms.invoice.InvoicePanel;
-import forms.lookup.PaymentDialog;
-
+import util.LoggerUtility;
+import util.TableUtility;
 import bus.DeliveryItemService;
 import bus.DeliveryService;
-import bus.InvoiceItemService;
-
-import util.TableUtility;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -81,7 +74,7 @@ public class DeliveryDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -370,7 +363,7 @@ public class DeliveryDialog extends javax.swing.JDialog {
 			}
 			this.setSize(736, 569);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

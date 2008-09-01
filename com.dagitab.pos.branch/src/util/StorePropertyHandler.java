@@ -7,10 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class StorePropertyHandler {
 
 	static File file;
 	static Properties properties;
+	private static Logger logger = Logger.getLogger(StorePropertyHandler.class);
 	
 	static{
 		file = new File("store.properties");
@@ -21,9 +24,9 @@ public class StorePropertyHandler {
 			properties.load(new FileInputStream(file));
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		
@@ -60,7 +63,7 @@ public class StorePropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "StoreConfiguration");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -69,7 +72,7 @@ public class StorePropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "StoreConfiguration");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -78,7 +81,7 @@ public class StorePropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "StoreConfiguration");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -87,7 +90,7 @@ public class StorePropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "StoreConfiguration");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -96,7 +99,7 @@ public class StorePropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "StoreConfiguration");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -105,7 +108,7 @@ public class StorePropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "StoreConfiguration");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -116,21 +119,20 @@ public class StorePropertyHandler {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(StorePropertyHandler.getStoreNo());
-		System.out.println(StorePropertyHandler.getTinNo());
-		System.out.println(StorePropertyHandler.getTerminalNo());
-		System.out.println(StorePropertyHandler.getBatchNo());
-		System.out.println(StorePropertyHandler.getControlNo());
-		System.out.println(StorePropertyHandler.getTenantNo());
+		logger.info(StorePropertyHandler.getStoreNo());
+		logger.info(StorePropertyHandler.getTinNo());
+		logger.info(StorePropertyHandler.getTerminalNo());
+		logger.info(StorePropertyHandler.getBatchNo());
+		logger.info(StorePropertyHandler.getControlNo());
+		logger.info(StorePropertyHandler.getTenantNo());
 		StorePropertyHandler.setBatchNo("320");
 		StorePropertyHandler.setTinNo("999");
-		System.out.println();
-		System.out.println(StorePropertyHandler.getStoreNo());
-		System.out.println(StorePropertyHandler.getTinNo());
-		System.out.println(StorePropertyHandler.getTerminalNo());
-		System.out.println(StorePropertyHandler.getBatchNo());
-		System.out.println(StorePropertyHandler.getControlNo());
-		System.out.println(StorePropertyHandler.getTenantNo());
+		logger.info(StorePropertyHandler.getStoreNo());
+		logger.info(StorePropertyHandler.getTinNo());
+		logger.info(StorePropertyHandler.getTerminalNo());
+		logger.info(StorePropertyHandler.getBatchNo());
+		logger.info(StorePropertyHandler.getControlNo());
+		logger.info(StorePropertyHandler.getTenantNo());
 	}
 	
 }

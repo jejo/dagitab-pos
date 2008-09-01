@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 import util.StorePropertyHandler;
 import domain.Invoice;
 
@@ -17,7 +18,7 @@ public class InvoiceService {
 				return rs.getString(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 		
@@ -52,7 +53,7 @@ public class InvoiceService {
 			return null;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -98,7 +99,7 @@ public class InvoiceService {
 				return rs.getString(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 		
@@ -110,7 +111,7 @@ public class InvoiceService {
 				return rs.getString(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -126,7 +127,7 @@ public class InvoiceService {
 				invoiceAmount += (amount*rs.getInt("QUANTITY"));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return invoiceAmount;
 	}
@@ -144,7 +145,7 @@ public class InvoiceService {
 				return rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}

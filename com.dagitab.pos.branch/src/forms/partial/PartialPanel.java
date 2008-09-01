@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+import util.LoggerUtility;
 import util.TableUtility;
 import bus.InvoiceService;
 
@@ -132,7 +133,7 @@ public class PartialPanel extends javax.swing.JPanel {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

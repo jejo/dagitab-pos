@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import reports.SalesCerkProduction;
+import util.LoggerUtility;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -80,7 +81,7 @@ public class SalesClerkProductionDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -238,7 +239,7 @@ public class SalesClerkProductionDialog extends javax.swing.JDialog {
 								FillClerkTable(rs);
 							} catch (SQLException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								LoggerUtility.getInstance().logStackTrace(e);
 							}
 						}
 					});
@@ -302,7 +303,7 @@ public class SalesClerkProductionDialog extends javax.swing.JDialog {
 			}
 			this.setSize(575, 594);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

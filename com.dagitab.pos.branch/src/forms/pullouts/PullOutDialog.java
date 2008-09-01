@@ -21,13 +21,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.LoggerUtility;
 import util.TableUtility;
-import bus.DeliveryItemService;
-import bus.DeliveryService;
 import bus.PullOutItemService;
 import bus.PullOutService;
-
-import forms.AboutDialog;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -76,7 +73,7 @@ public class PullOutDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -362,7 +359,7 @@ public class PullOutDialog extends javax.swing.JDialog {
 			}
 			this.setSize(796, 553);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import util.LoggerUtility;
 import util.ServerPropertyHandler;
 import util.StorePropertyHandler;
 
@@ -42,7 +43,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -394,7 +395,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 			this.setSize(682, 356);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

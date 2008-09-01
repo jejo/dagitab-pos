@@ -26,7 +26,7 @@ public class ComplianceFileReader {
 				sb.append(s+"\n");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} 
 		return sb.toString();
 	}

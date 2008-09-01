@@ -9,6 +9,7 @@ import main.Main;
 
 import org.apache.log4j.Logger;
 
+import util.LoggerUtility;
 import domain.InvoiceItem;
 
 public class InvoiceItemService {
@@ -44,7 +45,7 @@ public class InvoiceItemService {
 	//	"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension"
 		//TODO: Check selling price should be the price with discount
 		ResultSet rs = Main.getDBManager().executeQuery("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
-		System.out.println("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
+		logger.info("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
 		return rs;
 		
 	}
@@ -52,7 +53,7 @@ public class InvoiceItemService {
 	public ResultSet fetchDiscountedInvoiceItem(String orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY,  invoice_item.SELL_PRICE  - round((invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01)),2), round(products_lu.SELL_PRICE,2) , invoice_item.DEFERRED, invoice_item.DISC_CODE, round(invoice_item.quantity * invoice_item.SELL_PRICE,2) from invoice_item, products_lu, discount_lu where invoice_item.OR_NO = "+orNo+" and invoice_item.PROD_CODE = products_lu.PROD_CODE and invoice_item.DISC_CODE = discount_lu.DISC_NO");
 		logger.info("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY,  invoice_item.SELL_PRICE  - round((invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01)),2), round(products_lu.SELL_PRICE,2) , invoice_item.DEFERRED, invoice_item.DISC_CODE, round(invoice_item.quantity * invoice_item.SELL_PRICE,2) from invoice_item, products_lu, discount_lu where invoice_item.OR_NO = "+orNo+" and invoice_item.PROD_CODE = products_lu.PROD_CODE and invoice_item.DISC_CODE = discount_lu.DISC_NO");
-//		System.out.println("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
+//		logger.info("Select invoice_item.PROD_CODE, products_lu.name, invoice_item.QUANTITY, products_lu.SELL_PRICE, invoice_item.SELL_PRICE, invoice_item.DEFERRED, invoice_item.DISC_CODE, invoice_item.quantity * invoice_item.SELL_PRICE from invoice_item, products_lu where invoice_item.OR_NO = '"+orNo+"' and invoice_item.PROD_CODE = products_lu.PROD_CODE");
 		return rs;
 	}
 	
@@ -119,7 +120,7 @@ public class InvoiceItemService {
 			return invoiceItemList;
 		} catch (SQLException e) {
 			
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -131,7 +132,7 @@ public class InvoiceItemService {
 				return Double.parseDouble(String.format("%.2f", rs.getDouble(1)));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0.0d;
 	}
@@ -143,7 +144,7 @@ public class InvoiceItemService {
 				return Double.parseDouble(String.format("%.2f", rs.getDouble(1)));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0.0d;
 	}
@@ -160,7 +161,7 @@ public class InvoiceItemService {
 	
 	public InvoiceItem getInvoiceItemObject(Long orNo, String productCode){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode() );
-		System.out.println("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode());
+		logger.info("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode());
 		try {
 			if(rs.next()){
 				return toInvoiceItemObject(rs);
@@ -169,7 +170,7 @@ public class InvoiceItemService {
 				return null;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}

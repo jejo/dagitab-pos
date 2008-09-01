@@ -24,8 +24,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
 
-import main.Main;
-
+import util.LoggerUtility;
 import util.ServerPropertyHandler;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
@@ -90,7 +89,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -301,7 +300,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 			}
 			this.setSize(743, 580);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

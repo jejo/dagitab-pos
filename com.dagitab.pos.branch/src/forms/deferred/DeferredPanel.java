@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+import util.LoggerUtility;
 import util.TableUtility;
 import bus.InvoiceItemService;
 
@@ -129,7 +130,7 @@ public class DeferredPanel extends javax.swing.JPanel {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

@@ -3,17 +3,16 @@ import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,11 +23,10 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import util.LoggerUtility;
 import bus.DeliveryItemService;
 
 import com.cloudgarden.resource.SWTResourceManager;
-
-import forms.AboutDialog;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -58,6 +56,7 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 	private JTextField missingQuantityTextField;
 	private JLabel jLabel6;
 	private JTextField acceptedQuantityTextField;
+	private static Logger logger = Logger.getLogger(DeliveryItemConfirmationDialog.class);
 	
 	private DeliveryItemConfirmationDialog deliveryItemConfirmationDialog;
 	private Long deliveryItemId;
@@ -68,7 +67,7 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -216,11 +215,11 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 					day = calendar.getDay()+"";
 				}
 				this.startDate = calendar.getYear()+"-"+month+"-"+day;
-				System.out.println(startDate);
+				logger.info(startDate);
 				calendar.addSelectionListener (new SelectionAdapter () {
 					@Override
 					public void widgetSelected (SelectionEvent e) {
-//						System.out.println ("calendar date changed");
+//						logger.info ("calendar date changed");
 						String day = "";
 						String month = "";
 						if((calendar.getMonth()+1) <= 9){
@@ -237,7 +236,7 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 							day = calendar.getDay()+"";
 						}
 						startDate = calendar.getYear()+"-"+month+"-"+day;
-						System.out.println(startDate);
+						logger.info(startDate);
 						
 					}
 				});
@@ -246,7 +245,7 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 			}
 			this.setSize(480, 540);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

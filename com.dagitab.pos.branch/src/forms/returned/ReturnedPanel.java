@@ -26,6 +26,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.StringUtility;
 import bus.InvoiceItemService;
@@ -71,6 +75,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	* Auto-generated main method to display this 
 	* JPanel inside a new JFrame.
 	*/
+	
+	private static Logger logger = Logger.getLogger(ReturnedPanel.class);
+	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		frame.getContentPane().add(new ReturnedPanel());
@@ -594,7 +601,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				deletePaymentItemButton.getActionMap().put("deletePaymentItemButton",getDeletePaymentItemAction() );
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -629,7 +636,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	}
 	
 	public void addToReturnItemTable(InvoiceItem invoiceItem, String reason){
-		System.out.println("adding item to return list");
+		logger.info("adding item to return list");
 		DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
 //		"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" 
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
@@ -745,7 +752,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	public void editReturnedItem(InvoiceItem invoiceItem, String reason, String productCode){
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
 		int index = getReturnedItemRow(productCode);
-		System.out.println("Index: "+index);
+		logger.info("Index: "+index);
 		DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
@@ -834,11 +841,11 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 4).toString());
-			System.out.println(cardNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 4).toString());
+			logger.info(cardNo);
 			if(model.getValueAt(i, 1).toString().equals("Credit Card") && paymentName.equals("Credit Card") && model.getValueAt(i, 4).equals(cardNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -850,7 +857,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 1).toString());
 			if(model.getValueAt(i, 1).toString().equals("Cash") && paymentName.equals("Cash")){
 				return true;
 			}
@@ -863,11 +870,11 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 5).toString());
-			System.out.println(checkNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 5).toString());
+			logger.info(checkNo);
 			if(model.getValueAt(i, 1).toString().equals("Bank Check") && paymentName.equals("Bank Check") && model.getValueAt(i, 5).equals(checkNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -879,11 +886,11 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 6).toString());
-			System.out.println(gcNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 6).toString());
+			logger.info(gcNo);
 			if(model.getValueAt(i, 1).toString().equals("Gift Certificate") && paymentName.equals("Gift Certificate") && model.getValueAt(i, 6).equals(gcNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -1123,7 +1130,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(processTransactionAction == null) {
 			processTransactionAction = new AbstractAction("Process Transaction", new ImageIcon(getClass().getClassLoader().getResource("images/process.png"))) {
 				public void actionPerformed(ActionEvent evt) {
-					System.out.println("processing invoice transaction...");
+					logger.info("processing invoice transaction...");
 					int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 					if(confirm == 0){
 						if(hasEnoughPayment()){

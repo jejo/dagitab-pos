@@ -3,10 +3,12 @@ package util;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.DateTime;
 
 public class DateUtility {
 	private static DateUtility dateUtility = new DateUtility();
+	private static Logger logger = Logger.getLogger(DateUtility.class);
 	private DateUtility(){}
 	public static DateUtility getDateUtility(){
 		return dateUtility;
@@ -67,7 +69,7 @@ public class DateUtility {
 	public String[] getYears(){
 		Calendar calendar = Calendar.getInstance();
 		int year = calendar.get(Calendar.YEAR);
-		System.out.println(year-2005);
+		logger.info(year-2005);
 		String[] years = new String[year-2005];
 		int index = 0;
 		for(int i = year; i>2005; i--){

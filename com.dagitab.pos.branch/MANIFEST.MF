@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Class-Path: . swt.jar jdbf.jar poi-2.5.1-final-20040804.jar mysql-connector-java-3.1.13-bin.jar babyland-sync-08122008.jar commons-net-1.4.1.jar commons-logging.jar log4j-1.2.14.jar jakarta-oro-2.0.8.jar commons-lang-2.4.jar 
+Class-Path: . lib/swt.jar lib/jdbf.jar lib/poi-2.5.1-final-20040804.jar lib/mysql-connector-java-3.1.13-bin.jar lib/babyland-sync-08122008.jar lib/commons-net-1.4.1.jar lib/commons-logging.jar lib/log4j-1.2.14.jar lib/jakarta-oro-2.0.8.jar lib/commons-lang-2.4.jar 
 Main-Class: main.Main
 

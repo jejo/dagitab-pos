@@ -4,10 +4,11 @@ import java.awt.Graphics;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-
-import javax.swing.WindowConstants;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
+
+import util.LoggerUtility;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -21,6 +22,7 @@ import javax.swing.JLabel;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@Deprecated
 public class OldReceiptPanel extends javax.swing.JPanel {
 	private JLabel jLabel1;
 	private JLabel jLabel2;
@@ -181,7 +183,7 @@ public class OldReceiptPanel extends javax.swing.JPanel {
 				jLabel13.setBounds(147, 196, 70, 28);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

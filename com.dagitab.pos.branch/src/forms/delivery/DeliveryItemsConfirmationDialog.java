@@ -1,38 +1,20 @@
 package forms.delivery;
-import bus.DeliveryItemService;
-
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-import com.cloudgarden.resource.SWTResourceManager;
-
-import forms.AboutDialog;
-
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.swing.JButton;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import main.DBManager;
 
-
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -42,6 +24,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import util.LoggerUtility;
+import bus.DeliveryItemService;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
+import com.cloudgarden.resource.SWTResourceManager;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -55,6 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@Deprecated
 public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	private JLabel deliveryItemsLabel;
 	private JLabel jLabel2;
@@ -74,6 +64,7 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	private JTextField acceptedQuantityTextField;
 	private String delitemno;
 	private int quantity;
+	private static Logger logger = Logger.getLogger(DeliveryItemsConfirmationDialog.class);
 	
 	private DeliveryItemsConfirmationDialog deliveryItemsConfirmationDialog;
 	private Long deliveryItemId;
@@ -84,7 +75,7 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -233,11 +224,11 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 					day = calendar.getDay()+"";
 				}
 				this.startDate = calendar.getYear()+"-"+month+"-"+day;
-				System.out.println(startDate);
+				logger.info(startDate);
 				calendar.addSelectionListener (new SelectionAdapter () {
 					@Override
 					public void widgetSelected (SelectionEvent e) {
-//						System.out.println ("calendar date changed");
+//						logger.info ("calendar date changed");
 						String day = "";
 						String month = "";
 						if((calendar.getMonth()+1) <= 9){
@@ -254,7 +245,7 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 							day = calendar.getDay()+"";
 						}
 						startDate = calendar.getYear()+"-"+month+"-"+day;
-						System.out.println(startDate);
+						logger.info(startDate);
 						
 					}
 				});
@@ -263,7 +254,7 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 			}
 			this.setSize(701, 377);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	private AbstractAction getDeliveryItemsLabelAbstractAction() {

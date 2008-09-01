@@ -7,16 +7,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class ServerPropertyHandler {
 	static File file;
 	static Properties properties;
+	private static Logger logger = Logger.getLogger(ServerPropertyHandler.class);
 
 	public static void main(String [] args){
-		System.out.println(ServerPropertyHandler.getServerIP());
-		System.out.println(ServerPropertyHandler.getServerPort());
+		logger.info(ServerPropertyHandler.getServerIP());
+		logger.info(ServerPropertyHandler.getServerPort());
 		ServerPropertyHandler.setServerConfig("192.168.10.1", "8889");
-		System.out.println(ServerPropertyHandler.getServerIP());
-		System.out.println(ServerPropertyHandler.getServerPort());
+		logger.info(ServerPropertyHandler.getServerIP());
+		logger.info(ServerPropertyHandler.getServerPort());
 	}
 	
 	static{
@@ -26,16 +29,16 @@ public class ServerPropertyHandler {
 			try{
 				file.createNewFile();
 			}catch(IOException ex){
-				System.out.println(ex.getMessage());
+				logger.info(ex.getMessage());
 			}
 		}
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream(file));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -49,9 +52,9 @@ public class ServerPropertyHandler {
 		try {
 			properties.store(new FileOutputStream(file), "Server Configuration");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 	}

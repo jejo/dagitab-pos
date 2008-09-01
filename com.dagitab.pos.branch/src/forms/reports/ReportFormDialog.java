@@ -38,6 +38,7 @@ import reports.PullOutReport;
 import reports.TotalMerchandise;
 import util.DateUtility;
 import util.FileChooserUtility;
+import util.LoggerUtility;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -63,7 +64,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -239,7 +240,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 			}
 			this.setSize(540, 441);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -375,7 +376,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						}
 						OLEViewer.open2(fileName);
 					} catch (IOException e) {
-						e.printStackTrace();
+						LoggerUtility.getInstance().logStackTrace(e);
 					}
 				}
 			};

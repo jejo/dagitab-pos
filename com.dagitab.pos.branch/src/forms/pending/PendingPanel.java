@@ -3,7 +3,6 @@ package forms.pending;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 
 import javax.swing.ImageIcon;
@@ -16,15 +15,13 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.LoggerUtility;
 import util.TableUtility;
-
-import bus.InvoiceItemService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
 import domain.Transaction;
-
 import forms.MainWindow;
 import forms.invoice.InvoicePanel;
 
@@ -134,7 +131,7 @@ public class PendingPanel extends javax.swing.JPanel {
 //								updateAll();
 //							} catch (SQLException e) {
 //								// TODO Auto-generated catch block
-//								e.printStackTrace();
+//								LoggerUtility.getInstance().logStackTrace(e);
 //							}
 //							
 //							PendingTransactionData ptd = pausedData.get(pauseSelectedIndex);
@@ -179,7 +176,7 @@ public class PendingPanel extends javax.swing.JPanel {
 				jLabel38.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/transactions.PNG")));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

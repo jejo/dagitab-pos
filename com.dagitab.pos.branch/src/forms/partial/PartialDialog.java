@@ -25,9 +25,11 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import main.Main;
+
 import org.apache.log4j.Logger;
 
-import main.Main;
+import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.TableUtility;
 import bus.InvoiceItemService;
@@ -66,7 +68,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -153,7 +155,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 				processButton.setPreferredSize(new java.awt.Dimension(126, 28));
 				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						System.out.println("processing partial invoice transaction...");
+						logger.info("processing partial invoice transaction...");
 						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 						if(confirm == 0){
 							if(hasEnoughPayment()){
@@ -427,7 +429,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			this.setSize(806, 573);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	private void refreshItemTable(){
@@ -523,7 +525,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 1).toString());
 			if(model.getValueAt(i, 1).toString().equals("Cash") && paymentName.equals("Cash")){
 				return true;
 			}
@@ -535,11 +537,11 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 4).toString());
-			System.out.println(cardNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 4).toString());
+			logger.info(cardNo);
 			if(model.getValueAt(i, 1).toString().equals("Credit Card") && paymentName.equals("Credit Card") && model.getValueAt(i, 4).equals(cardNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -550,11 +552,11 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 5).toString());
-			System.out.println(checkNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 5).toString());
+			logger.info(checkNo);
 			if(model.getValueAt(i, 1).toString().equals("Bank Check") && paymentName.equals("Bank Check") && model.getValueAt(i, 5).equals(checkNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -565,11 +567,11 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 6).toString());
-			System.out.println(gcNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 6).toString());
+			logger.info(gcNo);
 			if(model.getValueAt(i, 1).toString().equals("Gift Certificate") && paymentName.equals("Gift Certificate") && model.getValueAt(i, 6).equals(gcNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class StoreService {
 	
@@ -15,7 +16,7 @@ public class StoreService {
 				return rs.getString("NAME");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -27,7 +28,7 @@ public class StoreService {
 				return rs.getString("ADDRESS");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -41,7 +42,7 @@ public class StoreService {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		String[] stores = new String[storeList.size()];
 		for(int i = 0; i<storeList.size(); i++){

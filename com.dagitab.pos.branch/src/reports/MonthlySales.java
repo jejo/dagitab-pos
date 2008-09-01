@@ -7,10 +7,9 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-
 import main.DBManager;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -20,11 +19,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import util.LoggerUtility;
+
 
 public class MonthlySales {
 
 	private static int topMarker = 7;
 	private static HSSFWorkbook wb;
+	private static Logger logger = Logger.getLogger(MonthlySales.class);
 	
 	public static void main(String[] args){
 //		generate("")
@@ -98,7 +100,7 @@ public static boolean generate(String fileName, DBManager db, String storeCode, 
 			
 			int rowCounter=topMarker;
 			ResultSet rs = db.executeQuery("SELECT i.or_no,i.store_code,i.cust_no,i.encoder_code FROM invoice i WHERE MONTH(i.trans_dt) =\'"+month+"\' AND YEAR(i.trans_dt)=\'"+year + "\'"+branchClause);
-			System.out.println("SELECT i.or_no,i.store_code,i.cust_no,i.encoder_code FROM invoice i WHERE MONTH(i.trans_dt) =\'"+month+"\' AND YEAR(i.trans_dt)=\'"+year + "\'"+branchClause);
+			logger.info("SELECT i.or_no,i.store_code,i.cust_no,i.encoder_code FROM invoice i WHERE MONTH(i.trans_dt) =\'"+month+"\' AND YEAR(i.trans_dt)=\'"+year + "\'"+branchClause);
 			double cash,check,card,gc,others,cashTotal = 0,checkTotal = 0,cardTotal = 0,gcTotal = 0,othersTotal=0,totalTotal=0;
 			while(rs.next()) {
 			
@@ -217,11 +219,11 @@ public static boolean generate(String fileName, DBManager db, String storeCode, 
 			return true;
 		} catch (FileNotFoundException e) {
 //			MessageDialogs.openErrorDialog(Display.getDefault().getActiveShell(),"File is in use.");
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (Exception e) {
 //			MessageDialogs.openErrorDialog(Display.getDefault().getActiveShell(),"System Error.");
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 

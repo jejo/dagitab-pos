@@ -86,7 +86,7 @@ public class OLEViewer extends Dialog implements  SelectionListener{
 
 	public void widgetSelected(SelectionEvent e) {
 //		if(e.widget==fileItem1)
-//			System.out.println(clientSite.doVerb(OLE.OLEIVERB_UIACTIVATE));
+//			logger.info(clientSite.doVerb(OLE.OLEIVERB_UIACTIVATE));
 	}
 
 

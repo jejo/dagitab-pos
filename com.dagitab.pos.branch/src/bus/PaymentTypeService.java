@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class PaymentTypeService {
 	public static String getPaymentName(Integer paymentCode){
@@ -13,7 +14,7 @@ public class PaymentTypeService {
 				return rs.getString("NAME");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -25,7 +26,7 @@ public class PaymentTypeService {
 				return rs.getInt("PT_CODE");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}

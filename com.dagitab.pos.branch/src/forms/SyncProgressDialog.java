@@ -18,6 +18,8 @@ import main.Main;
 
 import org.apache.log4j.Logger;
 
+import util.LoggerUtility;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -41,7 +43,7 @@ public class SyncProgressDialog extends javax.swing.JDialog implements PropertyC
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -94,7 +96,7 @@ public class SyncProgressDialog extends javax.swing.JDialog implements PropertyC
 			}
 			this.setSize(544, 94);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
