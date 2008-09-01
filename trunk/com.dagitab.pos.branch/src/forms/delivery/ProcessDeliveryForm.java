@@ -1,9 +1,4 @@
 package forms.delivery;
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-import forms.AboutDialog;
-
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -11,9 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.swing.JButton;
-
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +18,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.DBManager;
+import util.LoggerUtility;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -55,7 +53,7 @@ public class ProcessDeliveryForm extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -131,7 +129,7 @@ public class ProcessDeliveryForm extends javax.swing.JDialog {
 //							dialog.setVisible(true);
 						}
 						catch(Exception ex){
-						//	ex.printStackTrace();
+						//	ex.LoggerUtility.getInstance().logStackTrace(e);;
 						}
 					}
 				});
@@ -189,7 +187,7 @@ public class ProcessDeliveryForm extends javax.swing.JDialog {
 			}
 			this.setSize(617, 447);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -208,7 +206,7 @@ public class ProcessDeliveryForm extends javax.swing.JDialog {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		//fill to String[][]

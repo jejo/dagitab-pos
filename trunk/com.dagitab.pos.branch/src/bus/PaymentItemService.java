@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import domain.PaymentItem;
 
 public class PaymentItemService {
 	
 	private static PaymentItemService paymentItemService = new PaymentItemService();
+	private static Logger logger = Logger.getLogger(PaymentItemService.class);
 	
 	private PaymentItemService(){}
 	
@@ -26,7 +31,7 @@ public class PaymentItemService {
 				return rs.getString("NAME");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}
@@ -35,7 +40,7 @@ public class PaymentItemService {
 	public PaymentItem getPaymentItemById(Integer id){
 		PaymentItem paymentItem = new PaymentItem();
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
-		System.out.println("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
+		logger.info("SELECT * FROM payment_item WHERE or_no = '"+id+"'");
 		try {
 			if(rs.next()){
 				paymentItem.setOrNo(rs.getLong("OR_NO"));
@@ -48,7 +53,7 @@ public class PaymentItemService {
 				paymentItem.setStoreNo(rs.getInt("STORE_CODE"));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return paymentItem;
 	}
@@ -76,14 +81,14 @@ public class PaymentItemService {
 				return rs.getDouble(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0.0d;
 	}
 	
 	public ResultSet findPaymentItems(Long orNo){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
-		System.out.println("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
+		logger.info("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		return rs;
 	}
 	
@@ -111,7 +116,7 @@ public class PaymentItemService {
 				paymentItemList.add(paymentItem);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		return paymentItemList;
@@ -119,25 +124,25 @@ public class PaymentItemService {
 	
 	public Integer checkPaymentItemByType(Integer orNo, String paymentCode, String paymentType, String amount, String ccType, String ccNum, String bcNum, String gcNum ){
 		if(paymentType.equals("Cash")){
-			System.out.println("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode);
+			logger.info("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode);
 			ResultSet rs = Main.getDBManager().executeQuery("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode);
 			try {
 				if(rs.next()){
 					return rs.getInt(1);
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 		if(paymentType.equals("Bank Check")){
-			System.out.println("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + ", PT_Code = "+paymentCode+" and Check_No="+bcNum);
+			logger.info("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + ", PT_Code = "+paymentCode+" and Check_No="+bcNum);
 			ResultSet rs = Main.getDBManager().executeQuery("SELECT Count(*) FROM payment_item WHERE OR_NO = "+orNo + " and PT_Code = "+paymentCode+" and Check_No="+bcNum);
 			try {
 				if(rs.next()){
 					return rs.getInt(1);
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 		if(paymentType.equals("Credit Card")){
@@ -147,7 +152,7 @@ public class PaymentItemService {
 					return rs.getInt(1);
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 		if(paymentType.equals("Gift Check")){
@@ -157,7 +162,7 @@ public class PaymentItemService {
 					return rs.getInt(1);
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 		else{

@@ -18,6 +18,7 @@ import main.Main;
 
 import org.apache.log4j.Logger;
 
+import util.LoggerUtility;
 import util.Validator;
 import bus.ClerkService;
 import bus.StoreService;
@@ -51,7 +52,7 @@ public class LoginDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -141,7 +142,7 @@ public class LoginDialog extends javax.swing.JDialog {
 			}
 			this.setSize(429, 311);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

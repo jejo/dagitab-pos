@@ -20,6 +20,9 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import util.TableUtility;
 import util.Validator;
 import bus.InvoiceItemService;
@@ -64,7 +67,7 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 	private Invoice invoice;
 	private Object invoker;
 	private String action;
-	
+	private static Logger logger = Logger.getLogger(ReturnedItemsDialog.class);
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -242,7 +245,7 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 			}
 			this.setSize(645, 517);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -305,7 +308,7 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 								invoiceItem.setSellPrice(Double.parseDouble(itemTable.getValueAt(itemTable.getSelectedRow(), 3).toString()));
 								invoiceItem.setIsDeferred(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString()));
 								invoiceItem.setDiscountCode(Integer.parseInt(itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString()));
-								System.out.println("Reason: "+reason+ " Product Code: "+ action);
+								logger.info("Reason: "+reason+ " Product Code: "+ action);
 								returnedPanel.editReturnedItem(invoiceItem, reason, action);
 							}
 							else{

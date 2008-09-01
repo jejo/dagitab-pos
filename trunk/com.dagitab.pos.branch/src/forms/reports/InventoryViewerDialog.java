@@ -25,16 +25,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import main.DBManager;
 import main.Main;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import util.TableUtility;
 import bus.ProductService;
 import bus.StoreService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
-
-import forms.MainWindow;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -60,12 +61,9 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 	private JButton jButton2;
 	private JScrollPane productScrollPane;
 	private JTextField productTextField;
-	@SuppressWarnings("unused")
-	private MainWindow form;
-	private DBManager db;
-	@SuppressWarnings("unused")
-	private String storeCode;
 	private Vector<Vector<String>> inventoryTable;
+	private static Logger logger = Logger.getLogger(InventoryViewerDialog.class);
+	
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -122,15 +120,14 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 							  	int returnVal = chooser.showSaveDialog(InventoryViewerDialog.this);
 //							    int returnVal = chooser.showOpenDialog(InventoryViewer.this);
 							    if(returnVal == JFileChooser.APPROVE_OPTION) {
-							       System.out.println("You chose to open this file: " +
+							       logger.info("You chose to open this file: " +
 							            
 							            chooser.getSelectedFile().getAbsolutePath()+".xls");
 							       
 							       
 							       
 							       boolean success = 
-							    	   reports.CurrentInventory.generate(chooser.getSelectedFile().getAbsolutePath()+".xls", 
-							    			   								inventoryTable,db,storeCode);
+							    	   reports.CurrentInventory.generate(chooser.getSelectedFile().getAbsolutePath()+".xls",inventoryTable,Main.getDBManager(),Main.getStoreCode());
 							       
 							       if(success){
 							    	   JOptionPane.showMessageDialog(null, 
@@ -213,7 +210,7 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 			}
 			this.setSize(967, 475);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

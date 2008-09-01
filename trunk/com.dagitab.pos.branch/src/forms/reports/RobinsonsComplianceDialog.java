@@ -29,8 +29,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
 import util.ComplianceFileReader;
 import util.DateUtility;
+import util.LoggerUtility;
 import util.TableUtility;
 import bus.RobinsonsComplianceService;
 
@@ -83,13 +87,14 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 	private JScrollPane jScrollPane1;
 	private JComboBox filterYearComboBox;
 	private JLabel filterLabel;
+	private static Logger logger = Logger.getLogger(RobinsonsComplianceDialog.class);
 
 	{
 		//Set Look & Feel
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -315,7 +320,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 			}
 			this.setSize(896, 653);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -397,14 +402,14 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					calendar.set(Calendar.YEAR, Integer.parseInt(sendYearComboBox.getSelectedItem().toString()));
 					calendar.set(Calendar.MONTH, sendMonthComboBox.getSelectedIndex());
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(sendDayComboBox.getSelectedItem().toString()));
-					System.out.println("*****generating robinsons compliance report for date: "+calendar.getTime());
+					logger.info("*****generating robinsons compliance report for date: "+calendar.getTime());
 					try {
 						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(calendar.getTime());
 						JOptionPane.showMessageDialog(null, "Successfully generated compliance report.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 						init();
 					} catch (FileNotFoundException e) {
 						JOptionPane.showMessageDialog(null, "Compliance report was not successfully generated. Please try again.", "Prompt", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
+						LoggerUtility.getInstance().logStackTrace(e);
 					}
 				}
 			};
@@ -422,7 +427,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 
 		//Default view last 7 days unsent reports
 		List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(7);
-		System.out.println("date list: "+listDates.size());
+		logger.info("date list: "+listDates.size());
 		String[][] data = new String[listDates.size()][1];
 		for(int i = 0; i<listDates.size(); i++){
 			Calendar calendar = Calendar.getInstance();
@@ -432,7 +437,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 			int day = calendar.get(Calendar.DAY_OF_MONTH);
 			
 			data[i][0] = year+"-"+month+"-"+day;
-			System.out.println("ALEX: "+year+"-"+month+"-"+day);
+			logger.info("ALEX: "+year+"-"+month+"-"+day);
 		}
 		DefaultTableModel model = new DefaultTableModel(data,new String[]{"Dates"});
 		unsentItemTable.setModel(model);
@@ -475,7 +480,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 				query += dayClause;
 				whereCounter++;
 			}
-			System.out.println(query+orderClause);
+			logger.info(query+orderClause);
 			ResultSet rs = Main.getDBManager().executeQuery(query+orderClause);
 			TableUtility.fillTable(sentItemTable, rs, new String[]{"Date","File Name"});
 		}
@@ -492,13 +497,13 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					int row = sentItemTable.getSelectedRow();
 					String dateString = sentItemTable.getValueAt(row, 0).toString();
-					System.out.println(dateString);
+					logger.info(dateString);
 					String[] dateSplit = dateString.split("-");
 					Calendar calendar = Calendar.getInstance();
 					calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 					calendar.set(Calendar.MONTH, Integer.parseInt(dateSplit[1])-1);
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
-					System.out.println("generating robinsons compliace report for date: "+calendar.getTime());
+					logger.info("generating robinsons compliace report for date: "+calendar.getTime());
 					try {
 						
 						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(calendar.getTime());
@@ -507,7 +512,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 						init();
 					} catch (FileNotFoundException e) {
 						JOptionPane.showMessageDialog(null, "Compliance report was not successfully generated. Please try again.", "Prompt", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
+						LoggerUtility.getInstance().logStackTrace(e);
 					}
 					
 				}
@@ -555,7 +560,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					String viewDay = viewLastComboBox.getSelectedItem().toString();
 					List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(Integer.parseInt(viewDay));
-					System.out.println("date list: "+listDates.size());
+					logger.info("date list: "+listDates.size());
 					String[][] data = new String[listDates.size()][1];
 					for(int i = 0; i<listDates.size(); i++){
 						Calendar calendar = Calendar.getInstance();
@@ -565,7 +570,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 						int day = calendar.get(Calendar.DAY_OF_MONTH);
 						
 						data[i][0] = year+"-"+month+"-"+day;
-						System.out.println("ALEX: "+year+"-"+month+"-"+day);
+						logger.info("ALEX: "+year+"-"+month+"-"+day);
 					}
 					DefaultTableModel model = new DefaultTableModel(data,new String[]{"Dates"});
 					unsentItemTable.setModel(model);

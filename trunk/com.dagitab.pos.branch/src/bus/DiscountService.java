@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class DiscountService {
 	public static String[] getAllDiscounts(){
@@ -14,7 +15,7 @@ public class DiscountService {
 				size = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		String[] discounts = new String[size];
 		rs = Main.getDBManager().executeQuery("SELECT * FROM discount_lu");
@@ -24,7 +25,7 @@ public class DiscountService {
 				discounts[i++] = rs.getString("DISC_NO")+"-"+rs.getString("NAME");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return discounts;
 	}
@@ -35,7 +36,7 @@ public class DiscountService {
 				return rs.getDouble("DISC_RATE")*.01;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0.0d;
 	}

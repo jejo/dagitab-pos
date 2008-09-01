@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.JOptionPane;
-
 import main.Main;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -15,6 +13,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import util.LoggerUtility;
 
 public class DailySalesReport {
 	
@@ -161,13 +161,13 @@ public class DailySalesReport {
 			
 		} catch (FileNotFoundException e) {
 			
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 

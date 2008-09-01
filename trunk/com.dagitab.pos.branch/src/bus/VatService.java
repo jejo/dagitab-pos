@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class VatService {
 	public static double getVatRate(){
@@ -15,7 +16,7 @@ public class VatService {
 			}
 		} catch (SQLException e) {
 		
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return 0;
 	}
@@ -28,7 +29,7 @@ public class VatService {
 			}
 		}catch (SQLException e) {
 		
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
 	}

@@ -12,11 +12,15 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
+import main.DBManager;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
 import com.svcon.jdbf.DBFWriter;
 import com.svcon.jdbf.JDBFException;
 import com.svcon.jdbf.JDBField;
-
-import main.DBManager;
 
 public class AyalaCompliance {
 	DBManager db;
@@ -24,6 +28,7 @@ public class AyalaCompliance {
 	String tenantCode;
 	String dirName = "C:\\Ayala\\";
 	String fileName; 
+	private static Logger logger = Logger.getLogger(AyalaCompliance.class);
 	
 	public AyalaCompliance(DBManager db, String storeCode){
 		this.db = db;
@@ -33,7 +38,7 @@ public class AyalaCompliance {
 			tenantCode = br.readLine().trim();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -45,11 +50,11 @@ public class AyalaCompliance {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		boolean created = new File(dirName).mkdir();
-		System.out.println("Directory created: "+ created);
+		logger.info("Directory created: "+ created);
 	}
 	
 	public void createDBFFile(Date date){
@@ -75,7 +80,7 @@ public class AyalaCompliance {
 				f.createNewFile();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 	}
@@ -125,15 +130,15 @@ public class AyalaCompliance {
 				day = "0"+day;
 			}
 			ResultSet rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			try {
 				while(rs.next()){
 					dataRecord[1] = rs.getDouble(1);
-					System.out.println(rs.getString(1));
+					logger.info(rs.getString(1));
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		
 			cal = new GregorianCalendar();
@@ -151,15 +156,15 @@ public class AyalaCompliance {
 			}
 		
 			rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			try {
 				while(rs.next()){
 					dataRecord[2] = rs.getDouble(1);
-					System.out.println(rs.getString(1));
+					logger.info(rs.getString(1));
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			rs = db.executeQuery("SELECT VAT FROM global");
@@ -171,12 +176,12 @@ public class AyalaCompliance {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			
 			rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			
 			double VAT = 0;
 			double dlysale = 0;
@@ -191,7 +196,7 @@ public class AyalaCompliance {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			rs = db.executeQuery("SELECT i.SELL_PRICE, d.DISC_RATE, i.QUANTITY FROM invoice_item i, discount_lu d, invoice o " +
@@ -213,7 +218,7 @@ public class AyalaCompliance {
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			dataRecord[4] = totdisc;
@@ -251,13 +256,13 @@ public class AyalaCompliance {
 					
 					orno+=num;
 					
-					System.out.println(orno);
+					logger.info(orno);
 					
 					dataRecord[11] = Integer.parseInt(orno); 
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 				
 			rs = db.executeQuery("SELECT i.OR_NO " +
@@ -282,13 +287,13 @@ public class AyalaCompliance {
 					
 					orno+=num;
 					
-					System.out.println(orno);
+					logger.info(orno);
 					
 					dataRecord[12] = Integer.parseInt(orno); 
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			
@@ -305,7 +310,7 @@ public class AyalaCompliance {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			dataRecord[14] = 0;
@@ -325,13 +330,13 @@ public class AyalaCompliance {
 		} catch (JDBFException e) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null,"You have not exported a compliance report","Error",JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 
 	}
 	
 	public static void main(String[] args){
 //		Calendar c = new GregorianCalendar();
-//		System.out.println(c.FEBRUARY);
+//		logger.info(c.FEBRUARY);
 	}
 }

@@ -16,6 +16,10 @@ import javax.swing.JOptionPane;
 
 import main.DBManager;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
 public class FestivalHourlyReport {
 
 	/**
@@ -29,6 +33,7 @@ public class FestivalHourlyReport {
 	String dirName;
 	String fileName; 
 	String batchDownloadNum;
+	private static Logger logger = Logger.getLogger(FestivalHourlyReport.class);
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -55,7 +60,7 @@ public class FestivalHourlyReport {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		
@@ -80,7 +85,7 @@ public class FestivalHourlyReport {
 		}
 		
 		fileName = dirName+"\\"+"H"+tenantCode.substring(0,4)+termNum+batchDownloadNum+"."+month+day;
-		System.out.println("File Name: "+fileName);
+		logger.info("File Name: "+fileName);
 	}
 	
 	public void createFile(){
@@ -90,7 +95,7 @@ public class FestivalHourlyReport {
 				f.createNewFile();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 	}
@@ -117,33 +122,33 @@ public class FestivalHourlyReport {
 				
 				String startHour = "";
 				
-				System.out.println("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT ASC LIMIT 1");
+				logger.info("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT ASC LIMIT 1");
 				ResultSet rs = db.executeQuery("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT ASC LIMIT 1");
 				
 				try {
 					if(rs.next()){
-//						System.out.println(rs.getString(1));
+//						logger.info(rs.getString(1));
 						startHour = rs.getString(1);
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 				
 				
 				String endHour = "";
 				
-				System.out.println("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT DESC LIMIT 1");
+				logger.info("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT DESC LIMIT 1");
 				rs = db.executeQuery("SELECT HOUR(o.TRANS_DT) FROM invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"' ORDER by TRANS_DT DESC LIMIT 1");
 				
 				try {
 					if(rs.next()){
-//						System.out.println(rs.getString(1));
+//						logger.info(rs.getString(1));
 						endHour = rs.getString(1);
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 				
 				
@@ -168,10 +173,10 @@ public class FestivalHourlyReport {
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
-				System.out.println("start hour "+startHour);
-				System.out.println("end hour "+endHour);
+				logger.info("start hour "+startHour);
+				logger.info("end hour "+endHour);
 				
 				if(startHour.length()== 0){
 					startHour = "0";
@@ -203,11 +208,11 @@ public class FestivalHourlyReport {
 					try {
 						while(rs.next()){
 							sales += (rs.getDouble(2)*rs.getDouble(3));
-							System.out.println(rs.getDouble(2)+" * "+rs.getDouble(3));
+							logger.info(rs.getDouble(2)+" * "+rs.getDouble(3));
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						LoggerUtility.getInstance().logStackTrace(e);
 					}
 					
 					double netofVatSales  = sales/subtractor;
@@ -233,13 +238,13 @@ public class FestivalHourlyReport {
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						LoggerUtility.getInstance().logStackTrace(e);
 					}
 					
 				}
 				
 				rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-				System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+				logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 				
 				double dlysale = 0;
 				
@@ -258,7 +263,7 @@ public class FestivalHourlyReport {
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 				
 				
@@ -279,7 +284,7 @@ public class FestivalHourlyReport {
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LoggerUtility.getInstance().logStackTrace(e);
 				}
 				
 				
@@ -287,7 +292,7 @@ public class FestivalHourlyReport {
 				JOptionPane.showMessageDialog(null,"You have exported a compliance report","Success",JOptionPane.INFORMATION_MESSAGE);
 			}
 			catch(IOException e){
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 	}
 

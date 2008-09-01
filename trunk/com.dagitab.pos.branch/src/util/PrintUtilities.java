@@ -1,8 +1,16 @@
 package util;
 
-import java.awt.*;
-import javax.swing.*;
-import java.awt.print.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+
+import javax.swing.RepaintManager;
+
+import org.apache.log4j.Logger;
 
 /** A simple utility class that lets you very simply print
  *  an arbitrary component. Just pass the component to the
@@ -25,6 +33,7 @@ import java.awt.print.*;
 
 public class PrintUtilities implements Printable {
   private Component componentToBePrinted;
+  private static Logger logger = Logger.getLogger(PrintUtilities.class);
 
   public static void printComponent(Component c) {
     new PrintUtilities(c).print();
@@ -41,7 +50,7 @@ public class PrintUtilities implements Printable {
 		try {
 		    printJob.print();
 		  } catch(PrinterException pe) {
-		    System.out.println("Error printing: " + pe);
+		    logger.info("Error printing: " + pe);
 		  }
 	}
   }

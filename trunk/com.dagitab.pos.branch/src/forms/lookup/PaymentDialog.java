@@ -15,6 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import bus.PaymentItemService;
 import bus.PaymentTypeService;
 import domain.PaymentItem;
@@ -56,6 +59,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	private static PaymentDialog paymentDialog;
 	private static Object invoker;
 	private static String actionProdCode;
+	private static Logger logger = Logger.getLogger(PaymentDialog.class);
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -201,7 +205,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 							
 							if(Double.parseDouble(txtAmount.getText())>0){
 								if(invoker instanceof InvoicePanel){
-									System.out.println("invoking instance of invoice panel from payment dialog");
+									logger.info("invoking instance of invoice panel from payment dialog");
 									InvoicePanel invoicePanel = (InvoicePanel)invoker;
 								
 									if(actionProdCode.equals("add")){
@@ -231,7 +235,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 									}
 								}
 								else if(invoker instanceof PartialDialog){
-									System.out.println("invoking instance of partial dialog from payment dialog");
+									logger.info("invoking instance of partial dialog from payment dialog");
 									PartialDialog partialDialog = (PartialDialog)invoker;
 									if(actionProdCode.equals("add")){
 										if(!partialDialog.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
@@ -260,7 +264,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 									}
 								}
 								else if(invoker instanceof ReturnedPanel){
-									System.out.println("invoking instance of returned panel from payment dialog");
+									logger.info("invoking instance of returned panel from payment dialog");
 									ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
 									if(actionProdCode.equals("add")){
 										if(!returnedPanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
@@ -325,7 +329,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 			}
 			this.setSize(393, 440);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

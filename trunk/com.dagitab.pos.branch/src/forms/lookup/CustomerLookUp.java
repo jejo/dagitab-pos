@@ -17,13 +17,13 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import util.LoggerUtility;
 import util.TableUtility;
 import bus.CustomerService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
-import forms.AboutDialog;
 import forms.invoice.InvoicePanel;
 
 /**
@@ -163,7 +163,7 @@ public class CustomerLookUp extends javax.swing.JDialog {
 			TableUtility.fillTable(customerLookUpTable, rs, new String[]{"Customer No", "First Name","Last Name","Nick Name","Birthdate"});
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

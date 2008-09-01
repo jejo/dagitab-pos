@@ -16,8 +16,10 @@ import main.DBManager;
 import main.Main;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import util.FtpUtility;
+import util.LoggerUtility;
 import util.StorePropertyHandler;
 
 public class RobinsonsComplianceService {
@@ -30,6 +32,7 @@ public class RobinsonsComplianceService {
 	private String terminalNumber;
 	private static final int LINE_LENGTH = 16;
 	private static final String COMPLIANCE_DIRECTORY = "compliance\\";
+	private static Logger logger = Logger.getLogger(RobinsonsComplianceService.class);
 
 	// unnecessarily using IODH as much as possible to familiarize myself
 	// lazy load a singleton!!
@@ -91,7 +94,7 @@ public class RobinsonsComplianceService {
 				+ "','%Y-%m-%d'),"
 				+ (getMaxEodCounter() + 1) + ");";
 
-		System.out.println("insertComplianceReportLogRecordQuery = " + query);
+		logger.info("insertComplianceReportLogRecordQuery = " + query);
 		databaseManager.executeUpdate(query);
 	}
 
@@ -105,13 +108,13 @@ public class RobinsonsComplianceService {
 			props.load(fis);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 
-		System.out.println(props);
+		logger.info(props);
 
 		String hostAddress = props.getProperty("hostAddress");
 		String username = props.getProperty("username");
@@ -308,7 +311,7 @@ public class RobinsonsComplianceService {
 		// String fileName =
 		// BabylandFileWriter.getInstance().generateFileName(calendar
 		// .getTime());
-		// System.out.println(fileName);
+		// logger.info(fileName);
 
 		try {
 //			RobinsonsCompliance.getInstance()
@@ -316,7 +319,7 @@ public class RobinsonsComplianceService {
 			RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(new Date());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 
 	}
@@ -336,7 +339,7 @@ public class RobinsonsComplianceService {
 				+ " where " + "MONTH (report_date) = '" + month
 				+ "' && YEAR(report_date) = '" + year
 				+ "' && DAY(report_date) = '" + day + "'";
-		System.out.println("getSendCount query=" + query);
+		logger.info("getSendCount query=" + query);
 		ResultSet rs = databaseManager.executeQuery(query);
 
 		try {
@@ -345,7 +348,7 @@ public class RobinsonsComplianceService {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 
 		return -1;
@@ -355,7 +358,7 @@ public class RobinsonsComplianceService {
 		// TODO Auto-generated method stub
 
 		String query = "select max(EOD_COUNTER) from robinsons_compliance";
-		System.out.println("getMaxEodCounter query=" + query);
+		logger.info("getMaxEodCounter query=" + query);
 		ResultSet rs = databaseManager.executeQuery(query);
 
 		try {
@@ -365,7 +368,7 @@ public class RobinsonsComplianceService {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 
 		return -1;
@@ -387,9 +390,9 @@ public class RobinsonsComplianceService {
 																// based!!
 			int day = getComponent(date, Calendar.DAY_OF_MONTH);
 			
-			System.out.println("ALEX: i="+ i + " DATE = " + year +month+day);
+			logger.info("ALEX: i="+ i + " DATE = " + year +month+day);
 			if ( getSendCount(month, day, year) < 1) {
-				System.out.println("ALEX: i="+ i + " ADDDATE = " + date);
+				logger.info("ALEX: i="+ i + " ADDDATE = " + date);
 				unsentList.add(date);
 			}
 		}

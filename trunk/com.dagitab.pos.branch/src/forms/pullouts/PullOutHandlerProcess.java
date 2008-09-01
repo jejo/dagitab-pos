@@ -1,11 +1,4 @@
 package forms.pullouts;
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-
-import connection.DataUtil;
-import connection.LogHandler;
-import forms.AboutDialog;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -27,6 +20,16 @@ import javax.swing.table.TableModel;
 
 import main.DBManager;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
+
+import connection.DataUtil;
+import connection.LogHandler;
+
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -47,7 +50,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -61,6 +64,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 	private LogHandler cachewriter;
 	private DataUtil datautil;
 	private PullOutHandler form;
+	private static Logger logger = Logger.getLogger(PullOutHandlerProcess.class);
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -155,7 +159,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 									if(totalRows == totalProcessed){
 										int result = db.executeUpdate("UPDATE pull_outs SET STATUS = \"complete\" WHERE PULL_OUT_NO = "+pulloutcode);
 										if(result > 0){
-											System.out.println("updated pull_out status to finished");
+											logger.info("updated pull_out status to finished");
 											
 											String[] ss = new String[1];
 											ss[0] = "PULL_OUT_NO";
@@ -173,7 +177,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 									
 								} catch (SQLException e) {
 									// TODO Auto-generated catch block
-									e.printStackTrace();
+									LoggerUtility.getInstance().logStackTrace(e);
 								}
 								
 								
@@ -186,7 +190,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 								form.refreshCompletedList();
 							} catch (SQLException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								LoggerUtility.getInstance().logStackTrace(e);
 							}
 						
 							
@@ -255,7 +259,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 			}
 			this.setSize(575, 314);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
@@ -282,7 +286,7 @@ public class PullOutHandlerProcess extends javax.swing.JDialog {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		//feed to String[][]

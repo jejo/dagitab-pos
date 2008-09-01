@@ -25,7 +25,7 @@ public class TableUtility {
 			 aModel.addRow(objects);
 		}
 		}catch(Exception ex){
-			ex.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(ex);
 		}
 		table.setModel(aModel);
 	}
@@ -39,7 +39,7 @@ public class TableUtility {
 				aModel.addRow(row);
 			}
 		}catch(Exception ex){
-			ex.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(ex);
 		}
 		table.setModel(aModel);
 	}

@@ -22,6 +22,9 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import util.TableUtility;
 import util.Validator;
 import bus.DiscountService;
@@ -62,6 +65,7 @@ public class ProductDialog extends javax.swing.JDialog {
 	private static Object invoker;
 	private static ProductDialog productDialog;
 	private static String action;
+	private static Logger logger = Logger.getLogger(ProductDialog.class);
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -224,7 +228,7 @@ public class ProductDialog extends javax.swing.JDialog {
 								
 								if(Integer.parseInt(quantityTxt.getText())>0){
 									if(invoker instanceof InvoicePanel){
-										System.out.println("invoking...");
+										logger.info("invoking...");
 										InvoicePanel invoicePanel = (InvoicePanel)invoker;
 										if(action.equals("add")){
 											if(invoicePanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
@@ -306,7 +310,7 @@ public class ProductDialog extends javax.swing.JDialog {
 			}
 			this.setSize(567, 517);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 

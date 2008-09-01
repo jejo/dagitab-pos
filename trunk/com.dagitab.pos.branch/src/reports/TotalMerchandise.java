@@ -2,22 +2,23 @@ package reports;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import main.DBManager;
+
 import main.Main;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import util.LoggerUtility;
+
 public class TotalMerchandise {
 	private static int topMarker = 7;
 	private static HSSFWorkbook wb;
+	private static Logger logger = Logger.getLogger(TotalMerchandise.class);
 	
 	public static boolean generate(String fileName, String startDate, String endDate) {
 		HSSFCell cell;
@@ -70,10 +71,10 @@ public class TotalMerchandise {
 			return true;
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 
@@ -126,7 +127,7 @@ public class TotalMerchandise {
 				cell.setCellValue(dd[0]);
 				
 				String query2 = "SELECT SUM(b.AMT) FROM invoice a, payment_item b WHERE a.OR_NO = b.OR_NO && DATE(a.TRANS_DT) = \""+dd[0]+"\""+branchClause;
-				System.out.println(query2);
+				logger.info(query2);
 				ResultSet rs2 = Main.getDBManager().executeQuery(query2);
 				if(rs2.next()){
 					cell = HSSFUtil.createAmountCell(wb,row,(short)4,false,true);
@@ -140,10 +141,10 @@ public class TotalMerchandise {
 			return true;
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 

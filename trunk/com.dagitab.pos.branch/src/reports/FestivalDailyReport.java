@@ -16,6 +16,10 @@ import javax.swing.JOptionPane;
 
 import main.DBManager;
 
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
+
 public class FestivalDailyReport {
 
 	/**
@@ -29,6 +33,7 @@ public class FestivalDailyReport {
 	String dirName;
 	String fileName; 
 	String batchDownloadNum;
+	private static Logger logger = Logger.getLogger(FestivalDailyReport.class);
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -57,7 +62,7 @@ public class FestivalDailyReport {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		
@@ -82,7 +87,7 @@ public class FestivalDailyReport {
 		}
 		
 		fileName = dirName+"\\"+"S"+tenantCode.substring(0,4)+termNum+batchDownloadNum+"."+month+day;
-		System.out.println("File Name: "+fileName);
+		logger.info("File Name: "+fileName);
 	}
 	
 	public void createFile(){
@@ -92,7 +97,7 @@ public class FestivalDailyReport {
 				f.createNewFile();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 		}
 	}
@@ -142,13 +147,13 @@ public class FestivalDailyReport {
 				day = "0"+day;
 			}
 			ResultSet rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			try {
 				while(rs.next()){
 					String amt = String.format("%.2f", rs.getDouble(1));
 					int posOfDot = amt.indexOf(".");
 					String newAmt = amt.substring(0,posOfDot) + amt.substring(posOfDot+1);
-//					System.out.println("New Amt: "+ newAmt);
+//					logger.info("New Amt: "+ newAmt);
 					br.write("04"+newAmt);
 					br.newLine();
 					
@@ -156,7 +161,7 @@ public class FestivalDailyReport {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			
@@ -176,7 +181,7 @@ public class FestivalDailyReport {
 			}
 		
 			rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			try {
 				while(rs.next()){
 					String amt = String.format("%.2f", rs.getDouble(1));
@@ -187,12 +192,12 @@ public class FestivalDailyReport {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			//Taxable Sales Amount Gross of VAT NET of Discounts
 			rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			
 			try {
 				while(rs.next()){
@@ -205,7 +210,7 @@ public class FestivalDailyReport {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			/*NON TAXABLE SALES AMOUNT*/
@@ -241,7 +246,7 @@ public class FestivalDailyReport {
 			
 			} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			String amt = String.format("%.2f", totdisc);
@@ -285,7 +290,7 @@ public class FestivalDailyReport {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			/*SALES TYPE*/
@@ -303,12 +308,12 @@ public class FestivalDailyReport {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			
 			rs = db.executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
-			System.out.println("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+			logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 			
 			double VAT = 0;
 			double dlysale = 0;
@@ -329,7 +334,7 @@ public class FestivalDailyReport {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 			
 			/*TAX*/
@@ -364,7 +369,7 @@ public class FestivalDailyReport {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			JOptionPane.showMessageDialog(null,"You have not exported a compliance report","Error",JOptionPane.ERROR_MESSAGE);
 		}
 		

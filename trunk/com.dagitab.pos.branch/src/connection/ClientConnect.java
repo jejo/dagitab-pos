@@ -30,8 +30,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import forms.InstallProgress;
 import forms.MainWindow;
+
+@Deprecated
 public class ClientConnect {
 	Socket s;
 	ObjectInputStream in;
@@ -40,6 +46,7 @@ public class ClientConnect {
 	private Key symKey;
 	static DataUtil du = new DataUtil();
 	LogHandler lw = new LogHandler();
+	private static Logger logger = Logger.getLogger(ClientConnect.class);
 	
 	MainWindow form;
 	public static void main(String args[]) throws IOException {
@@ -58,7 +65,7 @@ public class ClientConnect {
 	
 	public void connect(String ip, String port, int storeCode) {
 		try {
-			System.out.println("Store Code: "+storeCode+" connecting to "+ip+":"+port);
+			logger.info("Store Code: "+storeCode+" connecting to "+ip+":"+port);
 			form.jLabel3.setText("Connecting");
 			s = new Socket(ip, Integer.parseInt(port));
 			out = new ObjectOutputStream(s.getOutputStream());
@@ -70,13 +77,13 @@ public class ClientConnect {
 	      generator.initialize(512, random);
 	      myPair = generator.generateKeyPair();
 	      
-	      System.out.println("Writing int storecode = "+storeCode);
+	      logger.info("Writing int storecode = "+storeCode);
 	      out.writeInt(storeCode);
 	      out.flush();
 	      out.write(myPair.getPublic().getEncoded());
 	      out.flush();
 	      
-			System.out.println("Client public key: length = "+ myPair.getPublic().getEncoded().length + " plain = "+ new String(myPair.getPublic().getEncoded()));
+			logger.info("Client public key: length = "+ myPair.getPublic().getEncoded().length + " plain = "+ new String(myPair.getPublic().getEncoded()));
 	      
 	      //get the encrypted symmetric key from server and decrypt with client's private key
 	      byte[] buffer = new byte[1000];
@@ -104,7 +111,7 @@ public class ClientConnect {
 			try {
 				if(!rs.next()){
 					form.jLabel3.setText("Installing data");
-					System.out.println("Install");
+					logger.info("Install");
 					out.writeBoolean(true);
 					out.flush();
 					
@@ -119,7 +126,7 @@ public class ClientConnect {
 						try{
 							sqlfile.createNewFile();
 						}catch(IOException ex){
-							System.out.println("Creating sql file error: "+ex.getMessage());
+							logger.info("Creating sql file error: "+ex.getMessage());
 						}
 					}
 					Progress prog = new Progress();
@@ -141,7 +148,7 @@ public class ClientConnect {
 					String sqlstatement = "";
 					
 					while((s=br1.readLine())!= null ){
-						//System.out.println(s);
+						//logger.info(s);
 						if(s.endsWith(";")){
 							if(!s.startsWith("INSERT")){
 								s = System.getProperty("line.separator")+s;
@@ -153,14 +160,14 @@ public class ClientConnect {
 								String[] splitter = sqlstatement.split(",");
 								String[] splitter2 = splitter[0].split("VALUES");
 								String clerk_code = splitter2[1].substring(4,splitter2[1].length()-1);
-//								System.out.println("this is the clerkcode : "+ clerk_code);
-								System.out.println("Configuring password encryption of clerk_code "+clerk_code);
+//								logger.info("this is the clerkcode : "+ clerk_code);
+								logger.info("Configuring password encryption of clerk_code "+clerk_code);
 								ResultSet res = Main.getDBManager().executeQuery("SELECT password FROM clerk_lu WHERE clerk_code = "+clerk_code);
-//								System.out.println("SELECT password FROM clerk_lu WHERE clerk_code = "+clerk_code);
+//								logger.info("SELECT password FROM clerk_lu WHERE clerk_code = "+clerk_code);
 								if(res.next()){
 									Main.getDBManager().executeUpdate("UPDATE clerk_lu SET password = '"+res.getString("password")+"' WHERE clerk_code = "+clerk_code);
 //									db.executeUpdate("UPDATE clerk_lu SET password = AES_ENCRYPT('"+res.getString("password")+"','babyland') WHERE clerk_code = "+clerk_code);
-//									System.out.println("UPDATE clerk_lu SET password = AES_ENCRYPT('"+res.getString("password")+"','babyland') WHERE clerk_code = "+clerk_code);
+//									logger.info("UPDATE clerk_lu SET password = AES_ENCRYPT('"+res.getString("password")+"','babyland') WHERE clerk_code = "+clerk_code);
 								}
 								
 							}
@@ -192,7 +199,7 @@ public class ClientConnect {
 					out.flush();
 					out.write(data);
 					out.flush();
-					System.out.println("Sent data");
+					logger.info("Sent data");
 					File f = new File("1.CAC");
 					PrintWriter pw = new PrintWriter(new FileWriter(f));
 					//getupdates from server and synchronize to database
@@ -203,26 +210,26 @@ public class ClientConnect {
 						buffer = new byte[num];
 						in.read(buffer);
 						String msg = new String(decrypter.doFinal(buffer,0,num));
-//						System.out.println(msg);
+//						logger.info(msg);
 						if(msg.equals("EOF")){
 							break;
 						}
 						else{
 							try{
-								System.out.println(msg);
+								logger.info(msg);
 								DataUtil.dataToRow(msg);
 							}catch(Exception ex){
-								ex.printStackTrace();
+								LoggerUtility.getInstance().logStackTrace(ex);
 							}
 						}
 					}
-					System.out.println("Received Data");
+					logger.info("Received Data");
 					form.jLabel3.setText("Finished Synchronization");
 					
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}
 				
 			
@@ -233,16 +240,16 @@ public class ClientConnect {
 			
 			
 //			int num = in.readInt();
-//			System.out.println("This is the number " + num);
+//			logger.info("This is the number " + num);
 //			byte[] rbuffer = new byte[num];
 //		    in.read(rbuffer);
 		    
-//		    System.out.println(new String(decrypter.doFinal(rbuffer,0,num)));
+//		    logger.info(new String(decrypter.doFinal(rbuffer,0,num)));
 			
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		
 		} catch (ConnectException e){
 			form.jLabel3.setText("Not Connected");
@@ -250,34 +257,34 @@ public class ClientConnect {
 					"Cannot connect to server. " +
 					"Please try again or contact network administrator.", 
 					"Warning",JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}catch(NoRouteToHostException e){
 			form.jLabel3.setText("Not Connected");
 			JOptionPane.showMessageDialog(null, 
 					"Cannot connect to server. " +
 					"Please try again or contact network administrator.", 
 					"Warning",JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 		catch (IOException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (NoSuchPaddingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (IllegalBlockSizeException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		} catch (BadPaddingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		
 	}

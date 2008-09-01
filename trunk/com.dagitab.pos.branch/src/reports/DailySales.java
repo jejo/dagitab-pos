@@ -2,25 +2,17 @@ package reports;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-
-
-import main.DBManager;
 import main.Main;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import util.LoggerUtility;
 
 
 public class DailySales {
@@ -161,10 +153,10 @@ public static boolean generate(String fileName, String startDate, String endDate
 			return true;
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 

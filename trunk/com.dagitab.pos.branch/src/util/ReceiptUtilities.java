@@ -2,9 +2,12 @@ package util;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 public class ReceiptUtilities {
 	
 	private static ReceiptUtilities receiptUtilities = new ReceiptUtilities();
+	private static Logger logger = Logger.getLogger(ReceiptUtilities.class);
 	private ReceiptUtilities(){}
 	
 	public int findNormalAmountXPos(String s){
@@ -45,7 +48,7 @@ public class ReceiptUtilities {
 	}
 	public Double roundDown(Double num){
 		String numS = String.format("%.4f",num);
-		System.out.println(numS);
+		logger.info(numS);
 		int index = numS.indexOf(".");
 		String  out = numS.substring(0,index+3);
 		return Double.parseDouble(out);

@@ -14,18 +14,16 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import main.Main;
+import util.LoggerUtility;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
 import domain.PaymentItem;
-
-import forms.invoice.InvoicePanel;
 import forms.partial.PartialDialog;
 
 /**
@@ -182,7 +180,7 @@ public class Payment extends javax.swing.JDialog {
 							paymentItem.setGcNo(giftCertificate);
 							
 							if(invoker instanceof InvoicePanel){
-								System.out.println("invoking...");
+								logger.info("invoking...");
 								InvoicePanel invoicePanel = (InvoicePanel)invoker;
 							
 								if(status.equals("edit")){
@@ -346,7 +344,7 @@ public class Payment extends javax.swing.JDialog {
 			}
 			this.setSize(400, 454);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	private AbstractAction getPaymentLabelAbstractAction() {

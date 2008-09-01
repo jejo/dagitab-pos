@@ -28,6 +28,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
+
+import org.apache.log4j.Logger;
+
+import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.StringUtility;
 import bus.InvoiceItemService;
@@ -134,6 +138,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	private JLabel jLabel16;
 	private JButton jButton31;
 	private MainWindow mainWindow;
+	private static Logger logger = Logger.getLogger(InvoicePanel.class);
 	
 	public InvoicePanel() {
 		super();
@@ -602,7 +607,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 				jButton9.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						System.out.println("processing invoice transaction...");
+						logger.info("processing invoice transaction...");
 						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 						if(confirm == 0){
 							if(hasEnoughPayment()){
@@ -654,7 +659,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	public Transaction savePendingTransaction() {
@@ -808,7 +813,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String amountString = lblAmount.getText();
 		double amount = Double.parseDouble(amountString);
 		totalPayment.setText(String.format("%.2f", totalPaymentAmount));
-		System.out.println("amount: "+amount);
+		logger.info("amount: "+amount);
 		
 		//for recording change amount, gift certificate should not be considered for change
 		totalPaymentAmount = 0.0d;
@@ -819,7 +824,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 		}
 		Double changeAmount = totalPaymentAmount-amount;
-		System.out.println("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
+		logger.info("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
 		changeField.setText(String.format("%.2f", changeAmount));
 	}
 	
@@ -869,7 +874,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 1).toString());
 			if(model.getValueAt(i, 1).toString().equals("Cash") && paymentName.equals("Cash")){
 				return true;
 			}
@@ -881,11 +886,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 4).toString());
-			System.out.println(cardNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 4).toString());
+			logger.info(cardNo);
 			if(model.getValueAt(i, 1).toString().equals("Credit Card") && paymentName.equals("Credit Card") && model.getValueAt(i, 4).equals(cardNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -896,11 +901,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 5).toString());
-			System.out.println(checkNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 5).toString());
+			logger.info(checkNo);
 			if(model.getValueAt(i, 1).toString().equals("Bank Check") && paymentName.equals("Bank Check") && model.getValueAt(i, 5).equals(checkNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -911,11 +916,11 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			System.out.println(model.getValueAt(i, 1).toString());
-			System.out.println(model.getValueAt(i, 6).toString());
-			System.out.println(gcNo);
+			logger.info(model.getValueAt(i, 1).toString());
+			logger.info(model.getValueAt(i, 6).toString());
+			logger.info(gcNo);
 			if(model.getValueAt(i, 1).toString().equals("Gift Certificate") && paymentName.equals("Gift Certificate") && model.getValueAt(i, 6).equals(gcNo)){
-				System.out.println("true");
+				logger.info("true");
 				return true;
 			}
 		}
@@ -1054,7 +1059,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		
 		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(lblAmount.getText()));
 		for(PaymentItem paymentItem: calculatedPaymentItems){
-			System.out.println("Inserting payment item");
+			logger.info("Inserting payment item");
 			PaymentItemService.getInstance().insert(paymentItem);
 		}
 		

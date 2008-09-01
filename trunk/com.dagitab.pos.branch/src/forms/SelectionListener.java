@@ -3,9 +3,12 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.log4j.Logger;
+
  public class SelectionListener implements ListSelectionListener {
         JTable table;
         int row = 0;
+        private static Logger logger = Logger.getLogger(SelectionListener.class);
         // It is necessary to keep the table since it is not possible
         // to determine the table from the event's source
         SelectionListener(JTable table) {
@@ -18,8 +21,8 @@ import javax.swing.event.ListSelectionListener;
                 // Column selection changed
                 int first = e.getFirstIndex();
                 int last = e.getLastIndex();
-                //System.out.println("selection changed true");
-                //System.out.println("row ="+ table.getSelectedRow());
+                //logger.info("selection changed true");
+                //logger.info("row ="+ table.getSelectedRow());
                 row = table.getSelectedRow();
                 
             } 
@@ -28,7 +31,7 @@ import javax.swing.event.ListSelectionListener;
                 // Row selection changed
                 int first = e.getFirstIndex();
                 int last = e.getLastIndex();
-                System.out.println("row selection changed");
+                logger.info("row selection changed");
             }
     
             if (e.getValueIsAdjusting()) {

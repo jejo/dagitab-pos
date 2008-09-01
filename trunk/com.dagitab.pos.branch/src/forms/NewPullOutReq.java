@@ -1,11 +1,4 @@
 package forms;
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-
-import connection.DataUtil;
-import connection.LogHandler;
-import forms.pullouts.PullOutReq;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,12 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,8 +24,15 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import main.DBManager;
+import util.LoggerUtility;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
+
+import connection.DataUtil;
+import connection.LogHandler;
+import forms.pullouts.PullOutReq;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -76,7 +75,7 @@ public class NewPullOutReq extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -318,7 +317,7 @@ public class NewPullOutReq extends javax.swing.JDialog {
 										}
 									} catch (SQLException e) {
 										// TODO Auto-generated catch block
-										e.printStackTrace();
+										LoggerUtility.getInstance().logStackTrace(e);
 									}
 								
 									
@@ -345,7 +344,7 @@ public class NewPullOutReq extends javax.swing.JDialog {
 			}
 			this.setSize(638, 517);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

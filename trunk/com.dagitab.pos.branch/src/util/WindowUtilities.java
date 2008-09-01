@@ -2,6 +2,8 @@ package util;
 
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 import print.ExitListener;
 
 import java.awt.*;
@@ -10,17 +12,21 @@ import java.awt.*;
  *  1998-99 Marty Hall, http://www.apl.jhu.edu/~hall/java/
  */
 
+
+
 public class WindowUtilities {
 
   /** Tell system to use native look and feel, as in previous
    *  releases. Metal (Java) LAF is the default otherwise.
    */
+	
+  private static Logger logger = Logger.getLogger(WindowUtilities.class);
 
   public static void setNativeLookAndFeel() {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch(Exception e) {
-      System.out.println("Error setting native LAF: " + e);
+      logger.info("Error setting native LAF: " + e);
     }
   }
 
@@ -28,7 +34,7 @@ public class WindowUtilities {
     try {
       UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
     } catch(Exception e) {
-      System.out.println("Error setting Java LAF: " + e);
+      logger.info("Error setting Java LAF: " + e);
     }
   }
 
@@ -36,7 +42,7 @@ public class WindowUtilities {
     try {
       UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
     } catch(Exception e) {
-      System.out.println("Error setting Motif LAF: " + e);
+      logger.info("Error setting Motif LAF: " + e);
     }
   }
 

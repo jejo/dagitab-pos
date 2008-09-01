@@ -2,9 +2,9 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import main.Main;
+import util.LoggerUtility;
 
 public class DeliveryItemService {
 	
@@ -24,7 +24,7 @@ public class DeliveryItemService {
 				return rs.getInt("NUM") > 0;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return false;
 	}

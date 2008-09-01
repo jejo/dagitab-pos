@@ -299,7 +299,7 @@ public class ResourceManager {
 //				combo2.add(s.trim());
 //			}
 //		} catch (SQLException e) {
-//			e.printStackTrace();
+//			LoggerUtility.getInstance().logStackTrace(e);
 //		}
 //		
 //	}
@@ -317,7 +317,7 @@ public class ResourceManager {
 //				combo2.add(s.trim());
 //			}
 //		} catch (SQLException e) {
-//			e.printStackTrace();
+//			LoggerUtility.getInstance().logStackTrace(e);
 //		}
 //		
 //	}

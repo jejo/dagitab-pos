@@ -21,6 +21,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import util.LoggerUtility;
+
 
 public class CurrentInventory {
 	
@@ -60,7 +62,7 @@ public class CurrentInventory {
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerUtility.getInstance().logStackTrace(e);
 			}		
 			
 			int rowCounter=topMarker;
@@ -93,11 +95,11 @@ public class CurrentInventory {
 	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 			return false;
 		}
 	}

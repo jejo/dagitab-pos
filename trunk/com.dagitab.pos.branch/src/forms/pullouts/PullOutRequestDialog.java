@@ -25,18 +25,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import util.TableUtility;
-
 import main.Main;
-import bus.DeliveryItemService;
-import bus.DeliveryService;
+import util.LoggerUtility;
+import util.TableUtility;
 import bus.ProductService;
 import bus.PullOutReasonService;
 import bus.PullOutRequestItemService;
 import bus.PullOutRequestService;
 import domain.InvoiceItem;
 import domain.Product;
-import forms.AboutDialog;
 import forms.lookup.ProductDialog;
 
 /**
@@ -58,7 +55,7 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 		try {
 			javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -241,7 +238,7 @@ public class PullOutRequestDialog extends javax.swing.JDialog {
 			}
 			this.setSize(766, 505);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

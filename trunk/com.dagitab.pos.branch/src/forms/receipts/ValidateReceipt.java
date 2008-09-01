@@ -15,12 +15,11 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 import main.DBManager;
+import util.LoggerUtility;
 import util.PrintUtilities;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
-
-import forms.AboutDialog;
 
 
 /**
@@ -46,7 +45,7 @@ public class ValidateReceipt extends javax.swing.JDialog {
 			javax.swing.UIManager
 					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 
@@ -190,7 +189,7 @@ public class ValidateReceipt extends javax.swing.JDialog {
 			}
 			this.setSize(296, 559);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	

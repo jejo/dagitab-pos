@@ -1,10 +1,12 @@
 package forms;
-import com.cloudgarden.layout.AnchorConstraint;
-import com.cloudgarden.layout.AnchorLayout;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+
+import util.LoggerUtility;
+
+import com.cloudgarden.layout.AnchorConstraint;
+import com.cloudgarden.layout.AnchorLayout;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -66,7 +68,7 @@ public class InstallProgress extends javax.swing.JDialog {
 			}
 			this.setSize(502, 177);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
 	}
 	
