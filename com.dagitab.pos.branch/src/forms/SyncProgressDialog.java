@@ -33,6 +33,7 @@ import util.LoggerUtility;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+@SuppressWarnings("serial")
 public class SyncProgressDialog extends javax.swing.JDialog implements PropertyChangeListener {
 	private JProgressBar jProgressBar1;
 	
@@ -128,7 +129,20 @@ public class SyncProgressDialog extends javax.swing.JDialog implements PropertyC
 			new Thread() {
 				public void run() {
 					Logger.getLogger(SyncProgressDialog.class).info("running in thread");
-					Main.getSyncManager().sync();
+					try{
+						Main.getSyncManager().sync();
+					}
+					catch(Throwable e){
+						while(e.getCause()!= null){
+							e = e.getCause();
+						}
+						JOptionPane.showMessageDialog(null, "Unable to connect to server. "+e.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+						setCursor(null); //turn off the wait cursor
+						SyncProgressDialog.this.dispose();
+						
+						LoggerUtility.getInstance().logStackTrace(e);
+						
+					}
 				}
 			}.start();
 			

@@ -13,7 +13,7 @@ public class LoggerUtility {
 		return loggerUtility;
 	}
 	
-	public void logStackTrace(Exception e){
+	public void logStackTrace(Throwable e){
 		do { 
 			logger.error("Caused by: "+e); 
 			for (StackTraceElement el : e.getStackTrace()) { logger.error("\t"+el.toString()); } } 

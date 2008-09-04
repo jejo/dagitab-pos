@@ -66,11 +66,11 @@ public class ClientConnect {
 	public void connect(String ip, String port, int storeCode) {
 		try {
 			logger.info("Store Code: "+storeCode+" connecting to "+ip+":"+port);
-			form.jLabel3.setText("Connecting");
+//			form.jLabel3.setText("Connecting");
 			s = new Socket(ip, Integer.parseInt(port));
 			out = new ObjectOutputStream(s.getOutputStream());
 			in = new ObjectInputStream(s.getInputStream());
-			form.jLabel3.setText("Connected");
+//			form.jLabel3.setText("Connected");
 			//generate key pair and send to server the public key
 			SecureRandom random = new SecureRandom();
 	      KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
@@ -110,7 +110,7 @@ public class ClientConnect {
 			 
 			try {
 				if(!rs.next()){
-					form.jLabel3.setText("Installing data");
+//					form.jLabel3.setText("Installing data");
 					logger.info("Install");
 					out.writeBoolean(true);
 					out.flush();
@@ -185,7 +185,7 @@ public class ClientConnect {
 					out.writeBoolean(false);
 					out.flush();
 					
-					form.jLabel3.setText("Sending Data");
+//					form.jLabel3.setText("Sending Data");
 					while((str=br.readLine())!=null)
 					{
 						byte[] data = encrypter.doFinal(str.getBytes());
@@ -203,7 +203,7 @@ public class ClientConnect {
 					File f = new File("1.CAC");
 					PrintWriter pw = new PrintWriter(new FileWriter(f));
 					//getupdates from server and synchronize to database
-					form.jLabel3.setText("Receiving Data");
+//					form.jLabel3.setText("Receiving Data");
 					while(true)
 					{
 						int num = in.readInt();
@@ -224,7 +224,7 @@ public class ClientConnect {
 						}
 					}
 					logger.info("Received Data");
-					form.jLabel3.setText("Finished Synchronization");
+//					form.jLabel3.setText("Finished Synchronization");
 					
 				}
 			} catch (SQLException e) {
@@ -235,7 +235,7 @@ public class ClientConnect {
 			
 			
 			s.close();
-			form.jLabel3.setText("Not Connected");
+//			form.jLabel3.setText("Not Connected");
 			
 			
 			
@@ -252,14 +252,14 @@ public class ClientConnect {
 			LoggerUtility.getInstance().logStackTrace(e);
 		
 		} catch (ConnectException e){
-			form.jLabel3.setText("Not Connected");
+//			form.jLabel3.setText("Not Connected");
 			JOptionPane.showMessageDialog(null, 
 					"Cannot connect to server. " +
 					"Please try again or contact network administrator.", 
 					"Warning",JOptionPane.ERROR_MESSAGE);
 			LoggerUtility.getInstance().logStackTrace(e);
 		}catch(NoRouteToHostException e){
-			form.jLabel3.setText("Not Connected");
+//			form.jLabel3.setText("Not Connected");
 			JOptionPane.showMessageDialog(null, 
 					"Cannot connect to server. " +
 					"Please try again or contact network administrator.", 

@@ -14,6 +14,10 @@ public class DateUtility {
 		return dateUtility;
 	}
 	
+	public static void main(String[] args) {
+		System.out.println(DateUtility.getDateUtility().getCurrentDate());
+	}
+	
 	public  String getCurrentDate(){
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

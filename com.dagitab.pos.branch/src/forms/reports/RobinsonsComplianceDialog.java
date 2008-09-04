@@ -88,6 +88,8 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 	private JComboBox filterYearComboBox;
 	private JLabel filterLabel;
 	private static Logger logger = Logger.getLogger(RobinsonsComplianceDialog.class);
+	public boolean isInit1 = true;
+	public boolean isInit2 = true;
 
 	{
 		//Set Look & Feel
@@ -277,9 +279,11 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 				{
 					ComboBoxModel sendYearComboBoxModel = 
 						new DefaultComboBoxModel(DateUtility.getDateUtility().getYears());
+					sendYearComboBoxModel.setSelectedItem("4");
 					sendYearComboBox = new JComboBox();
 					getContentPane().add(sendYearComboBox);
 					sendYearComboBox.setModel(sendYearComboBoxModel);
+					
 					sendYearComboBox.setBounds(156, 65, 65, 22);
 					sendYearComboBox.setAction(getSendYearAction());
 				}
@@ -341,10 +345,17 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		if(sendMonthAction == null) {
 			sendMonthAction = new AbstractAction("", null) {
 				public void actionPerformed(ActionEvent evt) {
+					logger.info("JEJO: setting day from month");
 					ComboBoxModel comboBoxModel = 
 						new DefaultComboBoxModel(DateUtility.getDateUtility().getDaysOfMonth(sendMonthComboBox.getSelectedIndex(), 
 																Integer.parseInt(sendYearComboBox.getSelectedItem().toString())));
 					sendDayComboBox.setModel(comboBoxModel);
+					if(isInit1){
+						logger.info("setting day to current");
+						sendDayComboBox.setSelectedItem(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"");
+						isInit1=false;
+					}
+					
 				}
 			};
 		}
@@ -356,10 +367,20 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		if(sendYearAction == null) {
 			sendYearAction = new AbstractAction("", null) {
 				public void actionPerformed(ActionEvent evt) {
+					logger.info("JEJO: setting day from year");
 					ComboBoxModel comboBoxModel = 
 						new DefaultComboBoxModel(DateUtility.getDateUtility().getDaysOfMonth(sendMonthComboBox.getSelectedIndex(), 
 																Integer.parseInt(sendYearComboBox.getSelectedItem().toString())));
 					sendDayComboBox.setModel(comboBoxModel);
+					
+					
+					//FIX TO SET DATE TO CURRENT AT INIT
+					if(isInit2){
+						logger.info("setting day to current");
+						sendDayComboBox.setSelectedItem(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"");
+						isInit2=false;
+					}
+					
 				}
 			};
 		}
@@ -442,6 +463,13 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		DefaultTableModel model = new DefaultTableModel(data,new String[]{"Dates"});
 		unsentItemTable.setModel(model);
 		
+		
+		//Send by Date should default to Current Date
+		Calendar calendar = Calendar.getInstance();
+		logger.info("JEJO:"+calendar.get(Calendar.DAY_OF_MONTH));
+		
+		sendYearComboBox.setSelectedItem(calendar.get(Calendar.YEAR)+"");
+		sendMonthComboBox.setSelectedIndex(calendar.get(Calendar.MONTH));
 		
 	}
 	

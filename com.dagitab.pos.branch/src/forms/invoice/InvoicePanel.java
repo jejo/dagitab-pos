@@ -163,24 +163,25 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			this.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 			{
 				welcomePanel = new JPanel();
+				AnchorLayout welcomePanelLayout = new AnchorLayout();
 				this.add(welcomePanel, new AnchorConstraint(45, 277, 146, 7, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				welcomePanel.setPreferredSize(new java.awt.Dimension(232, 47));
 				welcomePanel.setBackground(new java.awt.Color(254,253,218));
 				welcomePanel.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
-				welcomePanel.setLayout(null);
+				welcomePanel.setLayout(welcomePanelLayout);
 				{
 					jLabel1 = new JLabel();
-					welcomePanel.add(jLabel1);
+					welcomePanel.add(jLabel1, new AnchorConstraint(159, 976, 563, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel1.setText("Welcome, Ate Eva");
-					jLabel1.setBounds(7, 7, 219, 19);
 					jLabel1.setFont(new java.awt.Font("Segoe UI",0,20));
+					jLabel1.setPreferredSize(new java.awt.Dimension(219, 19));
 				}
 				{
 					jLabel2 = new JLabel();
-					welcomePanel.add(jLabel2);
+					welcomePanel.add(jLabel2, new AnchorConstraint(563, 976, 968, 32, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jLabel2.setText("Shaw Boulevard Branch");
-					jLabel2.setBounds(7, 26, 219, 19);
 					jLabel2.setFont(new java.awt.Font("Segoe UI",0,14));
+					jLabel2.setPreferredSize(new java.awt.Dimension(219, 19));
 				}
 			}
 			{

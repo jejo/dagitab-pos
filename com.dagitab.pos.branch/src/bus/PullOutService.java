@@ -16,7 +16,12 @@ public class PullOutService {
 	}
 
 	public static void changePullOutStatus(String status, Long pullOutId) {
-		Main.getDBManager().executeUpdate("update pull_outs set STATUS = '" + status + "' where PULL_OUT_NO = " + pullOutId + ";");
+		String[] columns = new String[]{"STATUS"};
+		String[] columnValues = new String[]{status};
+		String table = "pull_outs";
+		String[] whereColumns = new String[]{"PULL_OUT_NO","STO_TO_CODE"};
+		String[] whereValues = new String[]{pullOutId.toString(), Main.getStoreCode()};
+		Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
 	}
 	
 }

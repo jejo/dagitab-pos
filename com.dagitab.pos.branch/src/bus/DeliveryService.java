@@ -16,6 +16,11 @@ public class DeliveryService {
 	}
 	
 	public static void changeDeliveryStatus(String status, Long deliveryId) {
-		Main.getDBManager().executeUpdate("update deliveries set STATUS = '" + status + "' where DEL_NO = " + deliveryId + ";");
+		String[] columns = new String[]{"STATUS"};
+		String[] columnValues = new String[]{status};
+		String table = "deliveries";
+		String[] whereColumns = new String[]{"DEL_NO","STO_TO_CODE"};
+		String[] whereValues = new String[]{deliveryId.toString(), Main.getStoreCode()};
+		Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
 	}
 }
