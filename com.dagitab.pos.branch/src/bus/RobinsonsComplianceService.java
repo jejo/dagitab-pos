@@ -238,10 +238,14 @@ public class RobinsonsComplianceService {
 						+ "", LINE_LENGTH, "0"));
 
 		// LINE#18 Sales Transaction Date
-		Calendar c = Calendar.getInstance();
-		c.setTimeInMillis(date.getTime());
-		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")
-				+ StringUtils.leftPad(String.format("%1$tm/%1$te/%1$tY", c),
+		Calendar cal = Calendar.getInstance();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
+		cal.setTimeInMillis(date.getTime());
+
+		String dateString = sdf.format(cal.getTime());
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + StringUtils.leftPad(dateString,
 						LINE_LENGTH, "0"));
 
 		// LINE#19 Novelty (Promational items) ZERO
@@ -264,7 +268,7 @@ public class RobinsonsComplianceService {
 								year, storeCode))
 						+ "", LINE_LENGTH, "0"));
 
-		// LINE#23 Total Credit Sales
+		// LINE#23 Total Credit Sales VAT
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")
 				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
 						.getComplianceService().getCreditSalesVat(month, day,
