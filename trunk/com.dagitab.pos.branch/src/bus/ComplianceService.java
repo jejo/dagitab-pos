@@ -85,11 +85,12 @@ public class ComplianceService {
 //		return dailySale+totDisc+vat;
 	}
 	
-	
+	// TODO REFACTOR
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
 	public Double getTotalDiscount(int month, int day, int year, int storeCode) {
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum((p.SELL_PRICE - i.SELL_PRICE) * i.QUANTITY) FROM invoice_item i, invoice o, products_lu p " +
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i, invoice o, products_lu p " +
 													"WHERE  p.PROD_CODE = i.PROD_CODE" +
+													"  AND d.DISC_NO = i.DISC_CODE" +
 													"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
 													"YEAR(o.TRANS_DT) = '"+year+"' && " +
 													"DAY(o.TRANS_DT) = '"+day+"' " +
