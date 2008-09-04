@@ -104,7 +104,7 @@ public class RobinsonsComplianceService {
 		java.io.FileInputStream fis;
 		try {
 			fis = new java.io.FileInputStream(new java.io.File(
-					"data\\ftp.properties"));
+					"ftp.properties"));
 			props.load(fis);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

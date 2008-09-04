@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import main.Main;
 import util.LoggerUtility;
+import domain.PullOutItem;
 
 public class PullOutItemService {
 
@@ -14,7 +15,49 @@ public class PullOutItemService {
 	}
 	
 	public static void updatePullOutItem(Long pullOutItemId) {
-		Main.getDBManager().executeUpdate("update pull_out_items set PROCESSED_STAT = 1 where PULL_OUT_ITEM_NO = " + pullOutItemId + ";");
+		
+		String[] columns = new String[]{"PROCESSED_STAT"};
+		String[] columnValues = new String[]{"1"};
+		String table = "pull_out_items";
+		String[] whereColumns = new String[]{"PULL_OUT_ITEM_NO"};
+		String[] whereValues = new String[]{pullOutItemId.toString()};
+		int success = Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
+		if(success > 0){
+			PullOutItem pullOutItem = getPullOutItem(pullOutItemId);
+			InventoryService.getInstance().deductFromInventory(pullOutItem.getQuantity(), pullOutItem.getProductCode());
+		}
+		
+	}
+	
+	public static PullOutItem getPullOutItem(Long pullOutItemId){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM pull_out_items WHERE PULL_OUT_ITEM_NO = "+pullOutItemId);
+		try {
+			if(rs.next()){
+				PullOutItem pullOutItem = new PullOutItem();
+				pullOutItem.setProcessedStat(rs.getInt("PROCESSED_STAT"));
+				pullOutItem.setProductCode(rs.getString("PROD_CODE"));
+				pullOutItem.setPullOutItemNo(rs.getInt("PULL_OUT_ITEM_NO"));
+				pullOutItem.setPullOutNo(rs.getInt("PULL_OUT_NO"));
+				pullOutItem.setQuantity(rs.getInt("QUANTITY"));
+				return pullOutItem;
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
+	}
+	
+	public static String getProductCodeOfPullOutItem(Long pullOutItemId){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM pull_out_items WHERE PULL_OUT_ITEM_NO = "+pullOutItemId);
+		try {
+			if(rs.next()){
+				return rs.getString("PROD_CODE");
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
+		
 	}
 
 	public static boolean hasPendingPullOutItemsToCheck(Long pendingPullOutId) {

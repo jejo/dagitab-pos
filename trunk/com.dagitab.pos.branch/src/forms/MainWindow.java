@@ -1,6 +1,12 @@
 package forms;
 
+import java.awt.AWTException;
 import java.awt.Frame;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -54,12 +60,9 @@ public class MainWindow extends javax.swing.JFrame {
 		}
 	}
 
-	
-	public JLabel jLabel3;
 	private JLabel jLabel1;
 	private static JPanel returnedPanel;
 	private static JPanel deferredPanel;
-	private JPanel statusBarPanel;
 	private static JPanel partialPanel;
 	private static JPanel invoicePanel;
 	private JTabbedPane jTabbedPane1;
@@ -88,10 +91,8 @@ public class MainWindow extends javax.swing.JFrame {
 				AnchorLayout thisLayout = new AnchorLayout();
 				getContentPane().setLayout(thisLayout);
 				this.setExtendedState(Frame.MAXIMIZED_BOTH);
-				this
-						.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-				this.setIconImage(new ImageIcon(getClass().getClassLoader()
-						.getResource("images/payments.png")).getImage());
+				this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/payments.png")).getImage());
 				this.setFocusTraversalKeysEnabled(false);
 				this.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent event) {
@@ -107,7 +108,7 @@ public class MainWindow extends javax.swing.JFrame {
 
 					}
 				});
-
+				
 				{
 					jLabel1 = new JLabel();
 					getContentPane().add(
@@ -120,33 +121,6 @@ public class MainWindow extends javax.swing.JFrame {
 					jLabel1.setPreferredSize(new java.awt.Dimension(119, 28));
 					jLabel1.setIcon(new ImageIcon(getClass().getClassLoader()
 							.getResource("images/logo.jpg")));
-				}
-				{
-					statusBarPanel = new JPanel();
-					AnchorLayout jPanel3Layout = new AnchorLayout();
-					statusBarPanel.setLayout(jPanel3Layout);
-					getContentPane().add(
-							statusBarPanel,
-							new AnchorConstraint(970, 1008, 1008, 0,
-									AnchorConstraint.ANCHOR_REL,
-									AnchorConstraint.ANCHOR_REL,
-									AnchorConstraint.ANCHOR_REL,
-									AnchorConstraint.ANCHOR_REL));
-					statusBarPanel.setPreferredSize(new java.awt.Dimension(889, 21));
-					statusBarPanel.setEnabled(false);
-					statusBarPanel.setBorder(new LineBorder(
-							new java.awt.Color(0, 0, 0), 1, false));
-					{
-						jLabel3 = new JLabel();
-						statusBarPanel.add(jLabel3, new AnchorConstraint(23, 95, 690,
-								8, AnchorConstraint.ANCHOR_REL,
-								AnchorConstraint.ANCHOR_REL,
-								AnchorConstraint.ANCHOR_REL,
-								AnchorConstraint.ANCHOR_REL));
-						jLabel3.setText("Not Connected");
-						jLabel3
-								.setPreferredSize(new java.awt.Dimension(77, 14));
-					}
 				}
 				{
 					// tab panels

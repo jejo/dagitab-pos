@@ -224,7 +224,7 @@ public class DBManager {
 				}
 			}
 			
-			String sql = "UPDATE " + table + " SET " + updateSt + " "+ whereSt; 
+			String sql = "UPDATE `" + table + "` SET " + updateSt + " "+ whereSt; 
 			logger.info(sql);
 			int result =  statement.executeUpdate(sql);
 			if(result > 0){
@@ -271,7 +271,7 @@ public class DBManager {
 				}
 			}
 			
-			String sql = "INSERT INTO " + table + columnsSt + " VALUES "+ valuesSt + " " + whereSt; 
+			String sql = "INSERT INTO `" + table +"` "+ columnsSt + " VALUES "+ valuesSt + " " + whereSt; 
 			
 			logger.info(sql);
 			int result =  statement.executeUpdate(sql);

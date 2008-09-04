@@ -62,7 +62,7 @@ public class Main {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args){
 		
-		Properties properties = new Properties();
+		final Properties properties = new Properties();
 		
 		try {
 			
@@ -85,26 +85,67 @@ public class Main {
 			
 			
 			
+			
 			syncManager = new SyncManager(properties);
 			syncManager.addListener(new SyncProgressListener(){
+				private Integer errors = 0;
 				@Override
 				public void updateProgress(double arg0) {
 					percentage = (int)(arg0*100);
 					logger.info("percentage: "+ percentage);
-					
+					if(arg0 == 1) {//on complete{
+						if(errors == 1){
+							JOptionPane.showMessageDialog(null, "There was an error encountered with the sql statement. This synchronization might not be successful. Please contact administrator.", "System Error", JOptionPane.ERROR_MESSAGE);
+							errors = 0;
+						}
+						else if(errors > 1){
+							JOptionPane.showMessageDialog(null, "There were "+errors+" errors encountered with the sql statement. This synchronization might not be successful. Please contact administrator.", "System Error", JOptionPane.ERROR_MESSAGE);
+							errors = 0;
+						}
+					}
+						
 				}
 
 				@Override
 				public void onSqlRead(String arg0) {
 					 try {
-						Statement statement = Main.getDBManager().getConnection().createStatement();
-						statement.executeUpdate(arg0);
+						 logger.info(arg0);
+						 if(filterSQL(arg0)){
+							Statement statement = Main.getDBManager().getConnection().createStatement();
+							statement.executeUpdate(arg0);
+							logger.info(arg0);
+						 }
 					} catch (SQLException e) {
-						JOptionPane.showMessageDialog(null, "There was an error encountered with the sql statement. This synchronization might not be successful. Please contact administrator.", "System Error", JOptionPane.ERROR_MESSAGE);
+						errors++;
 						LoggerUtility.getInstance().logStackTrace(e);
+						logger.error(arg0);
 					}
+				}
+				
+				private boolean filterSQL(String sql){
+					//list of tables to be ignored upon synchronization
+					String[] tables = properties.getProperty("table.filters").split(",");
 					
-			}});
+					if(sql.startsWith("SELECT")){
+						return false;
+					}
+					else{
+						for(String s: tables){
+							if(sql.contains("INSERT INTO `"+s+"`") || sql.contains("INSERT INTO "+s)){
+								return false;
+							}
+							else if(sql.contains("UPDATE `"+s+"`") || sql.contains("UPDATE "+s)){
+								return false;
+							}
+							else if(sql.contains("DELETE FROM `"+s+"`") || sql.contains("DELETE FROM "+s) ){
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+				
+			});
 			
 		} catch (FileNotFoundException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
@@ -119,6 +160,8 @@ public class Main {
 		showLoginDialog();
 	
 	}
+	
+	
 
 	public static void setClerkCode(Integer clerkCode) {
 		Main.clerkCode = clerkCode;

@@ -49,7 +49,7 @@ public class ScheduledExecutor
 				
 				public void run(){
 					try{
-						form.jLabel3.setText("Connecting");
+//						form.jLabel3.setText("Connecting");
 						ClientConnect cc = new ClientConnect(form);
 						cc.connect(ServerPropertyHandler.getServerIP(), 
 									   ServerPropertyHandler.getServerPort(), 

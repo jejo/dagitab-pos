@@ -21,4 +21,13 @@ public class InventoryService {
 		}
 		return result;
 	}
+	public int addToInventory(int quantity, String productCode){
+		String sql = "UPDATE inventory_lu SET QUANTITY = QUANTITY + "+quantity+" WHERE PROD_CODE = \""+productCode+"\" AND STORE_CODE = "+Main.getStoreCode();
+		Integer result = Main.getDBManager().executeUpdate(sql);
+		if(result > 0){
+			Main.getSyncManager().record(sql);
+			logger.info("Updated inventory_lu added quantity of "+quantity+" to product: "+productCode+". Affected: "+result);
+		}
+		return result;
+	}
 }
