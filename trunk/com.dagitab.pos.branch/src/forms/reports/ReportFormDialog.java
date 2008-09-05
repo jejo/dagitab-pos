@@ -36,6 +36,7 @@ import reports.DailySales;
 import reports.DailySalesReport;
 import reports.PullOutReport;
 import reports.TotalMerchandise;
+import reports.ZSummaryReport;
 import util.DateUtility;
 import util.FileChooserUtility;
 import util.LoggerUtility;
@@ -164,7 +165,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 				}
 				{
 					ComboBoxModel reportTypeComboBoxModel = new DefaultComboBoxModel(
-						new String[] { "Daily Sales", "Daily Sales Summary", "Total Pullouts","Total Merchandise" });
+						new String[] { "Daily Sales", "Daily Sales Summary", "Total Pullouts","Total Merchandise","Z-Summary" });
 					reportyTypeComboBox = new JComboBox();
 					getContentPane().add(reportyTypeComboBox, new AnchorConstraint(95, 960, 161, 222, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportyTypeComboBox.setModel(reportTypeComboBoxModel);
@@ -366,6 +367,16 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							
 							case 3:
 								success = TotalMerchandise.generate(fileName, startDate, endDate);
+								if(success){
+//							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
+						        }
+						        else{
+						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+						        }
+							break;
+							
+							case 4:
+								success = ZSummaryReport.generate(fileName, startDate, endDate);
 								if(success){
 //							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
