@@ -20,13 +20,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import util.LoggerUtility;
 
 public class PullOutReport {
-	private static int topMarker = 7;
-	private static HSSFWorkbook wb;
+	private  int topMarker = 7;
+	private  HSSFWorkbook wb;
 	
-	private static Integer rowCounter = topMarker;
-	private static Logger logger = Logger.getLogger(PullOutReport.class);
+	private  Integer rowCounter = topMarker;
+	private  Logger logger = Logger.getLogger(PullOutReport.class);
 	
-	public static boolean generate(String fileName, String startDate, String endDate) {
+	public  boolean generate(String fileName, String startDate, String endDate) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		
@@ -91,7 +91,7 @@ public class PullOutReport {
 
 	}
 
-	public static boolean generatePerClerk(String fileName, DBManager db, String storeCode, String startDate, String endDate, int[] clerk_codes) {
+	public  boolean generatePerClerk(String fileName, DBManager db, String storeCode, String startDate, String endDate, int[] clerk_codes) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		

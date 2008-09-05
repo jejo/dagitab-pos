@@ -15,21 +15,20 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import util.LoggerUtility;
+import bus.InvoiceItemService;
 
 public class DailySalesReport {
 	
-	private static int topMarker = 8;
-	private static HSSFWorkbook wb;
+	private int topMarker = 8;
+	private HSSFWorkbook wb;
+	private Integer rowCounter = topMarker;
+	private Integer totalQty = 0;
+	private Double totalSellPrice = 0d;
+	private Double totalDiscPrice = 0d;
+	private Double totalSubtotal =0d;
+	private Double totalTotal = 0d;
 	
-	private static Integer rowCounter = topMarker;
-	
-	private static Integer totalQty = 0;
-	private static Double totalSellPrice = 0d;
-	private static Double totalDiscPrice = 0d;
-	private static Double totalSubtotal =0d;
-	private static Double totalTotal = 0d;
-	
-	public static boolean generate(String fileName, String startDate, String endDate){
+	public boolean generate(String fileName, String startDate, String endDate){
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		
@@ -71,11 +70,11 @@ public class DailySalesReport {
 					if(currentRow == 0)
 					{
 						//OR no				
-						cell = HSSFUtil.createStringCell(wb,row, (short) 0,false,false);
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 0,false,false);
 						cell.setCellValue(rs.getString("OR_NO"));
 					
 						//invoice no
-						cell = HSSFUtil.createStringCell(wb,row, (short) 1,false,false);
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 1,false,false);
 						cell.setCellValue(rs.getString("INVOICE_NO"));
 					}
 					
@@ -97,8 +96,8 @@ public class DailySalesReport {
 						totalSellPrice += rs3.getDouble("SELL_PRICE");
 					}
 					
-					
-					cell = HSSFUtil.createStringCell(wb,row, (short) 4,false,false);
+					//qty
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 4,false,false);
 					cell.setCellValue(rs2.getInt("QUANTITY"));
 					totalQty+=rs2.getInt("QUANTITY");
 					
@@ -107,19 +106,20 @@ public class DailySalesReport {
 					rs3 = Main.getDBManager().executeQuery(query);
 					if(rs3.next())
 					{
-						//qty
-						cell = HSSFUtil.createStringCell(wb,row, (short) 6,false,false);
+						
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 6,false,false);
 						cell.setCellValue(rs3.getString("DISC_RATE")+"%");
 					}
 					
 					//disc unit cost
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 7,false,false);
-					cell.setCellValue(String.format("%.2f",rs2.getDouble("SELL_PRICE")));
-					totalDiscPrice += rs2.getDouble("SELL_PRICE");
+					Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(rs2.getLong("OR_NO"),rs2.getString("PROD_CODE"));
+					cell.setCellValue(String.format("%.2f",discountedAmount));
+					totalDiscPrice += discountedAmount;
 					
 					
 					//subtotal
-					double subtotal = Double.parseDouble(rs2.getString("SELL_PRICE"))*Integer.parseInt(rs2.getString("QUANTITY"));
+					double subtotal = discountedAmount*rs2.getInt("QUANTITY");
 					String stotal = String.format("%.2f", subtotal);
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
 					cell.setCellValue(stotal);
@@ -132,21 +132,16 @@ public class DailySalesReport {
 					
 					if(currentRow == countRows){
 						//TOTAL
-						query = "SELECT SUM(SELL_PRICE*QUANTITY) FROM invoice_item WHERE OR_NO = "+rs.getString("OR_NO")+" && STORE_CODE = "+Main.getStoreCode();
-						ResultSet rs4 = Main.getDBManager().executeQuery(query);
-						if(rs4.next())
-						{
-							cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
-							cell.setCellValue(String.format("%.2f",Double.parseDouble(rs4.getString(1))));
-							totalTotal +=Double.parseDouble(rs4.getString(1));
-						}
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
+						cell.setCellValue(String.format("%.2f",subtotal));
+						totalTotal += subtotal;
 						
 						//cashier id
-						cell = HSSFUtil.createStringCell(wb,row, (short) 10,false,false);
+						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
 						cell.setCellValue(rs.getString("ENCODER_CODE"));
 						
 						//sales specialist
-						cell = HSSFUtil.createStringCell(wb,row, (short) 11,false,false);
+						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
 						cell.setCellValue(rs.getString("ASSIST_CODE"));
 					}
 				}
@@ -173,19 +168,19 @@ public class DailySalesReport {
 
 	}
 	
-	public static void writeTotals() {
+	public  void writeTotals() {
 		HSSFRow row = ReportUtility.getSheet(wb).getRow(rowCounter+2);
 		HSSFCell cell = HSSFUtil.createStringCell(wb,row, (short) 0,false,false);
 		cell.setCellValue("TOTAL");
-		cell = HSSFUtil.createStringCell(wb,row, (short) 4,false,false);
+		cell = HSSFUtil.createAmountCell(wb,row, (short) 4,false,false);
 		cell.setCellValue(totalQty);
-		cell = HSSFUtil.createStringCell(wb,row, (short) 5,false,false);
+		cell = HSSFUtil.createAmountCell(wb,row, (short) 5,false,false);
 		cell.setCellValue(String.format("%.2f",totalSellPrice));
-		cell = HSSFUtil.createStringCell(wb,row, (short) 7,false,false);
+		cell = HSSFUtil.createAmountCell(wb,row, (short) 7,false,false);
 		cell.setCellValue(String.format("%.2f",totalDiscPrice));
-		cell = HSSFUtil.createStringCell(wb,row, (short) 8,false,false);
+		cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
 		cell.setCellValue(String.format("%.2f",totalSubtotal));
-		cell = HSSFUtil.createStringCell(wb,row, (short) 9,false,false);
+		cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
 		cell.setCellValue(String.format("%.2f",totalTotal));
 	}
 }

@@ -16,11 +16,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import util.LoggerUtility;
 
 public class TotalMerchandise {
-	private static int topMarker = 7;
-	private static HSSFWorkbook wb;
-	private static Logger logger = Logger.getLogger(TotalMerchandise.class);
+	private int topMarker = 7;
+	private HSSFWorkbook wb;
+	private Logger logger = Logger.getLogger(TotalMerchandise.class);
 	
-	public static boolean generate(String fileName, String startDate, String endDate) {
+	public boolean generate(String fileName, String startDate, String endDate) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		
@@ -80,7 +80,7 @@ public class TotalMerchandise {
 
 	}
 
-	public static boolean generatePerClerk(String fileName, String startDate, String endDate, int[] clerk_codes) {
+	public boolean generatePerClerk(String fileName, String startDate, String endDate, int[] clerk_codes) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		

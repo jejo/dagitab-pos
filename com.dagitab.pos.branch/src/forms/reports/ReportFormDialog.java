@@ -239,7 +239,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 				}
 
 			}
-			this.setSize(540, 441);
+			this.setSize(635, 536);
 		} catch (Exception e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
@@ -334,7 +334,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						logger.info("Generating report: "+reportType+" filename: "+fileName+" startdate: "+startDate+" enddate: "+endDate);
 						switch(reportType){
 							case 0: //daily sales
-								boolean success = DailySalesReport.generate(fileName,startDate, endDate);
+								boolean success = (new DailySalesReport()).generate(fileName,startDate, endDate);
 								if(success){
 //									JOptionPane.showMessageDialog(null,"Successfully saved daily sales report.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -344,7 +344,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							break;
 							
 							case 1://daily sales summary
-								success = DailySales.generate(fileName,startDate, endDate);
+								success = (new DailySales()).generate(fileName,startDate, endDate);
 								if(success){
 //									JOptionPane.showMessageDialog(null,"Successfully saved daily sales summary report.","Saved",JOptionPane.INFORMATION_MESSAGE);
 								}
@@ -356,7 +356,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							
 							
 							case 2: //pullouts
-								success = PullOutReport.generate(fileName, startDate, endDate);
+								success = (new PullOutReport()).generate(fileName, startDate, endDate);
 								if(success){
 //							    	   JOptionPane.showMessageDialog(null,"Successfully saved pull-outs report.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -366,7 +366,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							break;
 							
 							case 3:
-								success = TotalMerchandise.generate(fileName, startDate, endDate);
+								success = (new TotalMerchandise()).generate(fileName, startDate, endDate);
 								if(success){
 //							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -376,7 +376,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							break;
 							
 							case 4:
-								success = ZSummaryReport.generate(fileName, startDate, endDate);
+								success = (new ZSummaryReport()).generate(fileName, startDate, endDate);
 								if(success){
 //							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -413,7 +413,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 				    	logger.info("Generating report: "+reportType+" filename: "+fileName);
 				    	switch(reportType){
 							case 0: //daily sales
-								boolean success = DailySalesReport.generate(fileName,startDate, endDate);
+								boolean success = (new DailySalesReport()).generate(fileName,startDate, endDate);
 								if(success){
 									JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -423,7 +423,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							break;
 							
 							case 1://daily sales summary
-								success = DailySales.generate(fileName,startDate, endDate);
+								success =  (new DailySales()).generate(fileName,startDate, endDate);
 								if(success){
 							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -435,7 +435,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							
 							
 							case 2: //pullouts
-								success = PullOutReport.generate(fileName, startDate, endDate);
+								success =  (new PullOutReport()).generate(fileName, startDate, endDate);
 								if(success){
 							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
@@ -445,7 +445,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							break;
 							
 							case 3:
-								success = TotalMerchandise.generate(fileName, startDate, endDate);
+								success = (new TotalMerchandise()).generate(fileName, startDate, endDate);
 								if(success){
 							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
