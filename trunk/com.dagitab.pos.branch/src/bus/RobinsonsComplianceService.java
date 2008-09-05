@@ -255,11 +255,12 @@ public class RobinsonsComplianceService {
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")
 				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
 
-		// LINE#21 Local Tax Government Tax
+		// LINE#21 Local Tax Government Tax ZERO
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")
-				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
-						.getComplianceService().getVatRate() - 1)
-						+ "", LINE_LENGTH, "0"));
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+//		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")
+//				+ StringUtils.leftPad(String.format("%.2f",VatService.getVatAmount())
+//						+ "", LINE_LENGTH, "0"));
 
 		// LINE#22 Total Credit Sales
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")
@@ -285,6 +286,158 @@ public class RobinsonsComplianceService {
 
 		return fileName;
 	}
+	
+	public String generateLocalFile3(Date date) throws FileNotFoundException {
+
+		int year = getComponent(date, Calendar.YEAR);
+		int month = getComponent(date, Calendar.MONTH) + 1; // month is zero
+															// based!!
+		int day = getComponent(date, Calendar.DAY_OF_MONTH);
+		int storeCode = Integer.parseInt(this.storeNumber);
+
+		String fileName = "zreading.txt";
+		PrintStream out = new PrintStream(new FileOutputStream(
+				COMPLIANCE_DIRECTORY + fileName));
+
+		int lineNumber = 1; // starting line number
+
+		// LINE#1 TENANT NUMBER
+		out.println("Tenant Number: "
+				+ StringUtils.leftPad(tenantsId, LINE_LENGTH, "0"));
+
+		// LINE#2 TERMINAL NUMBER
+		out.println("Terminal Number: "
+				+ StringUtils.leftPad(terminalNumber, LINE_LENGTH, "0"));
+
+		// LINE#3 Gross Sales QUERY
+		out.println("Gross Sales"
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getRawGross(month, day, year,
+								storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#4 Total TAX/VAT
+
+		out.println("Total Tax/VAT: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getVat(month, day, year,
+								storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#5 Total Amount Void / Error Correct
+		out.println("Total Amount Void / Error Correct: "
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+
+		// LINE#6 No. of Void / Error Correct Transactions
+		out.println("No. of Void / Error Correct Transactions"
+				+ StringUtils.leftPad("", LINE_LENGTH, "0"));
+
+		// LINE#7 Total Amount Discount
+		out.println("Total Amount Discount: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getTotalDiscount(month, day, year, 
+								storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#8 No. of Discounted Transactions QUERY
+		out.println("No. of Discounted Transactions: "
+				+ StringUtils.leftPad(ComplianceService.getComplianceService()
+						.getNoOfDisc(month, day, year, storeCode)
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#09 Total Amount Refund/Return
+		out.println("Total Amount Refund/Return: "
+				+ StringUtils.leftPad(ComplianceService.getComplianceService().getReturnedItemsAmount(month, day, year, storeCode) + "", LINE_LENGTH, "0"));
+
+		// LINE#10 No of Total Amount Refund/Return
+		out.println("No of Total Amount Refund/Return: "
+				+ StringUtils.leftPad(ComplianceService.getComplianceService().getReturnedItemsQuantity(month, day, year, storeCode) + "", LINE_LENGTH, "0"));
+
+		// LINE#11 Other Negative Adjustments
+		out.println("Other Negative Adjustments: "
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+
+		// LINE#12 No. of Recorded Negative Adjustments ZERO
+		out.println("No. of Recorded Negative Adjustments: "
+				+ StringUtils.leftPad("", LINE_LENGTH, "0"));
+
+		// LINE#13 Total Service Charge ZERO
+		out.println("Total Service Charge: "
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+
+		// LINE#14 PREVIOUS EOD COUNTER
+		Integer maxEodCounter = getMaxEodCounter();
+		out.println("PREVIOUS EOD COUNTER: "
+				+ StringUtils.leftPad(maxEodCounter + "", LINE_LENGTH, "0"));
+
+		// LINE#15 Previous Accumulated Grand Total QUERY
+		out.println("Previous Accumulated Grand Total: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getOldGT(month, day, year,
+								storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#16 CURRENT EOD COUNTER
+		out.println("CURRENT EOD COUNTER: "
+				+ StringUtils.leftPad((maxEodCounter + 1) + "", LINE_LENGTH,
+						"0"));
+
+		// LINE#17 CUrrent Accumulated Grand Total QUERY
+		out.println("Current Accumulated Grand Total: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getNewGT(month, day, year,
+								storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#18 Sales Transaction Date
+		Calendar cal = Calendar.getInstance();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
+		cal.setTimeInMillis(date.getTime());
+
+		String dateString = sdf.format(cal.getTime());
+		out.println("Sales Transaction Date: " + StringUtils.leftPad(dateString,
+						LINE_LENGTH, "0"));
+
+		// LINE#19 Novelty (Promational items) ZERO
+		out.println("Novelty (Promational items): "
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+		// LINE#20 Misc. (Sales Scrap and others) ZERO
+		out.println("Misc. (Sales Scrap and others): "
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+
+		// LINE#21 Local Tax Government Tax
+		out.println("Local Tax Government Tax: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getVatRate() - 1)
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#22 Total Credit Sales
+		out.println("Total Credit Sales: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getCreditSales(month, day,
+								year, storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#23 Total Credit Sales VAT
+		out.println("Total Credit Sales VAT: "
+				+ StringUtils.leftPad(String.format("%.2f", ComplianceService
+						.getComplianceService().getCreditSalesVat(month, day,
+								year, storeCode))
+						+ "", LINE_LENGTH, "0"));
+
+		// LINE#24 Total Non-Vat Sales
+		out.println("Total Non-Vat Sales: "
+				+ StringUtils.leftPad(".00", LINE_LENGTH, "0"));
+
+		out.close();
+
+		// TODO send file over FTP
+
+		return fileName;
+	}
+
 
 	private String generateFileName(int month, int day, int year) {
 		// Filename format
@@ -320,7 +473,7 @@ public class RobinsonsComplianceService {
 		try {
 //			RobinsonsCompliance.getInstance()
 //					.getUnsentComplianceReports(30);
-			RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(new Date());
+			RobinsonsComplianceService.getInstance().generateLocalFile(new Date());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			LoggerUtility.getInstance().logStackTrace(e);
