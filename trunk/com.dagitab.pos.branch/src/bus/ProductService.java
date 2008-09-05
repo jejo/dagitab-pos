@@ -14,7 +14,7 @@ public class ProductService {
 	
 	public static ResultSet filterProducts(String s){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
-				"WHERE PROD_CODE LIKE \"%"+s+"%\" " +
+				"WHERE PROD_CODE LIKE \""+s+"%\" " +
 						"OR NAME LIKE '%"+s+"%'");
 		return rs;
 	}

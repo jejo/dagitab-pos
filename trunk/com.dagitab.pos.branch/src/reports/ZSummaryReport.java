@@ -20,38 +20,38 @@ import util.LoggerUtility;
 public class ZSummaryReport {
 	
 	
-	private static int topMarker = 7;
-	private static HSSFWorkbook wb;
+	private  int topMarker = 7;
+	private  HSSFWorkbook wb;
 	
 	//AMOUNTS
-	private static Double cash = 0d;
-	private static Double check = 0d;
-	private static Double card = 0d;
-	private static Double gc = 0d;
-	private static Double others = 0d;
-	private static Double grossAmount = 0d;
-	private static Double discountAmount = 0d;
-	private static Double netAmount = 0d;
-	private static Double vatAmount = 0d;
+	private  Double cash = 0d;
+	private  Double check = 0d;
+	private  Double card = 0d;
+	private  Double gc = 0d;
+	private  Double others = 0d;
+	private  Double grossAmount = 0d;
+	private  Double discountAmount = 0d;
+	private  Double netAmount = 0d;
+	private  Double vatAmount = 0d;
 	
 	
 	
 	//TOTALS
-	private static Double cashTotal = 0d;
-	private static Double checkTotal = 0d;
-	private static Double cardTotal = 0d;
-	private static Double gcTotal = 0d;
-	private static Double othersTotal=0d;
-	private static Double grossAmountTotal = 0d;
-	private static Double discountAmountTotal = 0d;
-	private static Double netAmountTotal = 0d;
-	private static Double vatAmountTotal = 0d;
-	private static Double totalTotal=0d;
+	private  Double cashTotal = 0d;
+	private  Double checkTotal = 0d;
+	private  Double cardTotal = 0d;
+	private  Double gcTotal = 0d;
+	private  Double othersTotal=0d;
+	private  Double grossAmountTotal = 0d;
+	private  Double discountAmountTotal = 0d;
+	private  Double netAmountTotal = 0d;
+	private  Double vatAmountTotal = 0d;
+	private  Double totalTotal=0d;
 	
-	private static Integer rowCounter = topMarker;
+	private  Integer rowCounter = topMarker;
 	
 	
-	public static boolean generate(String fileName, String startDate, String endDate) {
+	public  boolean generate(String fileName, String startDate, String endDate) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		rowCounter = topMarker;
@@ -227,7 +227,7 @@ public class ZSummaryReport {
 
 	}
 	
-	public static void writeTotals() {
+	public  void writeTotals() {
 		rowCounter += 2;
 		HSSFRow row = ReportUtility.getSheet(wb).createRow(rowCounter);
 		
@@ -254,7 +254,7 @@ public class ZSummaryReport {
 //		cell = HSSFUtil.createAmountCell(wb,row,(short)11,true,true);
 	}
 	
-	public static void writeTotalAmountReturn(String startDate){
+	public  void writeTotalAmountReturn(String startDate){
 		String[] date = startDate.split("-");
 		rowCounter += 2;
 		HSSFRow row = ReportUtility.getSheet(wb).createRow(rowCounter);
@@ -264,7 +264,7 @@ public class ZSummaryReport {
 		cell.setCellValue(ComplianceService.getComplianceService().getReturnedItemsAmount(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode())));
 	}
 	
-	public static void writePreviousAccumulatedGrandTotal(String startDate){
+	public  void writePreviousAccumulatedGrandTotal(String startDate){
 		String[] date = startDate.split("-");
 		rowCounter += 1;
 		HSSFRow row = ReportUtility.getSheet(wb).createRow(rowCounter);
@@ -274,7 +274,7 @@ public class ZSummaryReport {
 		cell.setCellValue(ComplianceService.getComplianceService().getOldGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode())));
 	}
 	
-	public static void writeCurrentAccumulatedGrandTotal(String startDate){
+	public  void writeCurrentAccumulatedGrandTotal(String startDate){
 		String[] date = startDate.split("-");
 		rowCounter += 1;
 		HSSFRow row = ReportUtility.getSheet(wb).createRow(rowCounter);

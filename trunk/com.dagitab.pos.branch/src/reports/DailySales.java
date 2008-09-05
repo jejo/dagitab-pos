@@ -17,29 +17,29 @@ import util.LoggerUtility;
 
 public class DailySales {
 
-	private static int topMarker = 7;
-	private static HSSFWorkbook wb;
+	private  int topMarker = 7;
+	private  HSSFWorkbook wb;
 	
-	private static Double cash = 0d;
-	private static Double check = 0d;
-	private static Double card = 0d;
-	private static Double gc = 0d;
-	private static Double others = 0d;
-	private static Double cashTotal = 0d;
-	private static Double checkTotal = 0d;
-	private static Double cardTotal = 0d;
-	private static Double gcTotal = 0d;
-	private static Double othersTotal=0d;
-	private static Double totalTotal=0d;
+	private  Double cash = 0d;
+	private  Double check = 0d;
+	private  Double card = 0d;
+	private  Double gc = 0d;
+	private  Double others = 0d;
+	private  Double cashTotal = 0d;
+	private  Double checkTotal = 0d;
+	private  Double cardTotal = 0d;
+	private  Double gcTotal = 0d;
+	private  Double othersTotal=0d;
+	private  Double totalTotal=0d;
 	
-	private static Integer rowCounter = topMarker;
+	private  Integer rowCounter = topMarker;
 	
-	public static void main(String[] args){
+	public  void main(String[] args){
 
 	}
 
 
-public static boolean generate(String fileName, String startDate, String endDate) {
+public  boolean generate(String fileName, String startDate, String endDate) {
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		
@@ -162,7 +162,7 @@ public static boolean generate(String fileName, String startDate, String endDate
 
 	}
 	
-	public static void writeTotals() {
+	public  void writeTotals() {
 		HSSFRow row = ReportUtility.getSheet(wb).createRow(rowCounter+2);
 		
 		HSSFCell cell = HSSFUtil.createAmountCell(wb,row,(short)2,true,true);
