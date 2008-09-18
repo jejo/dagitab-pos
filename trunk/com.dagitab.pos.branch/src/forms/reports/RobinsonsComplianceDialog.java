@@ -61,6 +61,10 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 	private JLabel viewLast;
 	private AbstractAction closeButtonAction;
 	private JButton sendByDateButton;
+	private AbstractAction getFTPFilesAction;
+	private JTable ftpFileTable;
+	private JButton getFTPFilesButton;
+	private JScrollPane ftpFilesScrollPane;
 	private AbstractAction sendUnsentAction;
 	private AbstractAction sendAllUnsentAction;
 	private AbstractAction viewLastDaysAction;
@@ -138,7 +142,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 				{
 					fileTextArea = new JTextArea();
 					getContentPane().add(fileTextArea);
-					fileTextArea.setBounds(448, 45, 422, 509);
+					fileTextArea.setBounds(443, 65, 268, 460);
 					fileTextArea.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
 					fileTextArea.setEditable(false);
 				}
@@ -257,7 +261,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					closeButton = new JButton();
 					getContentPane().add(closeButton);
 					closeButton.setText("Close");
-					closeButton.setBounds(809, 583, 61, 23);
+					closeButton.setBounds(916, 598, 61, 23);
 					closeButton.setAction(getCloseButtonAction());
 				}
 				{
@@ -299,8 +303,8 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 				{
 					sendByDateButton = new JButton();
 					getContentPane().add(sendByDateButton);
-					sendByDateButton.setText("Send");
-					sendByDateButton.setBounds(227, 65, 59, 23);
+					sendByDateButton.setText("Generate EOD");
+					sendByDateButton.setBounds(227, 65, 125, 23);
 					sendByDateButton.setAction(getSendByDateAction());
 				}
 				{
@@ -317,12 +321,14 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					getContentPane().add(viewLastComboBox);
 					getContentPane().add(getViewFileButton());
 					getContentPane().add(getDayLabel());
+					getContentPane().add(getFtpFilesScrollPane());
+					getContentPane().add(getGetFTPFilesButton());
 					viewLastComboBox.setModel(viewLastComboBoxModel);
 					viewLastComboBox.setBounds(70, 117, 76, 22);
 					viewLastComboBox.setAction(getViewLastDaysAction());
 				}
 			}
-			this.setSize(896, 653);
+			this.setSize(1011, 673);
 		} catch (Exception e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
@@ -672,6 +678,56 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 			};
 		}
 		return sendUnsentAction;
+	}
+	
+	private JScrollPane getFtpFilesScrollPane() {
+		if(ftpFilesScrollPane == null) {
+			ftpFilesScrollPane = new JScrollPane();
+			ftpFilesScrollPane.setBounds(730, 65, 247, 460);
+			ftpFilesScrollPane.setViewportView(getFtpFileTable());
+		}
+		return ftpFilesScrollPane;
+	}
+	
+	private JButton getGetFTPFilesButton() {
+		if(getFTPFilesButton == null) {
+			getFTPFilesButton = new JButton();
+			getFTPFilesButton.setText("Get FTP Files");
+			getFTPFilesButton.setBounds(880, 531, 97, 23);
+			getFTPFilesButton.setAction(getGetFTPFilesAction());
+		}
+		return getFTPFilesButton;
+	}
+	
+	private JTable getFtpFileTable() {
+		if(ftpFileTable == null) {
+			TableModel ftpFileTableModel = 
+				new DefaultTableModel(
+						null,
+						new String[] { "File Name" });
+			ftpFileTable = new JTable();
+			ftpFileTable.setModel(ftpFileTableModel);
+		}
+		return ftpFileTable;
+	}
+	
+	private AbstractAction getGetFTPFilesAction() {
+		if(getFTPFilesAction == null) {
+			getFTPFilesAction = new AbstractAction("Get FTP Files", null) {
+				public void actionPerformed(ActionEvent evt) {
+					
+					List<String> ftpFiles = RobinsonsComplianceService.getInstance().getFTPFiles();
+					String[][] files = new String[ftpFiles.size()][1];
+					for(int i =0; i<ftpFiles.size();i++){
+						files[i][0] = ftpFiles.get(i);
+					}
+
+					DefaultTableModel defaultTableModel = new DefaultTableModel(files,new String[]{"File Names"});
+					getFtpFileTable().setModel(defaultTableModel);
+				}
+			};
+		}
+		return getFTPFilesAction;
 	}
 
 }
