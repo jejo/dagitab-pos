@@ -3,10 +3,11 @@ package util;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPConnectionClosedException;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
@@ -47,6 +48,26 @@ public class FtpUtility {
 		this.remoteDirectory = remoteDirectory;
 		this.ftp = new FTPClient();
 		
+	}
+	
+	public List<String> getRemoteFileNames(){
+		try {
+			ftp.changeWorkingDirectory(remoteDirectory);
+			FTPFile[] ftpFiles = ftp.listFiles();
+			ArrayList<String> fileNames = new ArrayList<String>();
+			for(FTPFile ftpFile : ftpFiles){
+				String fileName = ftpFile.getName();
+				if(!fileName.equals(".") && !fileName.equals("..") && fileName.contains(".")){
+					fileNames.add(fileName);
+				}
+				
+			}
+			return fileNames;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public String getHost() {
@@ -146,9 +167,16 @@ public class FtpUtility {
 		String password = "b4ti64d";
 		String workingDirectory = "C:\\Program Files\\Warcraft III\\";	//where the file(s) are placed
 		
-		FtpUtility ftp = new FtpUtility(hostAddress, username, password, workingDirectory);
+		FtpUtility ftp = new FtpUtility(hostAddress, username, password,workingDirectory,"wikilicious");
 		if(ftp.connect()) {
-			ftp.sendFile("CustomKeysSample.txt");
+//			ftp.sendFile("CustomKeysSample.txt");
+			
+			for(String s: ftp.getRemoteFileNames()){
+				if(!s.equals(".") && !s.equals("..") && s.contains(".")){
+					logger.info(s);
+				}
+			}
+			
 			ftp.disconnect();
 		}
 	}

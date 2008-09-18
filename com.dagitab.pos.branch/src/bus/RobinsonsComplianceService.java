@@ -134,6 +134,42 @@ public class RobinsonsComplianceService {
 		}
 		return null;
 	}
+	
+	public List<String> getFTPFiles(){
+		// properties in the startup directory
+		java.util.Properties props = new java.util.Properties();
+		java.io.FileInputStream fis;
+		try {
+			fis = new java.io.FileInputStream(new java.io.File(
+					"ftp.properties"));
+			props.load(fis);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+
+		logger.info(props);
+
+		String hostAddress = props.getProperty("hostAddress");
+		String username = props.getProperty("username");
+		String password = props.getProperty("password");
+		String remoteDirectory = props.getProperty("remoteDirectory");
+		String workingDirectory = COMPLIANCE_DIRECTORY; // where the file(s) are
+														// placed
+
+		FtpUtility ftp = new FtpUtility(hostAddress, username, password,
+				workingDirectory, remoteDirectory);
+		
+		List<String> files = null;
+		if (ftp.connect()) {
+			files = ftp.getRemoteFileNames();
+			ftp.disconnect();
+		}
+		return files;
+	}
 
 	private String generateLocalFile(Date date) throws FileNotFoundException {
 
@@ -288,7 +324,8 @@ public class RobinsonsComplianceService {
 	}
 	
 	public String generateLocalFile3(Date date) throws FileNotFoundException {
-
+		
+		
 		int year = getComponent(date, Calendar.YEAR);
 		int month = getComponent(date, Calendar.MONTH) + 1; // month is zero
 															// based!!
