@@ -81,4 +81,20 @@ public class DateUtility {
 		}
 		return years;
 	}
+	
+	public java.util.Date convertSqlDateToUtilDate(java.sql.Date date) {
+		Calendar cal = Calendar.getInstance();
+		
+		cal.setTimeInMillis(date.getTime());
+		
+		return cal.getTime();
+	}
+	
+	public java.sql.Date convertUtilDateToSqlDate(java.util.Date date) {
+		Calendar cal = Calendar.getInstance();
+		
+		cal.setTimeInMillis(date.getTime());
+		
+		return new java.sql.Date(cal.getTime().getTime());
+	}
 }
