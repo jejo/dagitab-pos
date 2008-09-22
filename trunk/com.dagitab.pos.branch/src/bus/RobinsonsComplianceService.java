@@ -427,7 +427,7 @@ public class RobinsonsComplianceService {
 		return -1;
 	}
 	
-	private Integer getEodSentFlag(int month, int day, int year) {
+	public Integer getEodSentFlag(int month, int day, int year) {
 		// TODO Auto-generated method stub
 		String query = "select count(1)" + "  from eod_log"
 				+ " where IS_SENT = 'Y' AND " + "MONTH (trans_date) = '" + month
@@ -446,6 +446,27 @@ public class RobinsonsComplianceService {
 		}
 
 		return -1;
+	}
+	
+	private java.sql.Date getEodLogDate(int month, int day, int year) {
+		// TODO Auto-generated method stub
+		String query = "select EOD_TIME" + "  from eod_log"
+				+ " where IS_SENT = 'Y' AND " + "MONTH (trans_date) = '" + month
+				+ "' && YEAR(trans_date) = '" + year
+				+ "' && DAY(trans_date) = '" + day + "'";
+		logger.info("getEodSentFlag query=" + query);
+		ResultSet rs = databaseManager.executeQuery(query);
+
+		try {
+			if (rs.next()) {
+				return rs.getDate(1); 
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+
+		return null;
 	}
 
 	private Integer getMaxEodCounter() {
@@ -494,7 +515,7 @@ public class RobinsonsComplianceService {
 		return unsentList;
 	}
 	
-	private Date getTransDateBasedOnEodDate(Date eodDate) {
+	public Date getTransDateBasedOnEodDate(Date eodDate) {
 		
 		Calendar cal = Calendar.getInstance();
 
@@ -502,9 +523,33 @@ public class RobinsonsComplianceService {
 
 		if(cal.get(Calendar.HOUR_OF_DAY) < 4) {
 			cal.add(Calendar.DAY_OF_MONTH, -1 );
+			
+		}
+		cal.set(Calendar.HOUR_OF_DAY, 8); // set to 9am
+		return cal.getTime();
+		
+	}
+	
+	public Date getEodDateBasedOnTransDate(Date transDate) {
+		
+		Calendar cal = Calendar.getInstance();
+
+		cal.setTimeInMillis(transDate.getTime());
+
+		int year = getComponent(transDate, Calendar.YEAR);
+		int month = getComponent(transDate, Calendar.MONTH) + 1; // month is zero
+															// based!!
+		int day = getComponent(transDate, Calendar.DAY_OF_MONTH);
+		
+		if (getEodSentFlag(month, day, year) > 0) {
+			cal.setTimeInMillis((getEodLogDate(month, day, year).getTime()));
+		} else {
+			cal.add(Calendar.DAY_OF_MONTH, 1 );
+			cal.set(Calendar.HOUR_OF_DAY, 3);
 		}
 		
 		return cal.getTime();
 		
 	}
+	
 }
