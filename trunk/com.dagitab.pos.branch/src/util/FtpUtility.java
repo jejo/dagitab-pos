@@ -102,22 +102,22 @@ public class FtpUtility {
 		this.ftp = ftp;
 	}
 	
-	public void sendFile(String file) {
+	public void sendFile(String file) throws IOException {
 		sendFile(file, getWorkingDirectory());
 	}
 	
-	public void sendFile(String file, String workingDirectory) {
+	public void sendFile(String file, String workingDirectory) throws IOException {
 		logger.info("Transferring " + file + "...");
-		try {
+		
 			ftp.changeWorkingDirectory(remoteDirectory);
 			ftp.storeFile(file, new FileInputStream(workingDirectory + file));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		}
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			LoggerUtility.getInstance().logStackTrace(e);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			LoggerUtility.getInstance().logStackTrace(e);
+//		}
 		logger.info(file + " has been transferred.");
 	}
 
@@ -161,7 +161,7 @@ public class FtpUtility {
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String hostAddress = "ftp.dagitab.com";
 		String username = "rocky@dagitab.com";
 		String password = "b4ti64d";
