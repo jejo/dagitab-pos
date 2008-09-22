@@ -111,13 +111,13 @@ public class RobinsonsComplianceService {
 
 		String transDateString = sdf.format(cal.getTime());
 		
-		sdf = new SimpleDateFormat("yyyy-MM-dd HH24:mm:ss");
+		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		cal.setTimeInMillis(eodDate.getTime());
 		
 		String eodDateString = sdf.format(cal.getTime());
 
-		String query = "insert into eod_log (trans_date, eod_time, ) values ("
+		String query = "insert into eod_log (trans_date, eod_time, is_sent) values ("
 				+ "str_to_date('"
 				+ transDateString
 				+ "','%Y-%m-%d'),"

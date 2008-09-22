@@ -2,6 +2,7 @@ package forms.reports;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -61,6 +63,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 	private JLabel viewLast;
 	private AbstractAction closeButtonAction;
 	private JButton sendByDateButton;
+	private JTextField currentTextField;
 	private AbstractAction getFTPFilesAction;
 	private JTable ftpFileTable;
 	private JButton getFTPFilesButton;
@@ -78,9 +81,6 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 	private AbstractAction sendYearAction;
 	private JTable unsentItemTable;
 	private JTable sentItemTable;
-	private JComboBox sendYearComboBox;
-	private JComboBox sendDayComboBox;
-	private JComboBox sendMonthComboBox;
 	private JLabel sendByDateLabel;
 	private JButton closeButton;
 	private JButton sendAllButton;
@@ -271,35 +271,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					sendByDateLabel.setBounds(10, 45, 93, 14);
 					sendByDateLabel.setFont(new java.awt.Font("Tahoma",1,11));
 				}
-				{
-					ComboBoxModel sendMonthComboBoxModel =new DefaultComboBoxModel(DateUtility.getDateUtility().getAllMonths());
-					sendMonthComboBox = new JComboBox();
-					getContentPane().add(sendMonthComboBox);
-					sendMonthComboBox.setModel(sendMonthComboBoxModel);
-					sendMonthComboBox.setBounds(10, 65, 73, 22);
-					sendMonthComboBox.setAction(getSendMonthAction());
-				}
 				
-				{
-					ComboBoxModel sendYearComboBoxModel = 
-						new DefaultComboBoxModel(DateUtility.getDateUtility().getYears());
-					sendYearComboBoxModel.setSelectedItem("4");
-					sendYearComboBox = new JComboBox();
-					getContentPane().add(sendYearComboBox);
-					sendYearComboBox.setModel(sendYearComboBoxModel);
-					
-					sendYearComboBox.setBounds(156, 65, 65, 22);
-					sendYearComboBox.setAction(getSendYearAction());
-				}
-				{
-					ComboBoxModel sendDayComboBoxModel = 
-						new DefaultComboBoxModel(DateUtility.getDateUtility().getDaysOfMonth(sendMonthComboBox.getSelectedIndex(), 
-																Integer.parseInt(sendYearComboBox.getSelectedItem().toString())));
-					sendDayComboBox = new JComboBox();
-					getContentPane().add(sendDayComboBox);
-					sendDayComboBox.setModel(sendDayComboBoxModel);
-					sendDayComboBox.setBounds(93, 65, 53, 22);
-				}
 				{
 					sendByDateButton = new JButton();
 					getContentPane().add(sendByDateButton);
@@ -323,6 +295,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					getContentPane().add(getDayLabel());
 					getContentPane().add(getFtpFilesScrollPane());
 					getContentPane().add(getGetFTPFilesButton());
+					getContentPane().add(getCurrentTextField());
 					viewLastComboBox.setModel(viewLastComboBoxModel);
 					viewLastComboBox.setBounds(70, 117, 76, 22);
 					viewLastComboBox.setAction(getViewLastDaysAction());
@@ -351,16 +324,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		if(sendMonthAction == null) {
 			sendMonthAction = new AbstractAction("", null) {
 				public void actionPerformed(ActionEvent evt) {
-					logger.info("JEJO: setting day from month");
-					ComboBoxModel comboBoxModel = 
-						new DefaultComboBoxModel(DateUtility.getDateUtility().getDaysOfMonth(sendMonthComboBox.getSelectedIndex(), 
-																Integer.parseInt(sendYearComboBox.getSelectedItem().toString())));
-					sendDayComboBox.setModel(comboBoxModel);
-					if(isInit1){
-						logger.info("setting day to current");
-						sendDayComboBox.setSelectedItem(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"");
-						isInit1=false;
-					}
+					
 					
 				}
 			};
@@ -368,30 +332,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		return sendMonthAction;
 	}
 	
-	@SuppressWarnings("serial")
-	private AbstractAction getSendYearAction() {
-		if(sendYearAction == null) {
-			sendYearAction = new AbstractAction("", null) {
-				public void actionPerformed(ActionEvent evt) {
-					logger.info("JEJO: setting day from year");
-					ComboBoxModel comboBoxModel = 
-						new DefaultComboBoxModel(DateUtility.getDateUtility().getDaysOfMonth(sendMonthComboBox.getSelectedIndex(), 
-																Integer.parseInt(sendYearComboBox.getSelectedItem().toString())));
-					sendDayComboBox.setModel(comboBoxModel);
-					
-					
-					//FIX TO SET DATE TO CURRENT AT INIT
-					if(isInit2){
-						logger.info("setting day to current");
-						sendDayComboBox.setSelectedItem(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"");
-						isInit2=false;
-					}
-					
-				}
-			};
-		}
-		return sendYearAction;
-	}
+	
 	
 	@SuppressWarnings("serial")
 	private AbstractAction getFilterMonthAction() {
@@ -425,19 +366,16 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		if(sendByDateAction == null) {
 			sendByDateAction = new AbstractAction("Send", null) {
 				public void actionPerformed(ActionEvent evt) {
-					Calendar calendar = Calendar.getInstance();
-					calendar.set(Calendar.YEAR, Integer.parseInt(sendYearComboBox.getSelectedItem().toString()));
-					calendar.set(Calendar.MONTH, sendMonthComboBox.getSelectedIndex());
-					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(sendDayComboBox.getSelectedItem().toString()));
-					logger.info("*****generating robinsons compliance report for date: "+calendar.getTime());
+					Date eodDate = Calendar.getInstance().getTime();
+					Date transDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(eodDate);
 					try {
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(calendar.getTime());
-						JOptionPane.showMessageDialog(null, "Successfully generated compliance report.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-						init();
-					} catch (FileNotFoundException e) {
-						JOptionPane.showMessageDialog(null, "Compliance report was not successfully generated. Please try again.", "Prompt", JOptionPane.ERROR_MESSAGE);
-						LoggerUtility.getInstance().logStackTrace(e);
+						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
+					
 				}
 			};
 		}
@@ -474,8 +412,9 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		Calendar calendar = Calendar.getInstance();
 		logger.info("JEJO:"+calendar.get(Calendar.DAY_OF_MONTH));
 		
-		sendYearComboBox.setSelectedItem(calendar.get(Calendar.YEAR)+"");
-		sendMonthComboBox.setSelectedIndex(calendar.get(Calendar.MONTH));
+		Date date = Calendar.getInstance().getTime();
+		currentTextField.setText(date.toString());
+		
 		
 	}
 	
@@ -538,15 +477,15 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					calendar.set(Calendar.MONTH, Integer.parseInt(dateSplit[1])-1);
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
 					logger.info("generating robinsons compliace report for date: "+calendar.getTime());
+					
+					Date transDate = calendar.getTime();
+					Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 					try {
-						
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(calendar.getTime());
-						
-						JOptionPane.showMessageDialog(null, "Successfully generated compliance report.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-						init();
-					} catch (FileNotFoundException e) {
-						JOptionPane.showMessageDialog(null, "Compliance report was not successfully generated. Please try again.", "Prompt", JOptionPane.ERROR_MESSAGE);
-						LoggerUtility.getInstance().logStackTrace(e);
+						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
 					
 				}
@@ -628,18 +567,20 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 						calendar.set(Calendar.MONTH, Integer.parseInt(dateSplit[1])-1);
 						calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 						calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
+						Date transDate = calendar.getTime();
+						Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 						try {
-							RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(calendar.getTime());
-							sentDatesList.add(dateString);
+							RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+							sentDatesList.add(transDate.toString());
 							
-						} catch (FileNotFoundException e) {
-//							JOptionPane.showMessageDialog(null, "Compliance report was not successfully generated. Please try again.", "Prompt", JOptionPane.ERROR_MESSAGE);
-							unsentDateList.add(dateString);
+						} catch (IOException e) {
+							unsentDateList.add(transDate.toString());
+							e.printStackTrace();
 						}
 					}
 					
 					if(sentDatesList.size() == model.getRowCount()){
-						JOptionPane.showMessageDialog(null, "Successfully generated compliance report for all dates.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
 						init();
 					}
 					else{
@@ -647,8 +588,8 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 						for(String s: unsentDateList){
 							unsentDates += s;
 						}
-						
-						JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+//						JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			};
@@ -667,12 +608,14 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					calendar.set(Calendar.MONTH, Integer.parseInt(dateSplit[1])-1);
 					calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
+					Date transDate = calendar.getTime();
+					Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 					try {
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(calendar.getTime());
-						JOptionPane.showMessageDialog(null, "Successfully generated compliance report.", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-						init();
-					} catch (FileNotFoundException e) {
-						JOptionPane.showMessageDialog(null, "Compliance report was not successfully generated. Please try again.", "Prompt", JOptionPane.ERROR_MESSAGE);
+						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
 				}
 			};
@@ -728,6 +671,15 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 			};
 		}
 		return getFTPFilesAction;
+	}
+	
+	private JTextField getCurrentTextField() {
+		if(currentTextField == null) {
+			currentTextField = new JTextField();
+			currentTextField.setBounds(10, 66, 211, 20);
+			currentTextField.setEditable(false);
+		}
+		return currentTextField;
 	}
 
 }

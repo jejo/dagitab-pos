@@ -250,7 +250,7 @@ public class EastwoodComplianceService {
 
 		if (ftp.connect()) {
 
-			ftp.sendFile(fileName);
+//			ftp.sendFile(fileName);
 			ftp.disconnect();
 
 		}

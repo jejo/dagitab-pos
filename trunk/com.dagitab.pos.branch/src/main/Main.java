@@ -6,7 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
@@ -29,6 +32,7 @@ public class Main {
 	private static Integer clerkCode = null;
 	private static Logger logger = Logger.getLogger(Main.class);
 	private static int percentage = 0;
+	private static Properties properties;
 	
 	
 	private static SyncManager syncManager;
@@ -62,7 +66,7 @@ public class Main {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args){
 		
-		final Properties properties = new Properties();
+		properties = new Properties();
 		
 		try {
 			
@@ -86,6 +90,12 @@ public class Main {
 			
 			
 			
+			
+			
+			
+			
+			
+			//Synchronizer Configuration
 			syncManager = new SyncManager(properties);
 			syncManager.addListener(new SyncProgressListener(){
 				private Integer errors = 0;
@@ -203,6 +213,10 @@ public class Main {
 
 	public static SyncManager getSyncManager() {
 		return syncManager;
+	}
+
+	public static Properties getProperties() {
+		return properties;
 	}
 	
 	

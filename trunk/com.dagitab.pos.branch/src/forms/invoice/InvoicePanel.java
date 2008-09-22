@@ -134,7 +134,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	private JButton addPaymentItemButton;
 	private JButton editPaymentItemButton;
 	private JButton deletePaymentItemButton;
-	private JButton jButton9;
+	private JButton processButton;
 	private JLabel jLabel16;
 	private JButton jButton31;
 	private MainWindow mainWindow;
@@ -601,12 +601,12 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				deletePaymentItemButton.getActionMap().put("deletePaymentItemButton",getDeletePaymentItemAction() );
 			}
 			{
-				jButton9 = new JButton();
-				this.add(jButton9, new AnchorConstraint(922, 975, 978, 763, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton9.setText("Process Transaction");
-				jButton9.setPreferredSize(new java.awt.Dimension(182, 28));
-				jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
-				jButton9.addActionListener(new ActionListener() {
+				processButton = new JButton();
+				this.add(processButton, new AnchorConstraint(922, 975, 978, 763, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				processButton.setText("Process Transaction");
+				processButton.setPreferredSize(new java.awt.Dimension(182, 28));
+				processButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
+				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						logger.info("processing invoice transaction...");
 						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
@@ -1253,5 +1253,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			};
 		}
 		return deletePaymentItemAction;
+	}
+
+	public JButton getProcessButton() {
+		return processButton;
 	}
 }

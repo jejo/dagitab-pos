@@ -4,6 +4,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,8 +28,10 @@ import org.apache.log4j.Logger;
 import util.LoggerUtility;
 import util.Validator;
 import bus.ClerkService;
+import bus.RobinsonsComplianceService;
 import bus.StoreService;
 import domain.Clerk;
+import forms.reports.RobinsonsComplianceDialog;
 
 
 /**
@@ -165,6 +174,67 @@ public class LoginDialog extends javax.swing.JDialog {
 				String userName = clerk.getFirstName()+" "+clerk.getLastName(); 
 				Main.displayLoginInformation(userName, branchName);
 				Main.clearInvoiceInformation();
+				
+				
+				
+				
+				String isCompliance = Main.getProperties().getProperty("compliance");
+				String periodicRate = Main.getProperties().getProperty("compliance.periodicRate");
+				final Integer sendUnsentDaysNo = Integer.valueOf(Main.getProperties().getProperty("send.unsentdays.no"));
+				//galleria compliance
+				
+				if(isCompliance.equals("galleria")){
+					
+					Timer timer = new Timer();
+					timer.scheduleAtFixedRate(new TimerTask(){
+
+						@Override
+						public void run() {
+							logger.info("Trying to send unsent files…");
+							Main.getInst().getStatusLabel().setText("Trying to send unsent files\u2026");
+							
+							List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(sendUnsentDaysNo);
+							
+							
+							ArrayList<String> sentDatesList = new ArrayList<String>();
+							ArrayList<String> unsentDateList = new ArrayList<String>();
+							for(int i = 0; i<listDates.size(); i++){
+								Date transDate = listDates.get(i);
+								Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
+								try {
+									RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+									sentDatesList.add(transDate.toString());
+								} catch (IOException e) {
+									unsentDateList.add(transDate.toString());
+									e.printStackTrace();
+								}
+							}
+							
+							if(sentDatesList.size() == listDates.size()){
+								Main.getInst().getStatusLabel().setText("Sales file successfully sent to RLC server");
+//								JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+								
+							}
+							else{
+								String unsentDates = "";
+								for(String s: unsentDateList){
+									unsentDates += s;
+								}
+								Main.getInst().getStatusLabel().setText("Sales file is not sent to RLC server. Please contact your POS vendor");
+//								JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+//								JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
+							}
+							
+							
+							
+							
+							
+						}}, Calendar.getInstance().getTime(), Long.valueOf(periodicRate));
+				}
+				
+				
+				
+				
 			}
 			else{
 				JOptionPane.showMessageDialog(null, "Please check your login information.", "Invalid Clerk Login", JOptionPane.ERROR_MESSAGE);

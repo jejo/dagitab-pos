@@ -68,9 +68,9 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			Double dailySale = 0.0d;
 			rs = pquery.executeQuery();
@@ -117,8 +117,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, eodDate);
-			pquery.setInt(1, storeCode);
+			pquery.setDate(1, eodDate);
+			pquery.setInt(2, storeCode);
 			
 			rs = pquery.executeQuery();
 			
@@ -167,8 +167,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setInt(1, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setInt(2, storeCode);
 			
 			rs = pquery.executeQuery();
 			
@@ -243,9 +243,9 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
 			
@@ -305,9 +305,9 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
 			
@@ -396,9 +396,9 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
 			
@@ -488,9 +488,9 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
 			
@@ -532,16 +532,16 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
 			
 			Integer count = 0;
 			
 			if(rs.next()){
-				count = rs.getInt("COUNT");
+				count = rs.getInt(1);
 			}
 		
 			logger.info("TOTAL NO OF RETURNED ITEMS: "+ count);
@@ -588,9 +588,9 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(0, transDate);
-			pquery.setDate(1, eodDate);
-			pquery.setInt(2, storeCode);
+			pquery.setDate(1, transDate);
+			pquery.setDate(2, eodDate);
+			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
 			
