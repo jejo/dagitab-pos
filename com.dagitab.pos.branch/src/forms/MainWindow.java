@@ -64,6 +64,7 @@ public class MainWindow extends javax.swing.JFrame {
 	private static JPanel returnedPanel;
 	private static JPanel deferredPanel;
 	private static JPanel partialPanel;
+	private JLabel statusLabel;
 	private static JPanel invoicePanel;
 	private JTabbedPane jTabbedPane1;
 	private static JPanel pendingPanel;
@@ -81,6 +82,15 @@ public class MainWindow extends javax.swing.JFrame {
 		initGUI();
 		pendingTransactions = new ArrayList<Transaction>();
 	}
+	
+	public void disableTransaction(){
+		InvoicePanel invPanel = (InvoicePanel) invoicePanel;
+		invPanel.getProcessButton().setEnabled(false);
+		PartialPanel partPanel = (PartialPanel) partialPanel;
+		partPanel.getProcessButton().setEnabled(false);
+		ReturnedPanel returnPanel = (ReturnedPanel) returnedPanel;
+		returnPanel.setEnabled(false);
+	}
 
 	private void initGUI() {
 		try {
@@ -94,6 +104,12 @@ public class MainWindow extends javax.swing.JFrame {
 				this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/payments.png")).getImage());
 				this.setFocusTraversalKeysEnabled(false);
+				{
+					statusLabel = new JLabel();
+					getContentPane().add(statusLabel, new AnchorConstraint(962, 167, 989, 12, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					statusLabel.setText("");
+					statusLabel.setPreferredSize(new java.awt.Dimension(136, 14));
+				}
 				this.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent event) {
 						int n = JOptionPane
@@ -217,6 +233,10 @@ public class MainWindow extends javax.swing.JFrame {
 
 	public void setJTabbedPane1(JTabbedPane tabbedPane1) {
 		jTabbedPane1 = tabbedPane1;
+	}
+
+	public JLabel getStatusLabel() {
+		return statusLabel;
 	}
 	
 	

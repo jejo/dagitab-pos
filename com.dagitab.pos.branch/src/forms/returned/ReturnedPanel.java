@@ -1273,4 +1273,8 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		
 	}
 
+	public JButton getProcessTransactionButton() {
+		return processTransactionButton;
+	}
+
 }

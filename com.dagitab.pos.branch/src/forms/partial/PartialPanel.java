@@ -149,4 +149,8 @@ public class PartialPanel extends javax.swing.JPanel {
 	public void setMainWindow(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 	}
+
+	public JButton getProcessButton() {
+		return processButton;
+	}
 }
