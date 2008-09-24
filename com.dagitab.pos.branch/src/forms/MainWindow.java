@@ -89,7 +89,7 @@ public class MainWindow extends javax.swing.JFrame {
 		PartialPanel partPanel = (PartialPanel) partialPanel;
 		partPanel.getProcessButton().setEnabled(false);
 		ReturnedPanel returnPanel = (ReturnedPanel) returnedPanel;
-		returnPanel.setEnabled(false);
+		returnPanel.getProcessTransactionButton().setEnabled(false);
 	}
 
 	private void initGUI() {

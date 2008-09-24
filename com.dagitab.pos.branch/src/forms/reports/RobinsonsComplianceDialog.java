@@ -366,6 +366,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		if(sendByDateAction == null) {
 			sendByDateAction = new AbstractAction("Generate EOD", null) {
 				public void actionPerformed(ActionEvent evt) {
+					logger.info("generating eod action..");
 					Date eodDate = Calendar.getInstance().getTime();
 					Date transDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(eodDate);
 					try {
