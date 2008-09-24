@@ -77,7 +77,7 @@ public class RobinsonsComplianceService {
 		String fileName = generateLocalFile(transDate, eodDate);
 		sendFileThroughFtp(fileName);
 		insertComplianceLogRecord(fileName, transDate);
-		insertEodLogRecord(fileName, eodDate, eodDate);
+		insertEodLogRecord(fileName, transDate, eodDate);
 	}
 
 	private void insertComplianceLogRecord(String fileName, Date date) {
@@ -105,13 +105,11 @@ public class RobinsonsComplianceService {
 
 		Calendar cal = Calendar.getInstance();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		cal.setTimeInMillis(transDate.getTime());
 
 		String transDateString = sdf.format(cal.getTime());
-		
-		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		cal.setTimeInMillis(eodDate.getTime());
 		
@@ -120,7 +118,7 @@ public class RobinsonsComplianceService {
 		String query = "insert into eod_log (trans_date, eod_time, is_sent) values ("
 				+ "str_to_date('"
 				+ transDateString
-				+ "','%Y-%m-%d'),"
+				+ "','%Y-%m-%d %H:%i:%S'),"
 				+ "str_to_date('"
 				+ eodDateString
 				+ "','%Y-%m-%d %H:%i:%S'),'Y')";
@@ -162,6 +160,8 @@ public class RobinsonsComplianceService {
 			ftp.sendFile(fileName);
 			ftp.disconnect();
 
+		} else {
+			throw new IOException();
 		}
 		return null;
 	}
@@ -204,9 +204,23 @@ public class RobinsonsComplianceService {
 	
 	private String generateLocalFile(Date utilTransDate, Date utilEodDate) throws FileNotFoundException {
 
-		java.sql.Date transDate = DateUtility.getDateUtility().convertUtilDateToSqlDate(utilTransDate);
-		java.sql.Date eodDate = DateUtility.getDateUtility().convertUtilDateToSqlDate(utilEodDate);
+		java.sql.Timestamp transDate = new java.sql.Timestamp(DateUtility.getDateUtility().convertUtilDateToSqlDate(utilTransDate).getTime());
+		java.sql.Timestamp eodDate = new java.sql.Timestamp(DateUtility.getDateUtility().convertUtilDateToSqlDate(utilEodDate).getTime());
 		
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTimeInMillis(transDate.getTime());
+
+		String transDateString = sdf2.format(cal2.getTime());
+		
+		cal2.setTimeInMillis(eodDate.getTime());
+		
+		String eodDateString = sdf2.format(cal2.getTime());
+		
+		System.out.println("transdateString="  + transDateString);
+		System.out.println("eodDateString="  + eodDateString);
+				
 		int year = getComponent(transDate, Calendar.YEAR);
 		int month = getComponent(transDate, Calendar.MONTH) + 1; // month is zero
 															// based!!
@@ -379,6 +393,16 @@ public class RobinsonsComplianceService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis((new Date()).getTime());
 
+		calendar.add(Calendar.DAY_OF_MONTH, -12);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		System.out.println(sdf.format(RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(calendar.getTime())));
+
+
+//		Double gross = ComplianceService.getComplianceService().getRawGross(DateUtility.getDateUtility().convertUtilDateToSqlDate(calendar.getTime()), 
+//				DateUtility.getDateUtility().convertUtilDateToSqlDate(new Date()), new Integer(1));
+		
+//		System.out.println("Gross" + gross);
 		// calendar.add(Calendar.DAY_OF_MONTH, );
 
 		// String fileName =
@@ -397,7 +421,7 @@ public class RobinsonsComplianceService {
 
 	}
 
-	private int getComponent(Date date, int component) {
+	public int getComponent(Date date, int component) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(date.getTime());
 
@@ -495,9 +519,18 @@ public class RobinsonsComplianceService {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(new Date().getTime());
 		cal.add(Calendar.DAY_OF_MONTH, -1 * pastDays - 1);
-		for(int i = -1 * pastDays; i <= 0; i ++) {
+		
+		Integer offset = 0;
+		if(cal.get(Calendar.HOUR_OF_DAY) <= 4) {
+			offset = -2;
+		} else {
+			offset = -1;
+		}
+		for(int i = -1 * pastDays; i <= offset; i ++) {
 			cal.add(Calendar.DAY_OF_MONTH, 1);
-			
+			cal.set(Calendar.HOUR_OF_DAY, 9); // set to 9am
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
 			Date date = cal.getTime();
 			
 			int year = getComponent(date, Calendar.YEAR);
@@ -521,11 +554,12 @@ public class RobinsonsComplianceService {
 
 		cal.setTimeInMillis(eodDate.getTime());
 
-		if(cal.get(Calendar.HOUR_OF_DAY) < 4) {
+		if(cal.get(Calendar.HOUR_OF_DAY) <= 8) {
 			cal.add(Calendar.DAY_OF_MONTH, -1 );
-			
 		}
-		cal.set(Calendar.HOUR_OF_DAY, 8); // set to 9am
+		cal.set(Calendar.HOUR_OF_DAY, 9); // set to 9am
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
 		return cal.getTime();
 		
 	}
@@ -545,7 +579,9 @@ public class RobinsonsComplianceService {
 			cal.setTimeInMillis((getEodLogDate(month, day, year).getTime()));
 		} else {
 			cal.add(Calendar.DAY_OF_MONTH, 1 );
-			cal.set(Calendar.HOUR_OF_DAY, 3);
+			cal.set(Calendar.HOUR_OF_DAY, 4);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
 		}
 		
 		return cal.getTime();

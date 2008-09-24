@@ -8,6 +8,7 @@ import java.util.Date;
 import main.Main;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.ntp.TimeStamp;
 import org.apache.log4j.Logger;
 
 import util.LoggerUtility;
@@ -60,16 +61,16 @@ public class ComplianceService {
 	}
 	
 	//need to change where to derive amount to invoice_item less discounts
-	public Double getRawGross(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
-		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND o.STORE_CODE = ?";
+	public Double getRawGross(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND o.STORE_CODE = ?";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			Double dailySale = 0.0d;
@@ -109,15 +110,15 @@ public class ComplianceService {
 	}
 	
 	//need to change where to derive amount to invoice_item less discounts
-	public Double getNewGT(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
-		String query = "SELECT sum(p.AMT) from payment_item p WHERE DATE (p.TRANS_DT) <= ? AND p.STORE_CODE = ? AND p.PT_CODE != 4";
+	public Double getNewGT(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT sum(p.AMT) from payment_item p WHERE p.TRANS_DT <= ? AND p.STORE_CODE = ? AND p.PT_CODE != 4";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, eodDate);
+			pquery.setTimestamp(1, eodDate);
 			pquery.setInt(2, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -159,15 +160,15 @@ public class ComplianceService {
 	}
 	
 	//need to change where to derive amount to invoice_item less discounts
-	public Double getOldGT(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
-		String query = "SELECT sum(p.AMT) from payment_item p WHERE DATE (p.TRANS_DT) < ? AND p.STORE_CODE = ? AND p.PT_CODE != 4";
+	public Double getOldGT(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT sum(p.AMT) from payment_item p WHERE p.TRANS_DT < ? AND p.STORE_CODE = ? AND p.PT_CODE != 4";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
+			pquery.setTimestamp(1, transDate);
 			pquery.setInt(2, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -197,7 +198,7 @@ public class ComplianceService {
 //		return dailySale+totDisc+vat;
 	}
 	
-	public Double getDailySaleWithoutVat(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Double getDailySaleWithoutVat(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		
 //		Double amount = getDailySale(month, year, day, storeCode) - getTotDisc(month, year, day, storeCode)+getVat(month, day, year, storeCode); 
 		Double amount = getRawGross(transDate, eodDate, storeCode)/getVatRate();
@@ -230,7 +231,7 @@ public class ComplianceService {
 	}
 	
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
-	public Double getTotalDiscount(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Double getTotalDiscount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i, invoice o, products_lu p " +
 													"WHERE  p.PROD_CODE = i.PROD_CODE" +
 													"  AND d.DISC_NO = i.DISC_CODE" +
@@ -243,8 +244,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -290,7 +291,7 @@ public class ComplianceService {
 		return count;
 	}
 	
-	public Integer getNoOfDisc(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Integer getNoOfDisc(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT count(1) COUNT FROM invoice o where " +
 				"o.TRANS_DT >= ? AND o.TRANS_DT <= ? " +
 				"AND EXISTS (select 1 " +
@@ -305,8 +306,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -335,7 +336,7 @@ public class ComplianceService {
 		return vat;
 	}
 	
-	public Double getVat(java.sql.Date transDate, java.sql.Date eodDate, int storeCode){
+	public Double getVat(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		Double amt = getRawGross(transDate, eodDate, storeCode);
 		Double dlysale = amt/getVatRate();
 		Double vat = amt - dlysale; 
@@ -353,7 +354,7 @@ public class ComplianceService {
 		return vat;
 	}
 	
-	public Double getCreditSalesVat(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Double getCreditSalesVat(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		Double amt = getCreditSales(transDate, eodDate, storeCode);
 		Double dlysale = amt/getVatRate();
 		Double vat = amt - dlysale; 
@@ -386,7 +387,7 @@ public class ComplianceService {
 	}
 	
 	//need to change where to derive amount to invoice_item less discounts
-	public Double getCreditSales(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Double getCreditSales(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT SUM(p.AMT) FROM payment_item p " +
 				"                                  WHERE p.TRANS_DT >= ? AND p.TRANS_DT <= ?" +
 				                                   " AND p.STORE_CODE = ?"+
@@ -396,8 +397,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -479,7 +480,7 @@ public class ComplianceService {
 		return returnedItemsAmount;
 	}
 	
-	public Double getReturnedItemsAmount(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Double getReturnedItemsAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o WHERE r.OR_NO = o.OR_NO and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND r.OR_NO = o.OR_NO AND o.STORE_CODE = ? and o.RETURN = 1";
 //		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"' AND p.PT_CODE!=4");
 //		Double returnedItemsAmount= 0.0d;
@@ -488,8 +489,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -524,7 +525,7 @@ public class ComplianceService {
 		return returnedItemsQuantity;
 	}
 	
-	public Integer getReturnedItemsQuantity(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Integer getReturnedItemsQuantity(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT SUM(r.QUANTITY) FROM returned_items r, invoice o WHERE r.OR_NO = o.OR_NO and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND r.OR_NO = o.OR_NO AND o.STORE_CODE = ? and o.RETURN = 1";
 //		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"' AND p.PT_CODE!=4");
 		PreparedStatement pquery;
@@ -532,8 +533,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
@@ -578,7 +579,7 @@ public class ComplianceService {
 		return count;		
 	}
 	
-	public Integer getNoOfTransactions(java.sql.Date transDate, java.sql.Date eodDate, int storeCode) {
+	public Integer getNoOfTransactions(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT count(1) COUNT FROM invoice o where " +
 		"MONTH o.TRANS_DT >= ? and o.TRANS_DT <= ? " +
 		"AND o.STORE_CODE = ?";
@@ -588,8 +589,8 @@ public class ComplianceService {
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
-			pquery.setDate(1, transDate);
-			pquery.setDate(2, eodDate);
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
 			
 			rs = pquery.executeQuery();
