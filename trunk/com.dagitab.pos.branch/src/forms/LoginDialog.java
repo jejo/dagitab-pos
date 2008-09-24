@@ -183,54 +183,54 @@ public class LoginDialog extends javax.swing.JDialog {
 				final Integer sendUnsentDaysNo = Integer.valueOf(Main.getProperties().getProperty("send.unsentdays.no"));
 				//galleria compliance
 				
-//				if(isCompliance.equals("galleria")){
-//					
-//					Timer timer = new Timer();
-//					timer.scheduleAtFixedRate(new TimerTask(){
-//
-//						@Override
-//						public void run() {
-//							logger.info("Trying to send unsent files…");
-//							Main.getInst().getStatusLabel().setText("Trying to send unsent files\u2026");
-//							
-//							List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(sendUnsentDaysNo);
-//							
-//							
-//							ArrayList<String> sentDatesList = new ArrayList<String>();
-//							ArrayList<String> unsentDateList = new ArrayList<String>();
-//							for(int i = 0; i<listDates.size(); i++){
-//								Date transDate = listDates.get(i);
-//								Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
-//								try {
-//									RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
-//									sentDatesList.add(transDate.toString());
-//								} catch (IOException e) {
-//									unsentDateList.add(transDate.toString());
-//									e.printStackTrace();
-//								}
-//							}
-//							
-//							if(sentDatesList.size() == listDates.size()){
-//								Main.getInst().getStatusLabel().setText("Sales file successfully sent to RLC server");
-////								JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
-//								
-//							}
-//							else{
-//								String unsentDates = "";
-//								for(String s: unsentDateList){
-//									unsentDates += s;
-//								}
-//								Main.getInst().getStatusLabel().setText("Sales file is not sent to RLC server. Please contact your POS vendor");
-////								JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
-////								JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
-//							}
-//							
-//							
-//							
-//							
-//							
-//						}}, Calendar.getInstance().getTime(), Long.valueOf(periodicRate));
-//				}
+				if(isCompliance.equals("galleria")){
+					
+					Timer timer = new Timer();
+					timer.scheduleAtFixedRate(new TimerTask(){
+
+						@Override
+						public void run() {
+							logger.info("Trying to send unsent files…");
+							Main.getInst().getStatusLabel().setText("Trying to send unsent files\u2026");
+							
+							List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(sendUnsentDaysNo);
+							
+							
+							ArrayList<String> sentDatesList = new ArrayList<String>();
+							ArrayList<String> unsentDateList = new ArrayList<String>();
+							for(int i = 0; i<listDates.size(); i++){
+								Date transDate = listDates.get(i);
+								Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
+								try {
+									RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+									sentDatesList.add(transDate.toString());
+								} catch (IOException e) {
+									unsentDateList.add(transDate.toString());
+									e.printStackTrace();
+								}
+							}
+							
+							if(sentDatesList.size() == listDates.size()){
+								Main.getInst().getStatusLabel().setText("Sales file successfully sent to RLC server");
+//								JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+								
+							}
+							else{
+								String unsentDates = "";
+								for(String s: unsentDateList){
+									unsentDates += s;
+								}
+								Main.getInst().getStatusLabel().setText("Sales file is not sent to RLC server. Please contact your POS vendor");
+//								JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+//								JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
+							}
+							
+							
+							
+							
+							
+						}}, Calendar.getInstance().getTime(), Long.valueOf(periodicRate));
+				}
 				
 				
 				
