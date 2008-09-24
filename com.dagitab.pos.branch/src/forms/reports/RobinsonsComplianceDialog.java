@@ -364,18 +364,19 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 	
 	private AbstractAction getSendByDateAction() {
 		if(sendByDateAction == null) {
-			sendByDateAction = new AbstractAction("Send", null) {
+			sendByDateAction = new AbstractAction("Generate EOD", null) {
 				public void actionPerformed(ActionEvent evt) {
 					Date eodDate = Calendar.getInstance().getTime();
 					Date transDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(eodDate);
 					try {
 						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
 						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						Main.getInst().disableTransaction();
+						init();
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
-					
 				}
 			};
 		}
