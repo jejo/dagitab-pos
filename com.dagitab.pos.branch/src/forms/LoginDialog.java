@@ -248,8 +248,6 @@ public class LoginDialog extends javax.swing.JDialog {
 							
 							
 							
-							
-							
 						}}, Calendar.getInstance().getTime(), Long.valueOf(periodicRate));
 				}
 				
