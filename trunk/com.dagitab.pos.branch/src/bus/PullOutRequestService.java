@@ -2,12 +2,16 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+
+import org.apache.log4j.Logger;
 
 import main.Main;
+import util.DateUtility;
 import util.LoggerUtility;
 
 public class PullOutRequestService {
-	
+	private static Logger logger = Logger.getLogger(PullOutRequestService.class);
 	public static ResultSet fetchAllPullOutRequests() {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT REQUEST_NO, REQUEST_DATE, ISSUE_CLERK, pull_out_reason_lu.NAME FROM pull_out_requests inner join pull_out_reason_lu on pull_out_requests.PO_REASON_CODE = pull_out_reason_lu.PO_REASON_CODE WHERE STO_TO_CODE = '" + Main.getStoreCode() + "';");		
 		return rs;
@@ -18,7 +22,20 @@ public class PullOutRequestService {
 		try {
 			if(rs.next()) {
 				try {
-					Main.getDBManager().insert(new String[] { "STO_TO_CODE", "ISSUE_CLERK", "PO_REASON_CODE" }, new String[] { Main.getStoreCode(), Main.getClerkCode().toString(), rs.getString("PO_REASON_CODE") }, "pull_out_requests", null, null);
+//					Main.getDBManager().insert(new String[] { "STO_TO_CODE", "ISSUE_CLERK", "PO_REASON_CODE" }, new String[] { Main.getStoreCode(), Main.getClerkCode().toString(), rs.getString("PO_REASON_CODE") }, "pull_out_requests", null, null);
+					StringBuilder sqlBuilder = new StringBuilder("INSERT INTO pull_out_requests (`STO_TO_CODE`,`ISSUE_CLERK`,`PO_REASON_CODE`,`REQUEST_DATE`) ");
+					sqlBuilder.append("VALUES ( ");
+					sqlBuilder.append(Main.getStoreCode()+",");
+					sqlBuilder.append(Main.getClerkCode().toString()+",");
+					sqlBuilder.append(rs.getString("PO_REASON_CODE")+",");
+					sqlBuilder.append("str_to_date('"+DateUtility.getDateUtility().getTimeStampString(Calendar.getInstance().getTime())+"','%Y-%m-%d %H:%i:%S')");
+					sqlBuilder.append(")");
+					
+					logger.info(sqlBuilder.toString());
+					int result = Main.getDBManager().executeUpdate(sqlBuilder.toString());
+					if(result > 0){
+						Main.getSyncManager().record(sqlBuilder.toString());
+					}
 				} catch (SQLException e) {
 					LoggerUtility.getInstance().logStackTrace(e);
 				}
