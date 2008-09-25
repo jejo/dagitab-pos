@@ -418,6 +418,10 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 		currentTextField.setText(date.toString());
 		
 		
+		//set filtermonth to current month
+		filterMonthComboBox.setSelectedIndex(Calendar.getInstance().get(Calendar.MONTH));
+		
+		
 	}
 	
 	private void filterSentItemTableByDate(int year, int month, int day){

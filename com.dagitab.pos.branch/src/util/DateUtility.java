@@ -2,6 +2,7 @@ package util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.DateTime;
@@ -96,5 +97,14 @@ public class DateUtility {
 		cal.setTimeInMillis(date.getTime());
 		
 		return new java.sql.Date(cal.getTime().getTime());
+	}
+	
+	public String getTimeStampString(Date date){
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		cal.setTimeInMillis(date.getTime());
+		String timeStampString = sdf.format(cal.getTime());
+		return timeStampString;
+
 	}
 }

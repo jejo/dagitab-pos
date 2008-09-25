@@ -2,13 +2,20 @@ package bus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+
+import org.apache.log4j.Logger;
 
 import main.Main;
+import util.DateUtility;
 import util.LoggerUtility;
 import util.StorePropertyHandler;
 import domain.Invoice;
 
 public class InvoiceService {
+	
+	private static Logger logger = Logger.getLogger(InvoiceService.class);
+	
 	
 	public static String getNextORNumber(){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT (MAX(`OR_NO`) + 1) FROM invoice WHERE store_code = '"+StorePropertyHandler.getStoreNo()+"'");
@@ -59,19 +66,38 @@ public class InvoiceService {
 	}
 	
 	public static int insert(Invoice invoice){
-		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL","`RETURN`","CHANGE_AMOUNT"};
-		String[] columnValues = new String[]{invoice.getOrNo().toString(),
-											 invoice.getInvoiceNo().toString(), 
-											 invoice.getEncoderCode().toString(), 
-											 invoice.getAssistantCode().toString(), 
-											 invoice.getCustomerNo().toString(), 
-											 invoice.getStoreNo().toString(), 
-											 invoice.getIsPartial().toString(),
-											 invoice.getIsReturn().toString(),
-											 invoice.getChangeAmount().toString()};
+//		String[] columns = new String[]{"OR_NO","INVOICE_NO","ENCODER_CODE","ASSIST_CODE","CUST_NO","STORE_CODE","PARTIAL","`RETURN`","CHANGE_AMOUNT"};
+//		String[] columnValues = new String[]{invoice.getOrNo().toString(),
+//											 invoice.getInvoiceNo().toString(), 
+//											 invoice.getEncoderCode().toString(), 
+//											 invoice.getAssistantCode().toString(), 
+//											 invoice.getCustomerNo().toString(), 
+//											 invoice.getStoreNo().toString(), 
+//											 invoice.getIsPartial().toString(),
+//											 invoice.getIsReturn().toString(),
+//											 invoice.getChangeAmount().toString()};
+//		
+//		
+//		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);
 		
-		
-		Integer result = Main.getDBManager().insert(columns, columnValues, "invoice", null, null);	
+		StringBuilder sqlBuilder = new StringBuilder("INSERT INTO invoice (`OR_NO`,`INVOICE_NO`,`ENCODER_CODE`,`ASSIST_CODE`,`CUST_NO`,`STORE_CODE`,`PARTIAL`,`RETURN`,`CHANGE_AMOUNT`,`TRANS_DT`) ");
+		sqlBuilder.append("VALUES ( ");
+		sqlBuilder.append(invoice.getOrNo().toString()+",");
+		sqlBuilder.append(invoice.getInvoiceNo().toString()+",");
+		sqlBuilder.append(invoice.getEncoderCode().toString()+",");
+		sqlBuilder.append(invoice.getAssistantCode().toString()+",");
+		sqlBuilder.append(invoice.getCustomerNo().toString()+",");
+		sqlBuilder.append(invoice.getStoreNo().toString()+",");
+		sqlBuilder.append(invoice.getIsPartial().toString()+",");
+		sqlBuilder.append(invoice.getIsReturn().toString()+",");
+		sqlBuilder.append(invoice.getChangeAmount().toString()+",");
+		sqlBuilder.append("str_to_date('"+DateUtility.getDateUtility().getTimeStampString(Calendar.getInstance().getTime())+"','%Y-%m-%d %H:%i:%S')");
+		sqlBuilder.append(")");
+		logger.info(sqlBuilder.toString());
+		int result = Main.getDBManager().executeUpdate(sqlBuilder.toString());
+		if(result > 0){
+			Main.getSyncManager().record(sqlBuilder.toString());
+		}
 		return result;
 	}
 	

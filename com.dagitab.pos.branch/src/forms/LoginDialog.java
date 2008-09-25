@@ -194,14 +194,14 @@ public class LoginDialog extends javax.swing.JDialog {
 				int day = cal.get( Calendar.DAY_OF_MONTH);
 				
 				if (RobinsonsComplianceService.getInstance().getEodSentFlag(month, day, year) > 0) { // EOD already sent for the day
-					Main.getInst().disableTransaction();
+//					Main.getInst().disableTransaction();
 				} else {
 					cal.setTimeInMillis(new Date().getTime());
 					
 					int hour = cal.get( Calendar.HOUR_OF_DAY );
 					
 					if ((hour >= 4 && hour < 9) ) { //blackhole time
-						Main.getInst().disableTransaction();
+//						Main.getInst().disableTransaction();
 					}
 				}
 				if(isCompliance.equals("galleria")){
