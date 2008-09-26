@@ -52,6 +52,8 @@ import forms.returned.ReturnedPanel;
 public class ProductDialog extends javax.swing.JDialog {
 	private JLabel productDialogLabel;
 	private JScrollPane productScrollPane;
+	private JLabel productNameLabel;
+	private JTextField productNameTextField;
 	private JCheckBox deferredChk;
 	private JButton jButton1;
 	private JTable productTable;
@@ -131,22 +133,21 @@ public class ProductDialog extends javax.swing.JDialog {
 					txtProduct.setBounds(14, 52, 525, 22);
 					txtProduct.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
-							ResultSet rs = ProductService.filterProducts(txtProduct.getText());
+							ResultSet rs = ProductService.filterProductById(txtProduct.getText());
 							TableUtility.fillTable(productTable,rs, new String[]{ "Product Code","Product Name","Product Price"});
-							
 						}
 					});
 				}
 				{
 					jLabel1 = new JLabel();
 					getContentPane().add(jLabel1);
-					jLabel1.setText("Product Code / Name");
+					jLabel1.setText("Product Code ");
 					jLabel1.setBounds(14, 33, 116, 16);
 				}
 				{
 					productScrollPane = new JScrollPane();
 					getContentPane().add(productScrollPane);
-					productScrollPane.setBounds(15, 80, 523, 235);
+					productScrollPane.setBounds(15, 132, 523, 211);
 					{
 						TableModel jTable1Model = new DefaultTableModel(
 								new String[][] { },
@@ -170,31 +171,31 @@ public class ProductDialog extends javax.swing.JDialog {
 					discountCB = new JComboBox();
 					getContentPane().add(discountCB);
 					discountCB.setModel(jComboBox1Model);
-					discountCB.setBounds(15, 340, 249, 22);
+					discountCB.setBounds(12, 371, 249, 22);
 					
 				}
 				{
 					jLabel2 = new JLabel();
 					getContentPane().add(jLabel2);
 					jLabel2.setText("Discount");
-					jLabel2.setBounds(15, 324, 47, 16);
+					jLabel2.setBounds(12, 349, 47, 16);
 				}
 				{
 					quantityTxt = new JTextField();
 					getContentPane().add(quantityTxt);
-					quantityTxt.setBounds(289, 340, 249, 22);
+					quantityTxt.setBounds(290, 371, 249, 22);
 				}
 				{
 					jLabel3 = new JLabel();
 					getContentPane().add(jLabel3);
 					jLabel3.setText("Quantity");
-					jLabel3.setBounds(289, 324, 46, 16);
+					jLabel3.setBounds(290, 349, 46, 16);
 				}
 				{
 					jButton1 = new JButton();
 					getContentPane().add(jButton1);
 					jButton1.setText("OK");
-					jButton1.setBounds(215, 428, 49, 25);
+					jButton1.setBounds(215, 445, 49, 25);
 					jButton1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							
@@ -291,7 +292,7 @@ public class ProductDialog extends javax.swing.JDialog {
 					jButton2 = new JButton();
 					getContentPane().add(jButton2);
 					jButton2.setText("Cancel");
-					jButton2.setBounds(283, 428, 66, 24);
+					jButton2.setBounds(280, 445, 66, 24);
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							productDialog.setVisible(false);
@@ -301,8 +302,10 @@ public class ProductDialog extends javax.swing.JDialog {
 				{
 					deferredChk = new JCheckBox();
 					getContentPane().add(deferredChk);
+					getContentPane().add(getProductNameTextField());
+					getContentPane().add(getProductNameLabel());
 					deferredChk.setText("Deferred");
-					deferredChk.setBounds(15, 381, 85, 20);
+					deferredChk.setBounds(12, 403, 85, 20);
 					deferredChk.setBackground(new java.awt.Color(255,255,255));
 				}
 
@@ -324,10 +327,11 @@ public class ProductDialog extends javax.swing.JDialog {
 	
 	public void setProductCode(String prodCode){
 		txtProduct.setText(prodCode);
-		ResultSet rs = ProductService.filterProducts(txtProduct.getText());
+		ResultSet rs = ProductService.getByProductId(txtProduct.getText());
 		TableUtility.fillTable(productTable,rs, new String[]{ "Product Code","Product Name","Product Price"});
 		productTable.selectAll();
 		txtProduct.setEditable(false);
+		productNameTextField.setEditable(false);
 	}
 	
 	public void setDeferredValue(String value){
@@ -384,5 +388,27 @@ public class ProductDialog extends javax.swing.JDialog {
 		return tabProductScrollPaneAction;
 	}
 	
+	private JTextField getProductNameTextField() {
+		if(productNameTextField == null) {
+			productNameTextField = new JTextField();
+			productNameTextField.setBounds(14, 98, 525, 22);
+			productNameTextField.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent evt) {
+					ResultSet rs = ProductService.filterProductByName(productNameTextField.getText());
+					TableUtility.fillTable(productTable,rs, new String[]{ "Product Code","Product Name","Product Price"});
+				}
+			});
+		}
+		return productNameTextField;
+	}
+	
+	private JLabel getProductNameLabel() {
+		if(productNameLabel == null) {
+			productNameLabel = new JLabel();
+			productNameLabel.setText("Product Name");
+			productNameLabel.setBounds(15, 77, 77, 16);
+		}
+		return productNameLabel;
+	}
 
 }

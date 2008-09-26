@@ -12,12 +12,26 @@ public class ProductService {
 		return Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu");
 	}
 	
-	public static ResultSet filterProducts(String s){
+	public static ResultSet filterProductById(String s){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
-				"WHERE PROD_CODE LIKE \""+s+"%\" " +
-						"OR NAME LIKE '%"+s+"%'");
+				"WHERE PROD_CODE LIKE \""+s+"%\" ");
 		return rs;
 	}
+	
+	public static ResultSet getByProductId(String s){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
+				"WHERE PROD_CODE = \""+s+"\" ");
+		return rs;
+	}
+	
+	
+	public static ResultSet filterProductByName(String s){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
+				"WHERE NAME LIKE '%"+s+"%'");
+		return rs;
+	}
+	
+	
 	
 	public static Product getProductById(String id){
 		Product product = new Product();

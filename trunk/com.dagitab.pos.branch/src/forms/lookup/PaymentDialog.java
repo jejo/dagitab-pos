@@ -60,6 +60,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 	private static Object invoker;
 	private static String actionProdCode;
 	private static Logger logger = Logger.getLogger(PaymentDialog.class);
+	private Double derivedAmount = 0.0d;
 
 	/**
 	* Auto-generated main method to display this JDialog
@@ -347,6 +348,9 @@ public class PaymentDialog extends javax.swing.JDialog {
 				txtBankCheck.setText("");
 				txtGiftCertificate.setEnabled(false);
 				txtGiftCertificate.setText("");
+				if(actionProdCode.equals("add")){
+					txtAmount.setText("0");
+				}
 			}
 			else if(combo.getSelectedItem().equals("Credit Card")){
 				txtCreditCard.setEnabled(true);
@@ -355,6 +359,39 @@ public class PaymentDialog extends javax.swing.JDialog {
 				txtBankCheck.setText("");
 				txtGiftCertificate.setEnabled(false);
 				txtGiftCertificate.setText("");
+				
+				if(actionProdCode.equals("add")){
+					if(invoker instanceof InvoicePanel){
+						InvoicePanel invoicePanel = (InvoicePanel) invoker;
+						Double exactAmount = invoicePanel.getAmountDue() - invoicePanel.getTotalPayment();
+						if(exactAmount > 0){
+							txtAmount.setText(String.format("%.2f", exactAmount));
+						}
+						else{
+							txtAmount.setText("0");
+						}
+					}
+					else if(invoker instanceof PartialDialog){
+						PartialDialog partialDialog = (PartialDialog) invoker;
+						Double exactAmount = partialDialog.getAmountDue() - partialDialog.getTotalPayment();
+						if(exactAmount > 0){
+							txtAmount.setText(String.format("%.2f", exactAmount));
+						}
+						else{
+							txtAmount.setText("0");
+						}
+					}
+					else if(invoker instanceof ReturnedPanel){
+						ReturnedPanel returnedPanel = (ReturnedPanel) invoker;
+						Double exactAmount = returnedPanel.getAmountDue() - returnedPanel.getTotalPayment();
+						if(exactAmount > 0){
+							txtAmount.setText(String.format("%.2f", exactAmount));
+						}
+						else{
+							txtAmount.setText("0");
+						}
+					}
+				}
 			}
 			else if(combo.getSelectedItem().equals("Gift Certificate")){
 				txtCreditCard.setEnabled(false);
@@ -364,6 +401,9 @@ public class PaymentDialog extends javax.swing.JDialog {
 				txtBankCheck.setEnabled(false);
 				txtBankCheck.setText("");
 				txtGiftCertificate.setEnabled(true);
+				if(actionProdCode.equals("add")){
+					txtAmount.setText("0");
+				}
 			}
 			else if(combo.getSelectedItem().equals("Bank Check")){
 				txtCreditCard.setEnabled(false);
@@ -373,6 +413,10 @@ public class PaymentDialog extends javax.swing.JDialog {
 				txtBankCheck.setEnabled(true);
 				txtGiftCertificate.setEnabled(false);
 				txtGiftCertificate.setText("");
+				if(actionProdCode.equals("add")){
+					txtAmount.setText("0");
+				}
+				
 			}
 			
 		}
