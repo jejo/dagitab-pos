@@ -53,5 +53,9 @@ public interface Payments {
 	
 	public void updatePaymentAmounts();
 	
+	public Double getTotalPayment();
+	
+	public Double getAmountDue();
+	
 	
 }

@@ -1277,4 +1277,18 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		return processTransactionButton;
 	}
 
+	@Override
+	public Double getAmountDue() {
+		return Double.parseDouble(amountLabel.getText());
+	}
+
+	@Override
+	public Double getTotalPayment() {
+		Double totalPayment = 0.0d;
+		for(int i =0; i<paymentTable.getRowCount(); i++){
+			totalPayment += Double.valueOf(paymentTable.getValueAt(i, 2).toString());
+		}
+		return totalPayment;
+	}
+
 }

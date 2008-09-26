@@ -1258,4 +1258,20 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	public JButton getProcessButton() {
 		return processButton;
 	}
+
+	@Override
+	public Double getTotalPayment() {
+		Double totalPayment = 0.0d;
+		for(int i =0; i<paymentTable.getRowCount(); i++){
+			totalPayment += Double.valueOf(paymentTable.getValueAt(i, 2).toString());
+		}
+		return totalPayment;
+	}
+
+	@Override
+	public Double getAmountDue() {
+		return Double.parseDouble(lblAmount.getText());
+	}
+	
+	
 }
