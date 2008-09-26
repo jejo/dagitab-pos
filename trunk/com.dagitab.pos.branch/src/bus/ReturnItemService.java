@@ -21,6 +21,7 @@ public class ReturnItemService {
 											 returnItem.getStoreCode().toString()
 											 };
 		Integer result = Main.getDBManager().insert(columns, columnValues, "returned_items", null, null);
+		InventoryService.getInstance().addToInventory(returnItem.getQuantity(), returnItem.getProductCode());
 		return result;
 	}
 	
