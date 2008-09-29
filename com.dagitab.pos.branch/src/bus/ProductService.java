@@ -9,25 +9,25 @@ import domain.Product;
 
 public class ProductService {
 	public static ResultSet getAllProducts(){
-		return Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu");
+		return Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu ORDER by NAME");
 	}
 	
 	public static ResultSet filterProductById(String s){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
-				"WHERE PROD_CODE LIKE \""+s+"%\" ");
+				"WHERE PROD_CODE LIKE \""+s+"%\" ORDER BY NAME");
 		return rs;
 	}
 	
 	public static ResultSet getByProductId(String s){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
-				"WHERE PROD_CODE = \""+s+"\" ");
+				"WHERE PROD_CODE = \""+s+"\" ORDER BY NAME");
 		return rs;
 	}
 	
 	
 	public static ResultSet filterProductByName(String s){
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT PROD_CODE, NAME, FORMAT(SELL_PRICE,2) FROM products_lu " +
-				"WHERE NAME LIKE '%"+s+"%'");
+				"WHERE NAME LIKE '%"+s+"%' ORDER BY NAME");
 		return rs;
 	}
 	
@@ -58,7 +58,7 @@ public class ProductService {
 	}
 	
 	public static Product loadProductOfStore(String prodCode){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM inventory_lu i, products_lu p WHERE i.PROD_CODE = p.PROD_CODE AND i.STORE_CODE = "+Main.getStoreCode()+" AND p.PROD_CODE= \""+prodCode+"\"");
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM inventory_lu i, products_lu p WHERE i.PROD_CODE = p.PROD_CODE AND i.STORE_CODE = "+Main.getStoreCode()+" AND p.PROD_CODE= \""+prodCode+"\" ORDER by p.NAME");
 		Product product = new Product();
 		try {
 			if(rs.next()){
@@ -82,7 +82,7 @@ public class ProductService {
 	}
 	
 	public static ResultSet filterProductInventory(String query, String storeCode){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT p.PROD_CODE, p.NAME, p.SELL_PRICE, i.QUANTITY, i.DEFERRED_QTY FROM products_lu p, inventory_lu i WHERE p.PROD_CODE = i.PROD_CODE AND (p.PROD_CODE LIKE \"%"+query+"%\" OR p.NAME LIKE \"%"+query+"%\") AND i.STORE_CODE = "+storeCode);
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT p.PROD_CODE, p.NAME, p.SELL_PRICE, i.QUANTITY, i.DEFERRED_QTY FROM products_lu p, inventory_lu i WHERE p.PROD_CODE = i.PROD_CODE AND (p.PROD_CODE LIKE \"%"+query+"%\" OR p.NAME LIKE \"%"+query+"%\") AND i.STORE_CODE = "+storeCode+" ORDER by p.NAME");
 		
 		return rs;
 	}

@@ -10,7 +10,7 @@ import domain.Clerk;
 public class ClerkService {
 	
 	public static ResultSet getAllClerks(){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM clerk_lu");
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM clerk_lu ORDER by LAST_NAME");
 		return rs;
 	}
 	
@@ -18,7 +18,7 @@ public class ClerkService {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM clerk_lu " +
 				"WHERE CLERK_CODE LIKE '%"+s+"%' " +
 				"OR LAST_NAME LIKE '%"+s+"%' " +
-				"OR FIRST_NAME LIKE '%"+s+"%'");
+				"OR FIRST_NAME LIKE '%"+s+"%' ORDER by LAST_NAME");
 		return rs;
 	}
 	
