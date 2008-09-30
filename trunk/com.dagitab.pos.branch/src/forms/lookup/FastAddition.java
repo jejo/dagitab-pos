@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -177,7 +178,26 @@ public class FastAddition extends javax.swing.JDialog {
 					deleteButton.setBounds(616, 448, 126, 28);
 					deleteButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							
+							DefaultTableModel tableModel = (DefaultTableModel) itemListTable.getModel();
+							int selected = itemListTable.getSelectedRow();
+							int qty = Integer.parseInt(itemListTable.getValueAt(selected, 2).toString());
+							if(qty == 1){
+								tableModel.removeRow(selected);
+							}
+							else{
+								String input = JOptionPane.showInputDialog(null, "Quantity wished to be removed?");
+								int newQty = qty-Integer.parseInt(input);
+								if(newQty>0){
+									tableModel.setValueAt(newQty+"", selected, 2);
+								}
+								else if(newQty == 0){
+									tableModel.removeRow(selected);
+								}
+								else{
+									JOptionPane.showMessageDialog(null, "Please input valid quantity to be removed","Error",JOptionPane.INFORMATION_MESSAGE);
+								}
+								
+							}
 						}
 					});
 				}
