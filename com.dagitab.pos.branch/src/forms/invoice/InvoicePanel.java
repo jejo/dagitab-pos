@@ -818,13 +818,21 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		
 		//for recording change amount, gift certificate should not be considered for change
 		totalPaymentAmount = 0.0d;
+		boolean hasGCPayment = false;
 		for(int i = 0; i<model.getRowCount(); i++){
 			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
-			if(!model.getValueAt(i,1).toString().equals("Gift Certificate")){
-				totalPaymentAmount += paymentAmount;
+			if(model.getValueAt(i,1).toString().equals("Gift Certificate")){
+				hasGCPayment = true;
+			}
+			totalPaymentAmount += paymentAmount;
+		}
+		
+		Double changeAmount = totalPaymentAmount-amount;
+		if(hasGCPayment){
+			if(changeAmount > 0) {
+				changeAmount = 0.0d;
 			}
 		}
-		Double changeAmount = totalPaymentAmount-amount;
 		logger.info("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
 		changeField.setText(String.format("%.2f", changeAmount));
 	}
