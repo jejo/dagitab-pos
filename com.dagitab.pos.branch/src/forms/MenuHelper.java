@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
+import org.apache.log4j.Logger;
+
 import main.Main;
 import forms.delivery.DeliveryDialog;
 import forms.pullouts.PullOutDialog;
@@ -131,6 +133,12 @@ public class MenuHelper {
 		
 		ROBINSONS_COMPLIANCE_FORM.setAction(getRobinsonsComplianceAction());
 		ROBINSONS_COMPLIANCE_FORM.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/refresh.png")));
+		
+		String compliance = Main.getProperties().getProperty("compliance");
+		if(!compliance.equals("galleria")){
+//			Logger.getLogger(MenuHelper.class).info("hiding compliance robinsons");
+			ROBINSONS_COMPLIANCE_FORM.setEnabled(false);
+		}
 		
 		CONNECT.setAction(getConnectAction());
 		CONNECT.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/connect.png")));
