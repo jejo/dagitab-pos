@@ -31,7 +31,6 @@ import bus.ClerkService;
 import bus.RobinsonsComplianceService;
 import bus.StoreService;
 import domain.Clerk;
-import forms.reports.RobinsonsComplianceDialog;
 
 
 /**
@@ -176,35 +175,38 @@ public class LoginDialog extends javax.swing.JDialog {
 				Main.clearInvoiceInformation();
 				
 				
-				
-				
 				String isCompliance = Main.getProperties().getProperty("compliance");
-				String periodicRate = Main.getProperties().getProperty("compliance.periodicRate");
-				final Integer sendUnsentDaysNo = Integer.valueOf(Main.getProperties().getProperty("send.unsentdays.no"));
-				//galleria compliance
 				
-				Calendar cal = Calendar.getInstance();
-				 
-				Date currentTransDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(new Date());
-				
-				cal.setTime(currentTransDate);
-				int year = cal.get(Calendar.YEAR);
-				int month = cal.get(Calendar.MONTH) + 1; // month is zero
-																	// based!!
-				int day = cal.get( Calendar.DAY_OF_MONTH);
-				
-				if (RobinsonsComplianceService.getInstance().getEodSentFlag(month, day, year) > 0) { // EOD already sent for the day
-//					Main.getInst().disableTransaction();
-				} else {
-					cal.setTimeInMillis(new Date().getTime());
-					
-					int hour = cal.get( Calendar.HOUR_OF_DAY );
-					
-					if ((hour >= 4 && hour < 9) ) { //blackhole time
-//						Main.getInst().disableTransaction();
-					}
-				}
 				if(isCompliance.equals("galleria")){
+					
+					
+					String periodicRate = Main.getProperties().getProperty("compliance.periodicRate");
+					final Integer sendUnsentDaysNo = Integer.valueOf(Main.getProperties().getProperty("send.unsentdays.no"));
+					//galleria compliance
+					
+					Calendar cal = Calendar.getInstance();
+					 
+					Date currentTransDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(new Date());
+					
+					cal.setTime(currentTransDate);
+					int year = cal.get(Calendar.YEAR);
+					int month = cal.get(Calendar.MONTH) + 1; // month is zero
+																		// based!!
+					int day = cal.get( Calendar.DAY_OF_MONTH);
+					
+					if (RobinsonsComplianceService.getInstance().getEodSentFlag(month, day, year) > 0) { // EOD already sent for the day
+//						Main.getInst().disableTransaction();
+					} else {
+						cal.setTimeInMillis(new Date().getTime());
+						
+						int hour = cal.get( Calendar.HOUR_OF_DAY );
+						
+						if ((hour >= 4 && hour < 9) ) { //blackhole time
+//							Main.getInst().disableTransaction();
+						}
+					}
+					
+					
 					
 					Timer timer = new Timer();
 					timer.scheduleAtFixedRate(new TimerTask(){
