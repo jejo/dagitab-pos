@@ -63,6 +63,7 @@ public class DailySalesReport {
 				query = "SELECT * FROM invoice_item WHERE OR_NO = "+rs.getString("OR_NO")+" && STORE_CODE = "+Main.getStoreCode();
 				
 				rs2 = Main.getDBManager().executeQuery(query);
+				double totalPerInvoice=0.0d;
 				while(rs2.next())
 				{
 					HSSFRow row = sheet.getRow(rowCounter);
@@ -124,6 +125,7 @@ public class DailySalesReport {
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
 					cell.setCellValue(stotal);
 					totalSubtotal += subtotal;
+					totalPerInvoice += subtotal;
 					
 					
 					currentRow++;
@@ -133,8 +135,8 @@ public class DailySalesReport {
 					if(currentRow == countRows){
 						//TOTAL
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
-						cell.setCellValue(String.format("%.2f",subtotal));
-						totalTotal += subtotal;
+						cell.setCellValue(String.format("%.2f",totalPerInvoice));
+						totalTotal += totalPerInvoice;
 						
 						//cashier id
 						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
