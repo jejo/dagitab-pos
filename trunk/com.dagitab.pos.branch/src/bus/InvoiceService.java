@@ -176,7 +176,23 @@ public class InvoiceService {
 		return null;
 	}
 	
-	
+	public static Double getTotalDiscountAmount(Long orNo){
+		String query = "SELECT  truncate((d.DISC_RATE * .01)*SELL_PRICE,2), d.DISC_RATE  FROM invoice_item i, discount_lu  d WHERE i.DISC_CODE = d.DISC_NO AND i.OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode();
+		logger.info(query);
+		Double totalDiscount = 0.0d;
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		try {
+			while(rs.next()){
+				if(rs.getDouble(2) > 0){
+					totalDiscount += rs.getDouble(1);
+				}
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return totalDiscount;
+		
+	}
 	
 
 }
