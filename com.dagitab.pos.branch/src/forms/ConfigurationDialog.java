@@ -2,9 +2,13 @@ package forms;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -57,6 +61,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 	private JTextField jTextField4;
 	private JTextField jTextField5;
 	private JTextField jTextField6;
+	private JComboBox connectionComboBox;
 	private JButton jButton7;
 	private JTextField jTextField7;
 	private JLabel jLabel15;
@@ -68,10 +73,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 	private JLabel jLabel13;
 	private JPanel jPanel4;
 	private JPanel jPanel3;
-	private JTextField jTextField3;
-	private JLabel jLabel9;
 	private JButton jButton3;
-	private JTextField jTextField2;
 	private JLabel jLabel8;
 	private JButton jButton1;
 	private JLabel jLabel7;
@@ -94,12 +96,12 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 		initGUI();
 		
 		jTextField1.setText(StorePropertyHandler.getStoreNo());
-		jTextField2.setText(ServerPropertyHandler.getServerIP());
-		jTextField3.setText(ServerPropertyHandler.getServerPort());
 		jTextField4.setText(StorePropertyHandler.getTinNo());
 		jTextField5.setText(StorePropertyHandler.getTenantNo());
 		jTextField6.setText(StorePropertyHandler.getTerminalNo());
 		jTextField7.setText(StorePropertyHandler.getBatchNo());
+		
+		init();
 		
 	}
 	
@@ -207,20 +209,16 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 					jPanel2.setPreferredSize(new java.awt.Dimension(406, 189));
 					{
 						jLabel7 = new JLabel();
-						jPanel2.add(jLabel7, new AnchorConstraint(74, 715, 223, 240, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						jLabel7.setText("The IP Address is required to communicate with the server.");
-						jLabel7.setPreferredSize(new java.awt.Dimension(289, 27));
+						jPanel2.add(getConnectionComboBox(), new AnchorConstraint(400, 715, 511, 240, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						jPanel2.add(jLabel7, new AnchorConstraint(74, 766, 223, 225, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						jLabel7.setText("the connection setting is required to communicate with the server");
+						jLabel7.setPreferredSize(new java.awt.Dimension(329, 27));
 					}
 					{
 						jLabel8 = new JLabel();
 						jPanel2.add(jLabel8, new AnchorConstraint(295, 412, 369, 241, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						jLabel8.setText("IP Address:");
+						jLabel8.setText("Connection Option");
 						jLabel8.setPreferredSize(new java.awt.Dimension(70, 14));
-					}
-					{
-						jTextField2 = new JTextField();
-						jPanel2.add(jTextField2, new AnchorConstraint(259, 704, 405, 412, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						jTextField2.setPreferredSize(new java.awt.Dimension(119, 28));
 					}
 					{
 						jButton3 = new JButton();
@@ -229,30 +227,24 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 						jButton3.setPreferredSize(new java.awt.Dimension(112, 26));
 						jButton3.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								if(jTextField2.getText().length() == 0 || 
-										jTextField3.getText().length() == 0){
-									JOptionPane.showMessageDialog(null, 
-											"Please input store code.", 
-											"Warning",JOptionPane.WARNING_MESSAGE);
-								}else{
-									ServerPropertyHandler.setServerConfig(jTextField2.getText(),jTextField3.getText());
-									JOptionPane.showMessageDialog(null, 
-											"Updated IP connection option", 
-											"Success",JOptionPane.INFORMATION_MESSAGE);
+								
+								if(connectionComboBox.getSelectedItem().equals("VPN")){
+									Properties storeProperties = StorePropertyHandler.getProperties();
+									String vpnIp = storeProperties.getProperty("vpn.connect");
+									StorePropertyHandler.setFtpServer(vpnIp);
 								}
+								else {
+									Properties storeProperties = StorePropertyHandler.getProperties();
+									String dialUpIp = storeProperties.getProperty("dial.connect");
+									StorePropertyHandler.setFtpServer(dialUpIp);
+								}
+
+									JOptionPane.showMessageDialog(null, 
+											"Updated connection option", 
+											"Success",JOptionPane.INFORMATION_MESSAGE);
+								
 							}
 						});
-					}
-					{
-						jLabel9 = new JLabel();
-						jPanel2.add(jLabel9, new AnchorConstraint(479, 412, 589, 241, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						jLabel9.setText("Port No:");
-						jLabel9.setPreferredSize(new java.awt.Dimension(70, 21));
-					}
-					{
-						jTextField3 = new JTextField();
-						jPanel2.add(jTextField3, new AnchorConstraint(444, 524, 588, 411, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						jTextField3.setPreferredSize(new java.awt.Dimension(69, 26));
 					}
 				}
 				{
@@ -407,6 +399,34 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 			}
 		};
 		return confirmationLabelAction;
+	}
+	
+	private JComboBox getConnectionComboBox() {
+		if(connectionComboBox == null) {
+			ComboBoxModel connectionComboBoxModel = 
+				new DefaultComboBoxModel(
+						new String[] { "VPN", "Dial-up" });
+			connectionComboBox = new JComboBox();
+			connectionComboBox.setModel(connectionComboBoxModel);
+			connectionComboBox.setPreferredSize(new java.awt.Dimension(289, 20));
+		}
+		return connectionComboBox;
+	}
+	
+	private void init(){
+		Properties properties = StorePropertyHandler.getProperties();
+		String vpnIp = properties.getProperty("vpn.connect");
+		String dialIp = properties.getProperty("dial.connect");
+		String ftpServer = properties.getProperty("ftpServer");
+		
+		if(ftpServer.equals(vpnIp)){
+			connectionComboBox.setSelectedIndex(0); //set to vpn
+		}
+		else{
+			connectionComboBox.setSelectedIndex(1);
+		}
+		
+		
 	}
 
 }
