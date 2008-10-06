@@ -36,6 +36,7 @@ public class MenuHelper {
 	private static JMenu COMPLIANCE_MENU = new JMenu("Compliance");
 	private static JMenu ABOUT_MENU = new JMenu("About");
 	
+	
 	private static JMenuItem CONFIGURATION = new JMenuItem("Configuration Settings");
 	private static JMenuItem PASSWORD = new JMenuItem("Password Manager");
 	private static JMenuItem CONNECT = new JMenuItem("Connect to Server");
@@ -57,7 +58,7 @@ public class MenuHelper {
 	private static JMenuItem ROBINSONS_COMPLIANCE_FORM = new JMenuItem("Robinsons Compliance");
 	
 	
-//	private static JMenuItem HELP = new JMenuItem("Help");
+	private static JMenuItem DEBUGGER = new JMenuItem("Debugger");
 	private static JMenuItem ABOUT = new JMenuItem("About");
 	
 	
@@ -71,6 +72,7 @@ public class MenuHelper {
 		MENU_BAR.add(PULL_OUT_MENU);
 		MENU_BAR.add(REPORTS_MENU);
 		MENU_BAR.add(COMPLIANCE_MENU);
+//		MENU_BAR.add(DEBUGGER);
 		MENU_BAR.add(ABOUT_MENU);
 	
 		FILE_MENU.add(CONFIGURATION);
@@ -86,7 +88,7 @@ public class MenuHelper {
 		PULL_OUT_MENU.add(PULL_OUT_REQUEST);
 		PULL_OUT_MENU.add(PULL_OUT_LIST);
 		
-//		ABOUT_MENU.add(HELP);
+		ABOUT_MENU.add(DEBUGGER);
 		ABOUT_MENU.add(ABOUT);
 		
 		REPORTS_MENU.add(INVENTORY);
@@ -150,6 +152,9 @@ public class MenuHelper {
 		SALES_CLERK_PRODUCTION_REPORT.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/sales.png")));
 		
 		
+		DEBUGGER.setAction(getDebuggerAction());
+		DEBUGGER.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/debug.gif")));
+		
 	}
 	
 	public static JMenuBar getMenuBar(){
@@ -160,7 +165,18 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
-	
+	private static AbstractAction getDebuggerAction() {
+		AbstractAction salesClerkProductionReportAction  = new AbstractAction("Debugger"){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				DebuggerDialog dialog = new DebuggerDialog(Main.getInst());
+				dialog.setLocationRelativeTo(null);
+				dialog.setVisible(true);
+			}
+		};
+		return salesClerkProductionReportAction;
+
+	}
 	
 	
 	private static AbstractAction getSalesClerkProductionReportAction() {
