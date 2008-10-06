@@ -32,6 +32,7 @@ public class StorePropertyHandler {
 		
 	}
 	
+	
 	public static String getBatchNo() {
 		return properties.getProperty("batch.no");
 	}
@@ -65,6 +66,16 @@ public class StorePropertyHandler {
 		} catch (IOException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
+	}
+	
+	public static void setFtpServer(String ftpServer){
+		properties.setProperty("ftpServer", ftpServer);
+		try {
+			properties.store(new FileOutputStream(file), "StoreConfiguration");
+		} catch (IOException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		
 	}
 
 	public static void setControlNo(String controlNo) {
@@ -133,6 +144,10 @@ public class StorePropertyHandler {
 		logger.info(StorePropertyHandler.getBatchNo());
 		logger.info(StorePropertyHandler.getControlNo());
 		logger.info(StorePropertyHandler.getTenantNo());
+	}
+
+	public static Properties getProperties() {
+		return properties;
 	}
 	
 }
