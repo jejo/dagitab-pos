@@ -1223,9 +1223,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			invoiceItem.setOrNo(Long.parseLong(orTextField.getText()));
 			invoiceItem.setProductCode(replacementItemsTableModel.getValueAt(i, 0).toString());
 			invoiceItem.setQuantity(Integer.parseInt(replacementItemsTableModel.getValueAt(i, 2).toString()));
-			invoiceItem.setSellPrice(Double.parseDouble(replacementItemsTableModel.getValueAt(i, 4).toString()));
 			invoiceItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
 			Product product = ProductService.getProductById(replacementItemsTableModel.getValueAt(i, 0).toString());
+			invoiceItem.setSellPrice(product.getSellPrice());
 			invoiceItem.setCost(product.getCost());
 			InvoiceItemService.getInstance().insert(invoiceItem);
 			

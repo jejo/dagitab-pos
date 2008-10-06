@@ -21,6 +21,7 @@ import util.ReceiptUtilities;
 import util.StorePropertyHandler;
 import util.StringUtility;
 import bus.ClerkService;
+import bus.DiscountService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentTypeService;
@@ -309,7 +310,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 	public void paintComponent(Graphics g) {	
 		 super.paintComponent(g);
 		 
-		 g.setFont(new Font("Arial", Font.PLAIN, 9));
+		 g.setFont(new Font("Arial", Font.PLAIN, 8));
 		 
 		 g.drawLine(5, 149, 190, 149); //line after Description, Amount Heading
 		 
@@ -344,26 +345,61 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			sellingSubTotal += sellingPriceQuantityAmount;
 			g.setFont(new Font("Arial", Font.PLAIN, 9));
 			
-			g.drawString(invoiceItem.getProductCode(),8,topMarker);
+			//Ellipsis on product code more than 13 chars.
+			String productCode =  invoiceItem.getProductCode();
+			if(productCode.length() > 13){
+				productCode = productCode.substring(0, 13)+"..";
+			}
+			g.drawString(productCode,8,topMarker);
 			
 			String qty = invoiceItem.getQuantity().toString();
 			if(Integer.parseInt(qty) < 0){
 				//eliminate "-" if negative value;
 				qty = "("+qty.substring(1)+")"; 
 			}
+			else{
+				//put a discount @ at item qty if there is
+				if(DiscountService.getDiscRate(invoiceItem.getDiscountCode()) > 0){
+					qty = qty+"@"+DiscountService.getDiscountPercentage(invoiceItem.getDiscountCode());
+				}
+			}
 			
-			g.drawString(qty, 85, topMarker);
 			
+			g.drawString(qty, 80, topMarker);
+			 
+			
+			//if not returned set unit price to product selling price, else set unit price to price sold.
 			String unitPrice = String.format("%.2f", product.getSellPrice());
+			if(invoiceItem.getIsReturned()){
+				unitPrice = String.format("%.2f", invoiceItem.getSellPrice());
+			}
+			
 			
 			int newXpos = 140 - (unitPrice.length() * 4);
 			
 			g.drawString(unitPrice, newXpos, topMarker);
 			
-			String currentPriceAmount = String.format("%.2f", Math.abs(currentPriceQuantityAmount));  
-			if(currentPriceQuantityAmount < 0){
-				currentPriceAmount = "("+ currentPriceAmount +")";
+			
+
+			String currentPriceAmount="";
+			if(!invoiceItem.getIsReturned()){
+				//update amount to combine discount
+				Double discountedPriceQuantityAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
+				currentPriceAmount = String.format("%.2f", discountedPriceQuantityAmount);
 			}
+			else{ //if returned
+				currentPriceAmount = String.format("%.2f", invoiceItem.getSellPrice()*invoiceItem.getQuantity());
+				currentPriceAmount ="("+Math.abs(invoiceItem.getSellPrice()*invoiceItem.getQuantity())+")";
+			}
+			
+			
+//			String currentPriceAmount = String.format("%.2f", Math.abs(currentPriceQuantityAmount));  
+//			if(currentPriceQuantityAmount < 0){
+//				currentPriceAmount = "("+ currentPriceAmount +")";
+//			}
+//			else {
+//				
+//			}
 			
 			newXpos = 190 - (currentPriceAmount.length()*4);
 			g.drawString(currentPriceAmount, newXpos, topMarker);
@@ -392,7 +428,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 if(sellingSubTotal < 0) sellingSubTotal = 0;
 		 
 		 
-		 Double totalDiscount = currentSubTotal - sellingSubTotal;
+		 
 //		 Double netSaleAmount = Double.parseDouble(String.format("%.2f",currentSubTotal)) - Double.parseDouble(String.format("%.2f",totalDiscount));
 //		 logger.info("Net Sale Amount: "+netSaleAmount);
 		 logger.info("SUB TOTAL:"+sellingSubTotal);
@@ -410,6 +446,9 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 g.drawString("Discount",5,topMarker);
 		 
 		 //	for right justified compute 190 - string size*5 as first position
+		 //derive totalDiscount
+//		 Double totalDiscount = currentSubTotal - sellingSubTotal;
+		 Double totalDiscount = InvoiceService.getTotalDiscountAmount(invoice.getOrNo());
 		 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", totalDiscount));
 		 g.drawString(String.format("%.2f", totalDiscount), xpos, topMarker); //disc amount
 		 topMarker+=15;

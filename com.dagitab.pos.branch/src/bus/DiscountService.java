@@ -40,4 +40,17 @@ public class DiscountService {
 		}
 		return 0.0d;
 	}
+	
+	public static String getDiscountPercentage(int disc){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM discount_lu WHERE disc_no = "+disc);
+		try {
+			if(rs.next()){
+				Double discRate=rs.getDouble("DISC_RATE"); 
+				return discRate.intValue()+"%";
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return 0+"%";
+	}
 }

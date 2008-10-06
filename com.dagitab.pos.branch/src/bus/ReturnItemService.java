@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import main.Main;
 import util.LoggerUtility;
 import domain.ReturnItem;
@@ -47,7 +49,8 @@ public class ReturnItemService {
 	}
 	
 	public static ReturnItem getReturnItem(Long orNo, String productCode){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM returned_items WHERE OR_NO = "+orNo+" AND PROD_CODE = "+productCode+" AND STORE_CODE = "+Main.getStoreCode());
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM returned_items WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode());
+		Logger.getLogger(ReturnItemService.class).info("SELECT * FROM returned_items WHERE OR_NO = "+orNo+" AND PROD_CODE = '"+productCode+"' AND STORE_CODE = "+Main.getStoreCode());
 		try {
 			if(rs.next()){
 				ReturnItem returnItem = new ReturnItem();
