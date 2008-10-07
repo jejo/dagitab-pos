@@ -135,7 +135,7 @@ public  boolean generate(String fileName, String startDate, String endDate) {
 				}
 				cell.setCellValue(others);
 
-				double total= cash+check+card+others; //removed gc
+				double total= cash+check+card+others+gc; //restored gc...
 				totalTotal += total;
 				
 				cell = HSSFUtil.createAmountCell(wb,row,(short)7,false,true);
