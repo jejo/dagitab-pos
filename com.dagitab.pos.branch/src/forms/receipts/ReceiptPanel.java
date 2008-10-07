@@ -385,6 +385,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			if(!invoiceItem.getIsReturned()){
 				//update amount to combine discount
 				Double discountedPriceQuantityAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
+				discountedPriceQuantityAmount = discountedPriceQuantityAmount*invoiceItem.getQuantity();
 				currentPriceAmount = String.format("%.2f", discountedPriceQuantityAmount);
 			}
 			else{ //if returned
