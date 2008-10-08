@@ -284,8 +284,11 @@ public class ReportFormDialog extends javax.swing.JDialog {
 			validate();
 			setSize(w, h);
 			validate();
-			
-			swtEventLoop();
+			try{
+				swtEventLoop();
+			}catch(Exception e){
+				
+			}
 		}
 
 		/**
