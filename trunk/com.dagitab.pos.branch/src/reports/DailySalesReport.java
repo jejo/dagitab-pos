@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import main.Main;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -27,6 +28,7 @@ public class DailySalesReport {
 	private Double totalDiscPrice = 0d;
 	private Double totalSubtotal =0d;
 	private Double totalTotal = 0d;
+	private static Logger logger = Logger.getLogger(DailySalesReport.class);
 	
 	public boolean generate(String fileName, String startDate, String endDate){
 		HSSFCell cell;
@@ -123,11 +125,13 @@ public class DailySalesReport {
 					//disc unit cost
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 7,false,false);
 					Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(rs2.getLong("OR_NO"),rs2.getString("PROD_CODE"));
-					cell.setCellValue(String.format("%.2f",discountedAmount));
+					discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
+					cell.setCellValue(discountedAmount);
 					totalDiscPrice += discountedAmount;
 					
 					
 					//subtotal
+					
 					double subtotal = discountedAmount*rs2.getInt("QUANTITY");
 					String stotal = String.format("%.2f", subtotal);
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
