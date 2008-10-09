@@ -228,7 +228,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 						jButton3.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
 								
-								if(connectionComboBox.getSelectedItem().equals("VPN")){
+								if(connectionComboBox.getSelectedItem().toString().split("-")[0].equals("VPN")){
 									Properties storeProperties = StorePropertyHandler.getProperties();
 									String vpnIp = storeProperties.getProperty("vpn.connect");
 									StorePropertyHandler.setFtpServer(vpnIp);
@@ -238,9 +238,9 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 									String dialUpIp = storeProperties.getProperty("dial.connect");
 									StorePropertyHandler.setFtpServer(dialUpIp);
 								}
-
+									
 									JOptionPane.showMessageDialog(null, 
-											"Updated connection option", 
+											"Updated connection option. Please restart the application.", 
 											"Success",JOptionPane.INFORMATION_MESSAGE);
 								
 							}
@@ -403,9 +403,12 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 	
 	private JComboBox getConnectionComboBox() {
 		if(connectionComboBox == null) {
+			Properties properties = StorePropertyHandler.getProperties();
+			String vpnIp = properties.getProperty("vpn.connect");
+			String dialIp = properties.getProperty("dial.connect");
 			ComboBoxModel connectionComboBoxModel = 
 				new DefaultComboBoxModel(
-						new String[] { "VPN", "Dial-up" });
+						new String[] { "VPN-"+vpnIp, "Dial-up-"+dialIp });
 			connectionComboBox = new JComboBox();
 			connectionComboBox.setModel(connectionComboBoxModel);
 			connectionComboBox.setPreferredSize(new java.awt.Dimension(289, 20));
@@ -420,6 +423,7 @@ public class ConfigurationDialog extends javax.swing.JDialog {
 		String ftpServer = properties.getProperty("ftpServer");
 		
 		if(ftpServer.equals(vpnIp)){
+			
 			connectionComboBox.setSelectedIndex(0); //set to vpn
 		}
 		else{
