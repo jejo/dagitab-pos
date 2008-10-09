@@ -4,7 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -742,14 +745,18 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 //		"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" 
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		DecimalFormat df = new DecimalFormat(".00");
+		Double sellingPrice = Double.valueOf(df.format(invoiceItem.getSellPrice())); 
+		Double extensionPrice = invoiceItem.getQuantity()*sellingPrice;
+		
 		model.addRow(new String[]{invoiceItem.getProductCode(),
 								  product.getName(),
 								  invoiceItem.getQuantity().toString(),
 								  String.format("%.2f",product.getSellPrice()),
-								  String.format("%.2f",invoiceItem.getSellPrice()),
+								  sellingPrice.toString(),
 								  (invoiceItem.getIsDeferred()==1)?"Yes":"No",
 								  invoiceItem.getDiscountCode().toString(),
-								  String.format("%.2f", invoiceItem.getQuantity()*invoiceItem.getSellPrice())});
+								  df.format(extensionPrice)});
 		updateAmounts();
 		updatePaymentAmounts();
 	}
@@ -765,17 +772,21 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	}
 	
 	public void editInvoiceItem(InvoiceItem invoiceItem, String productCode){
+		
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		DecimalFormat df = new DecimalFormat(".00");
+		Double sellingPrice = Double.valueOf(df.format(invoiceItem.getSellPrice())); 
+		Double extensionPrice = invoiceItem.getQuantity()*sellingPrice;
 		int index = getInvoiceItemRow(productCode);
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
 		model.setValueAt(invoiceItem.getQuantity(), index, 2);
 		model.setValueAt( String.format("%.2f",product.getSellPrice()), index, 3);
-		model.setValueAt(String.format("%.2f",invoiceItem.getSellPrice()), index, 4);
+		model.setValueAt(sellingPrice.toString(), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
-		model.setValueAt(String.format("%.2f", invoiceItem.getSellPrice()*invoiceItem.getQuantity()), index, 7);
+		model.setValueAt( df.format(extensionPrice), index, 7);
 		updateAmounts();
 		updatePaymentAmounts();
 	}
