@@ -92,7 +92,7 @@ public class EastwoodComplianceService {
 	// 1 - daily sales
 	// 2 - hourly sales
 	// 3 - discount sales
-	public void generateAndSendComplianceReport(Date date, ComplianceMode mode)
+	private void generateAndSendComplianceReport(Date date, ComplianceMode mode)
 			throws FileNotFoundException {
 		
 		String fileName = null;
@@ -110,6 +110,12 @@ public class EastwoodComplianceService {
 		
 		sendFileThroughFtp(fileName);
 		insertComplianceLogRecord(fileName, date, mode);
+	}
+	
+	public void generateEod(Date date) throws IOException {
+		generateAndSendComplianceReport(date, ComplianceMode.DAILY);
+		generateAndSendComplianceReport(date, ComplianceMode.HOURLY);
+		generateAndSendComplianceReport(date, ComplianceMode.DISCOUNT);
 	}
 
 	public String generateDiscountLocalFile(Date date) throws FileNotFoundException {
@@ -161,10 +167,10 @@ public class EastwoodComplianceService {
 		int lineNumber = 1; // starting line number
 
 		// LINE#1 TENANT CODE
-		out.println(lineNumber++ + tenantsId);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + tenantsId);
 		
 		// LINE#2 POS TERMINAL NUMBER
-		out.println(lineNumber++ + terminalNumber);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + terminalNumber);
 		
 		// LINE#3 Sales Transaction Date
 		Calendar cal = Calendar.getInstance();
@@ -174,7 +180,7 @@ public class EastwoodComplianceService {
 		cal.setTimeInMillis(date.getTime());
 
 		String dateString = sdf.format(cal.getTime());
-		out.println(lineNumber++ + dateString);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + dateString);
 		
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + StringUtils.leftPad(dateString,
 						LINE_LENGTH, "0"));
@@ -182,18 +188,17 @@ public class EastwoodComplianceService {
 		
 		for(int hour = 1; hour <= 24; hour++) {
 			// LINE#4 HOUR
-			out.println(lineNumber++ + "" + hour);
+			System.out.println("HOUR = " + hour);
+			
+			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + "" + hour);
 			// LINE#5 TOTAL NET SALES FOR GIVEN HOUR
-			if (hour == 24) {
-				hour = 0;
-			}
-			out.println(lineNumber++ + removeDecimalPoint(ComplianceService.getComplianceService().getRawGross(month, day, year, storeCode, hour), 2));
+			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + removeDecimalPoint(ComplianceService.getComplianceService().getRawGross(month, day, year, storeCode, hour%24), 2));
 
-			Integer totalNoOfTransactions = ComplianceService.getComplianceService().getNoOfTransactions(month, day, year, storeCode, hour);
+			Integer totalNoOfTransactions = ComplianceService.getComplianceService().getNoOfTransactions(month, day, year, storeCode, hour%24);
 			// LINE#6 TOTAL NO OF SALES TRANSACTION / HOUR
-			out.println(lineNumber++ + ""  + totalNoOfTransactions);
+			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + ""  + totalNoOfTransactions);
 			// LINE#7 TOTAL NO OF CUSTOMER COUNT / HOUR
-			out.println(lineNumber++ + ""  + totalNoOfTransactions);
+			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + ""  + totalNoOfTransactions);
 		}
 
 		return fileName;
@@ -275,10 +280,10 @@ public class EastwoodComplianceService {
 		int lineNumber = 1; // starting line number
 
 		// LINE#1 TENANT CODE
-		out.println(lineNumber++ + tenantsId);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ tenantsId);
 		
 		// LINE#2 POS TERMINAL NUMBER
-		out.println(lineNumber++ + terminalNumber);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ terminalNumber);
 		
 		// LINE#3 Sales Transaction Date
 		Calendar cal = Calendar.getInstance();
@@ -288,80 +293,77 @@ public class EastwoodComplianceService {
 		cal.setTimeInMillis(date.getTime());
 
 		String dateString = sdf.format(cal.getTime());
-		out.println(lineNumber++ + dateString);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ dateString);
 		
-		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + StringUtils.leftPad(dateString,
-						LINE_LENGTH, "0"));
-
 		// LINE#4 Previous Accumulated Grand Total QUERY
-		out.println(lineNumber++ + removeDecimalPoint(ComplianceService
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService
 						.getComplianceService().getOldGT(month, day, year,
 								storeCode), 2));
 
 		// LINE#5 Current Accumulated Grand Total QUERY
-		out.println(lineNumber++ + removeDecimalPoint(ComplianceService
-						.getComplianceService().getOldGT(month, day, year,
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService
+						.getComplianceService().getNewGT(month, day, year,
 								storeCode), 2));
 				
 
 		// LINE#6 Gross Sales QUERY
 		Double grossSalesAmount = ComplianceService.getComplianceService().getRawGross(month, day, year, storeCode);
 		Double otherDiscountAmount = ComplianceService.getComplianceService().getTotalDiscount(month, day, year, storeCode);
-		out.println(lineNumber++ + removeDecimalPoint(grossSalesAmount - otherDiscountAmount, 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(grossSalesAmount, 2));
 		
 		
 		// LINE#7 TOTAL NON-TAXABLE AMOUNT
-		out.println(lineNumber++ + "000");
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "000");
 		
 		// LINE#8 SENIOR CITIZEN DISCOUNT
-		out.println(lineNumber++ + "000");
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "000");
 		
 		// LINE#9 TOTAL OTHER DISCOUNT
 		 
-		out.println(lineNumber++ + removeDecimalPoint(otherDiscountAmount, 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(otherDiscountAmount, 2));
 		
 		// LINE#10 TOTAL REFUND AMOUNT
-		out.println(lineNumber++ + "000");
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "000");
 		
 		// LINE#11 TOTAL TAX/VAT AMOUNT
-		out.println(lineNumber++ + removeDecimalPoint(ComplianceService
-						.getComplianceService().getVat(month, day, year,
-								storeCode), 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService
+				.getComplianceService().getVat(month, day, year,
+						storeCode), 2));
 
 		// LINE#12 TOTAL SERVICE CHARGE AMOUNT
-		out.println(lineNumber++ + "000");
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "000");
 		
 		// LINE#13 TOTAL NET SALES
-		out.println(lineNumber++ + removeDecimalPoint(grossSalesAmount, 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(grossSalesAmount - otherDiscountAmount, 2));
 		
 		// LINE#14 TOTAL CASH SALES
-		out.println(lineNumber++ + removeDecimalPoint(ComplianceService.getComplianceService().getSalesForPaymentTypeWithoutDiscount(month, day, year, storeCode, 1), 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService.getComplianceService().getSalesForPaymentTypeWithoutDiscount(month, day, year, storeCode, 1), 2));
 		
 		// LINE#15 TOTAL CHARGE/CREDIT SALES
-		out.println(lineNumber++ + removeDecimalPoint(ComplianceService.getComplianceService().getSalesForPaymentTypeWithoutDiscount(month, day, year, storeCode, 3), 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService.getComplianceService().getSalesForPaymentTypeWithoutDiscount(month, day, year, storeCode, 3), 2));
 		
 		// LINE#16 TOTAL GC SALES
-		out.println(lineNumber++ + removeDecimalPoint(ComplianceService.getComplianceService().getSalesForPaymentTypeWithoutDiscount(month, day, year, storeCode, 4), 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService.getComplianceService().getSalesForPaymentTypeWithoutDiscount(month, day, year, storeCode, 4), 2));
 
 		// LINE#17 TOTAL VOID AMOUNT
-		out.println(lineNumber++ + "000");
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "000");
 		
 		// LINE#18 TOTAL CUSTOMER COUNT
 		Integer totalNoOfTransactions =  ComplianceService.getComplianceService().getNoOfTransactions(month, day, year, storeCode);
-		out.println(lineNumber++ + ""  + totalNoOfTransactions);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ ""  + totalNoOfTransactions);
 		
 		// LINE#19 CONTROL NUMBER
-		out.println(lineNumber++ + ""  + (getMaxEodCounter() + 1) );
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ ""  + (getMaxEodCounter() + 1) );
 
 		// LINE#20 TOTAL NO OF SALES TRANSACTION
-		out.println(lineNumber++ + ""  + totalNoOfTransactions);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ ""  + totalNoOfTransactions);
 
 		
 		// LINE#21 SALES TYPE 02 - NON FOOD
-		out.println(lineNumber++ + "02" );
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "02" );
 		
 		// LINE#22 SALES TYPE 02 - NON FOOD - NET SALES INCLUSIVE OF VAT
-		out.println(lineNumber++ + removeDecimalPoint(grossSalesAmount - otherDiscountAmount, 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(grossSalesAmount - otherDiscountAmount, 2));
 		
 		out.close();
 
@@ -381,7 +383,7 @@ public class EastwoodComplianceService {
 //		99	-	Day
 		
 		String properFileName = mode.getComplianceSuffix() + firstFourTenantsId + terminalNumber + (getSendCount(month,day,year) + 1);
-		String extensionFileName = Integer.toHexString(month) + StringUtils.leftPad(day + "", 2, "0");
+		String extensionFileName = Integer.toHexString(month).toUpperCase() + StringUtils.leftPad(day + "", 2, "0");
 		
 		return properFileName + "." + extensionFileName;
 		// String extension =
@@ -400,7 +402,9 @@ public class EastwoodComplianceService {
 		// logger.info(fileName);
 
 		try {
+			EastwoodComplianceService.getInstance().generateDailyLocalFile(new Date());
 			EastwoodComplianceService.getInstance().generateDiscountLocalFile(new Date());
+			EastwoodComplianceService.getInstance().generateHourlyLocalFile(new Date());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			LoggerUtility.getInstance().logStackTrace(e);
