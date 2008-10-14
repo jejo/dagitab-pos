@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 
 import util.ComplianceFileReader;
 import util.DateUtility;
+import util.FtpUtility;
 import util.LoggerUtility;
 import util.TableUtility;
 import bus.RobinsonsComplianceService;
@@ -665,7 +666,7 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 			getFTPFilesAction = new AbstractAction("Get FTP Files", null) {
 				public void actionPerformed(ActionEvent evt) {
 					
-					List<String> ftpFiles = RobinsonsComplianceService.getInstance().getFTPFiles();
+					List<String> ftpFiles = FtpUtility.getFTPFiles();
 					String[][] files = new String[ftpFiles.size()][1];
 					for(int i =0; i<ftpFiles.size();i++){
 						files[i][0] = ftpFiles.get(i);

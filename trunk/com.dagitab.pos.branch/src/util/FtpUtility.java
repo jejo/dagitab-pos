@@ -22,6 +22,7 @@ public class FtpUtility {
 	private FTPClient ftp;
 	private static Logger logger = Logger.getLogger(FtpUtility.class);
 	
+	
 	public FtpUtility(String host, String username, String password) {
 		this.host = host;
 		this.username = username;
@@ -197,6 +198,42 @@ public class FtpUtility {
 		this.remoteDirectory = remoteDirectory;
 	}
 	
+	
+	public static  List<String> getFTPFiles(){
+		
+		java.util.Properties props = new java.util.Properties();
+		java.io.FileInputStream fis;
+		try {
+			fis = new java.io.FileInputStream(new java.io.File(
+					"ftp.properties"));
+			props.load(fis);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+
+		logger.info(props);
+
+		String hostAddress = props.getProperty("hostAddress");
+		String username = props.getProperty("username");
+		String password = props.getProperty("password");
+		String remoteDirectory = props.getProperty("remoteDirectory");
+		String workingDirectory = props.getProperty("complianceDirectory"); // where the file(s) are
+														// placed
+		
+		FtpUtility ftp = new FtpUtility(hostAddress, username, password,
+				workingDirectory, remoteDirectory);
+		
+		List<String> files = null;
+		if (ftp.connect()) {
+			files = ftp.getRemoteFileNames();
+			ftp.disconnect();
+		}
+		return files;
+	}
 	
 	
 	

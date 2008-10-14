@@ -1,17 +1,27 @@
 package bus;
 
 public enum ComplianceMode	{ 
-		DAILY("S"),HOURLY("H"),DISCOUNT("D");
+	
+		DAILY("S","DAILY"),HOURLY("H","HOURLY"),DISCOUNT("D","DISCOUNT");
 		
-		ComplianceMode(String complianceSuffix) {
+		ComplianceMode(String complianceSuffix, String name) {
 			this.complianceSuffix = complianceSuffix;
+			this.name = name;
+			
 		}
 	 
 		private String complianceSuffix;
+		private String name;
 		
 		public String getComplianceSuffix() {
 			return complianceSuffix;
 		}
+
+		public String getName() {
+			return name;
+		}
+		
+		
 	 	
 
 }

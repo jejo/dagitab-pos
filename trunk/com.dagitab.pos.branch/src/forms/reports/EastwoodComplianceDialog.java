@@ -36,10 +36,26 @@ import org.apache.log4j.Logger;
 
 import util.ComplianceFileReader;
 import util.DateUtility;
+import util.FtpUtility;
 import util.LoggerUtility;
 import util.TableUtility;
-import bus.RobinsonsComplianceService;
+import bus.ComplianceMode;
+import bus.EastwoodComplianceService;
 
+
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class EastwoodComplianceDialog extends javax.swing.JDialog {
 
 	private JLabel titleLabel;
@@ -51,6 +67,11 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 	private JLabel viewLast;
 	private AbstractAction closeButtonAction;
 	private JButton sendByDateButton;
+	private AbstractAction getUnsentAbstractAction;
+	private AbstractAction getUnsentReportTypeAction;
+	private AbstractAction getUnsentReportTypeAbstractAction;
+	private JComboBox reportTypeCombo;
+	private JComboBox reportTypeCombo1;
 	private JTextField currentTextField;
 	private AbstractAction getFTPFilesAction;
 	private JTable ftpFileTable;
@@ -79,7 +100,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 	private JScrollPane jScrollPane1;
 	private JComboBox filterYearComboBox;
 	private JLabel filterLabel;
-	private static Logger logger = Logger.getLogger(RobinsonsComplianceDialog.class);
+	private static Logger logger = Logger.getLogger(EastwoodComplianceDialog.class);
 	public boolean isInit1 = true;
 	public boolean isInit2 = true;
 
@@ -116,14 +137,14 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 		try {
 			{
 				getContentPane().setBackground(new java.awt.Color(255,255,255));
-				this.setTitle("Robinsons Compliance");
+				this.setTitle("Eastwood Compliance");
 				getContentPane().setLayout(null);
 				this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				this.setModal(true);
 				{
 					titleLabel = new JLabel();
 					getContentPane().add(titleLabel);
-					titleLabel.setText("Robinsons Compliance Form");
+					titleLabel.setText("Eastwood Compliance Form");
 					titleLabel.setBounds(10, 11, 236, 23);
 					titleLabel.setFont(new java.awt.Font("Tahoma",0,18));
 				}
@@ -174,7 +195,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					filterLabel = new JLabel();
 					getContentPane().add(filterLabel);
 					filterLabel.setText("Filter Month/Year");
-					filterLabel.setBounds(10, 356, 93, 14);
+					filterLabel.setBounds(10, 349, 93, 14);
 				}
 				{
 					ComboBoxModel filterMonthComboBoxModel = 
@@ -182,7 +203,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					filterMonthComboBox = new JComboBox();
 					getContentPane().add(filterMonthComboBox);
 					filterMonthComboBox.setModel(filterMonthComboBoxModel);
-					filterMonthComboBox.setBounds(122, 351, 80, 22);
+					filterMonthComboBox.setBounds(107, 345, 80, 22);
 					filterMonthComboBox.setAction(getFilterMonthAction());
 				}
 				{
@@ -191,7 +212,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					filterYearComboBox = new JComboBox();
 					getContentPane().add(filterYearComboBox);
 					filterYearComboBox.setModel(filterYearComboBoxModel);
-					filterYearComboBox.setBounds(212, 351, 65, 22);
+					filterYearComboBox.setBounds(197, 345, 65, 22);
 					filterYearComboBox.setAction(getFilterYearAction());
 				}
 				{
@@ -221,7 +242,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					sentDatesLabel = new JLabel();
 					getContentPane().add(sentDatesLabel);
 					sentDatesLabel.setText("Sent Dates");
-					sentDatesLabel.setBounds(10, 331, 70, 14);
+					sentDatesLabel.setBounds(10, 324, 70, 14);
 					sentDatesLabel.setFont(new java.awt.Font("Tahoma",1,11));
 				}
 				{
@@ -284,6 +305,8 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					getContentPane().add(getFtpFilesScrollPane());
 					getContentPane().add(getGetFTPFilesButton());
 					getContentPane().add(getCurrentTextField());
+					getContentPane().add(getReportTypeCombo1());
+					getContentPane().add(getReportTypeCombo());
 					viewLastComboBox.setModel(viewLastComboBoxModel);
 					viewLastComboBox.setBounds(70, 117, 76, 22);
 					viewLastComboBox.setAction(getViewLastDaysAction());
@@ -329,7 +352,9 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					int year = Integer.parseInt(filterYearComboBox.getSelectedItem().toString());
 					int month = filterMonthComboBox.getSelectedIndex()+1;
-					filterSentItemTableByDate(year,month , 0);
+					String complianceType = reportTypeCombo.getSelectedItem().toString();
+					ComplianceMode complianceMode = ComplianceMode.valueOf(complianceType);
+					filterSentItemTableByDate(year,month, 0,complianceMode);
 				}
 			};
 		}
@@ -343,7 +368,9 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					int year = Integer.parseInt(filterYearComboBox.getSelectedItem().toString());
 					int month = filterMonthComboBox.getSelectedIndex()+1;
-					filterSentItemTableByDate(year,month , 0);
+					String complianceType = reportTypeCombo.getSelectedItem().toString();
+					ComplianceMode complianceMode = ComplianceMode.valueOf(complianceType);
+					filterSentItemTableByDate(year,month , 0,complianceMode);
 				}
 			};
 		}
@@ -355,15 +382,15 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 			sendByDateAction = new AbstractAction("Generate EOD", null) {
 				public void actionPerformed(ActionEvent evt) {
 					logger.info("generating eod action..");
-					Date eodDate = Calendar.getInstance().getTime();
-					Date transDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(eodDate);
+					Date transDate = Calendar.getInstance().getTime();
+					
 					try {
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
-						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						EastwoodComplianceService.getInstance().generateEod(transDate);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to compliance server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
 						Main.getInst().disableTransaction();
 						init();
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to compliance server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
 				}
@@ -374,14 +401,17 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 	
 	//initialize form after initGUI
 	private void init(){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT REPORT_DATE, FILENAME FROM robinsons_compliance ORDER BY REPORT_DATE DESC LIMIT 30");
+		ComplianceMode complianceMode = ComplianceMode.valueOf(reportTypeCombo.getSelectedItem().toString());
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT REPORT_DATE, FILENAME FROM eastwood_compliance WHERE mode = \""+complianceMode.getComplianceSuffix()+"\" ORDER BY REPORT_DATE DESC LIMIT 30");
 		TableUtility.fillTable(sentItemTable, rs, new String[]{"Date","File Name"});
 		
 		ComboBoxModel viewLastComboBoxModel =new DefaultComboBoxModel(new String[] { "7", "15","30" });
 		viewLastComboBox.setModel(viewLastComboBoxModel);
 
 		//Default view last 7 days unsent reports
-		List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(7);
+		String complianceType = reportTypeCombo1.getSelectedItem().toString();
+		complianceMode = ComplianceMode.valueOf(complianceType);
+		List<Date> listDates = EastwoodComplianceService.getInstance().getUnsentComplianceReports(7, complianceMode);
 		logger.info("date list: "+listDates.size());
 		String[][] data = new String[listDates.size()][1];
 		for(int i = 0; i<listDates.size(); i++){
@@ -412,8 +442,8 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 		
 	}
 	
-	private void filterSentItemTableByDate(int year, int month, int day){
-		String query = "SELECT REPORT_DATE, FILENAME FROM robinsons_compliance";
+	private void filterSentItemTableByDate(int year, int month, int day, ComplianceMode complianceMode){
+		String query = "SELECT REPORT_DATE, FILENAME FROM eastwood_compliance WHERE mode = \""+complianceMode.getComplianceSuffix()+"\"";
 		String yearClause = " YEAR(REPORT_DATE) = '"+year+"' ";
 		String monthClause = " MONTH(REPORT_DATE) = '"+month+"' ";
 		String dayClause = " DAY (REPORT_DATE) = '"+day+"'";
@@ -421,11 +451,11 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 		
 		int whereCounter = 0;
 		if(year == 0 && month ==0 && day==0){
-			ResultSet rs = Main.getDBManager().executeQuery("SELECT REPORT_DATE, FILENAME FROM robinsons_compliance ORDER BY REPORT_DATE DESC LIMIT 30");
+			ResultSet rs = Main.getDBManager().executeQuery("SELECT REPORT_DATE, FILENAME FROM eastwood_compliance  WHERE mode = \""+complianceMode.getComplianceSuffix()+"\" ORDER BY REPORT_DATE DESC LIMIT 30");
 			TableUtility.fillTable(sentItemTable, rs, new String[]{"Date","File Name"});
 		}
 		else{
-			query += " WHERE ";
+			query += " AND ";
 			if(year > 0){
 				if(whereCounter>0){
 					query += " AND ";
@@ -470,15 +500,14 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 					calendar.set(Calendar.MONTH, Integer.parseInt(dateSplit[1])-1);
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
-					logger.info("generating robinsons compliace report for date: "+calendar.getTime());
-					
+					logger.info("generating eastwood compliace report for date: "+calendar.getTime());
 					Date transDate = calendar.getTime();
-					Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 					try {
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
-						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						EastwoodComplianceService.getInstance().generateEod(transDate);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to compliance server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						init();
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to compliance server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
 					
@@ -525,11 +554,14 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 		if(viewLastDaysAction == null) {
 			viewLastDaysAction = new AbstractAction("", null) {
 				public void actionPerformed(ActionEvent evt) {
-					String viewDay = viewLastComboBox.getSelectedItem().toString();
-					List<Date> listDates = RobinsonsComplianceService.getInstance().getUnsentComplianceReports(Integer.parseInt(viewDay));
-					logger.info("date list: "+listDates.size());
+					int days = Integer.parseInt(viewLastComboBox.getSelectedItem().toString());
+					String complianceType = reportTypeCombo1.getSelectedItem().toString();
+					ComplianceMode complianceMode = ComplianceMode.valueOf(complianceType);
+					EastwoodComplianceService eastwoodComplianceService = EastwoodComplianceService.getInstance();
+					List<Date> listDates = eastwoodComplianceService.getUnsentComplianceReports(days, complianceMode);
 					String[][] data = new String[listDates.size()][1];
 					for(int i = 0; i<listDates.size(); i++){
+						
 						Calendar calendar = Calendar.getInstance();
 						calendar.setTimeInMillis((listDates.get(i).getTime()));
 						int month = calendar.get(Calendar.MONTH)+1;
@@ -539,7 +571,9 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 						data[i][0] = year+"-"+month+"-"+day;
 						logger.info("ALEX: "+year+"-"+month+"-"+day);
 					}
+					
 					DefaultTableModel model = new DefaultTableModel(data,new String[]{"Dates"});
+					
 					unsentItemTable.setModel(model);
 				}
 			};
@@ -562,9 +596,8 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 						calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 						calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
 						Date transDate = calendar.getTime();
-						Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 						try {
-							RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+							EastwoodComplianceService.getInstance().generateEod(transDate);
 							sentDatesList.add(transDate.toString());
 							
 						} catch (IOException e) {
@@ -572,9 +605,8 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 							e.printStackTrace();
 						}
 					}
-					
 					if(sentDatesList.size() == model.getRowCount()){
-						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to compliance server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
 						init();
 					}
 					else{
@@ -582,8 +614,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 						for(String s: unsentDateList){
 							unsentDates += s;
 						}
-						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
-//						JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to compliance server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			};
@@ -603,12 +634,13 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 					calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
 					Date transDate = calendar.getTime();
-					Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 					try {
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
-						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						EastwoodComplianceService.getInstance().generateEod(transDate);
+						
+						JOptionPane.showMessageDialog(null, "Sales file successfully sent to compliance server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+						init();
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Sales file is not sent to compliance server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
 				}
@@ -653,7 +685,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 			getFTPFilesAction = new AbstractAction("Get FTP Files", null) {
 				public void actionPerformed(ActionEvent evt) {
 					
-					List<String> ftpFiles = RobinsonsComplianceService.getInstance().getFTPFiles();
+					List<String> ftpFiles = FtpUtility.getFTPFiles();
 					String[][] files = new String[ftpFiles.size()][1];
 					for(int i =0; i<ftpFiles.size();i++){
 						files[i][0] = ftpFiles.get(i);
@@ -674,5 +706,92 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 			currentTextField.setEditable(false);
 		}
 		return currentTextField;
+	}
+	
+	private JComboBox getReportTypeCombo1() {
+		if(reportTypeCombo1 == null) {
+			
+			ComboBoxModel reportTypeCombo1Model = 
+				new DefaultComboBoxModel(getComplianceNames());
+			reportTypeCombo1 = new JComboBox();
+			reportTypeCombo1.setModel(reportTypeCombo1Model);
+			reportTypeCombo1.setBounds(321, 117, 102, 22);
+			reportTypeCombo1.setAction(getGetUnsentReportTypeAction());
+		}
+		return reportTypeCombo1;
+	}
+	
+	private JComboBox getReportTypeCombo() {
+		if(reportTypeCombo == null) {
+			ComboBoxModel reportTypeComboModel = 
+				new DefaultComboBoxModel(getComplianceNames());
+			reportTypeCombo = new JComboBox();
+			reportTypeCombo.setModel(reportTypeComboModel);
+			reportTypeCombo.setBounds(321, 345, 101, 22);
+			reportTypeCombo.setAction(getGetUnsentAbstractAction());
+		}
+		return reportTypeCombo;
+	}
+	
+	private String[] getComplianceNames(){
+		
+		String[] complianceNames = new String[ComplianceMode.values().length+1];
+		int i =0;
+		for(ComplianceMode complianceMode: ComplianceMode.values()){
+			complianceNames[i] = complianceMode.getName();
+			i++;
+		}
+		return complianceNames;
+	}
+	
+	
+	@SuppressWarnings("serial")
+	private AbstractAction getGetUnsentReportTypeAction() {
+		if(getUnsentReportTypeAction == null) {
+			getUnsentReportTypeAction = new AbstractAction("", null) {
+				public void actionPerformed(ActionEvent evt) {
+					int days = Integer.parseInt(viewLastComboBox.getSelectedItem().toString());
+					String complianceType = reportTypeCombo1.getSelectedItem().toString();
+					ComplianceMode complianceMode = ComplianceMode.valueOf(complianceType);
+					EastwoodComplianceService eastwoodComplianceService = EastwoodComplianceService.getInstance();
+					List<Date> listDates = eastwoodComplianceService.getUnsentComplianceReports(days, complianceMode);
+					
+					String[][] data = new String[listDates.size()][1];
+					 
+					for(int i = 0; i<listDates.size(); i++){
+						
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTimeInMillis((listDates.get(i).getTime()));
+						int month = calendar.get(Calendar.MONTH)+1;
+						int year = calendar.get(Calendar.YEAR);
+						int day = calendar.get(Calendar.DAY_OF_MONTH);
+						
+						data[i][0] = year+"-"+month+"-"+day;
+						logger.info("ALEX: "+year+"-"+month+"-"+day);
+					}
+					
+					DefaultTableModel model = new DefaultTableModel(data,new String[]{"Dates"});
+					
+					unsentItemTable.setModel(model);
+					
+				}
+			};
+		}
+		return getUnsentReportTypeAction;
+	}
+	
+	private AbstractAction getGetUnsentAbstractAction() {
+		if(getUnsentAbstractAction == null) {
+			getUnsentAbstractAction = new AbstractAction("", null) {
+				public void actionPerformed(ActionEvent evt) {
+					int year = Integer.parseInt(filterYearComboBox.getSelectedItem().toString());
+					int month = filterMonthComboBox.getSelectedIndex()+1;
+					String complianceType = reportTypeCombo.getSelectedItem().toString();
+					ComplianceMode complianceMode = ComplianceMode.valueOf(complianceType);
+					filterSentItemTableByDate(year,month, 0,complianceMode);
+				}
+			};
+		}
+		return getUnsentAbstractAction;
 	}
 }
