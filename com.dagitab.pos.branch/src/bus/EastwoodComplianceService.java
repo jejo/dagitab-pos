@@ -462,8 +462,8 @@ public class EastwoodComplianceService {
 		return -1;
 	}
 	
-	public Map<Date, ComplianceMode> getUnsentComplianceReports(int pastDays, ComplianceMode mode) {
-		Map<Date, ComplianceMode> unsentList = new HashMap<Date, ComplianceMode>();
+	public List<Date> getUnsentComplianceReports(int pastDays, ComplianceMode mode) {
+		List<Date> unsentList = new ArrayList<Date>();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(new Date().getTime());
@@ -481,15 +481,15 @@ public class EastwoodComplianceService {
 			logger.info("ALEX: i="+ i + " DATE = " + year +month+day);
 			if ( getSendCount(month, day, year, mode) < 1) {
 				logger.info("ALEX: i="+ i + " ADDDATE = " + date);
-				unsentList.put(date, mode);
+				unsentList.add(date);
 			}
 		}
 		
 		return unsentList;
 	}
 	
-	public Map<Date, ComplianceMode> getUnsentComplianceReports(int pastDays) {
-		Map<Date, ComplianceMode> unsentList = new HashMap<Date, ComplianceMode>();
+	public Map<Date, String> getSentComplianceReports(int pastDays, ComplianceMode mode) {
+		Map<Date, String> sentList = new HashMap<Date, String>();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(new Date().getTime());
@@ -503,17 +503,16 @@ public class EastwoodComplianceService {
 			int month = getComponent(date, Calendar.MONTH) + 1; // month is zero
 																// based!!
 			int day = getComponent(date, Calendar.DAY_OF_MONTH);
-			for(ComplianceMode mode : ComplianceMode.values()) {
+			
 				logger.info("ALEX: i="+ i + " DATE = " + year +month+day);
 				if ( getSendCount(month, day, year, mode) < 1) {
 					logger.info("ALEX: i="+ i + " ADDDATE = " + date);
-					unsentList.put(date, mode);
+					sentList.put(date, generateFileName(month, day, year, mode));
 				}	
-			}
-			
+
 		}
 		
-		return unsentList;
+		return sentList;
 	}
 	
 	public String removeDecimalPoint(Double number, int noOfDecimalPlaces) {
