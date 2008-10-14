@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import main.DBManager;
 import main.Main;
@@ -34,8 +35,8 @@ public class EastwoodComplianceService {
 	private String storeNumber;
 	private String terminalNumber;
 	private static final int LINE_LENGTH = 0;
-	private static final String COMPLIANCE_DIRECTORY = "compliance\\";
 	private static Logger logger = Logger.getLogger(RobinsonsComplianceService.class);
+	private static Properties props;
 
 	// unnecessarily using IODH as much as possible to familiarize myself
 	// lazy load a singleton!!
@@ -66,6 +67,22 @@ public class EastwoodComplianceService {
 		firstFourTenantsId = tenantsId.substring(0,4);
 		terminalNumber = StringUtils.leftPad(StorePropertyHandler.getTerminalNo(),2,"0");
 		
+		
+		props = new java.util.Properties();
+		java.io.FileInputStream fis;
+		try {
+			fis = new java.io.FileInputStream(new java.io.File(
+					"ftp.properties"));
+			props.load(fis);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+
+		logger.info(props);
 
 	}
 
@@ -114,7 +131,7 @@ public class EastwoodComplianceService {
 
 		String fileName = generateFileName(month, day, year, ComplianceMode.DISCOUNT);
 		PrintStream out = new PrintStream(new FileOutputStream(
-				COMPLIANCE_DIRECTORY + fileName));
+				props.getProperty("complianceDirectory") + fileName));
 
 		String output = ComplianceService.getComplianceService().getDiscountTypesSales(month, day, year, storeCode);
 		
@@ -145,7 +162,7 @@ public class EastwoodComplianceService {
 
 		String fileName = generateFileName(month, day, year, ComplianceMode.HOURLY);
 		PrintStream out = new PrintStream(new FileOutputStream(
-				COMPLIANCE_DIRECTORY + fileName));
+				props.getProperty("complianceDirectory") + fileName));
 		
 		// TODO
 		// should refactor out.println into another function with linenumbers, formatting etc
@@ -216,7 +233,7 @@ public class EastwoodComplianceService {
 				+ "',str_to_date('"
 				+ dateString
 				+ "','%Y-%m-%d'),"
-				+ (getMaxEodCounter() + 1) + "," + mode.getComplianceSuffix() +");";
+				+ (getMaxEodCounter() + 1) + ",'" + mode.getComplianceSuffix() +"');";
 
 		logger.info("insertComplianceReportLogRecordQuery = " + query);
 		databaseManager.executeUpdate(query);
@@ -224,27 +241,12 @@ public class EastwoodComplianceService {
 
 	private String sendFileThroughFtp(String fileName) {
 		// properties in the startup directory
-		java.util.Properties props = new java.util.Properties();
-		java.io.FileInputStream fis;
-		try {
-			fis = new java.io.FileInputStream(new java.io.File(
-					"ftp.properties"));
-			props.load(fis);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		}
-
-		logger.info(props);
-
+		
 		String hostAddress = props.getProperty("hostAddress");
 		String username = props.getProperty("username");
 		String password = props.getProperty("password");
 		String remoteDirectory = props.getProperty("remoteDirectory");
-		String workingDirectory = COMPLIANCE_DIRECTORY; // where the file(s) are
+		String workingDirectory = props.getProperty("complianceDirectory"); // where the file(s) are
 														// placed
 
 		FtpUtility ftp = new FtpUtility(hostAddress, username, password,
@@ -269,7 +271,7 @@ public class EastwoodComplianceService {
 
 		String fileName = generateFileName(month, day, year, ComplianceMode.DAILY);
 		PrintStream out = new PrintStream(new FileOutputStream(
-				COMPLIANCE_DIRECTORY + fileName));
+				props.getProperty("complianceDirectory") + fileName));
 
 		// TODO
 		// should refactor out.println into another function with linenumbers, formatting etc
@@ -422,11 +424,11 @@ public class EastwoodComplianceService {
 
 	private Integer getSendCount(int month, int day, int year, ComplianceMode mode) {
 		// TODO Auto-generated method stub
-		String query = "select count(1)" + "  from robinsons_compliance"
+		String query = "select count(1)" + "  from eastwood_compliance"
 				+ " where " + "MONTH (report_date) = '" + month
 				+ "' && YEAR(report_date) = '" + year
 				+ "' && DAY(report_date) = '" + day + "'"
-				+ "' && mode = '" + mode.getComplianceSuffix() + "'";
+				+ " && mode = '" + mode.getComplianceSuffix() + "'";
 		logger.info("getSendCount query=" + query);
 		ResultSet rs = databaseManager.executeQuery(query);
 
@@ -445,7 +447,7 @@ public class EastwoodComplianceService {
 	private Integer getMaxEodCounter() {
 		// TODO Auto-generated method stub
 
-		String query = "select max(EOD_COUNTER) from robinsons_compliance";
+		String query = "select max(EOD_COUNTER) from eastwood_compliance";
 		logger.info("getMaxEodCounter query=" + query);
 		ResultSet rs = databaseManager.executeQuery(query);
 

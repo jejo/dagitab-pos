@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import main.DBManager;
 import main.Main;
@@ -32,8 +33,9 @@ public class RobinsonsComplianceService {
 	private String storeNumber;
 	private String terminalNumber;
 	private static final int LINE_LENGTH = 16;
-	private static final String COMPLIANCE_DIRECTORY = "compliance\\";
 	private static Logger logger = Logger.getLogger(RobinsonsComplianceService.class);
+	private static Properties props; 
+	
 
 	// unnecessarily using IODH as much as possible to familiarize myself
 	// lazy load a singleton!!
@@ -62,6 +64,23 @@ public class RobinsonsComplianceService {
 		// only get the last four of the tenants id
 		lastFourTenantsId = tenantsId.substring(tenantsId.length() - 4);
 		terminalNumber = StringUtils.leftPad(StorePropertyHandler.getTerminalNo(),2,"0");
+		
+		
+		props = new java.util.Properties();
+		java.io.FileInputStream fis;
+		try {
+			fis = new java.io.FileInputStream(new java.io.File(
+					"ftp.properties"));
+			props.load(fis);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+
+		logger.info(props);
 		
 
 	}
@@ -129,27 +148,13 @@ public class RobinsonsComplianceService {
 
 	private String sendFileThroughFtp(String fileName) throws IOException {
 		// properties in the startup directory
-		java.util.Properties props = new java.util.Properties();
-		java.io.FileInputStream fis;
-		try {
-			fis = new java.io.FileInputStream(new java.io.File(
-					"ftp.properties"));
-			props.load(fis);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		}
-
-		logger.info(props);
+		
 
 		String hostAddress = props.getProperty("hostAddress");
 		String username = props.getProperty("username");
 		String password = props.getProperty("password");
 		String remoteDirectory = props.getProperty("remoteDirectory");
-		String workingDirectory = COMPLIANCE_DIRECTORY; // where the file(s) are
+		String workingDirectory = props.getProperty("complianceDirectory"); // where the file(s) are
 														// placed
 
 		FtpUtility ftp = new FtpUtility(hostAddress, username, password,
@@ -166,41 +171,6 @@ public class RobinsonsComplianceService {
 		return null;
 	}
 
-	public List<String> getFTPFiles(){
-		// properties in the startup directory
-		java.util.Properties props = new java.util.Properties();
-		java.io.FileInputStream fis;
-		try {
-			fis = new java.io.FileInputStream(new java.io.File(
-					"ftp.properties"));
-			props.load(fis);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			LoggerUtility.getInstance().logStackTrace(e);
-		}
-
-		logger.info(props);
-
-		String hostAddress = props.getProperty("hostAddress");
-		String username = props.getProperty("username");
-		String password = props.getProperty("password");
-		String remoteDirectory = props.getProperty("remoteDirectory");
-		String workingDirectory = COMPLIANCE_DIRECTORY; // where the file(s) are
-														// placed
-
-		FtpUtility ftp = new FtpUtility(hostAddress, username, password,
-				workingDirectory, remoteDirectory);
-		
-		List<String> files = null;
-		if (ftp.connect()) {
-			files = ftp.getRemoteFileNames();
-			ftp.disconnect();
-		}
-		return files;
-	}
 	
 	private String generateLocalFile(Date utilTransDate, Date utilEodDate) throws FileNotFoundException {
 
@@ -229,7 +199,7 @@ public class RobinsonsComplianceService {
 
 		String fileName = generateFileName(month, day, year);
 		PrintStream out = new PrintStream(new FileOutputStream(
-				COMPLIANCE_DIRECTORY + fileName));
+				props.getProperty("complianceDirectory") + fileName));
 
 		int lineNumber = 1; // starting line number
 

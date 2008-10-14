@@ -11,13 +11,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
-
 import main.Main;
 import forms.delivery.DeliveryDialog;
 import forms.pullouts.PullOutDialog;
 import forms.pullouts.PullOutRequestDialog;
 import forms.receipts.InvoiceViewer;
+import forms.reports.EastwoodComplianceDialog;
 import forms.reports.InventoryViewerDialog;
 import forms.reports.ReportFormDialog;
 import forms.reports.RobinsonsComplianceDialog;
@@ -56,6 +55,7 @@ public class MenuHelper {
 	private static JMenuItem SALES_CLERK_PRODUCTION_REPORT = new JMenuItem("Sales Clerk Production Report");
 	
 	private static JMenuItem ROBINSONS_COMPLIANCE_FORM = new JMenuItem("Robinsons Compliance");
+	private static JMenuItem EASTWOOD_COMPLIANCE_FORM = new JMenuItem("Eastwood Compliance");
 	
 	
 	private static JMenuItem DEBUGGER = new JMenuItem("Debugger");
@@ -96,6 +96,7 @@ public class MenuHelper {
 		REPORTS_MENU.add(SALES_CLERK_PRODUCTION_REPORT);
 		
 		COMPLIANCE_MENU.add(ROBINSONS_COMPLIANCE_FORM);
+		COMPLIANCE_MENU.add(EASTWOOD_COMPLIANCE_FORM);
 		
 		
 	}
@@ -136,10 +137,18 @@ public class MenuHelper {
 		ROBINSONS_COMPLIANCE_FORM.setAction(getRobinsonsComplianceAction());
 		ROBINSONS_COMPLIANCE_FORM.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/refresh.png")));
 		
+		
+		EASTWOOD_COMPLIANCE_FORM.setAction(getEastwoodComplianceAction());
+		EASTWOOD_COMPLIANCE_FORM.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/refresh.png")));
+		
 		String compliance = Main.getProperties().getProperty("compliance");
 		if(!compliance.equals("galleria")){
 //			Logger.getLogger(MenuHelper.class).info("hiding compliance robinsons");
 			ROBINSONS_COMPLIANCE_FORM.setEnabled(false);
+		}
+		if(!compliance.equals("eastwood")){
+//			Logger.getLogger(MenuHelper.class).info("hiding compliance robinsons");
+			EASTWOOD_COMPLIANCE_FORM.setEnabled(false);
 		}
 		
 		CONNECT.setAction(getConnectAction());
@@ -194,7 +203,20 @@ public class MenuHelper {
 
 	}
 
-
+	@SuppressWarnings("serial")
+	private static AbstractAction getEastwoodComplianceAction() {
+		AbstractAction eastwoodComplianceAction  = new AbstractAction("Eastwood Compliance"){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				EastwoodComplianceDialog eastwoodComplianceDialog = new EastwoodComplianceDialog(Main.getInst());
+				eastwoodComplianceDialog.setLocationRelativeTo(null);
+				eastwoodComplianceDialog.setVisible(true);
+				
+			}
+		};
+		return eastwoodComplianceAction;
+		
+	}
 	@SuppressWarnings("serial")
 	private static AbstractAction getRobinsonsComplianceAction() {
 		AbstractAction robinsonsComplianceAction  = new AbstractAction("Robinsons Compliance"){
