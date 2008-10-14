@@ -216,17 +216,55 @@ public class ComplianceService {
 	// TODO REFACTOR
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
 	public Double getTotalDiscount(int month, int day, int year, int storeCode) {
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i, invoice o, products_lu p " +
-													"WHERE  p.PROD_CODE = i.PROD_CODE" +
-													"  AND d.DISC_NO = i.DISC_CODE" +
-													"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
-													"YEAR(o.TRANS_DT) = '"+year+"' && " +
-													"DAY(o.TRANS_DT) = '"+day+"' " +
-													"AND i.OR_NO = o.OR_NO " +
-													"AND o.STORE_CODE = '"+storeCode+"'");
+		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
+		"WHERE  p.PROD_CODE = i.PROD_CODE" +
+		"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
+		"YEAR(o.TRANS_DT) = '"+year+"' && " +
+		"DAY(o.TRANS_DT) = '"+day+"' " +
+		"AND i.OR_NO = o.OR_NO " +
+		"AND o.STORE_CODE = '"+storeCode+"'";
+		System.out.println("TOTALDISCOUNT QUERY = " + query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
 		Double amount = 0.0d;
 		try {
 			while(rs.next()){
+				amount += (InvoiceItemService.getInstance().getDiscountAmount(rs.getLong("OR_NO"),rs.getString("PROD_CODE"))) * rs.getDouble("QUANTITY");
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.info("TOTAL DISCOUNT: "+ amount);
+		return amount;
+	}
+	
+	// TODO REFACTOR
+	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
+	public Double getNetSales(int month, int day, int year, int storeCode, int...hour ) {
+//		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
+//		"WHERE  p.PROD_CODE = i.PROD_CODE" +
+//		"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
+//		"YEAR(o.TRANS_DT) = '"+year+"' && " +
+//		"DAY(o.TRANS_DT) = '"+day+"' " +
+//		"AND i.OR_NO = o.OR_NO " +
+//		"AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT sum(p.AMT) from payment_item p " +
+			"  WHERE MONTH(p.TRANS_DT) = '"+month+"' && " +
+			"YEAR(p.TRANS_DT) = '"+year+"' && " +
+			"DAY(p.TRANS_DT) = '"+day+"' " +
+			"AND p.STORE_CODE = '"+storeCode+"'";
+		
+		if (hour.length > 0) {
+			query += " AND HOUR(p.TRANS_DT) = " + hour[0];
+		}
+		System.out.println("TOTALDISCOUNT QUERY = " + query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		Double amount = 0.0d;
+		Double discountedAmount;
+		try {
+			while(rs.next()){
+//				discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(rs.getLong("OR_NO"),rs.getString("PROD_CODE"));
+//				discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
+//				amount += discountedAmount * rs.getDouble("QUANTITY");
 				amount = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
