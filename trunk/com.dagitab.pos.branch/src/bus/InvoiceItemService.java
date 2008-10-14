@@ -182,4 +182,11 @@ public class InvoiceItemService {
 		Double discountedAmount = invoiceItem.getSellPrice() - (invoiceItem.getSellPrice() * discRate);
 		return discountedAmount;
 	}
+	
+	public Double getDiscountAmount(Long orNo, String productCode){
+		InvoiceItem invoiceItem = getInvoiceItemObject(orNo, productCode);
+		Double discRate = DiscountService.getDiscRate(invoiceItem.getDiscountCode());
+		Double discountedAmount = invoiceItem.getSellPrice() * discRate;
+		return discountedAmount;
+	}
 }
