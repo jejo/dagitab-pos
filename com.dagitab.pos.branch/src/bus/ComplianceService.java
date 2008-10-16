@@ -64,7 +64,7 @@ public class ComplianceService {
 	
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND o.STORE_CODE = ?";
+		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = ?";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
@@ -238,7 +238,6 @@ public class ComplianceService {
 	}
 	
 	// TODO REFACTOR
-	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
 	public Double getNetSales(int month, int day, int year, int storeCode, int...hour ) {
 //		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
 //		"WHERE  p.PROD_CODE = i.PROD_CODE" +
@@ -276,12 +275,18 @@ public class ComplianceService {
 	
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
 	public Double getTotalDiscount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i, invoice o, products_lu p " +
-													"WHERE  p.PROD_CODE = i.PROD_CODE" +
-													"  AND d.DISC_NO = i.DISC_CODE" +
-													"  AND o.TRANS_DT >= ? AND o.TRANS_DT <= ? " +
-													"  AND i.OR_NO = o.OR_NO " +
-													"  AND o.STORE_CODE = ?";
+		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
+		"WHERE  p.PROD_CODE = i.PROD_CODE" +
+		"  AND o.TRANS_DT >= ? AND o.TRANS_DT <= ? " +
+		"  AND i.OR_NO = o.OR_NO " +
+		"  AND o.STORE_CODE = ?";
+//		
+//		String query = "SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i, invoice o, products_lu p " +
+//													"WHERE  p.PROD_CODE = i.PROD_CODE" +
+//													"  AND d.DISC_NO = i.DISC_CODE" +
+//													"  AND o.TRANS_DT >= ? AND o.TRANS_DT <= ? " +
+//													"  AND i.OR_NO = o.OR_NO " +
+//													"  AND o.STORE_CODE = ?";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
@@ -296,11 +301,11 @@ public class ComplianceService {
 			
 			Double amount = 0.0d;
 			
-			if(rs.next()){
-				amount = rs.getDouble(1);
+			while(rs.next()){
+				amount += (InvoiceItemService.getInstance().getDiscountAmount(rs.getLong("OR_NO"),rs.getString("PROD_CODE"))) * rs.getDouble("QUANTITY");
 			}
 		
-			logger.info("Old Grand Total: "+amount);
+			logger.info("Total Discount: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -383,8 +388,9 @@ public class ComplianceService {
 	
 	public Double getVat(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		Double amt = getRawGross(transDate, eodDate, storeCode);
-		Double dlysale = amt/getVatRate();
-		Double vat = amt - dlysale; 
+		Double otherDiscountAmount = getTotalDiscount(transDate, eodDate, storeCode);
+		Double dlysale = (amt - otherDiscountAmount)/getVatRate();
+		Double vat = amt - otherDiscountAmount - dlysale; 
 		
 		logger.info("VAT: "+vat);
 		return vat;
