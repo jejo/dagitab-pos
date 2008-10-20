@@ -355,11 +355,12 @@ public class InvoiceViewer extends javax.swing.JDialog {
 						
 						
 						if(invoice.getIsReturn() == 1){
+							logger.info("JEJO: invoice amount: "+InvoiceService.getInvoiceAmount(invoice.getOrNo())+" return amount: "+ ReturnItemService.getReturnAmount(invoice.getOrNo()));
 							Double invoiceAmount =  InvoiceService.getInvoiceAmount(invoice.getOrNo()) - ReturnItemService.getReturnAmount(invoice.getOrNo());
 							Double subTotalAmount = InvoiceService.getSubTotal(invoiceAmount);
 							Double vatAmount = invoiceAmount - subTotalAmount;
-							Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo());
-							Long changeAmount =  Math.round(totalPaymentAmount- invoiceAmount);
+							logger.info("JEJO: total payment: "+InvoiceService.getTotalPaymentAmount(invoice.getOrNo()));
+							Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo()) + invoice.getChangeAmount();
 							amountDueTextField.setText(String.format("%.2f", invoiceAmount));
 							subTotalTextField.setText(String.format("%.2f", subTotalAmount));
 							vatTextField.setText(String.format("%.2f", vatAmount));
@@ -387,8 +388,8 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							Double invoiceAmount =  InvoiceService.getInvoiceAmount(invoice.getOrNo());
 							Double subTotalAmount = InvoiceService.getSubTotal(invoiceAmount);
 							Double vatAmount = invoiceAmount - subTotalAmount;
-							Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo());
-							Long changeAmount =  Math.round(totalPaymentAmount- invoiceAmount);
+							Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo()) +invoice.getChangeAmount();
+							
 							amountDueTextField.setText(String.format("%.2f", invoiceAmount));
 							subTotalTextField.setText(String.format("%.2f", subTotalAmount));
 							vatTextField.setText(String.format("%.2f", vatAmount));
