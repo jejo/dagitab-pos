@@ -76,7 +76,7 @@ public class ReturnItemService {
 	}
 	
 	public static Double getReturnAmount(Long orNo){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(SELL_PRICE) FROM returned_items WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode());
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(SELL_PRICE * QUANTITY) FROM returned_items WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode());
 		try {
 			if(rs.next()){
 				return rs.getDouble(1);
