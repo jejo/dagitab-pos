@@ -3,6 +3,7 @@ package forms;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -17,6 +18,7 @@ import forms.pullouts.PullOutDialog;
 import forms.pullouts.PullOutRequestDialog;
 import forms.receipts.InvoiceViewer;
 import forms.reports.EastwoodComplianceDialog;
+import forms.reports.FestivalComplianceDialog;
 import forms.reports.InventoryViewerDialog;
 import forms.reports.ReportFormDialog;
 import forms.reports.RobinsonsComplianceDialog;
@@ -34,6 +36,7 @@ public class MenuHelper {
 	private static JMenu REPORTS_MENU = new JMenu("Reports");
 	private static JMenu COMPLIANCE_MENU = new JMenu("Compliance");
 	private static JMenu ABOUT_MENU = new JMenu("About");
+	
 	
 	
 	private static JMenuItem CONFIGURATION = new JMenuItem("Configuration Settings");
@@ -56,6 +59,7 @@ public class MenuHelper {
 	
 	private static JMenuItem ROBINSONS_COMPLIANCE_FORM = new JMenuItem("Robinsons Compliance");
 	private static JMenuItem EASTWOOD_COMPLIANCE_FORM = new JMenuItem("Eastwood Compliance");
+	private static JMenuItem FESTIVAL_COMPLIANCE_FORM = new JMenuItem("Festival Compliance");
 	
 	
 	private static JMenuItem DEBUGGER = new JMenuItem("Debugger");
@@ -97,6 +101,7 @@ public class MenuHelper {
 		
 		COMPLIANCE_MENU.add(ROBINSONS_COMPLIANCE_FORM);
 		COMPLIANCE_MENU.add(EASTWOOD_COMPLIANCE_FORM);
+		COMPLIANCE_MENU.add(FESTIVAL_COMPLIANCE_FORM);
 		
 		
 	}
@@ -141,6 +146,10 @@ public class MenuHelper {
 		EASTWOOD_COMPLIANCE_FORM.setAction(getEastwoodComplianceAction());
 		EASTWOOD_COMPLIANCE_FORM.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/refresh.png")));
 		
+		
+		FESTIVAL_COMPLIANCE_FORM.setAction(getFestivalComplianceAction());
+		FESTIVAL_COMPLIANCE_FORM.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/refresh.png")));
+		
 		String compliance = Main.getProperties().getProperty("compliance");
 		if(!compliance.equals("galleria")){
 //			Logger.getLogger(MenuHelper.class).info("hiding compliance robinsons");
@@ -149,6 +158,10 @@ public class MenuHelper {
 		if(!compliance.equals("eastwood")){
 //			Logger.getLogger(MenuHelper.class).info("hiding compliance robinsons");
 			EASTWOOD_COMPLIANCE_FORM.setEnabled(false);
+		}
+		if(!compliance.equals("festival")){
+//			Logger.getLogger(MenuHelper.class).info("hiding compliance festival");
+			FESTIVAL_COMPLIANCE_FORM.setEnabled(false);
 		}
 		
 		CONNECT.setAction(getConnectAction());
@@ -174,6 +187,20 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	private static AbstractAction getFestivalComplianceAction() {
+		AbstractAction festivalComplianceAction  = new AbstractAction("Festival Compliance"){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				FestivalComplianceDialog festivalComplianceDialog = new FestivalComplianceDialog(Main.getInst());
+				festivalComplianceDialog.setLocationRelativeTo(null);
+				festivalComplianceDialog.setVisible(true);
+				
+			}
+		};
+		return festivalComplianceAction;
+	}
+
+
 	private static AbstractAction getDebuggerAction() {
 		AbstractAction salesClerkProductionReportAction  = new AbstractAction("Debugger"){
 			@Override
