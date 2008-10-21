@@ -376,7 +376,7 @@ public class FestivalComplianceService {
 
 	private Integer getSendCount(int month, int day, int year, ComplianceMode mode) {
 		// TODO Auto-generated method stub
-		String query = "select count(1)" + "  from eastwood_compliance"
+		String query = "select count(1)" + "  from festival_compliance"
 				+ " where " + "MONTH (report_date) = '" + month
 				+ "' && YEAR(report_date) = '" + year
 				+ "' && DAY(report_date) = '" + day + "'"
@@ -399,7 +399,7 @@ public class FestivalComplianceService {
 	private Integer getMaxEodCounter() {
 		// TODO Auto-generated method stub
 
-		String query = "select max(EOD_COUNTER) from eastwood_compliance";
+		String query = "select max(EOD_COUNTER) from festival_compliance";
 		logger.info("getMaxEodCounter query=" + query);
 		ResultSet rs = databaseManager.executeQuery(query);
 
