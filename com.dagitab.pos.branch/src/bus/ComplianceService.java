@@ -630,6 +630,32 @@ public class ComplianceService {
 		return count;		
 	}
 	
+	// only check if payment is greater than 0
+	public Integer getNoOfSalesTransactions(int month, int day, int year, int storeCode, int... hour) {
+		String query = "SELECT count(1) COUNT FROM invoice o where exists(select 1 from payment_item p where o.OR_NO = p.OR_NO and o.STORE_CODE = p.STORE_CODE and p.AMT >0) AND " +
+		"MONTH (o.TRANS_DT) = '"+month+"' && " +
+		"YEAR(o.TRANS_DT) = '"+year+"' && " +
+		"DAY(o.TRANS_DT) = '"+day+"' " +
+		"AND o.STORE_CODE = '"+storeCode+"'";
+
+		if (hour.length > 0) {
+			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
+		}
+		
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		
+		Integer count = 0;
+		try {
+			while(rs.next()){
+				count = rs.getInt("COUNT");
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.info("TOTAL NO OF TRANSACTIONS: "+ count);
+		return count;		
+	}
+	
 	public Integer getNoOfTransactions(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT count(1) COUNT FROM invoice o where " +
 		"MONTH o.TRANS_DT >= ? and o.TRANS_DT <= ? " +
