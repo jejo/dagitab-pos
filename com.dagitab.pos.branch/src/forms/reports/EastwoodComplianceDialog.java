@@ -735,7 +735,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 	
 	private String[] getComplianceNames(){
 		
-		String[] complianceNames = new String[ComplianceMode.values().length+1];
+		String[] complianceNames = new String[ComplianceMode.values().length];
 		int i =0;
 		for(ComplianceMode complianceMode: ComplianceMode.values()){
 			complianceNames[i] = complianceMode.getName();
