@@ -368,16 +368,21 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 			sendByDateAction = new AbstractAction("Generate EOD", null) {
 				public void actionPerformed(ActionEvent evt) {
 					logger.info("generating eod action..");
-					Date eodDate = Calendar.getInstance().getTime();
-					Date transDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(eodDate);
-					try {
-						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
-						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
-						Main.getInst().disableTransaction();
+					
+					int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to generate today's EOD? You will no longer be able to enter additional transactions for today.", "Confirmation", JOptionPane.YES_NO_OPTION);
+					if(result == 0){
+						Date eodDate = Calendar.getInstance().getTime();
+						Date transDate = RobinsonsComplianceService.getInstance().getTransDateBasedOnEodDate(eodDate);
+						try {
+							RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
+							JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+							Main.getInst().disableTransaction();
+							init();
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+						}
 						init();
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
 					}
 				}
 			};

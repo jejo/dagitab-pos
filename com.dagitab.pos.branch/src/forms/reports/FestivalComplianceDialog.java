@@ -366,21 +366,23 @@ public class FestivalComplianceDialog extends javax.swing.JDialog {
 		if(sendByDateAction == null) {
 			sendByDateAction = new AbstractAction("Generate EOD", null) {
 				public void actionPerformed(ActionEvent evt) {
-					logger.info("generating eod action..");
-					Date transDate = Calendar.getInstance().getTime();
-				
-					try {
-						FestivalComplianceService.getInstance().generateEod(transDate);
-						JOptionPane.showMessageDialog(null, "Sales file successfully sent to compliance server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
-						Main.getInst().disableTransaction();
+					int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to generate today's EOD? You will no longer be able to enter additional transactions for today.", "Confirmation", JOptionPane.YES_NO_OPTION);
+					if(result == 0){
+						logger.info("generating eod action..");
+						Date transDate = Calendar.getInstance().getTime();
+					
+						try {
+							FestivalComplianceService.getInstance().generateEod(transDate);
+							JOptionPane.showMessageDialog(null, "Sales file successfully sent to compliance server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
+							Main.getInst().disableTransaction();
+							init();
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(null, "Sales file is not sent to compliance server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+						}
 						init();
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Sales file is not sent to compliance server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
 					}
-
-					init();
-				}
+}
 			};
 		}
 		return sendByDateAction;
