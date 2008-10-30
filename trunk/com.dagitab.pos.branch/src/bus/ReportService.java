@@ -60,6 +60,7 @@ public class ReportService {
 		Double totalPerInvoice = 0.0d;
 		for(InvoiceItem invoiceItem: invoice.getInvoiceItems()){
 			Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoice.getOrNo(),invoiceItem.getProductCode());
+			discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
 			Double subTotal = discountedAmount*invoiceItem.getQuantity();
 			totalPerInvoice+=subTotal;
 		}
