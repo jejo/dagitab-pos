@@ -1,5 +1,8 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Invoice {
 	private Long invoiceNo =0L;
 	private Long orNo;
@@ -11,7 +14,21 @@ public class Invoice {
 	private Integer isReturn = 0;
 	private String transactionDate;
 	private Double changeAmount = 0.0d;
+	private List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+	private List<ReturnItem> returnedItems = new ArrayList<ReturnItem>();
 	
+	public List<ReturnItem> getReturnedItems() {
+		return returnedItems;
+	}
+	public void setReturnedItems(List<ReturnItem> returnedItems) {
+		this.returnedItems = returnedItems;
+	}
+	public List<InvoiceItem> getInvoiceItems() {
+		return invoiceItems;
+	}
+	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
+		this.invoiceItems = invoiceItems;
+	}
 	public Integer getAssistantCode() {
 		return assistantCode;
 	}

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import main.Main;
 
@@ -16,7 +17,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import util.LoggerUtility;
+import bus.DiscountService;
 import bus.InvoiceItemService;
+import bus.ProductService;
+import bus.ReportService;
+import domain.Invoice;
+import domain.InvoiceItem;
+import domain.Product;
+import domain.ReturnItem;
 
 public class DailySalesReport {
 	
@@ -31,6 +39,195 @@ public class DailySalesReport {
 	private static Logger logger = Logger.getLogger(DailySalesReport.class);
 	
 	public boolean generate(String fileName, String startDate, String endDate){
+		HSSFCell cell;
+		POIFSFileSystem fs;
+		
+		try {
+			fs = new POIFSFileSystem(new FileInputStream("xls/daily_sales.xls"));
+			wb = new HSSFWorkbook(fs);
+			HSSFSheet sheet = ReportUtility.getSheet(wb);
+
+			//page generated on:
+			ReportUtility.writeDateGenerated(wb);
+			
+			//branch
+			ReportUtility.writeBranch(wb);
+			
+			//date
+			ReportUtility.writeDateRange(startDate, endDate, wb);
+			
+			List<Invoice> invoiceList = ReportService.getInstance().getInvoice(startDate, endDate);
+			
+			for(Invoice invoice: invoiceList){
+				
+				int totalRowSize = invoice.getInvoiceItems().size()+invoice.getReturnedItems().size();
+				int currentRowSize = 0;
+				
+				for(InvoiceItem invoiceItem: invoice.getInvoiceItems()){
+					HSSFRow row = sheet.getRow(rowCounter);
+					
+					if(currentRowSize == 0){
+						//OR no				
+						cell = HSSFUtil.createIntCell(wb,row, (short) 0,false,false);
+						cell.setCellValue(invoice.getOrNo());
+					
+						//invoice no
+						cell = HSSFUtil.createIntCell(wb,row, (short) 1,false,false);
+						cell.setCellValue(invoice.getInvoiceNo());
+					}
+					
+					
+					
+					Product product = ProductService.getProductById(invoiceItem.getProductCode());
+					
+					//product code
+					cell = HSSFUtil.createStringCell(wb,row, (short) 2,false,false);
+					cell.setCellValue(product.getProdCode());
+					
+					//product name
+					cell = HSSFUtil.createStringCell(wb,row, (short) 3,false,false);
+					cell.setCellValue(product.getName());
+					
+					//qty
+					cell = HSSFUtil.createIntCell(wb,row, (short) 4,false,false);
+					cell.setCellValue(invoiceItem.getQuantity());
+					
+					
+					//unit cost
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 5,false,false);
+					cell.setCellValue(Double.parseDouble(String.format("%.2f", product.getSellPrice())));
+					
+					//disc
+					cell = HSSFUtil.createPercentCell(wb,row, (short) 6,false,false);
+					cell.setCellValue(DiscountService.getDiscountPercentage(invoiceItem.getDiscountCode()));
+					
+					//disc unit cost
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 7,false,false);
+					Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(),invoiceItem.getProductCode());
+					discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
+					cell.setCellValue(discountedAmount);
+					
+					//subtotal
+					double subTotal = discountedAmount*invoiceItem.getQuantity();
+					subTotal = Double.valueOf(String.format("%.2f", subTotal));
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
+					cell.setCellValue(subTotal);
+					
+					rowCounter++;
+					currentRowSize++;
+					sheet.shiftRows(rowCounter+1,rowCounter+2,1);
+					
+					if(currentRowSize == totalRowSize){
+						//TOTAL
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
+						cell.setCellValue(Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice))));
+						
+						//cashier id
+						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
+						cell.setCellValue(invoice.getEncoderCode());
+						
+						//sales specialist
+						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
+						cell.setCellValue(invoice.getAssistantCode());
+					}
+				}
+				
+				
+				for(ReturnItem returnItem: invoice.getReturnedItems()){
+					
+					HSSFRow row = sheet.getRow(rowCounter);
+					
+					if(currentRowSize == 0){
+						//OR no				
+						cell = HSSFUtil.createIntCell(wb,row, (short) 0,false,false);
+						cell.setCellValue(invoice.getOrNo());
+					
+						//invoice no
+						cell = HSSFUtil.createIntCell(wb,row, (short) 1,false,false);
+						cell.setCellValue(invoice.getInvoiceNo());
+					}
+					
+					Product product = ProductService.getProductById(returnItem.getProductCode());
+					
+					//product code
+					cell = HSSFUtil.createStringCell(wb,row, (short) 2,false,false);
+					cell.setCellValue(product.getProdCode());
+					
+					//product name
+					cell = HSSFUtil.createStringCell(wb,row, (short) 3,false,false);
+					cell.setCellValue(product.getName());
+					
+					//qty
+					cell = HSSFUtil.createIntCell(wb,row, (short) 4,false,false);
+					cell.setCellValue(returnItem.getQuantity()*-1); //negative to mark as change
+					
+					
+					//unit cost
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 5,false,false);
+					cell.setCellValue(Double.parseDouble(String.format("%.2f", returnItem.getSellPrice()))*-1);
+					
+					//disc
+					cell = HSSFUtil.createStringCell(wb,row, (short) 6,false,false);
+					cell.setCellValue("N/A");
+					
+					//disc unit cost
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 7,false,false);
+					Double discountedAmount = returnItem.getSellPrice()*-1; //discounted price is negative when returned
+					discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
+					cell.setCellValue(discountedAmount);
+					
+					//subtotal
+					double subTotal = discountedAmount*returnItem.getQuantity();
+					subTotal = Double.valueOf(String.format("%.2f", subTotal));
+					cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
+					cell.setCellValue(subTotal);
+					
+					
+					
+					
+					rowCounter++;
+					currentRowSize++;
+					sheet.shiftRows(rowCounter+1,rowCounter+2,1);
+					
+					if(currentRowSize == totalRowSize){
+						//TOTAL
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
+						cell.setCellValue(Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice))));
+						
+						//cashier id
+						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
+						cell.setCellValue(invoice.getEncoderCode());
+						
+						//sales specialist
+						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
+						cell.setCellValue(invoice.getAssistantCode());
+					}
+					
+				}
+				
+				
+				
+			}
+			
+			
+			writeTotalAmounts(topMarker,rowCounter);
+			
+			
+			// Write the output to a file
+			ReportUtility.writeOutputToFile(wb, fileName);
+			return true;
+			
+		} catch (FileNotFoundException e) {
+			
+			LoggerUtility.getInstance().logStackTrace(e);
+			return false;
+		} catch (IOException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+			return false;
+		}
+	}
+	
+	public boolean generateTemp(String fileName, String startDate, String endDate){
 		HSSFCell cell;
 		POIFSFileSystem fs;
 		
@@ -209,7 +406,7 @@ public class DailySalesReport {
 					cell.setCellValue("N/A");
 					
 					
-					//discounted price
+					//discounted price is negative is it is returned
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 7,false,false);
 					Double discountedAmount = resultSet.getDouble("SELL_PRICE")*-1;
 					cell.setCellValue(String.format("%.2f",discountedAmount));
@@ -282,5 +479,28 @@ public class DailySalesReport {
 		cell.setCellValue(String.format("%.2f",totalSubtotal));
 		cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
 		cell.setCellValue(String.format("%.2f",totalTotal));
+	}
+	
+	public void writeTotalAmounts(int firstRow, int lastRow){
+		HSSFRow row = ReportUtility.getSheet(wb).getRow(rowCounter+2);
+		
+		HSSFCell cell = HSSFUtil.createStringCell(wb,row, (short) 0,false,true);
+		cell.setCellValue("TOTAL");
+		
+		String totalQtyFormula = "SUM(E"+firstRow+":E"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 4,totalQtyFormula,false,false);
+		
+		String totalSellPriceFormula = "SUM(F"+firstRow+":F"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 5,totalSellPriceFormula,false,false);
+		
+		String totalDiscPriceFormula = "SUM(H"+firstRow+":H"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 7,totalDiscPriceFormula,false,false);
+		
+		String totalSubtotalFormula = "SUM(I"+firstRow+":I"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 8,totalSubtotalFormula,false,false);
+		
+		String totalTotalFormula = "SUM(J"+firstRow+":J"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 9,totalTotalFormula,false,false);
+		
 	}
 }
