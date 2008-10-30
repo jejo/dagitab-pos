@@ -120,7 +120,11 @@ public class DailySalesReport {
 					if(currentRowSize == totalRowSize){
 						//TOTAL
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
-						cell.setCellValue(Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice))));
+						Double total = Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice)));
+						if(total < 0){
+							total = 0.0d;
+						}
+						cell.setCellValue(total);
 						
 						//cashier id
 						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
@@ -192,7 +196,11 @@ public class DailySalesReport {
 					if(currentRowSize == totalRowSize){
 						//TOTAL
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
-						cell.setCellValue(Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice))));
+						Double total = Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice)));
+						if(total < 0){
+							total = 0.0d;
+						}
+						cell.setCellValue(total);
 						
 						//cashier id
 						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
