@@ -86,4 +86,19 @@ public class ReturnItemService {
 		}
 		return 0.0d;
 	}
+	
+	public static ReturnItem toReturnItem(ResultSet rs) throws SQLException{
+		ReturnItem returnItem = new ReturnItem();
+		returnItem.setCost(rs.getDouble("COST"));
+		returnItem.setOrNo(rs.getInt("OR_NO"));
+		returnItem.setProductCode(rs.getString("PROD_CODE"));
+		returnItem.setQuantity(rs.getInt("QUANTITY"));
+		returnItem.setReturnCode(rs.getInt("RETURN_CODE"));
+		returnItem.setSellPrice(rs.getDouble("SELL_PRICE"));
+		returnItem.setStoreCode(rs.getInt("STORE_CODE"));
+		return returnItem;
+	}
+	
+	
+	
 }

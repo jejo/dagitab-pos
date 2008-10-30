@@ -87,7 +87,7 @@ public class HSSFUtil {
 		cell.setCellType(HSSFCell.CELL_TYPE_FORMULA);
 		cell.setCellFormula(formula);
 		HSSFDataFormat format = wb.createDataFormat();
-		style.setDataFormat(format.getFormat("0.00 %"));
+		style.setDataFormat(format.getFormat("0.00"));
 		if(bold) {
 			HSSFFont font = wb.createFont();
 			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
