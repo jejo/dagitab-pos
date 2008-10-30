@@ -177,8 +177,7 @@ public class LoginDialog extends javax.swing.JDialog {
 				
 				String isCompliance = Main.getProperties().getProperty("compliance");
 				
-				if(isCompliance.equals("galleria")){
-					
+				if(!isCompliance.equals("none")){
 					
 					String periodicRate = Main.getProperties().getProperty("compliance.periodicRate");
 					final Integer sendUnsentDaysNo = Integer.valueOf(Main.getProperties().getProperty("send.unsentdays.no"));
@@ -234,7 +233,7 @@ public class LoginDialog extends javax.swing.JDialog {
 							}
 							
 							if(sentDatesList.size() == listDates.size()){
-								Main.getInst().getStatusLabel().setText("Sales file successfully sent to RLC server");
+								Main.getInst().getStatusLabel().setText("Sales file successfully sent to FTP server");
 //								JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
 								
 							}
@@ -243,7 +242,7 @@ public class LoginDialog extends javax.swing.JDialog {
 								for(String s: unsentDateList){
 									unsentDates += s;
 								}
-								Main.getInst().getStatusLabel().setText("Sales file is not sent to RLC server. Please contact your POS vendor");
+								Main.getInst().getStatusLabel().setText("Sales file is not sent to FTP server. Please contact your POS vendor");
 //								JOptionPane.showMessageDialog(null, "Sales file is not sent to RLC server. Please contact your POS vendor", "Sending Failure", JOptionPane.ERROR_MESSAGE);
 //								JOptionPane.showMessageDialog(null, "There were dates that weren't sent. These are: "+unsentDates, "Prompt", JOptionPane.ERROR_MESSAGE);
 							}
