@@ -495,17 +495,17 @@ public class DailySalesReport {
 		HSSFCell cell = HSSFUtil.createStringCell(wb,row, (short) 0,false,true);
 		cell.setCellValue("TOTAL");
 		
-		String totalQtyFormula = "SUM(E"+firstRow+":E"+lastRow+")";
-		cell = HSSFUtil.createFormulaCell(wb,row, (short) 4,totalQtyFormula,false,false);
+		/*String totalQtyFormula = "SUM(E"+firstRow+":E"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 4,totalQtyFormula,false,false);*/
 		
-		String totalSellPriceFormula = "SUM(F"+firstRow+":F"+lastRow+")";
-		cell = HSSFUtil.createFormulaCell(wb,row, (short) 5,totalSellPriceFormula,false,false);
+		/*String totalSellPriceFormula = "SUM(F"+firstRow+":F"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 5,totalSellPriceFormula,false,false);*/
 		
-		String totalDiscPriceFormula = "SUM(H"+firstRow+":H"+lastRow+")";
-		cell = HSSFUtil.createFormulaCell(wb,row, (short) 7,totalDiscPriceFormula,false,false);
+		/*String totalDiscPriceFormula = "SUM(H"+firstRow+":H"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 7,totalDiscPriceFormula,false,false);*/
 		
-		String totalSubtotalFormula = "SUM(I"+firstRow+":I"+lastRow+")";
-		cell = HSSFUtil.createFormulaCell(wb,row, (short) 8,totalSubtotalFormula,false,false);
+		/*String totalSubtotalFormula = "SUM(I"+firstRow+":I"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 8,totalSubtotalFormula,false,false);*/
 		
 		String totalTotalFormula = "SUM(J"+firstRow+":J"+lastRow+")";
 		cell = HSSFUtil.createFormulaCell(wb,row, (short) 9,totalTotalFormula,false,false);
