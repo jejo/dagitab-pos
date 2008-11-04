@@ -25,7 +25,7 @@ import util.FtpUtility;
 import util.LoggerUtility;
 import util.StorePropertyHandler;
 
-public class EastwoodComplianceService {
+public class EastwoodComplianceService extends ComplianceService {
 
 	private DBManager databaseManager;
 	// to be updated by actual tenant's id
@@ -422,7 +422,7 @@ public class EastwoodComplianceService {
 
 	}
 
-	private Integer getSendCount(int month, int day, int year, ComplianceMode mode) {
+	public Integer getSendCount(int month, int day, int year, ComplianceMode mode) {
 		// TODO Auto-generated method stub
 		String query = "select count(1)" + "  from eastwood_compliance"
 				+ " where " + "MONTH (report_date) = '" + month

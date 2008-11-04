@@ -374,7 +374,7 @@ public class FestivalComplianceService {
 
 	}
 
-	private Integer getSendCount(int month, int day, int year, ComplianceMode mode) {
+	public Integer getSendCount(int month, int day, int year, ComplianceMode mode) {
 		// TODO Auto-generated method stub
 		String query = "select count(1)" + "  from festival_compliance"
 				+ " where " + "MONTH (report_date) = '" + month

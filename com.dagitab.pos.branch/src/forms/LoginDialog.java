@@ -28,6 +28,9 @@ import org.apache.log4j.Logger;
 import util.LoggerUtility;
 import util.Validator;
 import bus.ClerkService;
+import bus.ComplianceMode;
+import bus.EastwoodComplianceService;
+import bus.FestivalComplianceService;
 import bus.RobinsonsComplianceService;
 import bus.StoreService;
 import domain.Clerk;
@@ -177,7 +180,7 @@ public class LoginDialog extends javax.swing.JDialog {
 				
 				String isCompliance = Main.getProperties().getProperty("compliance");
 				
-				if(!isCompliance.equals("none")){
+				if(isCompliance.equals("galleria")){
 					
 					String periodicRate = Main.getProperties().getProperty("compliance.periodicRate");
 					final Integer sendUnsentDaysNo = Integer.valueOf(Main.getProperties().getProperty("send.unsentdays.no"));
@@ -251,7 +254,25 @@ public class LoginDialog extends javax.swing.JDialog {
 							
 						}}, Calendar.getInstance().getTime(), Long.valueOf(periodicRate));
 				}
-				
+				else{
+					Calendar currentCalendar = Calendar.getInstance();
+					int month = currentCalendar.get(Calendar.MONTH)+1;
+					int year = currentCalendar.get(Calendar.YEAR);
+					int day = currentCalendar.get(Calendar.DAY_OF_MONTH);
+					if(isCompliance.equals("eastwood")){
+						
+						ComplianceMode mode = ComplianceMode.DAILY;
+						if (EastwoodComplianceService.getInstance().getSendCount(month, day, year, mode) > 0) { // EOD already sent for the day
+							Main.getInst().disableTransaction();
+						}
+					}
+					else if(isCompliance.equals("festival")){
+						ComplianceMode mode = ComplianceMode.DAILY;
+						if (FestivalComplianceService.getInstance().getSendCount(month, day, year, mode) > 0) { // EOD already sent for the day
+							Main.getInst().disableTransaction();
+						}
+					}
+				}
 				
 				
 				

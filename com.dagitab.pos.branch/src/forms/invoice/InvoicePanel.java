@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -195,7 +193,12 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				resetBtn.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png")));
 				resetBtn.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						clearInfoValues();
+						try {
+							clearInfoValues();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+							LoggerUtility.getInstance().logStackTrace(e);
+						}
 					}
 					
 				});
@@ -612,6 +615,15 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						
+						try {
+							if (Integer.parseInt(InvoiceService.getNextORNumber()) != Integer.parseInt(orNoTxt.getText())){
+								resetORNumber();
+							}
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+							LoggerUtility.getInstance().logStackTrace(e);
+						}
+						
 						if(itemTable.getRowCount() > 0){
 							int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 							if(confirm == 0){
@@ -658,9 +670,18 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				jButton31.setEnabled(true);
 				jButton31.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						Transaction pendingTransaction = savePendingTransaction();
-						mainWindow.getPendingTransactions().add(pendingTransaction);
-						clearInfoValues();	//reset all
+						if(itemTable.getRowCount() > 0){
+							Transaction pendingTransaction = savePendingTransaction();
+							mainWindow.getPendingTransactions().add(pendingTransaction);
+							try {
+								clearInfoValues();
+							} catch (Exception e) {
+								LoggerUtility.getInstance().logStackTrace(e);
+							}
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "You haven't put an item in this transaction", "Invalid Transaction", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 				
@@ -958,7 +979,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		jLabel2.setText(branchName);
 	}
 	
-	public void clearInfoValues(){
+	public void clearInfoValues() throws Exception{
 		//clear items table;
 		TableModel jTable1Model = new DefaultTableModel(
 				new String[][] {  },
@@ -987,7 +1008,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		updatePaymentAmounts();
 	}
 	
-	public void resetORNumber(){
+	public void resetORNumber() throws Exception{
 		//reset OR no
 		String nextOR = InvoiceService.getNextORNumber();
 		if(nextOR == null){
@@ -1097,7 +1118,13 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);
 		
-		clearInfoValues();
+		
+		//Additional check if or_no is not updated
+		try {
+			clearInfoValues();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+		}
 		
 	}
 	

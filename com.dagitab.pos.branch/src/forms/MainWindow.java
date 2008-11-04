@@ -158,14 +158,24 @@ public class MainWindow extends javax.swing.JFrame {
 
 							if (jTabbedPane1.getSelectedIndex() == 0) { // regular
 								InvoicePanel invoicePanel = (InvoicePanel)MainWindow.this.getInvoicePanel();
-								invoicePanel.resetORNumber();
+								try {
+									invoicePanel.resetORNumber();
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+									LoggerUtility.getInstance().logStackTrace(e);
+								}
 							} else if (jTabbedPane1.getSelectedIndex() == 1) { // partial
 								((PartialPanel) partialPanel).refreshPartialTable();
 							} else if (jTabbedPane1.getSelectedIndex() == 2) { // deferred
 								((DeferredPanel) deferredPanel).refreshDeferredTable();
 							} else if (jTabbedPane1.getSelectedIndex() == 3) { // returned
 								ReturnedPanel returnedPanel = (ReturnedPanel) MainWindow.this.getReturnedPanel();
-								returnedPanel.resetORNumber();
+								try {
+									returnedPanel.resetORNumber();
+								} catch (Exception e) {
+									JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+									LoggerUtility.getInstance().logStackTrace(e);
+								}
 							} else if (jTabbedPane1.getSelectedIndex() == 4) { // pending
 								
 								((PendingPanel) pendingPanel).refreshPendingTable();
