@@ -20,7 +20,7 @@ public class ComplianceService {
 	private static Logger logger = Logger.getLogger(ComplianceService.class);
 	private Boolean specialFlag = false;
 	
-	private ComplianceService(){}
+	protected ComplianceService(){}
 	
 	private ComplianceService(Boolean specialFlag) {
 		this.specialFlag = specialFlag;

@@ -17,15 +17,10 @@ public class InvoiceService {
 	private static Logger logger = Logger.getLogger(InvoiceService.class);
 	
 	
-	public static String getNextORNumber(){
+	public static String getNextORNumber() throws Exception {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT (MAX(`OR_NO`) + 1) FROM invoice WHERE store_code = '"+StorePropertyHandler.getStoreNo()+"'");
-		
-		try {
-			if (rs.next()){
-				return rs.getString(1);
-			}
-		} catch (SQLException e) {
-			LoggerUtility.getInstance().logStackTrace(e);
+		if (rs.next()){
+			return rs.getString(1);
 		}
 		return null;
 		

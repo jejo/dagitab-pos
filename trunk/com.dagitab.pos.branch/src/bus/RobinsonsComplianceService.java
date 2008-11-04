@@ -24,7 +24,7 @@ import util.FtpUtility;
 import util.LoggerUtility;
 import util.StorePropertyHandler;
 
-public class RobinsonsComplianceService {
+public class RobinsonsComplianceService extends ComplianceService {
 
 	private DBManager databaseManager;
 	// to be updated by actual tenant's id

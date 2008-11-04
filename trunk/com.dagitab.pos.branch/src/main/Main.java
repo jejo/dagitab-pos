@@ -204,7 +204,12 @@ public class Main {
 	
 	public static void clearInvoiceInformation(){
 		InvoicePanel invoicePanel = (InvoicePanel) mainWindow.getInvoicePanel();
-		invoicePanel.clearInfoValues();
+		try {
+			invoicePanel.clearInfoValues();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
 	}
 
 	public static int getPercentage() {

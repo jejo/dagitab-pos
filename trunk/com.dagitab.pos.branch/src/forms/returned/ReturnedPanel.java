@@ -1037,14 +1037,19 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(resetAction == null) {
 			resetAction = new AbstractAction("Reset All", new ImageIcon(getClass().getClassLoader().getResource("images/refresh.png"))) {
 				public void actionPerformed(ActionEvent evt) {
-					reset();
+					try {
+						reset();
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+						LoggerUtility.getInstance().logStackTrace(e);
+					}
 				}
 			};
 		}
 		return resetAction;
 	}
 	
-	private void  reset(){
+	private void  reset() throws Exception{
 		//activate and clear returnor textfield
 		returnedORTextField.setText("");
 		returnedORTextField.setEnabled(true);
@@ -1078,7 +1083,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		
 	}
 	
-	public void resetORNumber(){
+	public void resetORNumber() throws Exception{
 		//reset OR field
 		orTextField.setPreferredSize(new java.awt.Dimension(126, 21));
 		String nextOR = InvoiceService.getNextORNumber();
@@ -1271,7 +1276,12 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		validateReceiptDialog.setVisible(true);
 		
 		
-		reset();
+		try {
+			reset();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
 	}
 	
 	private boolean hasEnoughPayment(){
