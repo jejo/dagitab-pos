@@ -1146,6 +1146,16 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(processTransactionAction == null) {
 			processTransactionAction = new AbstractAction("Process Transaction", new ImageIcon(getClass().getClassLoader().getResource("images/process.png"))) {
 				public void actionPerformed(ActionEvent evt) {
+					
+					try {
+						if (Integer.parseInt(InvoiceService.getNextORNumber()) != Integer.parseInt(orTextField.getText())){
+							resetORNumber();
+						}
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+						LoggerUtility.getInstance().logStackTrace(e);
+					}
+					
 					if(returnedItemsTable.getRowCount() > 0){
 						logger.info("processing invoice transaction...");
 						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
