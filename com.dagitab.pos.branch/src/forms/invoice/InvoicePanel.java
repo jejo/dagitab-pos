@@ -240,9 +240,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 			{
 				addInvoiceItemButton = new JButton();
-				this.add(addInvoiceItemButton, new AnchorConstraint(459, 625, 502, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(addInvoiceItemButton, new AnchorConstraint(459, 614, 502, 534, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addInvoiceItemButton.setText("Add");
-				addInvoiceItemButton.setPreferredSize(new java.awt.Dimension(63, 20));
+				addInvoiceItemButton.setPreferredSize(new java.awt.Dimension(69, 20));
 				addInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
 				addInvoiceItemButton.setAction(getAddInvoiceItemAction());
@@ -499,7 +499,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				{
 					jButton2 = new JButton();
 					jPanel6.add(jButton2, new AnchorConstraint(431, 959, 537, 739, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jButton2.setText("Search");
+					jButton2.setText("...");
 					jButton2.setPreferredSize(new java.awt.Dimension(51, 20));
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
@@ -529,7 +529,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				{
 					jButton10 = new JButton();
 					jPanel6.add(jButton10, new AnchorConstraint(579, 959, 685, 739, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					jButton10.setText("Search");
+					jButton10.setText("...");
 					jButton10.setPreferredSize(new java.awt.Dimension(51, 20));
 					jButton10.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
@@ -542,9 +542,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 			{
 				editInvoiceItemButton = new JButton();
-				this.add(editInvoiceItemButton, new AnchorConstraint(459, 705, 502, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(editInvoiceItemButton, new AnchorConstraint(459, 703, 502, 619, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				editInvoiceItemButton.setText("Edit");
-				editInvoiceItemButton.setPreferredSize(new java.awt.Dimension(62, 20));
+				editInvoiceItemButton.setPreferredSize(new java.awt.Dimension(72, 20));
 				editInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
 				editInvoiceItemButton.setAction(getEditItemAction());
@@ -554,9 +554,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 			{
 				deleteInvoiceItemButton = new JButton();
-				this.add(deleteInvoiceItemButton, new AnchorConstraint(459, 796, 504, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(deleteInvoiceItemButton, new AnchorConstraint(459, 811, 502, 710, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				deleteInvoiceItemButton.setText("Delete");
-				deleteInvoiceItemButton.setPreferredSize(new java.awt.Dimension(72, 21));
+				deleteInvoiceItemButton.setPreferredSize(new java.awt.Dimension(87, 20));
 				deleteInvoiceItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deleteInvoiceItemButton.setBackground(new java.awt.Color(255,255,255));
 				deleteInvoiceItemButton.setAction(getDeleteInvoiceItemAction());
@@ -568,9 +568,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 			{
 				addPaymentItemButton = new JButton();
-				this.add(addPaymentItemButton, new AnchorConstraint(811, 625, 853, 552, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(addPaymentItemButton, new AnchorConstraint(811, 614, 853, 534, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addPaymentItemButton.setText("Add");
-				addPaymentItemButton.setPreferredSize(new java.awt.Dimension(63, 20));
+				addPaymentItemButton.setPreferredSize(new java.awt.Dimension(69, 20));
 				addPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addPaymentItemButton.setBackground(new java.awt.Color(255,255,255));
 				addPaymentItemButton.setAction(getAddPaymentItemAction());
@@ -581,9 +581,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 			{
 				editPaymentItemButton = new JButton();
-				this.add(editPaymentItemButton, new AnchorConstraint(811, 705, 853, 633, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(editPaymentItemButton, new AnchorConstraint(811, 703, 853, 619, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				editPaymentItemButton.setText("Edit");
-				editPaymentItemButton.setPreferredSize(new java.awt.Dimension(62, 20));
+				editPaymentItemButton.setPreferredSize(new java.awt.Dimension(72, 20));
 				editPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editPaymentItemButton.setBackground(new java.awt.Color(255,255,255));
 				editPaymentItemButton.setAction(getEditPaymentItemAction());
@@ -593,9 +593,9 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 			{
 				deletePaymentItemButton = new JButton();
-				this.add(deletePaymentItemButton, new AnchorConstraint(813, 796, 856, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(deletePaymentItemButton, new AnchorConstraint(813, 811, 856, 710, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				deletePaymentItemButton.setText("Delete");
-				deletePaymentItemButton.setPreferredSize(new java.awt.Dimension(72, 20));
+				deletePaymentItemButton.setPreferredSize(new java.awt.Dimension(87, 20));
 				deletePaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/delete.gif")));
 				deletePaymentItemButton.setBackground(new java.awt.Color(255,255,255));
 				deletePaymentItemButton.setAction(getDeletePaymentItemAction());
@@ -611,24 +611,30 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				processButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/process.png")));
 				processButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						logger.info("processing invoice transaction...");
-						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-						if(confirm == 0){
-							if(hasEnoughPayment()){
-								saveTransaction();
-							}
-							else{
-								if(isPartial()){
-									int confirm2  = JOptionPane.showConfirmDialog(null, "You are saving a partial transaction. Are you sure you want to continue?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-									if(confirm2 == 0){
-										saveTransaction();
-									}
+						
+						if(itemTable.getRowCount() > 0){
+							int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+							if(confirm == 0){
+								logger.info("processing invoice transaction...");
+								if(hasEnoughPayment()){
+									saveTransaction();
 								}
 								else{
-									JOptionPane.showMessageDialog(null, "This is not a partial transaction. You have an insufficient payment amount.", "Prompt", JOptionPane.ERROR_MESSAGE);
+									if(isPartial()){
+										int confirm2  = JOptionPane.showConfirmDialog(null, "You are saving a partial transaction. Are you sure you want to continue?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+										if(confirm2 == 0){
+											saveTransaction();
+										}
+									}
+									else{
+										JOptionPane.showMessageDialog(null, "This is not a partial transaction. You have an insufficient payment amount.", "Prompt", JOptionPane.ERROR_MESSAGE);
+									}
 								}
+								
 							}
-							
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "You haven't put an item in this transaction", "Invalid Transaction", JOptionPane.ERROR_MESSAGE);
 						}
 						
 						

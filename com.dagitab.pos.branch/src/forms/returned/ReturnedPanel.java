@@ -163,9 +163,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			}
 			{
 				editReturnItemButton = new JButton();
-				this.add(editReturnItemButton, new AnchorConstraint(267, 666, 311, 595, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(editReturnItemButton, new AnchorConstraint(267, 667, 311, 582, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				editReturnItemButton.setText("Edit");
-				editReturnItemButton.setPreferredSize(new java.awt.Dimension(61, 22));
+				editReturnItemButton.setPreferredSize(new java.awt.Dimension(73, 22));
 				editReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editReturnItemButton.setBackground(new java.awt.Color(244,244,244));
 				editReturnItemButton.setAction(getEditReturnedItemsAction());
@@ -174,9 +174,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			}
 			{
 				addReturnItemButton = new JButton();
-				this.add(addReturnItemButton, new AnchorConstraint(267, 588, 311, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(addReturnItemButton, new AnchorConstraint(267, 577, 311, 494, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addReturnItemButton.setText("Add");
-				addReturnItemButton.setPreferredSize(new java.awt.Dimension(61, 22));
+				addReturnItemButton.setPreferredSize(new java.awt.Dimension(72, 22));
 				addReturnItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addReturnItemButton.setBackground(new java.awt.Color(244,244,244));
 				addReturnItemButton.setAction(getAddReturnItemAction());
@@ -214,9 +214,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			}
 			{
 				addPaymentItemButton = new JButton();
-				this.add(addPaymentItemButton, new AnchorConstraint(839, 587, 885, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(addPaymentItemButton, new AnchorConstraint(839, 577, 883, 494, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addPaymentItemButton.setText("Add");
-				addPaymentItemButton.setPreferredSize(new java.awt.Dimension(60, 23));
+				addPaymentItemButton.setPreferredSize(new java.awt.Dimension(72, 22));
 				addPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addPaymentItemButton.setBackground(new java.awt.Color(244,244,244));
 				addPaymentItemButton.setAction(getAddPaymentItemAction());
@@ -226,9 +226,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			}
 			{
 				addReplacedItemButton = new JButton();
-				this.add(addReplacedItemButton, new AnchorConstraint(551, 587, 593, 517, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(addReplacedItemButton, new AnchorConstraint(551, 577, 595, 494, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addReplacedItemButton.setText("Add");
-				addReplacedItemButton.setPreferredSize(new java.awt.Dimension(60, 21));
+				addReplacedItemButton.setPreferredSize(new java.awt.Dimension(72, 22));
 				addReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/add.png")));
 				addReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
 				addReplacedItemButton.setAction(getAddReplacementItemAction());
@@ -507,9 +507,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			}
 			{
 				editReplacedItemButton = new JButton();
-				this.add(editReplacedItemButton, new AnchorConstraint(551, 666, 593, 595, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(editReplacedItemButton, new AnchorConstraint(551, 667, 595, 582, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				editReplacedItemButton.setText("Edit");
-				editReplacedItemButton.setPreferredSize(new java.awt.Dimension(61, 21));
+				editReplacedItemButton.setPreferredSize(new java.awt.Dimension(73, 22));
 				editReplacedItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editReplacedItemButton.setBackground(new java.awt.Color(244,244,244));
 				editReplacedItemButton.setAction(getEditReplacementItemsAction());
@@ -579,9 +579,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			}
 			{
 				editPaymentItemButton = new JButton();
-				this.add(editPaymentItemButton, new AnchorConstraint(839, 666, 885, 595, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(editPaymentItemButton, new AnchorConstraint(839, 667, 883, 582, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				editPaymentItemButton.setText("Edit");
-				editPaymentItemButton.setPreferredSize(new java.awt.Dimension(61, 23));
+				editPaymentItemButton.setPreferredSize(new java.awt.Dimension(73, 22));
 				editPaymentItemButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png")));
 				editPaymentItemButton.setBackground(new java.awt.Color(244,244,244));
 				editPaymentItemButton.setAction(getEditPaymentItemAction());
@@ -1141,16 +1141,21 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(processTransactionAction == null) {
 			processTransactionAction = new AbstractAction("Process Transaction", new ImageIcon(getClass().getClassLoader().getResource("images/process.png"))) {
 				public void actionPerformed(ActionEvent evt) {
-					logger.info("processing invoice transaction...");
-					int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-					if(confirm == 0){
-						if(hasEnoughPayment()){
-							saveTransaction();
+					if(returnedItemsTable.getRowCount() > 0){
+						logger.info("processing invoice transaction...");
+						int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+						if(confirm == 0){
+							if(hasEnoughPayment()){
+								saveTransaction();
+							}
+							else{
+								JOptionPane.showMessageDialog(null, "You have an insufficient payment amount.", "Prompt", JOptionPane.ERROR_MESSAGE);
+							}
+							
 						}
-						else{
-							JOptionPane.showMessageDialog(null, "You have an insufficient payment amount.", "Prompt", JOptionPane.ERROR_MESSAGE);
-						}
-						
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "You haven't put an item to return in this transaction", "Invalid Transaction", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			};

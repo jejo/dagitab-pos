@@ -183,8 +183,10 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 				jButton1.setPreferredSize(new java.awt.Dimension(112, 28));
 				jButton1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						updatePendingDeliveryItem(deliveryItemId, Long.parseLong(acceptedQuantityTextField.getText()), Long.parseLong(missingQuantityTextField.getText()), Long.parseLong(damagedQuantityTextField.getText()));
-						deliveryItemsConfirmationDialog.setVisible(false);
+						boolean success = updatePendingDeliveryItem(deliveryItemId, Long.parseLong(acceptedQuantityTextField.getText()), Long.parseLong(missingQuantityTextField.getText()), Long.parseLong(damagedQuantityTextField.getText()));
+						if(success){
+							deliveryItemsConfirmationDialog.setVisible(false);
+						}
 					}
 				});
 			}
@@ -351,14 +353,18 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 		this.deliveryDialog = deliveryDialog;
 	}
 	
-	public void updatePendingDeliveryItem(Long deliveryItemId, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
+	public boolean updatePendingDeliveryItem(Long deliveryItemId, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
 		//SimpleDateFormat sdf = new SimpleDateFormat();
 		//Calendar calendarInstance = Calendar.getInstance();
 		//calendarInstance.set(calendar.getYear(), calendar.getMonth(), calendar.getDay());
-		DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
+		boolean success = DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
 		
-		deliveryDialog.refreshPendingDeliveryItemsTable((Long) deliveryDialog.getPendingDeliveryTable().getValueAt(deliveryDialog.getPendingDeliveryTable().getSelectedRow(), 0));
-		deliveryDialog.updateSelectedPendingDelivery();
+		if(success){
+			deliveryDialog.refreshPendingDeliveryItemsTable((Long) deliveryDialog.getPendingDeliveryTable().getValueAt(deliveryDialog.getPendingDeliveryTable().getSelectedRow(), 0));
+			deliveryDialog.updateSelectedPendingDelivery();
+		}
+		
+		return success;
 	}
 
 	public JTextField getDamagedQuantityTextField() {
