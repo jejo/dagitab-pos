@@ -3,6 +3,8 @@ package bus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import main.Main;
 import util.LoggerUtility;
 
@@ -13,17 +15,42 @@ public class DeliveryItemService {
 		return rs;
 	}
 	
-	public static void updateDeliveryItem(Long deliveryItemId, String date, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
-		String[] columns = new String[]{"PROCESSED_STAT","RCVD_DATE","ACCEPTED_QTY","MISSING_QTY","DAMAGED_QTY"};
-		String[] columnValues = new String[]{"1", date + " 00:00:00", acceptedQuantity.toString(), missingQuantity.toString(), damagedQuantity.toString()};
-		String table = "delivery_items";
-		String[] whereColumns = new String[]{"DEL_ITEM_NO"};
-		String[] whereValues = new String[]{deliveryItemId.toString()};
-		
-		int success = Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
-		if(success > 0){
-			InventoryService.getInstance().addToInventory(Integer.valueOf(acceptedQuantity.toString()), getProductCodeOfDeliveryItem(deliveryItemId));
+	public static Integer getDeliveryItemQuantity(Long deliveryItemId){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT QUANTITY FROM DELIVERY_ITEMS WHERE DEL_ITEM_NO = "+deliveryItemId);
+		try {
+			if(rs.next()){
+				return rs.getInt("QUANTITY");
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
+		return null;
+	}
+	
+	public static boolean updateDeliveryItem(Long deliveryItemId, String date, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
+		
+		Integer deliveryItemQuantity = getDeliveryItemQuantity(deliveryItemId);
+		Integer sumOfQuantity = Integer.valueOf(acceptedQuantity.toString()) +  Integer.valueOf(missingQuantity.toString()) + Integer.valueOf(damagedQuantity.toString());
+		
+		if(deliveryItemQuantity == sumOfQuantity){
+			String[] columns = new String[]{"PROCESSED_STAT","RCVD_DATE","ACCEPTED_QTY","MISSING_QTY","DAMAGED_QTY"};
+			String[] columnValues = new String[]{"1", date + " 00:00:00", acceptedQuantity.toString(), missingQuantity.toString(), damagedQuantity.toString()};
+			String table = "delivery_items";
+			String[] whereColumns = new String[]{"DEL_ITEM_NO"};
+			String[] whereValues = new String[]{deliveryItemId.toString()};
+			
+			int success = Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
+			if(success > 0){
+				InventoryService.getInstance().addToInventory(Integer.valueOf(acceptedQuantity.toString()), getProductCodeOfDeliveryItem(deliveryItemId));
+			}
+			return true;
+		}
+		else{
+			int unaccountedItems = deliveryItemQuantity - sumOfQuantity;
+			JOptionPane.showMessageDialog(null, "There were "+unaccountedItems+" unaccounted quantities for this delivery item. Please input valid quantities for all items. ","Invalid Processing",JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 	}
 	
 	public static String getProductCodeOfDeliveryItem(Long deliveryItemNo){
