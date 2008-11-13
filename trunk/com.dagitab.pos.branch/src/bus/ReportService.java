@@ -58,6 +58,79 @@ public class ReportService {
 		return invoiceList;
 	}
 	
+	public Integer getMaxOrNo(String date){
+		String query = "SELECT max(i.OR_NO) MAX_OR_NO FROM invoice i WHERE DATE(i.trans_dt)>=\'"+date + "\' && i.store_code="+Main.getStoreCode();
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		try {
+			while(rs.next()){
+				return rs.getInt("MAX_OR_NO");
+			}
+		} catch (SQLException e) {
+			loggerUtility.logStackTrace(e);
+		}
+		return null;
+	}
+	
+	public Integer getMinOrNo(String date){
+		String query = "SELECT min(i.OR_NO) MIN_OR_NO FROM invoice i WHERE DATE(i.trans_dt)>=\'"+date + "\' && i.store_code="+Main.getStoreCode();
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		try {
+			while(rs.next()){
+				return rs.getInt("MIN_OR_NO");
+			}
+		} catch (SQLException e) {
+			loggerUtility.logStackTrace(e);
+		}
+		return null;
+	}
+	
+	public Double getApprovedDiscounts(String date){
+		String[] dateArr = date.split("-");
+		Double totaldiscounts = ComplianceService.getComplianceService().getTotalDiscount(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode()));
+		return totaldiscounts;
+	}
+	
+	public Double getGrossSales(String date) {
+		String[] dateArr = date.split("-");
+		Double grossSales = ComplianceService.getComplianceService().getRawGross(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode()));
+		return grossSales;
+	}
+	
+	public Double getTotalVipDiscount(String date) {
+		String[] dateArr = date.split("-");
+		Double totalVipdiscounts = ComplianceService.getComplianceService().getTotalDiscount(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode()), 2); // discount type of VIP is 2
+		return totalVipdiscounts;
+	}
+	
+	public Double getNetSalesBeforeTax(String date) {
+		String[] dateArr = date.split("-");
+		Double netSales = ComplianceService.getComplianceService().getNetSales(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode())); // discount type of VIP is 2
+		return netSales;
+	}
+	
+	public Double getVat(String date) {
+		String[] dateArr = date.split("-");
+		Double netSales = ComplianceService.getComplianceService().getVat(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode())); // discount type of VIP is 2
+		return netSales;
+	}
+	
+	public Double getPartialTransactionTotal(String date) {
+		
+		String query = "select sum(p.AMT) TOTAL_PARTIAL from payment_item p " +
+					   " WHERE DATE(i.trans_dt)>=\'"+date + "\' " +
+					   	 " AND i.store_code="+Main.getStoreCode() + 
+					   	 " AND exists (select 1 from invoice i where i.or_no = p.or_no and i.store_code = p.store_code and i.partial = 1)";
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		try {
+			while(rs.next()){
+				return rs.getDouble("TOTAL_PARTIAL");
+			}
+		} catch (SQLException e) {
+			loggerUtility.logStackTrace(e);
+		}
+		return null;
+	}
+	
 	public Double getTotalPerInvoice(Invoice invoice){
 		Double totalPerInvoice = 0.0d;
 		for(InvoiceItem invoiceItem: invoice.getInvoiceItems()){
