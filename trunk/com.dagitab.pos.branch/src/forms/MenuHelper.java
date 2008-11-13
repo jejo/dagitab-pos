@@ -3,7 +3,6 @@ package forms;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -22,6 +21,7 @@ import forms.reports.FestivalComplianceDialog;
 import forms.reports.InventoryViewerDialog;
 import forms.reports.ReportFormDialog;
 import forms.reports.RobinsonsComplianceDialog;
+import forms.reports.RobinsonsReportDialog;
 import forms.reports.SalesClerkProductionDialog;
 
 public class MenuHelper {
@@ -56,6 +56,7 @@ public class MenuHelper {
 	private static JMenuItem INVENTORY = new JMenuItem("Inventory");
 	private static JMenuItem REPORT_FORM = new JMenuItem("Export Reports");
 	private static JMenuItem SALES_CLERK_PRODUCTION_REPORT = new JMenuItem("Sales Clerk Production Report");
+	private static JMenuItem ROBINSONS_SALES_REPORT = new JMenuItem("Robinsons Sales Report");
 	
 	private static JMenuItem ROBINSONS_COMPLIANCE_FORM = new JMenuItem("Robinsons Compliance");
 	private static JMenuItem EASTWOOD_COMPLIANCE_FORM = new JMenuItem("Eastwood Compliance");
@@ -98,6 +99,7 @@ public class MenuHelper {
 		REPORTS_MENU.add(INVENTORY);
 		REPORTS_MENU.add(REPORT_FORM);
 		REPORTS_MENU.add(SALES_CLERK_PRODUCTION_REPORT);
+		REPORTS_MENU.add(ROBINSONS_SALES_REPORT);
 		
 		COMPLIANCE_MENU.add(ROBINSONS_COMPLIANCE_FORM);
 		COMPLIANCE_MENU.add(EASTWOOD_COMPLIANCE_FORM);
@@ -174,6 +176,10 @@ public class MenuHelper {
 		SALES_CLERK_PRODUCTION_REPORT.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/sales.png")));
 		
 		
+		ROBINSONS_SALES_REPORT.setAction(getRobinsonsSalesReportAction());
+		ROBINSONS_SALES_REPORT.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/reports.png")));
+		
+		
 		DEBUGGER.setAction(getDebuggerAction());
 		DEBUGGER.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/debug.gif")));
 		
@@ -187,6 +193,20 @@ public class MenuHelper {
 	//Action Declaration starts here
 	
 	
+	private static AbstractAction getRobinsonsSalesReportAction() {
+		AbstractAction robinsonsSalesReportComplianceAction  = new AbstractAction("Robinsons Sales Report"){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				RobinsonsReportDialog robinsonsSalesReportDialog = new RobinsonsReportDialog(Main.getInst());
+				robinsonsSalesReportDialog.setLocationRelativeTo(null);
+				robinsonsSalesReportDialog.setVisible(true);
+				
+			}
+		};
+		return robinsonsSalesReportComplianceAction;
+	}
+
+
 	private static AbstractAction getFestivalComplianceAction() {
 		AbstractAction festivalComplianceAction  = new AbstractAction("Festival Compliance"){
 			@Override

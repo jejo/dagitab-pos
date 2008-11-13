@@ -3,10 +3,12 @@ package bus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import main.Main;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import util.LoggerUtility;
@@ -71,6 +73,46 @@ public class ReportService {
 			totalPerInvoice+=subTotal;
 		}
 		return totalPerInvoice;
+	}
+	
+	
+	public ArrayList<String> getRobinsonsInvoiceDates(int month, int year){
+		int firstDay = 21;
+		int lastDay = 20;
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+//		System.out.println("1: "+prevCalendar.getTime());
+//		calendar.add(Calendar.MONTH, 1);
+//		System.out.println("2: "+prevCalendar.getTime());
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+//		System.out.println("3: "+prevCalendar.getTime());
+		
+		int lastDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+//		System.out.println("Last Day of Month: "+lastDayOfMonth);
+		ArrayList<String> dates = new ArrayList<String>();
+		for(int i = firstDay; i<=lastDayOfMonth; i++){
+			String date = year+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+			dates.add(date);
+		}
+		calendar.add(Calendar.MONTH, 1);
+		for(int i = 1; i<=lastDay; i++){
+			String date = year+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+			dates.add(date);
+		}
+		
+		return dates;
+	}
+	
+	
+	public static void main(String[] args){
+		ArrayList<String> dates = ReportService.getInstance().getRobinsonsInvoiceDates(11, 2008);
+		for(String s: dates){
+			System.out.println(s);
+		}
 	}
 	
 }

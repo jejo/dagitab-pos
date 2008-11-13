@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import reports.DailySales;
 import reports.DailySalesReport;
 import reports.PullOutReport;
+import reports.RobinsonsSalesReport;
 import reports.TotalMerchandise;
 import reports.ZSummaryReport;
 import util.DateUtility;
@@ -167,17 +168,17 @@ public class ReportFormDialog extends javax.swing.JDialog {
 					ComboBoxModel reportTypeComboBoxModel = new DefaultComboBoxModel(
 						new String[] { "Daily Sales", "Daily Sales Summary", "Total Pullouts","Total Merchandise","Z-Summary" });
 					reportyTypeComboBox = new JComboBox();
-					getContentPane().add(reportyTypeComboBox, new AnchorConstraint(95, 960, 161, 222, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(reportyTypeComboBox, new AnchorConstraint(95, 958, 149, 220, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportyTypeComboBox.setModel(reportTypeComboBoxModel);
-					reportyTypeComboBox.setPreferredSize(new java.awt.Dimension(387, 27));
+					reportyTypeComboBox.setPreferredSize(new java.awt.Dimension(504, 29));
 				}
 				{
 					reportTypeLabel = new JLabel();
-					getContentPane().add(reportTypeLabel, new AnchorConstraint(92, 241, 164, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(reportTypeLabel, new AnchorConstraint(91, 239, 149, 28, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportTypeLabel.setText("Report Type");
 					reportTypeLabel.setFont(new java.awt.Font("Tahoma",0,12));
 
-					reportTypeLabel.setPreferredSize(new java.awt.Dimension(111, 29));
+					reportTypeLabel.setPreferredSize(new java.awt.Dimension(144, 31));
 				}
 				{
 					dateCanvas = new Canvas();
@@ -239,7 +240,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 				}
 
 			}
-			this.setSize(635, 536);
+			this.setSize(670, 535);
 		} catch (Exception e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
@@ -387,6 +388,11 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
 						        }
 							break;
+							
+							
+							
+							
+							
 						}
 						OLEViewer.open2(fileName);
 					} catch (IOException e) {
@@ -449,6 +455,16 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							
 							case 3:
 								success = (new TotalMerchandise()).generate(fileName, startDate, endDate);
+								if(success){
+							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
+						        }
+						        else{
+						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+						        }
+							break;
+							
+							case 4:
+								success = (new ZSummaryReport()).generate(fileName, startDate, endDate);
 								if(success){
 							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
