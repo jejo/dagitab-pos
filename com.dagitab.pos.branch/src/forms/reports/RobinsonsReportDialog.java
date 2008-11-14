@@ -86,6 +86,7 @@ public class RobinsonsReportDialog extends javax.swing.JDialog {
 					getContentPane().add(jComboBox1);
 					jComboBox1.setModel(jComboBox1Model);
 					jComboBox1.setBounds(104, 22, 250, 22);
+					jComboBox1.setSelectedIndex(Calendar.getInstance().get(Calendar.MONTH));
 				}
 				{
 					yearLabel = new JLabel();
@@ -144,7 +145,16 @@ public class RobinsonsReportDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					String fileName = "temp.xls";
 					
-					boolean success = (new RobinsonsSalesReport()).generate(fileName,jComboBox1.getSelectedIndex(), Integer.parseInt(yearText.getText()));
+					boolean success = false;
+					try {
+						success = (new RobinsonsSalesReport()).generate(fileName,jComboBox1.getSelectedIndex(), Integer.parseInt(yearText.getText()));
+					} catch (NumberFormatException e1) {
+						JOptionPane.showMessageDialog(null,"Number Format Error","Error",JOptionPane.ERROR_MESSAGE);
+						LoggerUtility.getInstance().logStackTrace(e1);
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null,e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+						LoggerUtility.getInstance().logStackTrace(e1);
+					}
 					if(success){
 						try {
 							OLEViewer.open2(fileName);
@@ -173,7 +183,16 @@ public class RobinsonsReportDialog extends javax.swing.JDialog {
 				  	int returnValue = fileChooser.showSaveDialog(RobinsonsReportDialog.this);
 				    if(returnValue == JFileChooser.APPROVE_OPTION) {
 				    	String fileName = fileChooser.getSelectedFile().getAbsolutePath()+".xls";
-				    	boolean success = (new RobinsonsSalesReport()).generate(fileName,jComboBox1.getSelectedIndex(), Integer.parseInt(yearText.getText()));
+				    	boolean success = false;
+						try {
+							success = (new RobinsonsSalesReport()).generate(fileName,jComboBox1.getSelectedIndex(), Integer.parseInt(yearText.getText()));
+						} catch (NumberFormatException e) {
+							JOptionPane.showMessageDialog(null,"Number Format Error","Error",JOptionPane.ERROR_MESSAGE);
+							LoggerUtility.getInstance().logStackTrace(e);
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(null,e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+							LoggerUtility.getInstance().logStackTrace(e);
+						}
 						if(success){
 							JOptionPane.showMessageDialog(null,"Successfully saved daily sales report.","Saved",JOptionPane.INFORMATION_MESSAGE);
 				        }

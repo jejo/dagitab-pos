@@ -26,7 +26,11 @@ public class RobinsonsSalesReport {
 	private static Logger logger = Logger.getLogger(RobinsonsSalesReport.class);
 	
 	
-	public boolean generate(String fileName, int month, int year){
+	private Double totalGrossSales = 0.0d;
+	private Double totalPromoWithApproval = 0.0d;
+	private Double totalNetSales = 0.0d;
+	
+	public boolean generate(String fileName, int month, int year) throws Exception{
 		
 		HSSFCell cell;
 		POIFSFileSystem fs;
@@ -45,13 +49,106 @@ public class RobinsonsSalesReport {
 				
 				HSSFRow row = sheet.createRow(rowCounter);
 				System.out.println("Dates: "+dates.get(i));
-				cell = HSSFUtil.createStringCell(wb, row, (short) 0,false,false);
+				cell = HSSFUtil.createStringCell(wb, row, (short) 0,false,true);
 				cell.setCellValue(dates.get(i));
+				
+				
+				Integer minOrNo = ReportService.getInstance().getMinOrNo(dates.get(i));
+				if(minOrNo.equals(0)){
+					cell = HSSFUtil.createStringCell(wb, row, (short) 1, false, true);
+					cell.setCellValue("-");
+				}
+				else{
+					cell = HSSFUtil.createIntCell(wb, row, (short) 1, false, true);
+					cell.setCellValue(minOrNo);
+				}
+				
+				Integer maxOrNo = ReportService.getInstance().getMaxOrNo(dates.get(i));
+				if(maxOrNo.equals(0)){
+					cell = HSSFUtil.createStringCell(wb, row, (short) 2, false, true);
+					cell.setCellValue("-");
+				}
+				else{
+					cell = HSSFUtil.createIntCell(wb, row, (short) 2, false, true);
+					cell.setCellValue(maxOrNo);
+				}
+				
+				Double netSales = ReportService.getInstance().getNetSalesBeforeTax(dates.get(i));
+				cell = HSSFUtil.createAmountCell(wb, row, (short) 3, false, true);
+				cell.setCellValue(netSales);
+				
+				Double promoWithApproval = ReportService.getInstance().getApprovedDiscounts(dates.get(i));
+				cell = HSSFUtil.createAmountCell(wb, row, (short) 4, false, true);
+				cell.setCellValue(promoWithApproval);
+				
+				cell = HSSFUtil.createAmountCell(wb, row, (short) 5, false, true);
+				cell.setCellValue(0.0d);
+				
+				cell = HSSFUtil.createAmountCell(wb, row, (short) 6, false, true);
+				cell.setCellValue(0.0d);
+				
+				Double vipAmount = ReportService.getInstance().getTotalVipDiscount(dates.get(i));
+				cell = HSSFUtil.createAmountCell(wb, row, (short) 7, false, true);
+				cell.setCellValue(vipAmount);
+				
+				Double grossSales = ReportService.getInstance().getGrossSales(dates.get(i));
+				cell = HSSFUtil.createAmountCell(wb, row, (short) 8, false, true);
+				cell.setCellValue(grossSales);
+				
+				
+				totalGrossSales += grossSales;
+				totalPromoWithApproval += promoWithApproval;
+				totalNetSales += netSales;
+				
 //				
 				rowCounter++;
 				
 			}
 			
+			rowCounter++;
+			HSSFRow row = sheet.createRow(rowCounter++);
+			cell = HSSFUtil.createStringCell(wb, row, (short) 0,false,true);
+			cell.setCellValue("Total");
+			
+			cell = HSSFUtil.createAmountCell(wb, row, (short) 8,false,true);
+			cell.setCellValue(totalGrossSales);
+			
+			
+			row = sheet.createRow(rowCounter++);
+			cell = HSSFUtil.createStringCell(wb, row, (short) 0,false,true);
+			cell.setCellValue("Less: Promo Discounts with Approval");
+			
+			cell = HSSFUtil.createAmountCell(wb, row, (short) 8,false,true);
+			cell.setCellValue(totalPromoWithApproval);
+			
+			
+			row = sheet.createRow(rowCounter++);
+			cell = HSSFUtil.createStringCell(wb, row, (short) 0,false,true);
+			cell.setCellValue("Net Sales before Tax");
+			
+			cell = HSSFUtil.createAmountCell(wb, row, (short) 8,false,true);
+			cell.setCellValue(totalNetSales);
+			
+			row = sheet.createRow(rowCounter++);
+			cell = HSSFUtil.createStringCell(wb, row, (short) 0,false,true);
+			cell.setCellValue("Less 12% VAT");
+			
+			
+			Double totalNetSalesLessVat = ReportService.getInstance().getTotalNetSalesLessVat(totalNetSales);
+			
+			cell = HSSFUtil.createAmountCell(wb, row, (short) 8,false,true);
+			cell.setCellValue(totalNetSalesLessVat);
+			
+			logger.info("total gross-sales: "+totalGrossSales);
+			logger.info("total gross-promo-with-approval: "+totalPromoWithApproval);
+			logger.info("difference: "+(totalGrossSales-totalPromoWithApproval));
+			
+			logger.info("total net sales: "+totalNetSales);
+			
+//			if(totalGrossSales-totalPromoWithApproval != totalNetSales){
+//				throw new Exception("Total Net Sales is not equal with Total Gross Sales minus Total Promo Approval. Please contact pos vendor");
+				
+//			}
 			
 			
 			ReportUtility.writeOutputToFile(wb, fileName);
