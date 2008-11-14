@@ -215,7 +215,7 @@ public class ComplianceService {
 	
 	// TODO REFACTOR
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
-	public Double getTotalDiscount(int month, int day, int year, int storeCode) {
+	public Double getTotalDiscount(int month, int day, int year, int storeCode, int... discountType) {
 		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
 		"WHERE  p.PROD_CODE = i.PROD_CODE" +
 		"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
@@ -223,6 +223,10 @@ public class ComplianceService {
 		"DAY(o.TRANS_DT) = '"+day+"' " +
 		"AND i.OR_NO = o.OR_NO " +
 		"AND o.STORE_CODE = '"+storeCode+"'";
+		
+		if (discountType.length > 0) {
+			query += " AND i.DISC_CODE = " + discountType[0];
+		}
 		System.out.println("TOTALDISCOUNT QUERY = " + query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		Double amount = 0.0d;
