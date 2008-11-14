@@ -59,7 +59,7 @@ public class ReportService {
 	}
 	
 	public Integer getMaxOrNo(String date){
-		String query = "SELECT max(i.OR_NO) MAX_OR_NO FROM invoice i WHERE DATE(i.trans_dt)>=\'"+date + "\' && i.store_code="+Main.getStoreCode();
+		String query = "SELECT max(i.OR_NO) MAX_OR_NO FROM invoice i WHERE DATE(i.trans_dt)=\'"+date + "\' && i.store_code="+Main.getStoreCode();
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		try {
 			while(rs.next()){
@@ -72,7 +72,8 @@ public class ReportService {
 	}
 	
 	public Integer getMinOrNo(String date){
-		String query = "SELECT min(i.OR_NO) MIN_OR_NO FROM invoice i WHERE DATE(i.trans_dt)>=\'"+date + "\' && i.store_code="+Main.getStoreCode();
+		String query = "SELECT min(i.OR_NO) MIN_OR_NO FROM invoice i WHERE DATE(i.trans_dt)=\'"+date + "\' && i.store_code="+Main.getStoreCode();
+		logger.info(query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		try {
 			while(rs.next()){
@@ -112,6 +113,11 @@ public class ReportService {
 		String[] dateArr = date.split("-");
 		Double netSales = ComplianceService.getComplianceService().getVat(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode())); // discount type of VIP is 2
 		return netSales;
+	}
+	
+	public Double getTotalNetSalesLessVat(Double totalNetSales){
+		Double vatAmount = totalNetSales/VatService.getVatRate();
+		return Double.valueOf(String.format("%.2f", vatAmount));
 	}
 	
 	public Double getPartialTransactionTotal(String date) {
