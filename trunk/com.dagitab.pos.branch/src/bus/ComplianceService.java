@@ -38,7 +38,7 @@ public class ComplianceService {
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(int month, int day, int year, int storeCode, int...hour ) {
 //		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
-		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'";
 		
 		if (hour.length > 0) {
 			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
@@ -53,7 +53,13 @@ public class ComplianceService {
 			while(rs.next()){
 //				double amount = rs.getDouble(1);
 //				dailySale = amount/getVatRate();
+				
+				
 				dailySale = rs.getDouble(1);
+				logger.info("Raw Gross BEFORE SUBTRACTION: "+dailySale);
+				
+				dailySale = dailySale - getReturnedItemsAmount(month, day, year, storeCode);
+				logger.info("Raw Gross AFTER SUBTRACTION: "+dailySale);
 			}
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
@@ -64,7 +70,7 @@ public class ComplianceService {
 	
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = ?";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND o.STORE_CODE = ?";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
@@ -82,8 +88,10 @@ public class ComplianceService {
 //				double amount = rs.getDouble(1);
 //				dailySale = amount/getVatRate();
 				dailySale = rs.getDouble(1);
-				
-				logger.info("Raw Gross: "+dailySale);
+				logger.info("Raw Gross BEFORE SUBTRACTION: "+dailySale);
+				// SUBTRACT all returned items
+				dailySale = dailySale - getReturnedItemsAmount(transDate, eodDate, storeCode);
+				logger.info("Raw Gross AFTER RETURNED SUBTRACTION: "+dailySale);
 				return dailySale;
 			}
 		} catch (SQLException e1) {
@@ -242,6 +250,46 @@ public class ComplianceService {
 	}
 	
 	// TODO REFACTOR
+	public Double getNetSales(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode ) {
+//		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
+//		"WHERE  p.PROD_CODE = i.PROD_CODE" +
+//		"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
+//		"YEAR(o.TRANS_DT) = '"+year+"' && " +
+//		"DAY(o.TRANS_DT) = '"+day+"' " +
+//		"AND i.OR_NO = o.OR_NO " +
+//		"AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT sum(p.AMT) NET_SALES from payment_item p " +
+			"  WHERE p.TRANS_DT >= ? AND p.TRANS_DT <= ? " +
+			"  AND p.STORE_CODE = ?";
+		
+		System.out.println("NET SALES QUERY = " + query);
+		PreparedStatement pquery;
+		ResultSet rs = null;
+		try {
+			pquery = Main.getDBManager().getConnection().prepareStatement(query);
+			
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
+			pquery.setInt(3, storeCode);
+			
+			rs = pquery.executeQuery();
+			
+			Double amount = 0.0d;
+			
+			while(rs.next()){
+				amount = rs.getDouble("NET_SALES");
+			}
+		
+			logger.info("Net Sales: "+amount);
+			return amount;
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+
+	}
+	
 	public Double getNetSales(int month, int day, int year, int storeCode, int...hour ) {
 //		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
 //		"WHERE  p.PROD_CODE = i.PROD_CODE" +
@@ -276,15 +324,17 @@ public class ComplianceService {
 		logger.info("TOTAL DISCOUNT: "+ amount);
 		return amount;
 	}
-	
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
-	public Double getTotalDiscount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+	public Double getTotalDiscount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode, int... discountType) {
 		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
 		"WHERE  p.PROD_CODE = i.PROD_CODE" +
 		"  AND o.TRANS_DT >= ? AND o.TRANS_DT <= ? " +
 		"  AND i.OR_NO = o.OR_NO " +
 		"  AND o.STORE_CODE = ?";
 //		
+		if (discountType.length > 0) {
+			query += " AND i.DISC_CODE = " + discountType[0];
+		}
 //		String query = "SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i, invoice o, products_lu p " +
 //													"WHERE  p.PROD_CODE = i.PROD_CODE" +
 //													"  AND d.DISC_NO = i.DISC_CODE" +
@@ -521,7 +571,8 @@ public class ComplianceService {
 	
 	//here, SELL_PRICE is assumed to have discounts already, derive SELL_PRICE-DISC_RATE
 	public Double getReturnedItemsAmount(int month, int day, int year, int storeCode) {
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o WHERE r.OR_NO = o.OR_NO and MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND r.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' and o.RETURN = 1");
+		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE and MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND r.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' and o.RETURN = 1";
+		ResultSet rs = Main.getDBManager().executeQuery(query);
 //		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
 		Double returnedItemsAmount= 0.0d;
 		try {
@@ -536,7 +587,7 @@ public class ComplianceService {
 	}
 	
 	public Double getReturnedItemsAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o WHERE r.OR_NO = o.OR_NO and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND r.OR_NO = o.OR_NO AND o.STORE_CODE = ? and o.RETURN = 1";
+		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND p.TRANS_DT >= ? AND p.TRANS_DT <= ? AND r.OR_NO = o.OR_NO AND o.STORE_CODE = ? and o.RETURN = 1";
 //		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
 //		Double returnedItemsAmount= 0.0d;
 		PreparedStatement pquery;

@@ -1,5 +1,6 @@
 package bus;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -71,6 +72,56 @@ public class ReportService {
 		return null;
 	}
 	
+	public Integer getMaxOrNo(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT max(i.OR_NO) MAX_OR_NO FROM invoice i WHERE i.TRANS_DT >= ? AND i.TRANS_DT <= ? AND i.STORE_CODE = ?";
+		
+		PreparedStatement pquery;
+		ResultSet rs = null;
+		try {
+			pquery = Main.getDBManager().getConnection().prepareStatement(query);
+			
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
+			pquery.setInt(3, storeCode);
+			
+			rs = pquery.executeQuery();
+			
+			while(rs.next()){
+				return rs.getInt("MAX_OR_NO");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+
+	}
+
+	
+	public Integer getMinOrNo(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT min(i.OR_NO) MIN_OR_NO FROM invoice i WHERE i.TRANS_DT >= ? AND i.TRANS_DT <= ? AND i.STORE_CODE = ?";
+		
+		PreparedStatement pquery;
+		ResultSet rs = null;
+		try {
+			pquery = Main.getDBManager().getConnection().prepareStatement(query);
+			
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
+			pquery.setInt(3, storeCode);
+			
+			rs = pquery.executeQuery();
+			
+			while(rs.next()){
+				return rs.getInt("MIN_OR_NO");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+
+	}
 	public Integer getMinOrNo(String date){
 		String query = "SELECT min(i.OR_NO) MIN_OR_NO FROM invoice i WHERE DATE(i.trans_dt)=\'"+date + "\' && i.store_code="+Main.getStoreCode();
 		logger.info(query);
@@ -85,6 +136,11 @@ public class ReportService {
 		return null;
 	}
 	
+	public Double getApprovedDiscounts(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode){
+		Double totaldiscounts = ComplianceService.getComplianceService().getTotalDiscount(transDate, eodDate, storeCode);
+		return totaldiscounts;
+	}
+	
 	public Double getApprovedDiscounts(String date){
 		String[] dateArr = date.split("-");
 		Double totaldiscounts = ComplianceService.getComplianceService().getTotalDiscount(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode()));
@@ -97,9 +153,20 @@ public class ReportService {
 		return grossSales;
 	}
 	
+	public Double getGrossSales(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		Double grossSales = ComplianceService.getComplianceService().getRawGross(transDate, eodDate, storeCode);
+		return grossSales;
+	}
+	
 	public Double getTotalVipDiscount(String date) {
 		String[] dateArr = date.split("-");
 		Double totalVipdiscounts = ComplianceService.getComplianceService().getTotalDiscount(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode()), 2); // discount type of VIP is 2
+		return totalVipdiscounts;
+	}
+	
+	public Double getTotalVipDiscount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		Double totalVipdiscounts = ComplianceService.getComplianceService().getTotalDiscount(transDate, eodDate, storeCode, 2);
+//				2); // discount type of VIP is 2
 		return totalVipdiscounts;
 	}
 	
@@ -109,15 +176,59 @@ public class ReportService {
 		return netSales;
 	}
 	
+	public Double getNetSalesBeforeTax(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		Double netSales = ComplianceService.getComplianceService().getNetSales(transDate, eodDate, storeCode);
+		return netSales;
+	}
+	
 	public Double getVat(String date) {
 		String[] dateArr = date.split("-");
-		Double netSales = ComplianceService.getComplianceService().getVat(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode())); // discount type of VIP is 2
-		return netSales;
+		Double vat = ComplianceService.getComplianceService().getVat(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode())); // discount type of VIP is 2
+		return vat;
+	}
+	
+	public Double getVat(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		Double vat = ComplianceService.getComplianceService().getVat(transDate, eodDate, storeCode);
+		return vat;
 	}
 	
 	public Double getTotalNetSalesLessVat(Double totalNetSales){
 		Double vatAmount = totalNetSales/VatService.getVatRate();
 		return Double.valueOf(String.format("%.2f", vatAmount));
+	}
+	
+	public Double getPartialTransactionTotal(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		
+		String query = "select sum(p.AMT) TOTAL_PARTIAL from payment_item p " +
+					   "  WHERE p.TRANS_DT >= ? AND p.TRANS_DT <= ? " +
+					   	 "  AND p.STORE_CODE = ?" +
+					   	 "  AND exists (select 1 from invoice i where i.or_no = p.or_no and i.store_code = p.store_code and i.partial = 1)";
+
+		System.out.println("Partial Transaction QUERY = " + query);
+		PreparedStatement pquery;
+		ResultSet rs = null;
+		try {
+			pquery = Main.getDBManager().getConnection().prepareStatement(query);
+			
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
+			pquery.setInt(3, storeCode);
+			
+			rs = pquery.executeQuery();
+			
+			Double amount = 0.0d;
+			
+			while(rs.next()){
+				amount = rs.getDouble("TOTAL_PARTIAL");
+			}
+		
+			logger.info("Partial Transaction Sales: "+amount);
+			return amount;
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
 	}
 	
 	public Double getPartialTransactionTotal(String date) {
