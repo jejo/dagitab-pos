@@ -58,15 +58,20 @@ public class RobinsonsSalesReport {
 				cell.setCellValue(dates.get(i));
 				Calendar calendar = Calendar.getInstance();
 				
-				calendar.set(Calendar.MONTH, Integer.parseInt(dates.get(i).split("-")[1]));
+				calendar.set(Calendar.MONTH, Integer.parseInt(dates.get(i).split("-")[1])-1);
 				calendar.set(Calendar.YEAR, Integer.parseInt(dates.get(i).split("-")[0]));
 				calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dates.get(i).split("-")[2]));
 				
+				calendar.set(Calendar.HOUR_OF_DAY, 9); // set to 9am
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				
 				Date transDate = calendar.getTime();
+				
 				Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
 				java.sql.Timestamp trans = new java.sql.Timestamp(DateUtility.getDateUtility().convertUtilDateToSqlDate(transDate).getTime());
 				java.sql.Timestamp eod = new java.sql.Timestamp(DateUtility.getDateUtility().convertUtilDateToSqlDate(eodDate).getTime());
-				
+				logger.info("ReportService.getInstance().getMinOrNo("+trans+","+ eod +", "+Integer.parseInt(Main.getStoreCode()));
 				Integer minOrNo = ReportService.getInstance().getMinOrNo(trans, eod, Integer.parseInt(Main.getStoreCode()));
 				if(minOrNo.equals(0)){
 					cell = HSSFUtil.createStringCell(wb, row, (short) 1, false, true);
