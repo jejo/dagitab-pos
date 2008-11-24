@@ -100,7 +100,7 @@ public class ReportService {
 	
 	public Integer getMinOrNo(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT min(i.OR_NO) MIN_OR_NO FROM invoice i WHERE i.TRANS_DT >= ? AND i.TRANS_DT <= ? AND i.STORE_CODE = ?";
-		
+		logger.info(query);
 		PreparedStatement pquery;
 		ResultSet rs = null;
 		try {
