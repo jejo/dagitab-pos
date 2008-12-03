@@ -347,6 +347,10 @@ public class ProductDialog extends javax.swing.JDialog {
 		quantityTxt.setText(qty);
 	}
 	
+	public void setQuantityEditable(boolean editable){
+		quantityTxt.setEditable(editable);
+	}
+	
 	public void setDiscount(int discCode){
 		DefaultComboBoxModel model = (DefaultComboBoxModel) discountCB.getModel();
 		int index = 0;

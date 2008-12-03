@@ -3,6 +3,7 @@ package forms.returned;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.apache.log4j.Logger;
 import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.StringUtility;
+import bus.DiscountService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
@@ -50,8 +52,10 @@ import domain.Product;
 import domain.ReturnItem;
 import domain.ReturnReason;
 import forms.interfaces.Payments;
+import forms.invoice.InvoicePanel;
 import forms.lookup.PaymentDialog;
 import forms.lookup.ProductDialog;
+import forms.lookup.ProductDiscountDialog;
 import forms.receipts.ReceiptPanel;
 import forms.receipts.ValidateReceipt;
 
@@ -729,20 +733,44 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	
 	public void editInvoiceItem(InvoiceItem invoiceItem, String productCode){
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
+		DecimalFormat df = new DecimalFormat(".00");
+		Double sellingPrice = Double.valueOf(df.format(invoiceItem.getSellPrice())); 
+		Double extensionPrice = invoiceItem.getQuantity()*sellingPrice;
 		int index = getInvoiceItemRow(productCode);
 		DefaultTableModel model = (DefaultTableModel) replacementItemsTable.getModel();
 		model.setValueAt(invoiceItem.getProductCode(), index, 0);
 		model.setValueAt(product.getName(), index, 1);
 		model.setValueAt(invoiceItem.getQuantity(), index, 2);
 		model.setValueAt(String.format("%.2f",product.getSellPrice()), index, 3);
-		model.setValueAt(String.format("%.2f",invoiceItem.getSellPrice()), index, 4);
+		model.setValueAt(sellingPrice.toString(), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
-		model.setValueAt( new Double(invoiceItem.getQuantity()* invoiceItem.getSellPrice()).toString(), index, 7);
+		model.setValueAt( df.format(extensionPrice), index, 7);
 		
 		updateAmounts();
 		updatePaymentAmounts();
 	}
+	
+	
+	public void editInvoiceItems(String discountCode, int[] indices){
+		DefaultTableModel model = (DefaultTableModel) replacementItemsTable.getModel();
+		for(int index: indices){
+			Product product = ProductService.getProductById(model.getValueAt(index, 0).toString());
+			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
+			Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
+			DecimalFormat df = new DecimalFormat(".00");
+			sellingPrice = Double.valueOf(df.format(sellingPrice)); 
+			Double extensionPrice = Integer.valueOf(model.getValueAt(index, 2).toString())*sellingPrice;
+			
+			model.setValueAt(sellingPrice.toString(), index, 4);
+			model.setValueAt(discountCode, index, 6);
+			model.setValueAt( df.format(extensionPrice), index, 7);
+		}
+		updateAmounts();
+		updatePaymentAmounts();
+	}
+	
+	
 	public Integer getReturnedItemRow(String prodCode){
 		DefaultTableModel model = (DefaultTableModel) returnedItemsTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
@@ -773,19 +801,47 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(editReplacementItemsAction == null) {
 			editReplacementItemsAction = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
 				public void actionPerformed(ActionEvent evt) {
-					String productCode = replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 0).toString();
-					String quantity = replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 2).toString();
-					int discountCode = Integer.parseInt( replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 6).toString());
-					String deferred = replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 5).toString();
 					
-					ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),ReturnedPanel.this,productCode);
-					dialog.setProductCode(productCode);
-					dialog.setQuantity(quantity);
-					dialog.setDiscount(discountCode);
-					dialog.setDeferredValue(deferred);
-					
-					dialog.setLocationRelativeTo(null);
-					dialog.setVisible(true);
+					if(replacementItemsTable.getSelectedRows().length == 1)
+					{
+						String productCode = replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 0).toString();
+						String quantity = replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 2).toString();
+						int discountCode = Integer.parseInt( replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 6).toString());
+						String deferred = replacementItemsTable.getValueAt(replacementItemsTable.getSelectedRow(), 5).toString();
+						
+						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),ReturnedPanel.this,productCode);
+						dialog.setProductCode(productCode);
+						dialog.setQuantity(quantity);
+						dialog.setDiscount(discountCode);
+						dialog.setDeferredValue(deferred);
+						
+						dialog.setLocationRelativeTo(null);
+						dialog.setVisible(true);
+					}
+					else{
+						int[] prodCodeIndices = replacementItemsTable.getSelectedRows();
+						String prodCodes = "";
+						int discountCode = 0;
+						for(int i=1; i<=prodCodeIndices.length; i++){
+							
+							prodCodes+=replacementItemsTable.getValueAt(prodCodeIndices[i-1], 0).toString();
+							
+							if(i != prodCodeIndices.length){
+								prodCodes+=",";
+							}
+							
+							discountCode = Integer.parseInt( replacementItemsTable.getValueAt(prodCodeIndices[i-1], 6).toString());
+						}
+						
+						ProductDiscountDialog productDiscountDialog = new ProductDiscountDialog(Main.getInst(), ReturnedPanel.this);
+						productDiscountDialog.setProductCode(prodCodes);
+						productDiscountDialog.setDiscount(discountCode);
+						productDiscountDialog.setIndices(prodCodeIndices);
+						
+						
+						productDiscountDialog.setLocationRelativeTo(null);
+						productDiscountDialog.setVisible(true);
+					}
 				}
 			};
 		}
