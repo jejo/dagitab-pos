@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.StringUtility;
+import bus.DiscountService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
@@ -57,6 +58,7 @@ import forms.lookup.CustomerLookUp;
 import forms.lookup.FastAddition;
 import forms.lookup.PaymentDialog;
 import forms.lookup.ProductDialog;
+import forms.lookup.ProductDiscountDialog;
 import forms.receipts.ReceiptPanel;
 import forms.receipts.ValidateReceipt;
 /**
@@ -818,6 +820,24 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		updatePaymentAmounts();
 	}
 	
+	public void editInvoiceItems(String discountCode, int[] indices){
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+		for(int index: indices){
+			Product product = ProductService.getProductById(model.getValueAt(index, 0).toString());
+			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
+			Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
+			DecimalFormat df = new DecimalFormat(".00");
+			sellingPrice = Double.valueOf(df.format(sellingPrice)); 
+			Double extensionPrice = Integer.valueOf(model.getValueAt(index, 2).toString())*sellingPrice;
+			
+			model.setValueAt(sellingPrice.toString(), index, 4);
+			model.setValueAt(discountCode, index, 6);
+			model.setValueAt( df.format(extensionPrice), index, 7);
+		}
+		updateAmounts();
+		updatePaymentAmounts();
+	}
+	
 	public void removeInvoiceItem(){
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 		model.removeRow(itemTable.getSelectedRow());
@@ -1185,19 +1205,48 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			editItemAction1 = new AbstractAction("Edit", new ImageIcon(getClass().getClassLoader().getResource("images/icons/email_edit.png"))) {
 				public void actionPerformed(ActionEvent evt) {
 					try{
-						String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
-						String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
-						int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
-						String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
 						
-						ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
-						dialog.setProductCode(productCode);
-						dialog.setQuantity(quantity);
-						dialog.setDiscount(discountCode);
-						dialog.setDeferredValue(deferred);
-						
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
+						if(itemTable.getSelectedRows().length == 1)
+						{
+							String productCode = itemTable.getValueAt(itemTable.getSelectedRow(), 0).toString();
+							String quantity = itemTable.getValueAt(itemTable.getSelectedRow(), 2).toString();
+							int discountCode = Integer.parseInt( itemTable.getValueAt(itemTable.getSelectedRow(), 6).toString());
+							String deferred = itemTable.getValueAt(itemTable.getSelectedRow(), 5).toString();
+							
+							ProductDialog dialog = ProductDialog.getProductDialog(Main.getInst(),InvoicePanel.this,productCode);
+							dialog.setProductCode(productCode);
+							dialog.setQuantity(quantity);
+							dialog.setDiscount(discountCode);
+							dialog.setDeferredValue(deferred);
+							
+							dialog.setLocationRelativeTo(null);
+							dialog.setVisible(true);
+						}
+						else{
+							int[] prodCodeIndices = itemTable.getSelectedRows();
+							String prodCodes = "";
+							int discountCode = 0;
+							for(int i=1; i<=prodCodeIndices.length; i++){
+								
+								prodCodes+=itemTable.getValueAt(prodCodeIndices[i-1], 0).toString();
+								
+								if(i != prodCodeIndices.length){
+									prodCodes+=",";
+								}
+								
+								discountCode = Integer.parseInt( itemTable.getValueAt(prodCodeIndices[i-1], 6).toString());
+							}
+							
+							ProductDiscountDialog productDiscountDialog = new ProductDiscountDialog(Main.getInst(), InvoicePanel.this);
+							productDiscountDialog.setProductCode(prodCodes);
+							productDiscountDialog.setDiscount(discountCode);
+							productDiscountDialog.setIndices(prodCodeIndices);
+							
+							
+							productDiscountDialog.setLocationRelativeTo(null);
+							productDiscountDialog.setVisible(true);
+							
+						}
 					}
 					catch(ArrayIndexOutOfBoundsException e){
 						JOptionPane.showMessageDialog(null, "Please select item from the list", "Prompt", JOptionPane.ERROR_MESSAGE);
