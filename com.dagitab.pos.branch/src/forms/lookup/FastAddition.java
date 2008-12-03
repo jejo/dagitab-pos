@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -21,6 +22,7 @@ import javax.swing.table.TableModel;
 import main.Main;
 import util.LoggerUtility;
 import util.StringUtility;
+import bus.DiscountService;
 import bus.ProductService;
 import domain.InvoiceItem;
 import domain.Product;
@@ -43,6 +45,8 @@ public class FastAddition extends javax.swing.JDialog {
 	private JButton okButton;
 	private JButton deleteButton;
 	private JTable itemListTable;
+	private AbstractAction editAction;
+	private JButton editButton;
 	private JScrollPane itemListScrollPane;
 	private JLabel itemListLabel;
 	private JButton insertButton;
@@ -174,6 +178,7 @@ public class FastAddition extends javax.swing.JDialog {
 				{
 					deleteButton = new JButton();
 					getContentPane().add(deleteButton);
+					getContentPane().add(getEditButton());
 					deleteButton.setText("Delete Product");
 					deleteButton.setBounds(616, 448, 126, 28);
 					deleteButton.addActionListener(new ActionListener() {
@@ -260,6 +265,64 @@ public class FastAddition extends javax.swing.JDialog {
 		return fastAdditionLabelAction;
 	}
 	
+	private JButton getEditButton() {
+		if(editButton == null) {
+			editButton = new JButton();
+			editButton.setText("Edit Product");
+			editButton.setBounds(488, 448, 104, 28);
+			editButton.setAction(getEditAction());
+		}
+		return editButton;
+	}
 	
-
+	private AbstractAction getEditAction() {
+		if(editAction == null) {
+			editAction = new AbstractAction("Edit Product", null) {
+				public void actionPerformed(ActionEvent evt) {
+					int[] prodCodeIndices = itemListTable.getSelectedRows();
+					
+					String prodCodes = "";
+					int discountCode = 0;
+					for(int i=1; i<=prodCodeIndices.length; i++){
+						
+						prodCodes+=itemListTable.getValueAt(prodCodeIndices[i-1], 0).toString();
+						
+						if(i != prodCodeIndices.length){
+							prodCodes+=",";
+						}
+						
+						discountCode = Integer.parseInt( itemListTable.getValueAt(prodCodeIndices[i-1], 6).toString());
+					}
+					
+					ProductDiscountDialog productDiscountDialog = new ProductDiscountDialog(Main.getInst(), FastAddition.this);
+					productDiscountDialog.setProductCode(prodCodes);
+					productDiscountDialog.setDiscount(discountCode);
+					productDiscountDialog.setIndices(prodCodeIndices);
+					
+					
+					productDiscountDialog.setLocationRelativeTo(null);
+					productDiscountDialog.setVisible(true);
+				}
+			};
+		}
+		return editAction;
+	}
+	
+	
+	public void editInvoiceItems(String discountCode, int[] indices){
+		DefaultTableModel model = (DefaultTableModel) itemListTable.getModel();
+		for(int index: indices){
+			Product product = ProductService.getProductById(model.getValueAt(index, 0).toString());
+			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
+			Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
+			DecimalFormat df = new DecimalFormat(".00");
+			sellingPrice = Double.valueOf(df.format(sellingPrice)); 
+			Double extensionPrice = Integer.valueOf(model.getValueAt(index, 2).toString())*sellingPrice;
+			
+			model.setValueAt(sellingPrice.toString(), index, 4);
+			model.setValueAt(discountCode, index, 6);
+			model.setValueAt( df.format(extensionPrice), index, 7);
+		}
+		
+	}
 }

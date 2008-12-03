@@ -165,6 +165,14 @@ public class ProductDiscountDialog extends javax.swing.JDialog {
 						
 						ProductDiscountDialog.this.dispose();
 					}
+					else if(invoker instanceof FastAddition){
+						FastAddition fastAddition = (FastAddition)invoker;
+						String discountCode = discountComboBox.getSelectedItem().toString().split("-")[0];
+						fastAddition.editInvoiceItems(discountCode, indices);
+						
+						ProductDiscountDialog.this.dispose();
+						
+					}
 				}
 			};
 		}
