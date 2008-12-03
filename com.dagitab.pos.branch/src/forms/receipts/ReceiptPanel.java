@@ -342,7 +342,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			logger.info("current price*quantity: "+currentPriceQuantityAmount);
 			logger.info("selling price*quantity: "+sellingPriceQuantityAmount);
 			currentSubTotal+=currentPriceQuantityAmount;
-			sellingSubTotal += sellingPriceQuantityAmount;
+			sellingSubTotal += Double.parseDouble(String.format("%.2f", sellingPriceQuantityAmount));
 			g.setFont(new Font("Arial", Font.PLAIN, 9));
 			
 			//Ellipsis on product code more than 13 chars.
@@ -404,6 +404,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			
 			newXpos = 190 - (currentPriceAmount.length()*4);
 			g.drawString(currentPriceAmount, newXpos, topMarker);
+			
 			
 			
 			topMarker+=10;
