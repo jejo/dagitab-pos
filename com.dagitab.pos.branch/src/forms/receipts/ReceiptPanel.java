@@ -436,6 +436,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 logger.info("SUB TOTAL:"+sellingSubTotal);
 		 
 		 Double vatRate = VatService.getVatRate();
+		 sellingSubTotal = Double.parseDouble(String.format("%.2f", sellingSubTotal));
 		 double vatablePurchase = sellingSubTotal/vatRate;
 //		 		vatablepurchase = roundDown(vatablepurchase);
 		 int xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", vatablePurchase));

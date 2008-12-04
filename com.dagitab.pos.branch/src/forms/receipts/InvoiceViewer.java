@@ -409,7 +409,7 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							rowData[4] = String.format("%.2f", discountedAmount); //selling price
 							rowData[5] = invoiceItem.getIsDeferred().toString(); //deferred
 							rowData[6] = invoiceItem.getDiscountCode().toString(); //discount code
-							Double extension = invoiceItem.getQuantity() * discountedAmount; 
+							Double extension = Double.valueOf(String.format("%.2f", (invoiceItem.getQuantity() * discountedAmount))); 
 							rowData[7] = extension.toString(); // extension
 							itemTableModel.addRow(rowData);
 						}

@@ -774,8 +774,8 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
 //		"Product Code", "Product Name","Quantity","Current Price","Selling Price","Deferred","Disc Code","Extension" 
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
-		DecimalFormat df = new DecimalFormat(".00");
-		Double sellingPrice = Double.valueOf(df.format(invoiceItem.getSellPrice())); 
+		
+		Double sellingPrice = Double.valueOf(String.format("%.2f",invoiceItem.getSellPrice())); 
 		Double extensionPrice = invoiceItem.getQuantity()*sellingPrice;
 		
 		model.addRow(new String[]{invoiceItem.getProductCode(),
@@ -785,7 +785,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 								  sellingPrice.toString(),
 								  (invoiceItem.getIsDeferred()==1)?"Yes":"No",
 								  invoiceItem.getDiscountCode().toString(),
-								  df.format(extensionPrice)});
+								  String.format("%.2f",extensionPrice)});
 		updateAmounts();
 		updatePaymentAmounts();
 	}
@@ -803,8 +803,8 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	public void editInvoiceItem(InvoiceItem invoiceItem, String productCode){
 		
 		Product product = ProductService.getProductById(invoiceItem.getProductCode());
-		DecimalFormat df = new DecimalFormat(".00");
-		Double sellingPrice = Double.valueOf(df.format(invoiceItem.getSellPrice())); 
+		
+		Double sellingPrice = Double.valueOf(String.format("%.2f",invoiceItem.getSellPrice())); 
 		Double extensionPrice = invoiceItem.getQuantity()*sellingPrice;
 		int index = getInvoiceItemRow(productCode);
 		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
@@ -815,7 +815,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		model.setValueAt(sellingPrice.toString(), index, 4);
 		model.setValueAt((invoiceItem.getIsDeferred()==1)?"Yes":"No", index, 5);
 		model.setValueAt(invoiceItem.getDiscountCode().toString(), index, 6);
-		model.setValueAt( df.format(extensionPrice), index, 7);
+		model.setValueAt( String.format("%.2f",extensionPrice), index, 7);
 		updateAmounts();
 		updatePaymentAmounts();
 	}
@@ -826,13 +826,12 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			Product product = ProductService.getProductById(model.getValueAt(index, 0).toString());
 			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
 			Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
-			DecimalFormat df = new DecimalFormat(".00");
-			sellingPrice = Double.valueOf(df.format(sellingPrice)); 
+			sellingPrice = Double.valueOf(String.format("%.2f",sellingPrice)); 
 			Double extensionPrice = Integer.valueOf(model.getValueAt(index, 2).toString())*sellingPrice;
 			
 			model.setValueAt(sellingPrice.toString(), index, 4);
 			model.setValueAt(discountCode, index, 6);
-			model.setValueAt( df.format(extensionPrice), index, 7);
+			model.setValueAt( String.format("%.2f",extensionPrice), index, 7);
 		}
 		updateAmounts();
 		updatePaymentAmounts();
