@@ -315,13 +315,13 @@ public class FastAddition extends javax.swing.JDialog {
 			Product product = ProductService.getProductById(model.getValueAt(index, 0).toString());
 			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
 			Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
-			DecimalFormat df = new DecimalFormat(".00");
-			sellingPrice = Double.valueOf(df.format(sellingPrice)); 
+			
+			sellingPrice = Double.valueOf(String.format("%.2f",sellingPrice)); 
 			Double extensionPrice = Integer.valueOf(model.getValueAt(index, 2).toString())*sellingPrice;
 			
 			model.setValueAt(sellingPrice.toString(), index, 4);
 			model.setValueAt(discountCode, index, 6);
-			model.setValueAt( df.format(extensionPrice), index, 7);
+			model.setValueAt( String.format("%.2f",extensionPrice), index, 7);
 		}
 		
 	}
