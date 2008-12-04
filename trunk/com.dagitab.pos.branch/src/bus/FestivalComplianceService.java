@@ -422,7 +422,7 @@ public class FestivalComplianceService {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(new Date().getTime());
 		cal.add(Calendar.DAY_OF_MONTH, -1 * pastDays - 1);
-		for(int i = -1 * pastDays; i <= 0; i ++) {
+		for(int i = -1 * pastDays; i < 0; i ++) {
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 			
 			Date date = cal.getTime();
