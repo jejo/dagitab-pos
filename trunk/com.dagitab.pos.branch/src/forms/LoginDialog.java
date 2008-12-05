@@ -316,10 +316,53 @@ public class LoginDialog extends javax.swing.JDialog {
 						
 					}
 					else if(isCompliance.equals("festival")){
-						ComplianceMode mode = ComplianceMode.DAILY;
+						final ComplianceMode mode = ComplianceMode.DAILY;
 						if (FestivalComplianceService.getInstance().getSendCount(month, day, year, mode) > 0) { // EOD already sent for the day
 							Main.getInst().disableTransaction();
 						}
+						
+						
+						
+						Timer timer = new Timer();
+						timer.scheduleAtFixedRate(new TimerTask(){
+
+							@Override
+							public void run() {
+								logger.info("Trying to send unsent files…");
+								Main.getInst().getStatusLabel().setText("Trying to send unsent files\u2026");
+								
+								List<Date> listDates = FestivalComplianceService.getInstance().getUnsentComplianceReports(sendUnsentDaysNo, mode);
+								
+								
+								ArrayList<String> sentDatesList = new ArrayList<String>();
+								ArrayList<String> unsentDateList = new ArrayList<String>();
+								for(int i = 0; i<listDates.size(); i++){
+									Date transDate = listDates.get(i);
+									try {
+										
+										FestivalComplianceService.getInstance().generateEod(transDate);
+										sentDatesList.add(transDate.toString());
+									} catch (IOException e) {
+										unsentDateList.add(transDate.toString());
+										e.printStackTrace();
+									}
+								}
+								
+								if(sentDatesList.size() == listDates.size()){
+									Main.getInst().getStatusLabel().setText("Sales file successfully sent to FTP server");
+									
+								}
+								else{
+									String unsentDates = "";
+									for(String s: unsentDateList){
+										unsentDates += s;
+									}
+									Main.getInst().getStatusLabel().setText("Sales file is not sent to FTP server. Please contact your POS vendor");
+							}
+								
+								
+								
+							}}, Calendar.getInstance().getTime(), Long.valueOf(periodicRate));
 					}
 				}
 				
