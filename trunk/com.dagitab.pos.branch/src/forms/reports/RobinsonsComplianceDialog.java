@@ -620,8 +620,13 @@ public class RobinsonsComplianceDialog extends javax.swing.JDialog {
 					calendar.set(Calendar.MONTH, Integer.parseInt(dateSplit[1])-1);
 					calendar.set(Calendar.YEAR, Integer.parseInt(dateSplit[0]));
 					calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateSplit[2]));
+					calendar.set(Calendar.HOUR_OF_DAY, 9); // set to 9am
+					calendar.set(Calendar.MINUTE, 0);
+					calendar.set(Calendar.SECOND, 0);
 					Date transDate = calendar.getTime();
+					
 					Date eodDate = RobinsonsComplianceService.getInstance().getEodDateBasedOnTransDate(transDate);
+
 					try {
 						RobinsonsComplianceService.getInstance().generateAndSendComplianceReport(transDate, eodDate);
 						JOptionPane.showMessageDialog(null, "Sales file successfully sent to RLC server", "Sending Success", JOptionPane.INFORMATION_MESSAGE);
