@@ -80,6 +80,8 @@ public class ComplianceService {
 			pquery.setTimestamp(1, transDate);
 			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
+			logger.info("TRANS DATE BEFORE"+transDate.toLocaleString());
+			logger.info("TRANS DATE BEFORE"+eodDate.toLocaleString());
 			
 			Double dailySale = 0.0d;
 			rs = pquery.executeQuery();
@@ -571,7 +573,7 @@ public class ComplianceService {
 	
 	//here, SELL_PRICE is assumed to have discounts already, derive SELL_PRICE-DISC_RATE
 	public Double getReturnedItemsAmount(int month, int day, int year, int storeCode) {
-		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE and MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND r.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' and o.RETURN = 1";
+		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND r.STORE_CODE = o.STORE_CODE and MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND r.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' and o.RETURN = 1";
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 //		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
 		Double returnedItemsAmount= 0.0d;
@@ -587,7 +589,7 @@ public class ComplianceService {
 	}
 	
 	public Double getReturnedItemsAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND p.TRANS_DT >= ? AND p.TRANS_DT <= ? AND r.OR_NO = o.OR_NO AND o.STORE_CODE = ? and o.RETURN = 1";
+		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND r.STORE_CODE = o.STORE_CODE AND o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND r.OR_NO = o.OR_NO AND o.STORE_CODE = ? and o.RETURN = 1";
 //		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
 //		Double returnedItemsAmount= 0.0d;
 		PreparedStatement pquery;

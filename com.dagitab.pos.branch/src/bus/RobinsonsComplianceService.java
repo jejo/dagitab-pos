@@ -545,14 +545,14 @@ public class RobinsonsComplianceService extends ComplianceService {
 															// based!!
 		int day = getComponent(transDate, Calendar.DAY_OF_MONTH);
 		
-		if (getEodSentFlag(month, day, year) > 0) {
-			cal.setTimeInMillis((getEodLogDate(month, day, year).getTime()));
-		} else {
+//		if (getEodSentFlag(month, day, year) > 0) {
+//			cal.setTimeInMillis((getEodLogDate(month, day, year).getTime()));
+//		} else {
 			cal.add(Calendar.DAY_OF_MONTH, 1 );
 			cal.set(Calendar.HOUR_OF_DAY, 4);
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
-		}
+//		}
 		
 		return cal.getTime();
 		
