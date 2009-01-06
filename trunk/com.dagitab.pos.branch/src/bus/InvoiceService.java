@@ -20,9 +20,11 @@ public class InvoiceService {
 	public static String getNextORNumber() throws Exception {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT (MAX(`OR_NO`) + 1) FROM invoice WHERE store_code = '"+StorePropertyHandler.getStoreNo()+"'");
 		if (rs.next()){
-			return rs.getString(1);
+			if(rs.getString(1) != null){
+				return rs.getString(1);
+			}
 		}
-		return null;
+		return "1";
 		
 	}
 	public static ResultSet fetchAllPartialInvoices(){
