@@ -22,7 +22,7 @@ public class DiscountService {
 		int i = 0;
 		try {
 			while(rs.next()){
-				discounts[i++] = rs.getString("DISC_NO")+"-"+rs.getString("NAME");
+				discounts[i++] = rs.getInt("DISC_NO")+" - "+rs.getString("NAME");
 			}
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);

@@ -215,8 +215,8 @@ public class ProductDialog extends javax.swing.JDialog {
 							
 							
 								Product product = ProductService.getProductById(selected);
-								String discountCode = discountCB.getSelectedItem().toString().split("-")[0];
-								Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
+								String discountCode = discountCB.getSelectedItem().toString().split("-")[0].trim();
+								Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode.trim()));
 								Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
 									
 								InvoiceItem invoiceItem = new InvoiceItem();
@@ -355,7 +355,7 @@ public class ProductDialog extends javax.swing.JDialog {
 		DefaultComboBoxModel model = (DefaultComboBoxModel) discountCB.getModel();
 		int index = 0;
 		for(int i = 0; i<model.getSize(); i++){
-			if(Integer.parseInt(model.getElementAt(i).toString().split("-")[0])== discCode){
+			if(Integer.parseInt(model.getElementAt(i).toString().split("-")[0].trim())== discCode){
 				index  = i;
 				break;
 			}

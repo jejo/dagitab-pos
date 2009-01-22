@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.apache.log4j.Logger;
 import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.TableUtility;
+import bus.GCItemService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
@@ -40,6 +42,7 @@ import bus.VatService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import domain.GCItem;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
@@ -434,7 +437,33 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 	}
 	private void refreshItemTable(){
 		ResultSet rs = InvoiceItemService.getInstance().fetchDiscountedInvoiceItem(invoice.getOrNo().toString());
-		TableUtility.fillTable(itemTable, rs, new String[]{"Product Code", "Product Name", "Quantity", "Current Price", "Selling Price", "Deferred", "Disc Code", "Extension"});
+//		TableUtility.fillTable(itemTable, rs, new String[]{"Product Code", "Product Name", "Quantity", "Current Price", "Selling Price", "Deferred", "Disc Code", "Extension"});
+		//FIX FOR Rounding off Price Sold Field 
+		DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+		
+		try {
+			while(rs.next()){
+				String[] rowValues = new String[8];
+				for(int i = 0; i<8; i++){
+					rowValues[i]= rs.getString(i+1);
+					if(i == 3){ //price sold
+						rowValues[i] = String.format("%.2f", Double.valueOf(rowValues[i]));
+					}
+					if(i==7){
+						rowValues[i] = String.format("%.2f", rs.getInt(3)*Double.valueOf(rowValues[3]));
+					}
+				}
+				
+				//Replace current price and selling price field values
+				String sellingPrice = rowValues[3];
+				rowValues[3] = rowValues[4];
+				rowValues[4] = sellingPrice;
+				
+				model.addRow(rowValues);
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
 	}
 	
 	private void updateAmounts(){
@@ -444,7 +473,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		Double subTotal = amount/vat;
 		totalAmountLabel.setText(String.format("%.2f", amount));
 		subTotalTextField.setText(String.format("%.2f", subTotal));
-		vatTextField.setText(String.format("%.2f", new Double(amount-subTotal)));
+		vatTextField.setText(String.format("%.2f", new Double(amount - subTotal)));
 		Double totalPaymentAmount = PaymentItemService.getInstance().getTotalPaymentAmount(invoice.getOrNo());
 		totalPaymentTextField.setText(String.format("%.2f",totalPaymentAmount));
 		Double change = totalPaymentAmount - amount;
@@ -463,17 +492,32 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		String amountString = totalAmountLabel.getText();
 		double amount = Double.parseDouble(amountString);
 		totalPaymentTextField.setText(String.format("%.2f", totalPaymentAmount));
+		
+		
 		//for recording change amount, gift certificate should not be considered for change
 		totalPaymentAmount = 0.0d;
+		boolean hasGCPayment = false;
+		boolean hasCashPayment = false;
 		for(int i = 0; i<model.getRowCount(); i++){
 			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
-			if(!model.getValueAt(i,1).toString().equals("Gift Certificate")){
-				totalPaymentAmount += paymentAmount;
-				
+			if(model.getValueAt(i,1).toString().equals("Gift Certificate")){
+				hasGCPayment = true;
+			}
+			else if(model.getValueAt(i,1).toString().equals("Cash")){
+				hasCashPayment = true;
+			}
+			totalPaymentAmount += paymentAmount;
+		}
+		
+		Double changeAmount = totalPaymentAmount-amount;
+		if(hasGCPayment){
+			if(!hasCashPayment){
+				if(changeAmount > 0) {
+					changeAmount = 0.0d;
+				}
 			}
 		}
-		Double changeAmount = totalPaymentAmount-amount;
-		if(changeAmount < 0 ) changeAmount = 0.0d;
+		logger.info("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
 		changeTextField.setText(String.format("%.2f", changeAmount));
 	}
 	
@@ -626,7 +670,18 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		
 		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(totalAmountLabel.getText()));
 		for(PaymentItem paymentItem: calculatedPaymentItems){
-			PaymentItemService.getInstance().insert(paymentItem);
+			//CHANGE REQUEST 2009-01-20 FILTER GC ITEMS AND  INSERT IT INTO GC_ITEM TABLE
+			if(paymentItem.getPaymentCode().equals(4)){
+				GCItem gcItem = new GCItem();
+				gcItem.setOrNo(paymentItem.getOrNo());
+				gcItem.setStoreNo(paymentItem.getStoreNo());
+				gcItem.setAmount(paymentItem.getAmount());
+				gcItem.setGcNo(paymentItem.getGcNo());
+				GCItemService.getInstance().insert(gcItem);
+			}
+			else{
+				PaymentItemService.getInstance().insert(paymentItem);
+			}
 		}
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);

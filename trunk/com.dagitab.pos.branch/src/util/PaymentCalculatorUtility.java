@@ -21,6 +21,8 @@ public class PaymentCalculatorUtility {
 		return paymentCalculatorUtility;
 	}
 	
+	//handle exact amounts to be paid
+	
 	public List<PaymentItem> getCalculatedPaymentItems(List<PaymentItem> items, Double transactionAmount){
 		//Copy paymentItems to new list to eliminate pointer problem!
 		List<PaymentItem> calculatedPaymentItems = copy(items);
@@ -31,9 +33,6 @@ public class PaymentCalculatorUtility {
 		for(PaymentItem paymentItem: items){
 			logger.info(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
 		}
-		
-		
-		
 		
 		for(int i =0; i < calculatedPaymentItems.size(); i++){
 			String payType = calculatedPaymentItems.get(i).getPaymentType();

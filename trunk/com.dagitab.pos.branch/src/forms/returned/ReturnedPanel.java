@@ -34,6 +34,7 @@ import util.LoggerUtility;
 import util.PaymentCalculatorUtility;
 import util.StringUtility;
 import bus.DiscountService;
+import bus.GCItemService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
@@ -45,6 +46,7 @@ import bus.VatService;
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 
+import domain.GCItem;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
@@ -1013,18 +1015,24 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		//for recording change amount, gift certificate should not be considered for change
 		totalPaymentAmount = 0.0d;
 		boolean hasGCPayment = false;
+		boolean hasCashPayment = false;
 		for(int i = 0; i<model.getRowCount(); i++){
 			double paymentAmount =  Double.parseDouble(model.getValueAt(i,2).toString());
 			if(model.getValueAt(i,1).toString().equals("Gift Certificate")){
-				hasGCPayment = true;	
+				hasGCPayment = true;
+			}
+			else if(model.getValueAt(i,1).toString().equals("Cash")){
+				hasCashPayment = true;
 			}
 			totalPaymentAmount += paymentAmount;
 		}
 		
 		Double changeAmount = totalPaymentAmount-amount;
 		if(hasGCPayment){
-			if(changeAmount > 0) {
-				changeAmount = 0.0d;
+			if(!hasCashPayment){
+				if(changeAmount > 0) {
+					changeAmount = 0.0d;
+				}
 			}
 		}
 //		if(changeAmount < 0 ) changeAmount = 0.0d;
@@ -1331,14 +1339,31 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		
 		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(amountLabel.getText()));
 		for(PaymentItem paymentItem: calculatedPaymentItems){
-			PaymentItemService.getInstance().insert(paymentItem);
+			//CHANGE REQUEST 2009-01-20 FILTER GC ITEMS AND  INSERT IT INTO GC_ITEM TABLE
+			if(paymentItem.getPaymentCode().equals(4)){
+				GCItem gcItem = new GCItem();
+				gcItem.setOrNo(paymentItem.getOrNo());
+				gcItem.setStoreNo(paymentItem.getStoreNo());
+				gcItem.setAmount(paymentItem.getAmount());
+				gcItem.setGcNo(paymentItem.getGcNo());
+				GCItemService.getInstance().insert(gcItem);
+			}
+			else{
+				PaymentItemService.getInstance().insert(paymentItem);
+			}
 		}
 		
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 		
 		//receipts
-		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
+		
+		//if negative amount due, dont issue a change
+		String changeValue = "0.00";
+		if(Double.valueOf(amountLabel.getText()) > 0 ){
+			changeValue = changeTextField.getText();
+		}
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeValue);
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);

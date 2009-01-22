@@ -369,5 +369,6 @@ public class DBManager {
 	public static void main(String args[]) throws Exception {
 		DBManager dbMan = new DBManager();
 		dbMan.connect();
+		System.out.println(dbMan.getConnection().getMetaData().getDatabaseProductName());
 	}
 }

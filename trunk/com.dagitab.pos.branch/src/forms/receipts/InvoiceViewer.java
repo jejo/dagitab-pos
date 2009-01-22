@@ -22,11 +22,13 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import util.LoggerUtility;
 import util.ServerPropertyHandler;
 import bus.DiscountService;
+import bus.GCItemService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
@@ -35,6 +37,7 @@ import bus.ReturnItemService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 
+import domain.GCItem;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
@@ -290,7 +293,10 @@ public class InvoiceViewer extends javax.swing.JDialog {
 								}
 							}
 							
-							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
+							
+							List<GCItem> gcItems = GCItemService.getInstance().getGcItemList(NumberUtils.toLong(txtOR.getText()));
+							
+							ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeTextField.getText());
 							ValidateReceipt validateReceiptDialog = new ValidateReceipt(InvoiceViewer.this, receiptPanel);
 							validateReceiptDialog.setLocationRelativeTo(null);
 							validateReceiptDialog.setVisible(true);
@@ -441,6 +447,23 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							
 							paymentItemTableModel.addRow(rowData);
 						}
+						
+						List<GCItem> gcItemList = GCItemService.getInstance().getGcItemList(invoice.getOrNo());
+						
+						for( GCItem gcItem: gcItemList ){
+							String[] rowData = new String[7];
+							rowData[0] = "4"; //payment code
+							rowData[1] = "Gift Certificate"; //payment item
+							rowData[2] = String.format("%.2f", gcItem.getAmount()); //amount
+							rowData[3] = "N/A";
+							rowData[4] = "N/A";
+							rowData[5] = "N/A";
+							rowData[6] = gcItem.getGcNo();
+							
+							paymentItemTableModel.addRow(rowData);
+						}
+						
+						
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "Please input a valid OR number.","Prompt",JOptionPane.WARNING_MESSAGE);

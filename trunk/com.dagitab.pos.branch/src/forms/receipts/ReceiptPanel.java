@@ -2,6 +2,7 @@ package forms.receipts;
 
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,6 +31,7 @@ import bus.ReturnItemService;
 import bus.StoreService;
 import bus.VatService;
 import domain.Clerk;
+import domain.GCItem;
 import domain.Invoice;
 import domain.InvoiceItem;
 import domain.PaymentItem;
@@ -66,91 +68,10 @@ public class ReceiptPanel extends javax.swing.JPanel {
 	private Invoice invoice;
 	private List<InvoiceItem> invoiceItems;
 	private List<PaymentItem> paymentItems;
-	private String changeAmount = "0";
+	private List<GCItem> gcItems = new ArrayList<GCItem>();
+ 	private String changeAmount = "0";
 	private static Logger logger = Logger.getLogger(ReceiptPanel.class);
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
 	
-	
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		DBManager db = new DBManager();
-		db.connect();
-		Vector<String> headerData = new Vector<String>();
-			//		Address Branch, Tin, OR_NO, Served Name, Current Date, Current Time
-		
-		
-		headerData.add("3048 New Wing, Alabang Town Ctr. Exp. Zapote Rd.Muntinlupa"); //address
-		headerData.add("TIN 000-051-689-000 VAT"); 
-		headerData.add("001-000000001");
-		headerData.add("ALEX ODAL");
-		headerData.add("4/18/2007");
-		headerData.add("13:45");
-		
-		Vector<Vector<String>> itemData = new Vector<Vector<String>>();
-			Vector<String> itemRowData = new Vector<String>();
-			itemRowData.add("xxx");
-			itemRowData.add("ASS WOODEN CASTANETS 24’S");
-			itemRowData.add("75.00");
-			itemRowData.add("75.00");
-			itemRowData.add("4");
-//			prod code, prod name, current price, selling price, qty,
-			
-			Vector<String> itemRowData2 = new Vector<String>();
-			itemRowData2.add("xxx");
-			itemRowData2.add("ASS WOODEN CASTANETS 24’S");
-			itemRowData2.add("75.00");
-			itemRowData2.add("75.00");
-			itemRowData2.add("1");
-			
-			Vector<String> itemRowData3 = new Vector<String>();
-			itemRowData3.add("xxx");
-			itemRowData3.add("ASS WOODEN CASTANETS 24’S");
-			itemRowData3.add("100.00");
-			itemRowData3.add("100.00");
-			itemRowData3.add("1");
-			
-			
-			Vector<String> itemRowData4 = new Vector<String>();
-			itemRowData4.add("xxx");
-			itemRowData4.add("ASS WOODEN CASTANETS 24’S");
-			itemRowData4.add("120.00");
-			itemRowData4.add("120.00");
-			itemRowData4.add("1");
-			
-			
-			Vector<String> itemRowData5 = new Vector<String>();
-			itemRowData5.add("xxx");
-			itemRowData5.add("ASS WOODEN CASTANETS 24’S");
-			itemRowData5.add("15.00");
-			itemRowData5.add("15.00");
-			itemRowData5.add("3");
-			
-			
-		itemData.add(itemRowData);
-		itemData.add(itemRowData2);
-		itemData.add(itemRowData3);
-		itemData.add(itemRowData4);
-		itemData.add(itemRowData5);
-			
-		
-		Vector<Vector<String>> paymentData = new Vector<Vector<String>>();
-			Vector<String> paymentRowData = new Vector<String>();
-			//name of payment, amount, change
-			paymentRowData.add("Cash");
-			paymentRowData.add("700.00");
-			paymentRowData.add("60");
-		paymentData.add(paymentRowData);
-		String vatAmount = "571.42";
-		String changeAmount = "60.00";
-		ReceiptPanel rp = new ReceiptPanel(headerData,itemData,paymentData,vatAmount,changeAmount, db,"par");
-		frame.getContentPane().add(rp);
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
 	
 	public ReceiptPanel(Invoice invoice, List<InvoiceItem> invoiceItems, List<PaymentItem> paymentItems, String change) {
 		super();
@@ -162,25 +83,16 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		initGUI();
 	}
 	
-	
-	
-	@Deprecated
-	public ReceiptPanel(Vector<String> headerData, 
-							Vector<Vector<String>> itemData, 
-							Vector<Vector<String>> paymentData,String vatAmount,
-							String changeAmount, DBManager db, String status) {
+	public ReceiptPanel(Invoice invoice, List<InvoiceItem> invoiceItems, List<PaymentItem> paymentItems, List<GCItem> gcItems, String change){
 		super();
-//		this.headerData = headerData; 
-			//Address Branch, Tin, OR_NO, Served Name, Current Date, Current Time
-	
-			//prod code, prod name, current price, selling price, qty, 
-	
-			//name of payment, amount,
-		//this.vatAmount = vatAmount;
-		//this.changeAmount = changeAmount;
-		
+		this.invoice = invoice;
+		this.invoiceItems = invoiceItems;
+		this.paymentItems = paymentItems;
+		this.changeAmount = change;
+		this.gcItems = gcItems;
 		initGUI();
 	}
+	
 	
 	private void initGUI() {
 		try {
@@ -332,7 +244,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			double currentPriceQuantityAmount = product.getSellPrice() * invoiceItem.getQuantity();
 			double sellingPriceQuantityAmount = 0;
 			if(!invoiceItem.getIsReturned()){
-				 sellingPriceQuantityAmount = Double.parseDouble(String.format("%.2f",InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()))) * invoiceItem.getQuantity();
+				sellingPriceQuantityAmount = Double.valueOf(String.format("%.2f", InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()))) * invoiceItem.getQuantity();
 			}
 			else{
 				sellingPriceQuantityAmount = Double.parseDouble(String.format("%.2f",ReturnItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()))) * invoiceItem.getQuantity();
@@ -517,6 +429,16 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			 g.drawString(String.format("%.2f",paymentItem.getAmount()), xpos, topMarker); //payment amount
 			 topMarker+=20;
 		 }
+		 
+		 for(int i = 0; i< gcItems.size(); i++){
+			 GCItem gcItem = gcItems.get(i);
+			 g.drawString("Gift Certificate", 10, topMarker); //Hard coded for GC payment type
+//				for right justified compute 190 - string size*5 as first position
+			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f",gcItem.getAmount()));
+			 g.drawString(String.format("%.2f",gcItem.getAmount()), xpos, topMarker); //payment amount
+			 topMarker+=20;
+		 }
+		 
 		 
 		 /*CHANGE OR BALANCE*/
 		 
