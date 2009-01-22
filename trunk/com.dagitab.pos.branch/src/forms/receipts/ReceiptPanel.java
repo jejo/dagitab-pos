@@ -332,17 +332,17 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			double currentPriceQuantityAmount = product.getSellPrice() * invoiceItem.getQuantity();
 			double sellingPriceQuantityAmount = 0;
 			if(!invoiceItem.getIsReturned()){
-				 sellingPriceQuantityAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()) * invoiceItem.getQuantity();
+				 sellingPriceQuantityAmount = Double.parseDouble(String.format("%.2f",InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()))) * invoiceItem.getQuantity();
 			}
 			else{
-				sellingPriceQuantityAmount = ReturnItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()) * invoiceItem.getQuantity();
+				sellingPriceQuantityAmount = Double.parseDouble(String.format("%.2f",ReturnItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()))) * invoiceItem.getQuantity();
 			}
 			
 			logger.info("Product Code: "+product.getProdCode()+" Product Name: "+product.getName());
 			logger.info("current price*quantity: "+currentPriceQuantityAmount);
 			logger.info("selling price*quantity: "+sellingPriceQuantityAmount);
 			currentSubTotal+=currentPriceQuantityAmount;
-			sellingSubTotal += Double.parseDouble(String.format("%.2f", sellingPriceQuantityAmount));
+			sellingSubTotal += sellingPriceQuantityAmount;
 			g.setFont(new Font("Arial", Font.PLAIN, 9));
 			
 			//Ellipsis on product code more than 13 chars.
