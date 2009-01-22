@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import util.LoggerUtility;
 import util.ServerPropertyHandler;
+import bus.DiscountService;
 import bus.InvoiceItemService;
 import bus.InvoiceService;
 import bus.PaymentItemService;
@@ -405,11 +406,16 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							rowData[1] = product.getName(); //product name
 							rowData[2] = invoiceItem.getQuantity().toString(); //quantity
 							rowData[3] = String.format("%.2f",invoiceItem.getSellPrice()); //current price
-							Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()); 
-							rowData[4] = String.format("%.2f", discountedAmount); //selling price
+//							Double sellingPrice = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode());
+							// ALEX: ALL computations should be exactly the same
+							Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*DiscountService.getDiscRate(invoiceItem.getDiscountCode()));
+							sellingPrice = Double.valueOf(String.format("%.2f",sellingPrice));
+//							Double discountedAmount = Double.valueOf(String.format("%.2f",invoiceItem.getSellPrice()));
+							rowData[4] = String.format("%.2f", sellingPrice); //selling price
 							rowData[5] = invoiceItem.getIsDeferred().toString(); //deferred
 							rowData[6] = invoiceItem.getDiscountCode().toString(); //discount code
-							Double extension = Double.valueOf(String.format("%.2f", (invoiceItem.getQuantity() * discountedAmount))); 
+//							Double extension = invoiceItem.getQuantity()*sellingPrice;
+							Double extension = Double.valueOf(String.format("%.2f", (invoiceItem.getQuantity() * sellingPrice))); 
 							rowData[7] = extension.toString(); // extension
 							itemTableModel.addRow(rowData);
 						}

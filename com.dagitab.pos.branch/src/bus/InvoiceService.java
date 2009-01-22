@@ -146,8 +146,8 @@ public class InvoiceService {
 			while(rs.next()){
 				Double discRate = DiscountService.getDiscRate(rs.getInt("DISC_CODE"));
 				Double sellingPrice = rs.getDouble("SELL_PRICE");
-				Double amount = sellingPrice - (sellingPrice*discRate);
-				invoiceAmount += Double.valueOf(String.format("%.2f", (amount*rs.getInt("QUANTITY"))));
+				Double amount = Double.parseDouble(String.format("%.2f",sellingPrice - (sellingPrice*discRate)));
+				invoiceAmount += amount*rs.getInt("QUANTITY");
 			}
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
