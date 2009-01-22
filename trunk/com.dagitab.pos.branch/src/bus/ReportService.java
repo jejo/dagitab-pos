@@ -285,7 +285,15 @@ public class ReportService {
 //		System.out.println("Last Day of Month: "+lastDayOfMonth);
 		ArrayList<String> dates = new ArrayList<String>();
 		for(int i = firstDay; i<=lastDayOfMonth; i++){
-			String date = year+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+			String date = "";
+			
+			if(calendar.get(Calendar.MONTH+1) == 1){
+				date = year-1+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+			}
+			else{
+				date = year+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+			}
+			
 			dates.add(date);
 		}
 		calendar.add(Calendar.MONTH, 1);
@@ -299,7 +307,7 @@ public class ReportService {
 	
 	
 	public static void main(String[] args){
-		ArrayList<String> dates = ReportService.getInstance().getRobinsonsInvoiceDates(11, 2008);
+		ArrayList<String> dates = ReportService.getInstance().getRobinsonsInvoiceDates(2, 2009);
 		for(String s: dates){
 			System.out.println(s);
 		}
