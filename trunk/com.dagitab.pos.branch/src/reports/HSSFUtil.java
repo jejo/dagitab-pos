@@ -61,7 +61,7 @@ public class HSSFUtil {
 		return cell;
 	}
 	
-	static HSSFCell createStringCell(HSSFWorkbook wb, HSSFRow row, short index,
+	public static HSSFCell createStringCell(HSSFWorkbook wb, HSSFRow row, short index,
 			boolean bold, boolean border) {
 		
 		HSSFCell cell = row.createCell(index);

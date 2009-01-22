@@ -18,6 +18,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import util.LoggerUtility;
 import bus.DiscountService;
+import bus.GCItemService;
 import bus.InvoiceItemService;
 import bus.ProductService;
 import bus.ReportService;
@@ -133,6 +134,12 @@ public class DailySalesReport {
 						//sales specialist
 						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
 						cell.setCellValue(invoice.getAssistantCode());
+						
+						//gift certificate amount
+						cell = HSSFUtil.createAmountCell(wb, row, (short) 12, false, false);
+						Double gcAmount = GCItemService.getInstance().getTotalGCAmountPerInvoice(invoice.getOrNo());
+						cell.setCellValue(gcAmount);
+						
 					}
 				}
 				
@@ -509,6 +516,9 @@ public class DailySalesReport {
 		
 		String totalTotalFormula = "SUM(J"+firstRow+":J"+lastRow+")";
 		cell = HSSFUtil.createFormulaCell(wb,row, (short) 9,totalTotalFormula,false,false);
+		
+		String totalGcAmountFormula = "SUM(M"+firstRow+":M"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 12,totalGcAmountFormula,false,false);
 		
 	}
 }

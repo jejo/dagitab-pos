@@ -56,7 +56,7 @@ public class ReportUtility {
 		return wb.getSheetAt(0);
 	}
 	
-	static void writeOutputToFile(HSSFWorkbook wb, String fileName) {
+	public static void writeOutputToFile(HSSFWorkbook wb, String fileName) {
 		FileOutputStream fileOut;
 		try {
 			fileOut = new FileOutputStream(fileName);
