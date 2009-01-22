@@ -49,92 +49,12 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		}
 	}
 
-	/**
-	 * Auto-generated main method to display this JDialog
-	 */
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		DBManager db = new DBManager();
-		db.connect();
-		Vector<String> headerData = new Vector<String>();
-		// Address Branch, Tin, OR_NO, Served Name, Current Date, Current Time
-		headerData.add("548 Facilities Ctr. Shaw Blvd");
-		headerData.add("TIN 000-051-689-000 VAT");
-		headerData.add("OR NO: 001-000000001");
-		headerData.add("Served by: ALEX ODAL");
-		headerData.add("Date: 4/18/2007");
-		headerData.add("Time: 13:45");
-
-		Vector<Vector<String>> itemData = new Vector<Vector<String>>();
-		Vector<String> itemRowData = new Vector<String>();
-		itemRowData.add("xxx");
-		itemRowData.add("ASS WOODEN CASTANETS 24’S");
-		itemRowData.add("59.75");
-		itemRowData.add("49.75");
-		itemRowData.add("1");
-		// prod code, prod name, current price, selling price, qty,
-
-		Vector<String> itemRowData2 = new Vector<String>();
-		itemRowData2.add("xxx");
-		itemRowData2.add("ASS WOODEN CASTANETS 24’S");
-		itemRowData2.add("59.75");
-		itemRowData2.add("59.75");
-		itemRowData2.add("2");
-		itemData.add(itemRowData);
-		itemData.add(itemRowData2);
-
-		Vector<Vector<String>> paymentData = new Vector<Vector<String>>();
-		Vector<String> paymentRowData = new Vector<String>();
-		// name of payment, amount, change
-		paymentRowData.add("Cash");
-		paymentRowData.add("100.00");
-		paymentRowData.add("0");
-		paymentData.add(paymentRowData);
-		String vatAmount = "10.00";
-		String changeAmount = "10.00";
-		ValidateReceipt inst = new ValidateReceipt(frame, headerData, itemData,
-				paymentData, vatAmount, changeAmount, db, "reg");
-		inst.setVisible(true);
-	}
-
 	public ValidateReceipt(Window frame, ReceiptPanel receiptPanel) {
 		super(frame);
 		this.receiptPanel = receiptPanel;
 		initGUI();
 	}
 	
-	
-	
-	@Deprecated
-	public ValidateReceipt(JFrame frame, String[] others, String date,
-			String time, Vector<Vector<String>> data) {
-		super(frame);
-		// panel = new ReceiptPanel(others,date,time,data);
-		initGUI();
-	}
-
-	@Deprecated
-	public ValidateReceipt(JFrame frame, Vector<String> headerData,
-			Vector<Vector<String>> itemData,
-			Vector<Vector<String>> paymentData, String vatAmount,
-			String changeAmount, DBManager db, String status) {
-		super(frame);
-		receiptPanel = new ReceiptPanel(headerData, itemData, paymentData,
-				vatAmount, changeAmount, db, status);
-		initGUI();
-	}
-	
-	@Deprecated
-	public ValidateReceipt(InvoiceViewer viewer, Vector<String> headerData,
-			Vector<Vector<String>> itemData,
-			Vector<Vector<String>> paymentData, String vatAmount,
-			String changeAmount, DBManager db, String status) {
-		super(viewer);
-		receiptPanel = new ReceiptPanel(headerData, itemData, paymentData,
-				vatAmount, changeAmount, db, status);
-		initGUI();
-	}
-
 	private void initGUI() {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();

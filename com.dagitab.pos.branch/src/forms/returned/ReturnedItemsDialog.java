@@ -2,6 +2,8 @@ package forms.returned;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -112,12 +114,55 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 		ComboBoxModel returnReasonModel = new DefaultComboBoxModel(returnReasons);
 		returnReasonComboBox.setModel(returnReasonModel);
 		if(action.equals("add")){
-			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().fetchDiscountedInvoiceItem(invoice.getOrNo().toString()), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"} );
+//			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().fetchDiscountedInvoiceItem(invoice.getOrNo().toString()), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"} );
+			
+			
+			//FIX FOR Rounding off Price Sold Field 
+			DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+			ResultSet rs = InvoiceItemService.getInstance().fetchDiscountedInvoiceItem(invoice.getOrNo().toString());
+			try {
+				while(rs.next()){
+					String[] rowValues = new String[8];
+					for(int i = 0; i<8; i++){
+						rowValues[i]= rs.getString(i+1);
+						if(i == 3){ //price sold
+							rowValues[i] = String.format("%.2f", Double.valueOf(rowValues[i]));
+						}
+						if(i==7){
+							rowValues[i] = String.format("%.2f", rs.getInt(3)*Double.valueOf(rowValues[3]));
+						}
+					}
+					model.addRow(rowValues);
+				}
+			} catch (SQLException e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+			}
 		}
 		else{
-			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().getDiscountedInvoiceItem(invoice.getOrNo(), action), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"});
+			
+//			TableUtility.fillTable(itemTable, InvoiceItemService.getInstance().getDiscountedInvoiceItem(invoice.getOrNo(), action), new String[]{"Product Code", "Product Name","Quantity","Price Sold","Current Price","Deferred","Disc Code","Extension"});
+			
+			//FIX FOR Rounding off Price Sold Field 
+			DefaultTableModel model = (DefaultTableModel) itemTable.getModel();
+			ResultSet rs = InvoiceItemService.getInstance().fetchDiscountedInvoiceItem(invoice.getOrNo().toString());
+			try {
+				while(rs.next()){
+					String[] rowValues = new String[8];
+					for(int i = 0; i<8; i++){
+						rowValues[i]= rs.getString(i+1);
+						if(i == 3){ //price sold
+							rowValues[i] = String.format("%.2f", Double.valueOf(rowValues[i]));
+						}
+						if(i==7){
+							rowValues[i] = String.format("%.2f", rs.getInt(3)*Double.valueOf(rowValues[3]));
+						}
+					}
+					model.addRow(rowValues);
+				}
+			} catch (SQLException e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+			}
 		}
-		
 		
 		if(!action.equals("add")){
 			Integer index = getItemIndex(action);
@@ -126,8 +171,6 @@ public class ReturnedItemsDialog extends javax.swing.JDialog {
 			}
 			
 		}
-		
-		
 	}
 	
 	private void initGUI() {

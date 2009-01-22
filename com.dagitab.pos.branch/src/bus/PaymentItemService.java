@@ -87,7 +87,7 @@ public class PaymentItemService {
 	}
 	
 	public ResultSet findPaymentItems(Long orNo){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo+" AND pi.STORE_CODE = "+Main.getStoreCode());
 		logger.info("SELECT pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		return rs;
 	}
@@ -102,7 +102,7 @@ public class PaymentItemService {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT pi.OR_NO, pi.STORE_CODE, pi.PT_CODE, NAME, AMT, CARD_TYPE, CARD_NO, CHECK_NO, GC_NO FROM payment_item pi, pay_type_lu pt WHERE pi.PT_CODE = pt.PT_CODE AND OR_NO = "+orNo);
 		List<PaymentItem> paymentItemList = new ArrayList<PaymentItem>();
 		try {
-			if(rs.next()){
+			while(rs.next()){
 				PaymentItem paymentItem = new PaymentItem();
 				paymentItem.setPaymentType(rs.getString("NAME"));
 				paymentItem.setAmount(rs.getDouble("AMT"));
