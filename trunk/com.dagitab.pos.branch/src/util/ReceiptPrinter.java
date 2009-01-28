@@ -43,6 +43,7 @@ public class ReceiptPrinter {
 	public static final int TOTAL_AMOUNT = 14;
 	public static final int TOTAL_QTY = 15;
 	public static final int CHANGE = 16;
+	public static final int OR_NO = 17;
 	
 	private List<String[]> items;
 	private List<String[]> payments;
@@ -66,7 +67,8 @@ public class ReceiptPrinter {
 		out.append(center(details[ReceiptPrinter.COMPANY_NAME], 40)+"\n\n");
 		out.append(center(details[ReceiptPrinter.ADDRESS_LINE_1], 40)+"\n");
 		out.append(center(details[ReceiptPrinter.ADDRESS_LINE_2], 40)+"\n");
-		out.append(center(details[ReceiptPrinter.TIN], 40)+"\n\n");
+		out.append(center(details[ReceiptPrinter.TIN], 40)+"\n");
+		out.append(center("OR NO: "+details[ReceiptPrinter.OR_NO], 40)+"\n");
 		out.append(center("Date: "+details[ReceiptPrinter.DATE], 40)+"\n");
 		out.append(center("Served by: "+details[ReceiptPrinter.CASHIER], 40)+"\n");
 		out.append(center("Time: "+details[ReceiptPrinter.TIME], 40)+"\n\n");
@@ -215,6 +217,7 @@ public class ReceiptPrinter {
         	details[ReceiptPrinter.ADDRESS_LINE_1] = "Unit 2044, Level B Shoppesville";
         	details[ReceiptPrinter.ADDRESS_LINE_2] = "Arcade, Greenhills, Sn. Juan, M.M.";
         	details[ReceiptPrinter.TIN] = "TIN-000-051-689-006-VAT";
+        	details[ReceiptPrinter.OR_NO] = "OR1236781002";
         	details[ReceiptPrinter.DATE] = "01/28/2009";
         	details[ReceiptPrinter.TIME] = "15:51:52";
         	details[ReceiptPrinter.CASHIER] = "User";
