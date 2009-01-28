@@ -32,17 +32,17 @@ public class ReceiptPrinter {
 	public static final int TIN = 3;
 	public static final int DATE = 4;
 	public static final int TIME = 5;
-	public static final int CASHIER = 5;
-	public static final int WEBSITE = 6;
-	public static final int FOOTER_MESSAGE_1 = 7;
-	public static final int FOOTER_MESSAGE_2 = 8;
-	public static final int DISCOUNT = 9;
-	public static final int VAT_PERCENT = 10;
-	public static final int VAT_VALUE = 11;
-	public static final int VATABLE_SALE = 12;
-	public static final int TOTAL_AMOUNT = 13;
-	public static final int TOTAL_QTY = 14;
-	public static final int CHANGE = 15;
+	public static final int CASHIER = 6;
+	public static final int WEBSITE = 7;
+	public static final int FOOTER_MESSAGE_1 = 8;
+	public static final int FOOTER_MESSAGE_2 = 9;
+	public static final int DISCOUNT = 10;
+	public static final int VAT_PERCENT = 11;
+	public static final int VAT_VALUE = 12;
+	public static final int VATABLE_SALE = 13;
+	public static final int TOTAL_AMOUNT = 14;
+	public static final int TOTAL_QTY = 15;
+	public static final int CHANGE = 16;
 	
 	private List<String[]> items;
 	private List<String[]> payments;
