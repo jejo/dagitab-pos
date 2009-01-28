@@ -212,7 +212,7 @@ public class ReceiptPrinter {
         	payment[1] = "1179.50";
         	payments.add(payment);
         	
-        	String[] details = new String[17];
+        	String[] details = new String[18];
         	details[ReceiptPrinter.COMPANY_NAME] = "BABYLAND, INC";
         	details[ReceiptPrinter.ADDRESS_LINE_1] = "Unit 2044, Level B Shoppesville";
         	details[ReceiptPrinter.ADDRESS_LINE_2] = "Arcade, Greenhills, Sn. Juan, M.M.";
