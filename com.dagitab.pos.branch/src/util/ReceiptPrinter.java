@@ -11,7 +11,6 @@ package util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -24,6 +23,12 @@ import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.event.PrintJobAdapter;
 import javax.print.event.PrintJobEvent;
 
+/**
+ * Prints Receipt see main() method for example usage
+ * 
+ * @author user
+ *
+ */
 public class ReceiptPrinter {
 	
 	public static final int COMPANY_NAME = 0;
@@ -195,6 +200,7 @@ public class ReceiptPrinter {
 	
 	public static void main(String[] args) {
         try {
+        	// Random Items Data
         	int numberOfItems = 10;
         	List<String[]> items = new ArrayList<String[]>();
         	for (int i = 0; i < numberOfItems; i++) {
@@ -206,12 +212,15 @@ public class ReceiptPrinter {
         		values[4] = generateRandomText(40);
         		items.add(values);
         	}
+        	
+        	// Example Payments Data
         	List<String[]> payments = new ArrayList<String[]>();
         	String[] payment = new String[2];
         	payment[0] = "Credit Card";
         	payment[1] = "1179.50";
         	payments.add(payment);
         	
+        	// Assign The Details
         	String[] details = new String[18];
         	details[ReceiptPrinter.COMPANY_NAME] = "BABYLAND, INC";
         	details[ReceiptPrinter.ADDRESS_LINE_1] = "Unit 2044, Level B Shoppesville";
@@ -232,9 +241,14 @@ public class ReceiptPrinter {
         	details[ReceiptPrinter.TOTAL_QTY] = "5";
         	details[ReceiptPrinter.CHANGE] = "0.00";
 
+        	// Create printer instance
         	ReceiptPrinter printer = new ReceiptPrinter(items, payments, details);
+        	
+        	// Print
         	printer.printReceipt();
-        } catch (PrintException e) {
+        
+        } 
+        catch (PrintException e) {
         	e.printStackTrace();
         } 
 	}
