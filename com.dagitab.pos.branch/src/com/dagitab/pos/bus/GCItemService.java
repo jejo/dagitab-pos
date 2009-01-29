@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import com.dagitab.pos.domain.GCItem;
+import com.dagitab.pos.domain.PaymentItem;
 import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.LoggerUtility;
 
@@ -19,6 +19,23 @@ public class GCItemService {
 	private static Logger logger = Logger.getLogger(PaymentItemService.class);
 	private static GCItemService gcItemService = new GCItemService();
 	private GCItemService(){}
+	
+	
+	public List<GCItem> filterToGCItemList(List<PaymentItem> paymentItems){
+		ArrayList<GCItem> gcItems = new ArrayList<GCItem>();
+		for(PaymentItem paymentItem: paymentItems){
+			if(paymentItem.getPaymentCode().equals(4)){
+				GCItem gcItem = new GCItem();
+				gcItem.setOrNo(paymentItem.getOrNo());
+				gcItem.setStoreNo(paymentItem.getStoreNo());
+				gcItem.setAmount(paymentItem.getAmount());
+				gcItem.setGcNo(paymentItem.getGcNo());
+				gcItems.add(gcItem);
+			}
+		}
+		return gcItems;
+	}
+	
 	public static GCItemService getInstance(){
 		return gcItemService;
 	}
