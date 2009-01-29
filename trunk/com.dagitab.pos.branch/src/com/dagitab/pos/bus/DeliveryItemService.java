@@ -33,7 +33,7 @@ public class DeliveryItemService {
 		Integer deliveryItemQuantity = getDeliveryItemQuantity(deliveryItemId);
 		Integer sumOfQuantity = Integer.valueOf(acceptedQuantity.toString()) +  Integer.valueOf(missingQuantity.toString()) + Integer.valueOf(damagedQuantity.toString());
 		
-		if(deliveryItemQuantity == sumOfQuantity){
+		if(deliveryItemQuantity.intValue() == sumOfQuantity.intValue()){
 			String[] columns = new String[]{"PROCESSED_STAT","RCVD_DATE","ACCEPTED_QTY","MISSING_QTY","DAMAGED_QTY"};
 			String[] columnValues = new String[]{"1", date + " 00:00:00", acceptedQuantity.toString(), missingQuantity.toString(), damagedQuantity.toString()};
 			String table = "delivery_items";
