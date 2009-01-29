@@ -49,6 +49,8 @@ public class ReceiptPrinter {
 	public static final int TOTAL_QTY = 15;
 	public static final int CHANGE = 16;
 	public static final int OR_NO = 17;
+	public static final int GC_AMOUNT = 18;
+	public static final int SUB_TOTAL = 19;
 	
 	private List<String[]> items;
 	private List<String[]> payments;
@@ -105,7 +107,13 @@ public class ReceiptPrinter {
 		out.append("Vatable Sale               "+right(details[ReceiptPrinter.VATABLE_SALE],13)+"\n");
 		out.append("Discount                   "+right(details[ReceiptPrinter.DISCOUNT],13)+"\n");
 		out.append("VAT("+details[ReceiptPrinter.VAT_PERCENT]+"%)                 "+right(details[ReceiptPrinter.VAT_VALUE],13)+"\n");
-		out.append("VAT-Excempt Sale                        \n\n");
+		out.append("VAT-Excempt Sale                        \n");
+		
+		if(details[ReceiptPrinter.GC_AMOUNT].length() > 0){
+			out.append(left("Sub-Total",20)+right(details[ReceiptPrinter.SUB_TOTAL],20)+"\n");
+			out.append(left("Less GC Payment",20)+right(details[ReceiptPrinter.GC_AMOUNT],20)+"\n");
+		}
+		out.append("\n");
 		out.append("=================TOTAL==================\n");
 		out.append(left("No of items ("+details[ReceiptPrinter.TOTAL_QTY]+")",20)+right(details[ReceiptPrinter.TOTAL_AMOUNT],20)+"\n");
 		out.append("========================================\n\n");

@@ -1349,6 +1349,9 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		}
 		
 		
+		//GC ITEM Population
+		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
+		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 		
 		//receipts
@@ -1358,7 +1361,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		if(Double.valueOf(amountLabel.getText()) > 0 ){
 			changeValue = changeTextField.getText();
 		}
-		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeValue);
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeValue);
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);

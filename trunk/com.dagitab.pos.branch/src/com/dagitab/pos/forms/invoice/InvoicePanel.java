@@ -1147,10 +1147,13 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 		}
 		
+		//GC ITEM Population
+		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
+		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 		
 		//MAKE RECEIPT
-		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeField.getText());
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeField.getText());
 		
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);

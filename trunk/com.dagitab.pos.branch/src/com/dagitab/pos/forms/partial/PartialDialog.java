@@ -26,6 +26,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import com.cloudgarden.layout.AnchorConstraint;
@@ -682,8 +683,11 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 			}
 		}
 		
+		//GC ITEM population
+		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
+		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeTextField.getText());
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeTextField.getText());
 		
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);

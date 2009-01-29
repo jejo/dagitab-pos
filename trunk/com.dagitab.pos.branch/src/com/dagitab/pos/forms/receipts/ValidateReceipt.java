@@ -85,7 +85,7 @@ public class ValidateReceipt extends javax.swing.JDialog {
 						
 						List<String[]> items = ReceiptUtilities.getReceiptUtilities().getItems(receiptPanel.getInvoiceItems());
 						List<String[]> payments = ReceiptUtilities.getReceiptUtilities().getPayments(receiptPanel.getPaymentItems(), receiptPanel.getGCItems());
-						String[] details = ReceiptUtilities.getReceiptUtilities().getReceiptDetails(receiptPanel.getInvoice(), receiptPanel.getInvoiceItems(), receiptPanel.getChangeAmount());
+						String[] details = ReceiptUtilities.getReceiptUtilities().getReceiptDetails(receiptPanel.getInvoice(), receiptPanel.getInvoiceItems(), receiptPanel.getGCItems(), receiptPanel.getChangeAmount());
 						
 						ReceiptPrinter receiptPrinter = new ReceiptPrinter(items, payments, details);
 						try {

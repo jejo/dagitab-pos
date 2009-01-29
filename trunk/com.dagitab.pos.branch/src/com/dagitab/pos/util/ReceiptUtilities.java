@@ -30,8 +30,8 @@ public class ReceiptUtilities {
 	private ReceiptUtilities(){}
 	
 	
-	public String[] getReceiptDetails(Invoice invoice, List<InvoiceItem> invoiceItems, String changeAmount){
-		String[] details = new String[18];
+	public String[] getReceiptDetails(Invoice invoice, List<InvoiceItem> invoiceItems, List<GCItem> gcItems, String changeAmount){
+		String[] details = new String[20];
     	details[ReceiptPrinter.COMPANY_NAME] = "BABYLAND, INC";
     	String[] address = ReceiptUtilities.getReceiptUtilities().splitString(StoreService.getStoreAddress(Integer.parseInt(Main.getStoreCode())));
     	details[ReceiptPrinter.ADDRESS_LINE_1] = address[0];
@@ -52,9 +52,22 @@ public class ReceiptUtilities {
     	details[ReceiptPrinter.TOTAL_AMOUNT] = getTotalAmount(invoiceItems);
     	details[ReceiptPrinter.TOTAL_QTY] = getTotalQty(invoiceItems);
     	details[ReceiptPrinter.CHANGE] = changeAmount;
-    	
+    	details[ReceiptPrinter.GC_AMOUNT] = "";
+    	if(gcItems.size() > 0){
+    		Double totalGCAmount = 0.0d;
+    		Double subTotalAmount = Double.valueOf(getTotalAmount(invoiceItems));
+    		for(int i = 0; i< gcItems.size(); i++){
+				 GCItem gcItem = gcItems.get(i);
+				 totalGCAmount += gcItem.getAmount();
+			 }
+    		Double grandTotal = subTotalAmount - totalGCAmount;
+    		if(grandTotal < 0) grandTotal = 0.0d;
+    		 
+    		 details[ReceiptPrinter.TOTAL_AMOUNT] = String.format("%.2f", grandTotal);
+			 details[ReceiptPrinter.SUB_TOTAL] = String.format("%.2f", subTotalAmount);
+			 details[ReceiptPrinter.GC_AMOUNT] = String.format("%.2f", totalGCAmount);
+		}
     	return details;
-		
 	}
 	
 	public String getTotalQty(List<InvoiceItem> invoiceItems){
@@ -145,20 +158,14 @@ public class ReceiptUtilities {
 		 for(int i = 0; i<paymentItems.size(); i++){
 			 String[] row = new String[2];
 			 PaymentItem paymentItem = paymentItems.get(i);
-			 row[0] = PaymentTypeService.getPaymentName(paymentItem.getPaymentCode());
-			 row[1] = String.format("%.2f",paymentItem.getAmount());
-			 results.add(row);
+			 if(!paymentItem.getPaymentCode().equals(4)){
+				 row[0] = PaymentTypeService.getPaymentName(paymentItem.getPaymentCode());
+				 row[1] = String.format("%.2f",paymentItem.getAmount());
+				 results.add(row);
+			 }
 		 }
 		 
-		 for(int i = 0; i< gcItems.size(); i++){
-			 String[] row = new String[2];
-			 GCItem gcItem = gcItems.get(i);
-			 row[0] = "Gift Certificate";
-			 row[1] = String.format("%.2f",gcItem.getAmount());
-			 results.add(row);
-		 }
-		 
-		 return results;
+		return results;
 	}
 	
 	public List<String[]> getItems(List<InvoiceItem> invoiceItems){

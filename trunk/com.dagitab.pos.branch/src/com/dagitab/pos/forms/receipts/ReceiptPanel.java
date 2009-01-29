@@ -393,10 +393,17 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 
 		 topMarker+=20;
 		 
-		 g.setFont(new Font("Arial", Font.BOLD, 11));
+		 if(gcItems.size() > 0){
+			 g.setFont(new Font("Arial", Font.PLAIN, 10));
+			 g.drawString("SUBTOTAL",5,topMarker);
+		 }
+		 else{
+			 g.setFont(new Font("Arial", Font.BOLD, 11));
+			 g.drawString("TOTAL",5,topMarker);
+		 }
 		 
 		 /***TOTAL**/
-		 g.drawString("TOTAL",5,topMarker);
+		
 		 
 		 logger.info("Total Amount:" +sellingSubTotal);
 		 
@@ -406,7 +413,39 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", totalAmount));
 		 g.drawString(String.format("%.2f", totalAmount), xpos, topMarker); //disc amount
 		 topMarker+=15;
-		  
+		 
+		 
+		 if(gcItems.size() > 0){
+			 g.drawString("LESS",5,topMarker);
+			 topMarker+=15;
+			 
+			 g.setFont(new Font("Arial", Font.PLAIN, 10));
+			 
+			 Double totalGCAmount = 0.0d;
+			 for(int i = 0; i< gcItems.size(); i++){
+				 GCItem gcItem = gcItems.get(i);
+				 totalGCAmount += gcItem.getAmount();
+				 
+			 }
+			 
+			 g.drawString("Gift Certificate", 10, topMarker); //Hard coded for GC payment type
+			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f",totalGCAmount));
+			 g.drawString(String.format("%.2f", totalGCAmount), xpos, topMarker); //payment amount
+			 topMarker+=20;
+			 
+			 /***GRAND TOTAL**/
+			 g.setFont(new Font("Arial", Font.BOLD, 11));
+			 g.drawString("TOTAL",5,topMarker);
+			 //	for right justified compute 190 - string size*5 as first position
+//			 double Total = Double.parseDouble(String.format("%.2f", vatablepurchase))+Double.parseDouble(vatAmount);
+			 Double grandTotal = totalAmount - totalGCAmount; 
+			 if(grandTotal < 0) grandTotal = 0.0d;
+			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", grandTotal));
+			 g.drawString(String.format("%.2f", grandTotal), xpos, topMarker); //disc amount
+			 topMarker+=15;
+		 }
+		 
+		 
 		 g.setFont(new Font("Arial", Font.PLAIN, 10));
 		 
 		 
@@ -431,25 +470,17 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 g.setFont(new Font("Arial", Font.PLAIN, 10));
 		 
 		 for(int i = 0; i<paymentItems.size(); i++){
-			 PaymentItem paymentItem = paymentItems.get(i); 
-			 g.drawString(PaymentTypeService.getPaymentName(paymentItem.getPaymentCode()),10,topMarker);//Payment Types
-//				for right justified compute 190 - string size*5 as first position
-			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f",paymentItem.getAmount()));
-			 g.drawString(String.format("%.2f",paymentItem.getAmount()), xpos, topMarker); //payment amount
-			 topMarker+=20;
+			 PaymentItem paymentItem = paymentItems.get(i);
+			 if(!paymentItem.getPaymentCode().equals(4)){
+				 g.drawString(PaymentTypeService.getPaymentName(paymentItem.getPaymentCode()),10,topMarker);//Payment Types
+	//				for right justified compute 190 - string size*5 as first position
+				 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f",paymentItem.getAmount()));
+				 g.drawString(String.format("%.2f",paymentItem.getAmount()), xpos, topMarker); //payment amount
+				 topMarker+=20;
+			 }
 		 }
 		 
-		 for(int i = 0; i< gcItems.size(); i++){
-			 GCItem gcItem = gcItems.get(i);
-			 g.drawString("Gift Certificate", 10, topMarker); //Hard coded for GC payment type
-//				for right justified compute 190 - string size*5 as first position
-			 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f",gcItem.getAmount()));
-			 g.drawString(String.format("%.2f",gcItem.getAmount()), xpos, topMarker); //payment amount
-			 topMarker+=20;
-		 }
-		 
-		 
-		 /*CHANGE OR BALANCE*/
+		
 		 
 		 //Partial Transactions don't have change, change means balance amount
 		 //partial
