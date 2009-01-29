@@ -57,18 +57,83 @@ public class ComplianceService {
 				
 				
 				dailySale = rs.getDouble(1);
-				logger.info("Raw Gross BEFORE SUBTRACTION: "+dailySale);
+				logger.debug("Raw Gross BEFORE SUBTRACTION: "+dailySale);
 				
-				dailySale = dailySale - getReturnedItemsAmount(month, day, year, storeCode);
-				logger.info("Raw Gross AFTER SUBTRACTION: "+dailySale);
+				dailySale = dailySale - getDeductibles(month, day, year, storeCode);
+				logger.debug("Raw Gross AFTER SUBTRACTION: "+dailySale);
 			}
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("Raw Gross: "+dailySale);
+		logger.debug("Raw Gross: "+dailySale);
 		return dailySale;
 	}
 	
+	public Double getGiftCheckAmount(int month, int day, int year, int storeCode, int...hour ) {
+		String query = "SELECT SUM(g.AMOUNT) FROM invoice o, gc_item g WHERE o.OR_NO = g.OR_NO and o.STORE_CODE = g.STORE_CODE and MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"'";
+		
+		if (hour.length > 0) {
+			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
+		}
+		logger.debug("GIFTCHECK AMOUNT QUERY="+query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double giftCheckAmount = 0.0d;
+		try {
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				
+				
+				giftCheckAmount = rs.getDouble(1);
+				logger.debug("Gift Check Amount: "+giftCheckAmount);
+				return giftCheckAmount;
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
+		
+	}
+	
+	public Double getDeductibles(int month, int day, int year, int storeCode, int...hour ) {
+		return getReturnedItemsAmount(month, day, year, storeCode) + getGiftCheckAmount(month, day, year, storeCode, hour);
+	}
+	
+	public Double getDeductibles(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		return getReturnedItemsAmount(transDate, eodDate, storeCode) + getDeductibles(transDate, eodDate, storeCode);
+	}
+	
+	public Double getGiftCheckAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT SUM(g.AMOUNT) FROM invoice o, gc_item g WHERE o.OR_NO = g.OR_NO and o.STORE_CODE = g.STORE_CODE and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND o.STORE_CODE = ?";
+		
+		PreparedStatement pquery;
+		ResultSet rs = null;
+		try {
+			pquery = Main.getDBManager().getConnection().prepareStatement(query);
+			
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
+			pquery.setInt(3, storeCode);
+			logger.debug("TRANS DATE BEFORE"+transDate.toLocaleString());
+			logger.debug("TRANS DATE BEFORE"+eodDate.toLocaleString());
+			
+			Double giftCheckAmount = 0.0d;
+			rs = pquery.executeQuery();
+			
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				logger.debug("Gift Check Amount: "+giftCheckAmount);
+				return giftCheckAmount;
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+
+	}
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND o.STORE_CODE = ?";
@@ -81,8 +146,8 @@ public class ComplianceService {
 			pquery.setTimestamp(1, transDate);
 			pquery.setTimestamp(2, eodDate);
 			pquery.setInt(3, storeCode);
-			logger.info("TRANS DATE BEFORE"+transDate.toLocaleString());
-			logger.info("TRANS DATE BEFORE"+eodDate.toLocaleString());
+			logger.debug("TRANS DATE BEFORE"+transDate.toLocaleString());
+			logger.debug("TRANS DATE BEFORE"+eodDate.toLocaleString());
 			
 			Double dailySale = 0.0d;
 			rs = pquery.executeQuery();
@@ -91,10 +156,10 @@ public class ComplianceService {
 //				double amount = rs.getDouble(1);
 //				dailySale = amount/getVatRate();
 				dailySale = rs.getDouble(1);
-				logger.info("Raw Gross BEFORE SUBTRACTION: "+dailySale);
+				logger.debug("Raw Gross BEFORE SUBTRACTION: "+dailySale);
 				// SUBTRACT all returned items
-				dailySale = dailySale - getReturnedItemsAmount(transDate, eodDate, storeCode);
-				logger.info("Raw Gross AFTER RETURNED SUBTRACTION: "+dailySale);
+				dailySale = dailySale - getDeductibles(transDate, eodDate, storeCode);
+				logger.debug("Raw Gross AFTER RETURNED SUBTRACTION: "+dailySale);
 				return dailySale;
 			}
 		} catch (SQLException e1) {
@@ -122,7 +187,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("New Grand Total: "+amount);
+		logger.debug("New Grand Total: "+amount);
 		return amount;
 	}
 	
@@ -146,7 +211,7 @@ public class ComplianceService {
 				amount = rs.getDouble(1);
 			}
 		
-			logger.info("New Grand Total: "+amount);
+			logger.debug("New Grand Total: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -163,7 +228,7 @@ public class ComplianceService {
 		//ResultSet rs = main.getDb().executeQuery("SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE D (o.TRANS_DT) != '"+month+"' || YEAR(o.TRANS_DT) != '"+year+"' || DAY(o.TRANS_DT) != '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		String date = year + "-" + StringUtils.leftPad(month + "", 2, "0") + "-" + StringUtils.leftPad(day + "", 2,"0");
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE DATE (p.TRANS_DT) < str_to_date('"+date+"','%Y-%m-%d') AND p.STORE_CODE = '"+storeCode+"'");
-		//logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+		//logger.debug("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		Double amount = 0.0d;
 		try {
 			if(rs.next()){
@@ -172,7 +237,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("Old Grand Total: "+amount);
+		logger.debug("Old Grand Total: "+amount);
 		return amount;
 	}
 	
@@ -196,7 +261,7 @@ public class ComplianceService {
 				amount = rs.getDouble(1);
 			}
 		
-			logger.info("Old Grand Total: "+amount);
+			logger.debug("Old Grand Total: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -210,7 +275,7 @@ public class ComplianceService {
 		
 //		Double amount = getDailySale(month, year, day, storeCode) - getTotDisc(month, year, day, storeCode)+getVat(month, day, year, storeCode); 
 		Double amount = getRawGross(month, day, year, storeCode)/getVatRate();
-		logger.info("Raw Gross: "+amount);
+		logger.debug("Raw Gross: "+amount);
 		return  amount;
 //		return dailySale+totDisc+vat;
 	}
@@ -219,7 +284,7 @@ public class ComplianceService {
 		
 //		Double amount = getDailySale(month, year, day, storeCode) - getTotDisc(month, year, day, storeCode)+getVat(month, day, year, storeCode); 
 		Double amount = getRawGross(transDate, eodDate, storeCode)/getVatRate();
-		logger.info("Raw Gross: "+amount);
+		logger.debug("Raw Gross: "+amount);
 		return  amount;
 //		return dailySale+totDisc+vat;
 	}
@@ -248,7 +313,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("TOTAL DISCOUNT: "+ amount);
+		logger.debug("TOTAL DISCOUNT: "+ amount);
 		return amount;
 	}
 	
@@ -283,7 +348,7 @@ public class ComplianceService {
 				amount = rs.getDouble("NET_SALES");
 			}
 		
-			logger.info("Net Sales: "+amount);
+			logger.debug("Net Sales: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -324,7 +389,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("TOTAL DISCOUNT: "+ amount);
+		logger.debug("TOTAL DISCOUNT: "+ amount);
 		return amount;
 	}
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
@@ -362,7 +427,7 @@ public class ComplianceService {
 				amount += (InvoiceItemService.getInstance().getDiscountAmount(rs.getLong("OR_NO"),rs.getString("PROD_CODE"))) * rs.getDouble("QUANTITY");
 			}
 		
-			logger.info("Total Discount: "+amount);
+			logger.debug("Total Discount: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -382,7 +447,7 @@ public class ComplianceService {
 				"               and i.DISC_CODE != 1 )         " +
 				"AND o.STORE_CODE = '"+storeCode+"'";
 		
-		logger.info("getNoOfDisc="+query);
+		logger.debug("getNoOfDisc="+query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		
 		Integer count = 0;
@@ -393,7 +458,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("TOTAL NO OF DISCOUNT: "+ count);
+		logger.debug("TOTAL NO OF DISCOUNT: "+ count);
 		return count;
 	}
 	
@@ -406,7 +471,7 @@ public class ComplianceService {
 				"               and i.DISC_CODE != 1 )         " +
 				"AND o.STORE_CODE = ?";
 		
-		logger.info("getNoOfDisc="+query);
+		logger.debug("getNoOfDisc="+query);
 		PreparedStatement pquery;
 		ResultSet rs = null;
 		try {
@@ -424,7 +489,7 @@ public class ComplianceService {
 				count = rs.getInt("COUNT");
 			}
 		
-			logger.info("TOTAL NO OF DISCOUNT: "+ count);
+			logger.debug("TOTAL NO OF DISCOUNT: "+ count);
 			return count;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -439,7 +504,7 @@ public class ComplianceService {
 		Double dlysale = (amt - otherDiscountAmount)/getVatRate();
 		Double vat = amt - otherDiscountAmount - dlysale; 
 		
-		logger.info("VAT: "+vat);
+		logger.debug("VAT: "+vat);
 		return vat;
 	}
 	
@@ -449,7 +514,7 @@ public class ComplianceService {
 		Double dlysale = (amt - otherDiscountAmount)/getVatRate();
 		Double vat = amt - otherDiscountAmount - dlysale; 
 		
-		logger.info("VAT: "+vat);
+		logger.debug("VAT: "+vat);
 		return vat;
 	}
 	
@@ -458,7 +523,7 @@ public class ComplianceService {
 		Double dlysale = amt/getVatRate();
 		Double vat = amt - dlysale; 
 		
-		logger.info("CREDIT VAT: "+vat);
+		logger.debug("CREDIT VAT: "+vat);
 		return vat;
 	}
 	
@@ -467,7 +532,7 @@ public class ComplianceService {
 		Double dlysale = amt/getVatRate();
 		Double vat = amt - dlysale; 
 		
-		logger.info("CREDIT VAT: "+vat);
+		logger.debug("CREDIT VAT: "+vat);
 		return vat;
 	}
 	
@@ -481,7 +546,7 @@ public class ComplianceService {
 				                                   "  AND p.PT_CODE = 3"
 				                                   
 				                                   );
-		//logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+		//logger.debug("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		Double amt = 0.0d;
 		try {
 			while(rs.next()){
@@ -490,7 +555,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("CREDIT SALES: "+amt);
+		logger.debug("CREDIT SALES: "+amt);
 		return amt;
 	}
 	
@@ -517,7 +582,7 @@ public class ComplianceService {
 				amount = rs.getDouble(1);
 			}
 		
-			logger.info("CREDIT SALES: "+amount);
+			logger.debug("CREDIT SALES: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -536,7 +601,7 @@ public class ComplianceService {
 				                                   "' AND p.STORE_CODE = '"+storeCode+"'"+
 				                                   "  AND p.PT_CODE = " + paymentType);
 		
-		//logger.info("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
+		//logger.debug("SELECT SUM(i.SELL_PRICE) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'");
 		Double amt = 0.0d;
 		try {
 			while(rs.next()){
@@ -550,7 +615,7 @@ public class ComplianceService {
 		}
 		
 //		amt =  amt / VatService.getVatRate();
-		logger.info("PAYMENT TYPE=" + paymentType + " SALES: "+amt);
+		logger.debug("PAYMENT TYPE=" + paymentType + " SALES: "+amt);
 		return amt;
 	}
 	
@@ -567,7 +632,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("Vat Rate: "+subtractor);
+		logger.debug("Vat Rate: "+subtractor);
 		return subtractor;
 	}
 	
@@ -585,7 +650,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("Returned Items Amount: "+returnedItemsAmount);
+		logger.debug("Returned Items Amount: "+returnedItemsAmount);
 		return returnedItemsAmount;
 	}
 	
@@ -610,7 +675,7 @@ public class ComplianceService {
 				amount = rs.getDouble(1);
 			}
 		
-			logger.info("Returned Items: "+amount);
+			logger.debug("Returned Items: "+amount);
 			return amount;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -630,7 +695,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("Returned Items Quantity: "+returnedItemsQuantity);
+		logger.debug("Returned Items Quantity: "+returnedItemsQuantity);
 		return returnedItemsQuantity;
 	}
 	
@@ -654,7 +719,7 @@ public class ComplianceService {
 				count = rs.getInt(1);
 			}
 		
-			logger.info("TOTAL NO OF RETURNED ITEMS: "+ count);
+			logger.debug("TOTAL NO OF RETURNED ITEMS: "+ count);
 			return count;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -684,7 +749,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("TOTAL NO OF TRANSACTIONS: "+ count);
+		logger.debug("TOTAL NO OF TRANSACTIONS: "+ count);
 		return count;		
 	}
 	
@@ -710,7 +775,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		logger.info("TOTAL NO OF TRANSACTIONS: "+ count);
+		logger.debug("TOTAL NO OF TRANSACTIONS: "+ count);
 		return count;		
 	}
 	
@@ -736,7 +801,7 @@ public class ComplianceService {
 				count = rs.getInt("COUNT");
 			}
 		
-			logger.info("TOTAL NO OF TRANSACTIONS: "+ count);
+			logger.debug("TOTAL NO OF TRANSACTIONS: "+ count);
 			return count;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
