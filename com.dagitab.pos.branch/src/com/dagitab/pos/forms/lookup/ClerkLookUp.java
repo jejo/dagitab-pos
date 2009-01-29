@@ -18,9 +18,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import com.dagitab.pos.bus.ClerkService;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.TableUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
 
 
 /**

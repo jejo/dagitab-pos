@@ -28,12 +28,12 @@ import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.domain.InvoiceItem;
 import com.dagitab.pos.domain.Product;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.forms.pullouts.PullOutRequestDialog;
+import com.dagitab.pos.forms.returned.ReturnedPanel;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.TableUtility;
 import com.dagitab.pos.util.Validator;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
-import com.dagtiab.pos.forms.returned.ReturnedPanel;
 
 
 

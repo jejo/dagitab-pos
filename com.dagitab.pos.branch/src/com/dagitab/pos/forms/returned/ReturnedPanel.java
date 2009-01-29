@@ -1,9 +1,8 @@
-package com.dagtiab.pos.forms.returned;
+package com.dagitab.pos.forms.returned;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +25,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import org.apache.log4j.Logger;
-
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -58,7 +55,6 @@ import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.PaymentCalculatorUtility;
 import com.dagitab.pos.util.StringUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
 
 
 
@@ -1179,11 +1175,10 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		Double amount = replacedAmounts + returnedAmounts;
 		amountLabel.setText(String.format("%.2f", amount));
 		
-		
 		Double vatRate = VatService.getVatRate();
 		double subTotal = amount/vatRate;
 		subTotalTextField.setText(String.format("%.2f", subTotal));
-		vatAmountTextField.setText(String.format("%.2f", (amount - subTotal)));
+		vatAmountTextField.setText(String.format("%.2f", (amount - Double.valueOf(String.format("%.2f", subTotal)))));
 	}
 	
 	private AbstractAction getEditReturnedItemsAction() {

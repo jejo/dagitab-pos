@@ -26,9 +26,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import org.apache.log4j.Logger;
-
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -473,7 +471,7 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		Double subTotal = amount/vat;
 		totalAmountLabel.setText(String.format("%.2f", amount));
 		subTotalTextField.setText(String.format("%.2f", subTotal));
-		vatTextField.setText(String.format("%.2f", new Double(amount - subTotal)));
+		vatTextField.setText(String.format("%.2f", new Double(amount - Double.valueOf(String.format("%.2f", subTotal)))));
 		Double totalPaymentAmount = PaymentItemService.getInstance().getTotalPaymentAmount(invoice.getOrNo());
 		totalPaymentTextField.setText(String.format("%.2f",totalPaymentAmount));
 		Double change = totalPaymentAmount - amount;

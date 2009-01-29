@@ -4,21 +4,18 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
-
 
 import org.apache.log4j.Logger;
+
+import bus.InvoiceService;
 
 import com.dagitab.pos.bus.ClerkService;
 import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.InvoiceItemService;
-import com.dagitab.pos.bus.InvoiceService;
 import com.dagitab.pos.bus.PaymentTypeService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.bus.ReturnItemService;
@@ -30,12 +27,12 @@ import com.dagitab.pos.domain.Invoice;
 import com.dagitab.pos.domain.InvoiceItem;
 import com.dagitab.pos.domain.PaymentItem;
 import com.dagitab.pos.domain.Product;
-import com.dagitab.pos.main.DBManager;
 import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.ReceiptUtilities;
 import com.dagitab.pos.util.StorePropertyHandler;
 import com.dagitab.pos.util.StringUtility;
+
 
 
 /**
@@ -106,7 +103,8 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			this.setPreferredSize(new java.awt.Dimension(203, height));
 			this.setLayout(null);
 			this.setBackground(new java.awt.Color(255,255,255));
-			this.setBorder(BorderFactory.createTitledBorder(""));
+//			this.setBorder(BorderFactory.createTitledBorder(""));
+			this.setBorder(BorderFactory.createEmptyBorder());
 			{
 				//1st label for babyland, inc.
 				babylandHeader1Label = new JLabel();
@@ -329,6 +327,8 @@ public class ReceiptPanel extends javax.swing.JPanel {
 			
 		 }
 		 
+		 
+		 
 		 g.drawLine(5, topMarker, 190, topMarker); //line after Items
 		 
 		 topMarker+=20;
@@ -371,13 +371,20 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		
 		 //vat amount 12% of Vatable Sale
 		 
-		 Double amt = vatablePurchase * (Double.parseDouble(vatValue)/100);
-		 logger.info(amt);
-		 vatAmount = String.format("%.2f",amt);
+//			for right justified compute 190 - string size*5 as first position
 		 g.drawString("VAT("+vatValue+"%)",5,topMarker);
 		 
-		 //	for right justified compute 190 - string size*5 as first position
+		 
+		 
+		 
+		 
+		 
+		 Double totalAmount = Double.parseDouble(String.format("%.2f", sellingSubTotal));
+		 
+		 vatAmount = String.format("%.2f", totalAmount - Double.valueOf(String.format("%.2f", vatablePurchase)));
+		 
 		 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(vatAmount);
+		 
 		 g.drawString(vatAmount, xpos, topMarker); //disc amount
 		 
 		 topMarker+=15;
@@ -392,9 +399,10 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 g.drawString("TOTAL",5,topMarker);
 		 
 		 logger.info("Total Amount:" +sellingSubTotal);
+		 
 		 //	for right justified compute 190 - string size*5 as first position
 //		 double Total = Double.parseDouble(String.format("%.2f", vatablepurchase))+Double.parseDouble(vatAmount);
-		 Double totalAmount = Double.parseDouble(String.format("%.2f", sellingSubTotal));
+		 
 		 xpos = ReceiptUtilities.getReceiptUtilities().findNormalAmountXPos(String.format("%.2f", totalAmount));
 		 g.drawString(String.format("%.2f", totalAmount), xpos, topMarker); //disc amount
 		 topMarker+=15;
@@ -495,6 +503,26 @@ public class ReceiptPanel extends javax.swing.JPanel {
 
 	public void setChangeAmount(String changeAmount) {
 		this.changeAmount = changeAmount;
+	}
+	
+	public List<InvoiceItem> getInvoiceItems(){
+		return this.invoiceItems;
+	}
+	
+	public List<PaymentItem> getPaymentItems(){
+		return this.paymentItems;
+	}
+	
+	public Invoice getInvoice(){
+		return this.invoice;
+	}
+	
+	public String getChangeAmount(){
+		return this.changeAmount;
+	}
+	
+	public List<GCItem> getGCItems(){
+		return this.gcItems;
 	}
 
 	

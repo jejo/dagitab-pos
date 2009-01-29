@@ -1,4 +1,4 @@
-package com.dagtiab.pos.forms.returned;
+package com.dagitab.pos.forms.returned;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;

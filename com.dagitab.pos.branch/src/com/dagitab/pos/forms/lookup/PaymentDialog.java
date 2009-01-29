@@ -20,10 +20,10 @@ import org.apache.log4j.Logger;
 import com.dagitab.pos.bus.PaymentItemService;
 import com.dagitab.pos.bus.PaymentTypeService;
 import com.dagitab.pos.domain.PaymentItem;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.forms.partial.PartialDialog;
+import com.dagitab.pos.forms.returned.ReturnedPanel;
 import com.dagitab.pos.util.LoggerUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
-import com.dagtiab.pos.forms.returned.ReturnedPanel;
 
 
 
