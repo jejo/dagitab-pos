@@ -15,14 +15,13 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.dagitab.pos.domain.Transaction;
 import com.dagitab.pos.forms.MainWindow;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.TableUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
 
 
 @SuppressWarnings("serial")

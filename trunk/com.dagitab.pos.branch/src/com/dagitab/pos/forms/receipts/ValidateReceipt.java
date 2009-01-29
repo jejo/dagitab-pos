@@ -4,22 +4,22 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Vector;
+import java.util.List;
 
+import javax.print.PrintException;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
-
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
-import com.dagitab.pos.main.DBManager;
 import com.dagitab.pos.util.LoggerUtility;
-import com.dagitab.pos.util.PrintUtilities;
+import com.dagitab.pos.util.ReceiptPrinter;
+import com.dagitab.pos.util.ReceiptUtilities;
 
 
 /**
@@ -35,10 +35,12 @@ import com.dagitab.pos.util.PrintUtilities;
 @SuppressWarnings("serial")
 public class ValidateReceipt extends javax.swing.JDialog {
 	private JScrollPane receiptPanelScrollPane;
+	private JScrollPane headerPanelScrollPane;
+	private JScrollPane footerPanelScrollPane;
 	private JButton printButton;
 	private JLabel receiptLabel;
 	private ReceiptPanel receiptPanel;
-
+	
 	{
 		// Set Look & Feel
 		try {
@@ -54,6 +56,10 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		this.receiptPanel = receiptPanel;
 		initGUI();
 	}
+	
+	
+	
+	
 	
 	private void initGUI() {
 		try {
@@ -75,7 +81,19 @@ public class ValidateReceipt extends javax.swing.JDialog {
 				printButton.setPreferredSize(new java.awt.Dimension(98, 28));
 				printButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
-						PrintUtilities.printComponent(receiptPanel);
+						
+						
+						List<String[]> items = ReceiptUtilities.getReceiptUtilities().getItems(receiptPanel.getInvoiceItems());
+						List<String[]> payments = ReceiptUtilities.getReceiptUtilities().getPayments(receiptPanel.getPaymentItems(), receiptPanel.getGCItems());
+						String[] details = ReceiptUtilities.getReceiptUtilities().getReceiptDetails(receiptPanel.getInvoice(), receiptPanel.getInvoiceItems(), receiptPanel.getChangeAmount());
+						
+						ReceiptPrinter receiptPrinter = new ReceiptPrinter(items, payments, details);
+						try {
+							receiptPrinter.printReceipt();
+						} catch (PrintException e) {
+							JOptionPane.showMessageDialog(null, "Error occured. Please restart printing.","Error",JOptionPane.ERROR_MESSAGE);
+						}
+						
 					}
 				});
 			}
@@ -107,6 +125,7 @@ public class ValidateReceipt extends javax.swing.JDialog {
 						212, 413));
 				receiptPanelScrollPane.setViewportView(receiptPanel);
 			}
+			
 			this.setSize(296, 559);
 		} catch (Exception e) {
 			LoggerUtility.getInstance().logStackTrace(e);
@@ -123,8 +142,6 @@ public class ValidateReceipt extends javax.swing.JDialog {
 		return receiptLabelAction;
 	}
 
-	public void setReceiptPanel(ReceiptPanel receiptPanel) {
-		this.receiptPanel = receiptPanel;
-	}
+	
 
 }

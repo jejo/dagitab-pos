@@ -65,6 +65,8 @@ public class ReceiptPrinter {
 		print(data);
 	}
 	
+	
+	
 	private byte[] convertToByteArray(List<String[]> items, List<String[]> payments, String[] details) {
 		StringBuilder out = new StringBuilder();
 		
@@ -118,6 +120,7 @@ public class ReceiptPrinter {
 			out.append('\n');
 		}
 		out.append('\n');
+		out.append("CHANGE"+right(details[ReceiptPrinter.CHANGE], 34)+"\n\n");
 		out.append(center(details[ReceiptPrinter.FOOTER_MESSAGE_1], 40)+"\n");
 		out.append(center(details[ReceiptPrinter.FOOTER_MESSAGE_2], 40)+"\n\n");
 		out.append(center(details[ReceiptPrinter.COMPANY_NAME], 40)+"\n");
@@ -213,13 +216,13 @@ public class ReceiptPrinter {
         		items.add(values);
         	}
         	
+        	
         	// Example Payments Data
         	List<String[]> payments = new ArrayList<String[]>();
         	String[] payment = new String[2];
         	payment[0] = "Credit Card";
         	payment[1] = "1179.50";
         	payments.add(payment);
-        	
         	// Assign The Details
         	String[] details = new String[18];
         	details[ReceiptPrinter.COMPANY_NAME] = "BABYLAND, INC";

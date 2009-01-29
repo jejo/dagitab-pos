@@ -3,8 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -23,10 +21,10 @@ import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.domain.InvoiceItem;
 import com.dagitab.pos.domain.Product;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.StringUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
 
 
 /**

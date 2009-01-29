@@ -12,8 +12,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.dagitab.pos.bus.DiscountService;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
-import com.dagtiab.pos.forms.returned.ReturnedPanel;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
+import com.dagitab.pos.forms.returned.ReturnedPanel;
 
 
 /**

@@ -1,12 +1,6 @@
 package com.dagitab.pos.forms;
 
-import java.awt.AWTException;
 import java.awt.Frame;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -17,20 +11,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.dagitab.pos.domain.Transaction;
 import com.dagitab.pos.forms.deferred.DeferredPanel;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.forms.partial.PartialPanel;
 import com.dagitab.pos.forms.pending.PendingPanel;
+import com.dagitab.pos.forms.returned.ReturnedPanel;
 import com.dagitab.pos.util.LoggerUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
-import com.dagtiab.pos.forms.returned.ReturnedPanel;
 
 
 /**

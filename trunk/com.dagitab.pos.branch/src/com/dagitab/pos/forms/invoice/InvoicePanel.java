@@ -1,11 +1,10 @@
-package com.dagtiab.pos.forms.invoice;
+package com.dagitab.pos.forms.invoice;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +27,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import org.apache.log4j.Logger;
 
+import bus.InvoiceService;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.GCItemService;
 import com.dagitab.pos.bus.InvoiceItemService;
-import com.dagitab.pos.bus.InvoiceService;
 import com.dagitab.pos.bus.PaymentItemService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.bus.VatService;
@@ -858,7 +856,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		}
 		double subTotal = amount/vatRate;
 		txtSubTotal.setText(String.format("%.2f", subTotal));
-		txtVat.setText(String.format("%.2f", (amount - subTotal)));
+		txtVat.setText(String.format("%.2f", (amount - Double.valueOf(String.format("%.2f", subTotal)))));
 		lblAmount.setText(String.format("%.2f", amount));
 	}
 	
@@ -1153,6 +1151,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		
 		//MAKE RECEIPT
 		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems,changeField.getText());
+		
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);

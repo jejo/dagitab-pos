@@ -6,22 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
-
 import com.babyland.sync.SyncManager;
 import com.babyland.sync.SyncProgressListener;
 import com.dagitab.pos.forms.LoginDialog;
 import com.dagitab.pos.forms.MainWindow;
+import com.dagitab.pos.forms.invoice.InvoicePanel;
 import com.dagitab.pos.util.LoggerUtility;
-import com.dagtiab.pos.forms.invoice.InvoicePanel;
 
 
 public class Main {
