@@ -59,5 +59,7 @@ public interface Payments {
 	
 	public boolean isGCGreaterThanAmount( Integer paymentCode,  Double gcAmount);
 	
+	public Double getTotalGCPayments();
+	
 	
 }

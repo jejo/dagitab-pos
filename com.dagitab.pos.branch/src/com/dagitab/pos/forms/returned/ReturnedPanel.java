@@ -961,12 +961,14 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	public void addPaymentItem(PaymentItem paymentItem) {
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		
-
+		Double totalGCPayments =  getTotalGCPayments();
 		//special handling when inserting gc, manipulate gc amount by making it exact with the invoice amount
 		if(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 			Double invoiceAmount = Double.parseDouble(amountLabel.getText());
-			if(paymentItem.getAmount() > invoiceAmount){
-				paymentItem.setAmount(invoiceAmount);
+			Double newTotalGCPayments = totalGCPayments + paymentItem.getAmount();
+			if(newTotalGCPayments > invoiceAmount){
+				Double amount =  (invoiceAmount - totalGCPayments);
+				paymentItem.setAmount(amount);
 			}
 		}
 		
@@ -986,12 +988,14 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 		int index = getPaymentItemRow(Integer.parseInt(paymentCode));
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		
-		
+		Double totalGCPayments =  getTotalGCPayments();
 		//special handling when inserting gc, manipulate gc amount by making it exact with the invoice amount
 		if(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
 			Double invoiceAmount = Double.parseDouble(amountLabel.getText());
-			if(paymentItem.getAmount() > invoiceAmount){
-				paymentItem.setAmount(invoiceAmount);
+			Double newTotalGCPayments = totalGCPayments + paymentItem.getAmount();
+			if(newTotalGCPayments > invoiceAmount){
+				Double amount =  (invoiceAmount - totalGCPayments);
+				paymentItem.setAmount(amount);
 			}
 		}
 		
@@ -1444,6 +1448,18 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			return true;
 		}
 		return false;
+	}
+	
+	public Double getTotalGCPayments(){
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		Double gcAmountTotal = 0.0d;
+		for(int i = 0; i<model.getRowCount(); i++){
+			
+			if(model.getValueAt(i, 1).toString().equals("Gift Certificate")){
+				gcAmountTotal += Double.parseDouble(model.getValueAt(i, 2).toString());
+			}
+		}
+		return gcAmountTotal;
 	}
 
 }
