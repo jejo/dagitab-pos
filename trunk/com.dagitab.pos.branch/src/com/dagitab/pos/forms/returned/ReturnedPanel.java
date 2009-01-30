@@ -960,6 +960,16 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	@Override
 	public void addPaymentItem(PaymentItem paymentItem) {
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		
+
+		//special handling when inserting gc, manipulate gc amount by making it exact with the invoice amount
+		if(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+			Double invoiceAmount = Double.parseDouble(amountLabel.getText());
+			if(paymentItem.getAmount() > invoiceAmount){
+				paymentItem.setAmount(invoiceAmount);
+			}
+		}
+		
 		model.addRow(new String[]{paymentItem.getPaymentCode().toString(),
 								  PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()),
 								  paymentItem.getAmount().toString(),
@@ -975,6 +985,16 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 	public void editPaymentItem(PaymentItem paymentItem, String paymentCode) {
 		int index = getPaymentItemRow(Integer.parseInt(paymentCode));
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		
+		
+		//special handling when inserting gc, manipulate gc amount by making it exact with the invoice amount
+		if(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+			Double invoiceAmount = Double.parseDouble(amountLabel.getText());
+			if(paymentItem.getAmount() > invoiceAmount){
+				paymentItem.setAmount(invoiceAmount);
+			}
+		}
+		
 		model.setValueAt(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()), index, 1);
 		model.setValueAt(paymentItem.getAmount(), index, 2);
 		model.setValueAt(paymentItem.getCardType().toString(), index, 3);
@@ -1406,6 +1426,24 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 			totalPayment += Double.valueOf(paymentTable.getValueAt(i, 2).toString());
 		}
 		return totalPayment;
+	}
+
+	@Override
+	public boolean isGCGreaterThanAmount(Integer paymentCode, Double gcAmount) {
+		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
+		Double gcAmountTotal = 0.0d;
+		for(int i = 0; i<model.getRowCount(); i++){
+			
+			if(model.getValueAt(i, 1).toString().equals("Gift Certificate")){
+				gcAmountTotal += Double.parseDouble(model.getValueAt(i, 2).toString());
+			}
+		}
+		Double amount = Double.parseDouble(amountLabel.getText());
+		logger.debug("GC Total Amount: "+gcAmountTotal+" amount: "+amount);
+		if(gcAmountTotal >= amount){
+			return true;
+		}
+		return false;
 	}
 
 }
