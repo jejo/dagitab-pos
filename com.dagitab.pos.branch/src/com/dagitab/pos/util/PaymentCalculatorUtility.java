@@ -44,7 +44,7 @@ public class PaymentCalculatorUtility {
 					amount -= paymentAmount;
 				}
 				else
-					amountToBe = paymentAmount;
+					amountToBe = amount; //CHANGE to record the exact amount of gc rendered
 			}
 			else if(payType.equals("Credit Card")){
 				if(amount > paymentAmount){
@@ -74,11 +74,11 @@ public class PaymentCalculatorUtility {
 		}
 		
 		for(PaymentItem paymentItem: items){
-			logger.info(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+			logger.debug(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
 		}
 		
 		for(PaymentItem paymentItem: calculatedPaymentItems){
-			logger.info(paymentItem.getPaymentType());
+			logger.debug("calculated: "+paymentItem.getPaymentType()+": "+paymentItem.getAmount());
 		}
 		return calculatedPaymentItems;
 	}

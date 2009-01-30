@@ -211,25 +211,33 @@ public class PaymentDialog extends javax.swing.JDialog {
 									InvoicePanel invoicePanel = (InvoicePanel)invoker;
 								
 									if(actionProdCode.equals("add")){
-										if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
-											invoicePanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!invoicePanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
-											invoicePanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!invoicePanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
-											invoicePanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!invoicePanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
-											invoicePanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
+										if(!invoicePanel.isGCGreaterThanAmount(paymentItem.getPaymentCode(), paymentItem.getAmount())){
+											if(!invoicePanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+												invoicePanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!invoicePanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+												invoicePanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!invoicePanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+												invoicePanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!invoicePanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+												invoicePanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											
+											else{
+												JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
 										}
 										else{
-											JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											JOptionPane.showMessageDialog(PaymentDialog.this,"GC Amount is already greater than invoice amount","Prompt",JOptionPane.ERROR_MESSAGE);
 										}
+										
+										
 									}
 									else { //edit
 										invoicePanel.editPaymentItem(paymentItem, actionProdCode);
@@ -240,24 +248,30 @@ public class PaymentDialog extends javax.swing.JDialog {
 									logger.info("invoking instance of partial dialog from payment dialog");
 									PartialDialog partialDialog = (PartialDialog)invoker;
 									if(actionProdCode.equals("add")){
-										if(!partialDialog.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
-											partialDialog.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!partialDialog.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
-											partialDialog.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!partialDialog.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
-											partialDialog.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!partialDialog.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
-											partialDialog.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
+										
+										if(!partialDialog.isGCGreaterThanAmount(paymentItem.getPaymentCode(), paymentItem.getAmount())){
+											if(!partialDialog.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+												partialDialog.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!partialDialog.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+												partialDialog.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!partialDialog.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+												partialDialog.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!partialDialog.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+												partialDialog.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else{
+												JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
 										}
 										else{
-											JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											JOptionPane.showMessageDialog(PaymentDialog.this,"GC Amount is already greater than invoice amount","Prompt",JOptionPane.ERROR_MESSAGE);
 										}
 									}
 									else{ //edit
@@ -269,24 +283,29 @@ public class PaymentDialog extends javax.swing.JDialog {
 									logger.info("invoking instance of returned panel from payment dialog");
 									ReturnedPanel returnedPanel = (ReturnedPanel)invoker;
 									if(actionProdCode.equals("add")){
-										if(!returnedPanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
-											returnedPanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!returnedPanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
-											returnedPanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!returnedPanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
-											returnedPanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
-										}
-										else if(!returnedPanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
-											returnedPanel.addPaymentItem(paymentItem);
-											paymentDialog.setVisible(false);
+										if(!returnedPanel.isGCGreaterThanAmount(paymentItem.getPaymentCode(), paymentItem.getAmount())){
+											if(!returnedPanel.hasCashPayment(paymentItem.getPaymentCode()) && PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Cash")){
+												returnedPanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!returnedPanel.hasCardNo(paymentItem.getPaymentCode(), paymentItem.getCardNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Credit Card")){
+												returnedPanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!returnedPanel.hasCheckNo(paymentItem.getPaymentCode(), paymentItem.getCheckNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Bank Check")){
+												returnedPanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else if(!returnedPanel.hasGcNo(paymentItem.getPaymentCode(), paymentItem.getGcNo())&& PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()).equals("Gift Certificate")){
+												returnedPanel.addPaymentItem(paymentItem);
+												paymentDialog.setVisible(false);
+											}
+											else{
+												JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											}
 										}
 										else{
-											JOptionPane.showMessageDialog(PaymentDialog.this,"Payment already exists  in the table.","Prompt",JOptionPane.ERROR_MESSAGE);
+											JOptionPane.showMessageDialog(PaymentDialog.this,"GC Amount is already greater than invoice amount","Prompt",JOptionPane.ERROR_MESSAGE);
 										}
 									}
 									else{ //edit
