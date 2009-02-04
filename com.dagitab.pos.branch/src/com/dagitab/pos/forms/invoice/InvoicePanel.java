@@ -29,13 +29,12 @@ import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
 
-import bus.InvoiceService;
-
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.GCItemService;
 import com.dagitab.pos.bus.InvoiceItemService;
+import com.dagitab.pos.bus.InvoiceService;
 import com.dagitab.pos.bus.PaymentItemService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.bus.VatService;

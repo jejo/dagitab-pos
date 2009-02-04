@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import bus.InvoiceService;
-
 import com.dagitab.pos.bus.ClerkService;
 import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.InvoiceItemService;
+import com.dagitab.pos.bus.InvoiceService;
 import com.dagitab.pos.bus.PaymentTypeService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.bus.ReturnItemService;
