@@ -6,12 +6,13 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
+import com.dagitab.pos.bus.DiscountService;
+import com.dagitab.pos.bus.VatService;
 import com.dagitab.pos.domain.Invoice;
 import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.DateUtility;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.StorePropertyHandler;
-
 
 public class InvoiceService {
 	
@@ -59,6 +60,13 @@ public class InvoiceService {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			LoggerUtility.getInstance().logStackTrace(e);
+		} finally{
+			try {
+				System.out.println("closing rs connection");
+				rs.close();
+			} catch (SQLException e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+			}
 		}
 		return null;
 	}
@@ -136,6 +144,13 @@ public class InvoiceService {
 			}
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
+		}finally{
+			try {
+				System.out.println("closing rs connection");
+				rs.close();
+			} catch (SQLException e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+			}
 		}
 		return null;
 	}
@@ -152,6 +167,13 @@ public class InvoiceService {
 			}
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
+		}finally{
+			try {
+				System.out.println("closing rs connection");
+				rs.close();
+			} catch (SQLException e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+			}
 		}
 		return invoiceAmount;
 	}

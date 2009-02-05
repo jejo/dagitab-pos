@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
-
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.cloudgarden.resource.SWTResourceManager;
@@ -39,7 +37,6 @@ import com.dagitab.pos.main.OLEViewer;
 import com.dagitab.pos.reports.DailySales;
 import com.dagitab.pos.reports.DailySalesReport;
 import com.dagitab.pos.reports.PullOutReport;
-import com.dagitab.pos.reports.RobinsonsSalesReport;
 import com.dagitab.pos.reports.TotalMerchandise;
 import com.dagitab.pos.reports.ZSummaryReport;
 import com.dagitab.pos.util.DateUtility;
@@ -344,6 +341,8 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						        }
 						        else{
 						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+						    	   
+						    	   
 						        }
 							break;
 							

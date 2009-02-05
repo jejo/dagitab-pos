@@ -11,11 +11,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
+import com.dagitab.pos.bus.EastwoodComplianceService;
 import com.dagitab.pos.forms.delivery.DeliveryDialog;
 import com.dagitab.pos.forms.pullouts.PullOutDialog;
 import com.dagitab.pos.forms.pullouts.PullOutRequestDialog;
 import com.dagitab.pos.forms.receipts.InvoiceViewer;
 import com.dagitab.pos.forms.reports.EastwoodComplianceDialog;
+import com.dagitab.pos.forms.reports.EastwoodReportDialog;
 import com.dagitab.pos.forms.reports.FestivalComplianceDialog;
 import com.dagitab.pos.forms.reports.InventoryViewerDialog;
 import com.dagitab.pos.forms.reports.ReportFormDialog;
@@ -58,6 +60,7 @@ public class MenuHelper {
 	private static JMenuItem REPORT_FORM = new JMenuItem("Export Reports");
 	private static JMenuItem SALES_CLERK_PRODUCTION_REPORT = new JMenuItem("Sales Clerk Production Report");
 	private static JMenuItem ROBINSONS_SALES_REPORT = new JMenuItem("Robinsons Sales Report");
+	private static JMenuItem EASTWOOD_SALES_REPORT = new JMenuItem("Eastwood Sales Report");
 	
 	private static JMenuItem ROBINSONS_COMPLIANCE_FORM = new JMenuItem("Robinsons Compliance");
 	private static JMenuItem EASTWOOD_COMPLIANCE_FORM = new JMenuItem("Eastwood Compliance");
@@ -100,7 +103,13 @@ public class MenuHelper {
 		REPORTS_MENU.add(INVENTORY);
 		REPORTS_MENU.add(REPORT_FORM);
 		REPORTS_MENU.add(SALES_CLERK_PRODUCTION_REPORT);
-		REPORTS_MENU.add(ROBINSONS_SALES_REPORT);
+		
+		if(Integer.valueOf(Main.getStoreCode()) == 6){
+			REPORTS_MENU.add(ROBINSONS_SALES_REPORT);
+		}
+		if(Integer.valueOf(Main.getStoreCode()) == 8){
+			REPORTS_MENU.add(EASTWOOD_SALES_REPORT);
+		}
 		
 		COMPLIANCE_MENU.add(ROBINSONS_COMPLIANCE_FORM);
 		COMPLIANCE_MENU.add(EASTWOOD_COMPLIANCE_FORM);
@@ -181,6 +190,10 @@ public class MenuHelper {
 		ROBINSONS_SALES_REPORT.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/reports.png")));
 		
 		
+		EASTWOOD_SALES_REPORT.setAction(getEastwoodSalesReportAction());
+		EASTWOOD_SALES_REPORT.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/reports.png")));
+	
+		
 		DEBUGGER.setAction(getDebuggerAction());
 		DEBUGGER.setIcon(new ImageIcon(menuHelper.getClass().getClassLoader().getResource("images/icons/debug.gif")));
 		
@@ -192,6 +205,20 @@ public class MenuHelper {
 	
 	
 	//Action Declaration starts here
+	
+	private static AbstractAction getEastwoodSalesReportAction() {
+		AbstractAction eastwoodSalesReportComplianceAction  = new AbstractAction("Eastwood Sales Report"){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				EastwoodReportDialog eastwoodReportDialog = new EastwoodReportDialog(Main.getInst());
+				eastwoodReportDialog.setLocationRelativeTo(null);
+				eastwoodReportDialog.setVisible(true);
+				
+			}
+		};
+		return eastwoodSalesReportComplianceAction;
+	}
+
 	
 	
 	private static AbstractAction getRobinsonsSalesReportAction() {
