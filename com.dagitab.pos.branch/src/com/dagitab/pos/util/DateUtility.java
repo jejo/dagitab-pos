@@ -15,6 +15,15 @@ public class DateUtility {
 		return dateUtility;
 	}
 	
+	public int getComponent(Date date, int component) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(date.getTime());
+
+		// convert to string
+		return calendar.get(component);
+
+	}
+	
 	public static void main(String[] args) {
 		System.out.println(DateUtility.getDateUtility().getCurrentDate());
 	}

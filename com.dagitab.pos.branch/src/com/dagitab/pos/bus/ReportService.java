@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,6 +15,7 @@ import com.dagitab.pos.domain.Invoice;
 import com.dagitab.pos.domain.InvoiceItem;
 import com.dagitab.pos.domain.ReturnItem;
 import com.dagitab.pos.main.Main;
+import com.dagitab.pos.util.DateUtility;
 import com.dagitab.pos.util.LoggerUtility;
 
 
@@ -150,6 +151,7 @@ public class ReportService {
 	
 	public Double getGrossSales(String date) {
 		String[] dateArr = date.split("-");
+		logger.info("JEJO: Getting Gross Sales of date: "+date);
 		Double grossSales = ComplianceService.getComplianceService().getRawGross(Integer.parseInt(dateArr[1]), Integer.parseInt( dateArr[2]), Integer.parseInt(dateArr[0]), Integer.parseInt(Main.getStoreCode()));
 		return grossSales;
 	}
@@ -276,6 +278,7 @@ public class ReportService {
 		
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.YEAR, year);
 //		System.out.println("1: "+prevCalendar.getTime());
 //		calendar.add(Calendar.MONTH, 1);
 //		System.out.println("2: "+prevCalendar.getTime());
@@ -289,26 +292,73 @@ public class ReportService {
 			String date = "";
 			
 			if(calendar.get(Calendar.MONTH+1) == 1){
-				date = year-1+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+				date = calendar.get(Calendar.YEAR)+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
 			}
 			else{
-				date = year+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+				date = calendar.get(Calendar.YEAR)+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
 			}
 			
 			dates.add(date);
 		}
 		calendar.add(Calendar.MONTH, 1);
 		for(int i = 1; i<=lastDay; i++){
-			String date = year+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
+			String date = calendar.get(Calendar.YEAR)+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(i+"",2,'0');
 			dates.add(date);
 		}
 		
 		return dates;
 	}
 	
+	public ArrayList<String> getEastwoodInvoiceDates(int month, int year){
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set( Calendar.MONTH, (month) );
+		calendar.set( Calendar.DAY_OF_MONTH, 1 );
+		calendar.set( Calendar.YEAR, year );
+		
+		ArrayList<String> dates = new ArrayList<String>();
+		
+		while(true){
+			if( calendar.get(Calendar.MONTH) != (month) ){
+				break;
+			}
+			
+			String date = calendar.get(Calendar.YEAR)+"-"+StringUtils.leftPad((calendar.get(Calendar.MONTH)+1)+"",2, '0')+"-"+StringUtils.leftPad(calendar.get(Calendar.DAY_OF_MONTH)+"",2,'0');
+			dates.add(date);
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		return dates;
+	}
+	
+	
+	public Date getEodDateBasedOnTransDate(Date transDate) {
+		
+		Calendar cal = Calendar.getInstance();
+
+		cal.setTimeInMillis(transDate.getTime());
+
+		int year = DateUtility.getDateUtility().getComponent(transDate, Calendar.YEAR);
+		int month = DateUtility.getDateUtility().getComponent(transDate, Calendar.MONTH) + 1; // month is zero
+															// based!!
+		int day = DateUtility.getDateUtility().getComponent(transDate, Calendar.DAY_OF_MONTH);
+		
+//		if (getEodSentFlag(month, day, year) > 0) {
+//			cal.setTimeInMillis((getEodLogDate(month, day, year).getTime()));
+//		} else {
+			cal.add(Calendar.DAY_OF_MONTH, 1 );
+			cal.set(Calendar.HOUR_OF_DAY, 4);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+//		}
+		
+		return cal.getTime();
+		
+	}
+	
 	
 	public static void main(String[] args){
-		ArrayList<String> dates = ReportService.getInstance().getRobinsonsInvoiceDates(2, 2009);
+		ArrayList<String> dates = ReportService.getInstance().getEastwoodInvoiceDates(1, 2009);
 		for(String s: dates){
 			System.out.println(s);
 		}
