@@ -72,13 +72,13 @@ public class AboutDialog extends javax.swing.JDialog {
 			{
 				jLabel5 = new JLabel();
 				getContentPane().add(jLabel5, new AnchorConstraint(463, 834, 565, 250, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel5.setText("All Rights Reserved 2007");
+				jLabel5.setText("All Rights Reserved 2009");
 				jLabel5.setPreferredSize(new java.awt.Dimension(343, 28));
 			}
 			{
 				jLabel4 = new JLabel();
 				getContentPane().add(jLabel4, new AnchorConstraint(232, 965, 335, 250, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel4.setText("For questions or to report a bug, contact jrdimayuga@dagitab.com");
+				jLabel4.setText("For questions or to report a bug, contact us at 438-4421");
 				jLabel4.setPreferredSize(new java.awt.Dimension(420, 28));
 			}
 			{
@@ -107,7 +107,7 @@ public class AboutDialog extends javax.swing.JDialog {
 			{
 				aboutLabel = new JLabel();
 				getContentPane().add(aboutLabel, new AnchorConstraint(53, 798, 155, 250, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				aboutLabel.setText("About Babyland POS Application");
+				aboutLabel.setText("About Babyland POS Application 2.0");
 				aboutLabel.setPreferredSize(new java.awt.Dimension(322, 28));
 				aboutLabel.setFont(new java.awt.Font("Tahoma",1,18));
 				aboutLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "aboutLabel");
@@ -120,7 +120,7 @@ public class AboutDialog extends javax.swing.JDialog {
 	}
 	
 	private AbstractAction getAboutLabelAbstractAction() {
-		AbstractAction aboutLabelAction = new AbstractAction("About Babyland POS Application", null) {
+		AbstractAction aboutLabelAction = new AbstractAction("About Babyland POS Application 2.0", null) {
 			
 			public void actionPerformed(ActionEvent evt) {
 				AboutDialog.this.dispose();
