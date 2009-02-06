@@ -42,7 +42,12 @@ public class DeliveryItemService {
 			
 			int success = Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
 			if(success > 0){
-				InventoryService.getInstance().addToInventory(Integer.valueOf(acceptedQuantity.toString()), getProductCodeOfDeliveryItem(deliveryItemId));
+				String productCode = getProductCodeOfDeliveryItem(deliveryItemId);
+				boolean hasInventory = InventoryService.getInstance().hasInventoryItem(productCode);
+				if(!hasInventory){
+					InventoryService.getInstance().insertIntoInventory(Integer.valueOf(acceptedQuantity.toString()), productCode);
+				}
+				InventoryService.getInstance().addToInventory(Integer.valueOf(acceptedQuantity.toString()), productCode);
 			}
 			return true;
 		}
