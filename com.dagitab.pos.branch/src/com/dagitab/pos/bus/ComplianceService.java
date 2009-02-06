@@ -39,7 +39,7 @@ public class ComplianceService {
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(int month, int day, int year, int storeCode, int...hour ) {
 //		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
-		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
 		
 		if (hour.length > 0) {
 			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
@@ -107,6 +107,7 @@ public class ComplianceService {
 	public Double getGiftCheckAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		String query = "SELECT SUM(g.AMOUNT) FROM invoice o, gc_item g WHERE o.OR_NO = g.OR_NO and o.STORE_CODE = g.STORE_CODE and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND o.STORE_CODE = ?";
 		
+		logger.debug("GIFT CHECK query=" + query);
 		PreparedStatement pquery;
 		ResultSet rs = null;
 		try {
@@ -124,6 +125,7 @@ public class ComplianceService {
 			while(rs.next()){
 //				double amount = rs.getDouble(1);
 //				dailySale = amount/getVatRate();
+				giftCheckAmount = rs.getDouble(1);
 				logger.debug("Gift Check Amount: "+giftCheckAmount);
 				return giftCheckAmount;
 			}
@@ -136,7 +138,7 @@ public class ComplianceService {
 	}
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND o.STORE_CODE = ?";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = ?";
 		
 		PreparedStatement pquery;
 		ResultSet rs = null;
