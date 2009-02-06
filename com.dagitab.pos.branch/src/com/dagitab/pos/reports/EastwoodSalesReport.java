@@ -78,7 +78,10 @@ public class EastwoodSalesReport {
 				cell = HSSFUtil.createAmountCell(wb, row, (short) 3, false, true);
 				cell.setCellValue(gcSales);
 				
-				Double totalDiscount = ReportService.getInstance().getApprovedDiscounts(dates.get(i));
+				Double grossSalesAmount = ComplianceService.getComplianceService().getRawGross(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR),  Integer.parseInt(Main.getStoreCode()));
+				Double netSalesAmount = ComplianceService.getComplianceService().getNetSales(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR),  Integer.parseInt(Main.getStoreCode()));
+				Double totalDiscount = grossSalesAmount - netSalesAmount;
+				
 				cell = HSSFUtil.createAmountCell(wb, row, (short) 4, false, true);
 				cell.setCellValue(totalDiscount);
 				

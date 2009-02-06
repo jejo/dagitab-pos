@@ -87,7 +87,7 @@ public class MainWindow extends javax.swing.JFrame {
 	private void initGUI() {
 		try {
 			{
-				this.setTitle("Babyland POS Application");
+				this.setTitle("Babyland POS Application 2.0");
 				getContentPane().setBackground(
 						new java.awt.Color(255, 255, 255));
 				AnchorLayout thisLayout = new AnchorLayout();
