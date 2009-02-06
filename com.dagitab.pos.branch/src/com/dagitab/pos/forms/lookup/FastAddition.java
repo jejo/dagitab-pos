@@ -213,7 +213,8 @@ public class FastAddition extends javax.swing.JDialog {
 	}
 	
 	private void insertIntoItemList(){
-		Product product = ProductService.loadProductOfStore(productCodeTextField.getText());
+//		Product product = ProductService.loadProductOfStore(productCodeTextField.getText());
+		Product product = ProductService.getProductById(productCodeTextField.getText());
 		if(product != null){
 			DefaultTableModel itemListTableModel = (DefaultTableModel) itemListTable.getModel();
 			Integer itemListIndex =getItemListIndex(product.getProdCode()); 
