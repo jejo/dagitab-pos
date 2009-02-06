@@ -101,7 +101,7 @@ public class ComplianceService {
 	}
 	
 	public Double getDeductibles(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		return getReturnedItemsAmount(transDate, eodDate, storeCode) + getDeductibles(transDate, eodDate, storeCode);
+		return getReturnedItemsAmount(transDate, eodDate, storeCode) + getGiftCheckAmount(transDate, eodDate, storeCode);
 	}
 	
 	public Double getGiftCheckAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
