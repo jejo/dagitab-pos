@@ -257,11 +257,12 @@ public class ReportService {
 			Double discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(invoice.getOrNo(),invoiceItem.getProductCode());
 			discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
 			Double subTotal = discountedAmount*invoiceItem.getQuantity();
+			Logger.getLogger(ReportService.class).info("REPORT SERVICE: JEJO: "+ subTotal);
 			totalPerInvoice+=subTotal;
 		}
 		for(ReturnItem returnItem: invoice.getReturnedItems()){
 			Double discountedAmount = returnItem.getSellPrice()*-1; //discounted price is negative when returned
-			discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
+//			discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
 			Double subTotal = discountedAmount*returnItem.getQuantity();
 			totalPerInvoice+=subTotal;
 		}
