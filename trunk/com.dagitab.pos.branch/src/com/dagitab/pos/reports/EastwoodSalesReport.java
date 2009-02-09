@@ -91,7 +91,8 @@ public class EastwoodSalesReport {
 				cell = HSSFUtil.createAmountCell(wb, row, (short) 6, false, true);
 				cell.setCellValue(0.0d);
 				
-				Double grossSales = ReportService.getInstance().getGrossSales(dates.get(i));
+//				Double grossSales = ReportService.getInstance().getGrossSales(dates.get(i));
+				Double grossSales = ReportService.getInstance().getNetSalesBeforeTax(dates.get(i));
 				cell = HSSFUtil.createAmountCell(wb, row, (short) 7, false, true);
 				cell.setCellValue(grossSales);
 				

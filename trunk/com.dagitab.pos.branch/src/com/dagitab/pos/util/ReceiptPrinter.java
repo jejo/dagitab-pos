@@ -19,7 +19,11 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintJobAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.PrinterResolution;
 import javax.print.event.PrintJobAdapter;
 import javax.print.event.PrintJobEvent;
 
@@ -150,6 +154,10 @@ public class ReceiptPrinter {
         PrintJobWatcher pjDone = new PrintJobWatcher(job);
 
         // Print it
+        
+        PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+        aset.add(new PrinterResolution(20,20,PrinterResolution.DPI));
+		aset.add(new MediaPrintableArea(0,0,30,100,MediaPrintableArea.MM ));
         job.print(doc, null);
         
         pjDone.waitForDone();

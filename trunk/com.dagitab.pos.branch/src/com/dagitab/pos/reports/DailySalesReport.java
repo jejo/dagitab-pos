@@ -65,6 +65,8 @@ public class DailySalesReport {
 				int totalRowSize = invoice.getInvoiceItems().size()+invoice.getReturnedItems().size();
 				int currentRowSize = 0;
 				
+				double totalField = 0.0d;
+				
 				for(InvoiceItem invoiceItem: invoice.getInvoiceItems()){
 					HSSFRow row = sheet.getRow(rowCounter);
 					
@@ -110,10 +112,12 @@ public class DailySalesReport {
 					cell.setCellValue(discountedAmount);
 					
 					//subtotal
-					double subTotal = discountedAmount*invoiceItem.getQuantity();
+					Double discountedAmountUnrounded = InvoiceItemService.getInstance().getDiscountedAmount(invoiceItem.getOrNo(),invoiceItem.getProductCode());
+					double subTotal = discountedAmountUnrounded*invoiceItem.getQuantity();
 					subTotal = Double.valueOf(String.format("%.2f", subTotal));
 					cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
 					cell.setCellValue(subTotal);
+					
 					
 					rowCounter++;
 					currentRowSize++;
@@ -126,7 +130,7 @@ public class DailySalesReport {
 						if(total < 0){
 							total = 0.0d;
 						}
-						cell.setCellValue(total);
+						cell.setCellValue(Double.parseDouble(String.format("%.2f", total)));
 						
 						//cashier id
 						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
