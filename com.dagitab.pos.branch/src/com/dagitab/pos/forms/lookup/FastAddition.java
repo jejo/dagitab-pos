@@ -94,7 +94,7 @@ public class FastAddition extends javax.swing.JDialog {
 								InvoiceItem invoiceItem = new InvoiceItem();
 								Product product = ProductService.getProductById(itemListTable.getValueAt(i, 0).toString());
 								invoiceItem.setCost(product.getCost());
-								invoiceItem.setDiscountCode(Integer.parseInt(itemListTable.getValueAt(i, 6).toString()));
+								invoiceItem.setDiscountCode(Integer.parseInt(itemListTable.getValueAt(i, 6).toString().trim()));
 								invoiceItem.setIsDeferred(0);
 								invoiceItem.setProductCode(itemListTable.getValueAt(i, 0).toString());
 								invoiceItem.setQuantity(Integer.parseInt(itemListTable.getValueAt(i, 2).toString()));
@@ -313,7 +313,7 @@ public class FastAddition extends javax.swing.JDialog {
 		DefaultTableModel model = (DefaultTableModel) itemListTable.getModel();
 		for(int index: indices){
 			Product product = ProductService.getProductById(model.getValueAt(index, 0).toString());
-			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode));
+			Double discRate = DiscountService.getDiscRate(Integer.parseInt(discountCode.trim()));
 			Double sellingPrice = product.getSellPrice() - (product.getSellPrice()*discRate);
 			
 			sellingPrice = Double.valueOf(String.format("%.2f",sellingPrice)); 

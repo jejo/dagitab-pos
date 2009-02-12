@@ -78,7 +78,7 @@ public class ProductDiscountDialog extends javax.swing.JDialog {
 		DefaultComboBoxModel model = (DefaultComboBoxModel) discountComboBox.getModel();
 		int index = 0;
 		for(int i = 0; i<model.getSize(); i++){
-			if(Integer.parseInt(model.getElementAt(i).toString().split("-")[0])== discCode){
+			if(Integer.parseInt(model.getElementAt(i).toString().split("-")[0].trim())== discCode){
 				index  = i;
 				break;
 			}
