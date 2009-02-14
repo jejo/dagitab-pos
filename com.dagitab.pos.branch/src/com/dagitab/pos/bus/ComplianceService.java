@@ -96,12 +96,39 @@ public class ComplianceService {
 		
 	}
 	
+	public Double getPartialTransactionBalance(int month, int day, int year, int storeCode, int...hour ) {
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"'";
+		
+		if (hour.length > 0) {
+			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
+		}
+		logger.debug("PARTIAL TRANSACTION BALANCE AMOUNT QUERY="+query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double partialBalance = 0.0d;
+		try {
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				
+				
+				partialBalance = rs.getDouble(1);
+				logger.debug("Partial Balance Amount: "+partialBalance);
+				return partialBalance;
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
+		
+	}
+	
 	public Double getDeductibles(int month, int day, int year, int storeCode, int...hour ) {
-		return getReturnedItemsAmount(month, day, year, storeCode) + getGiftCheckAmount(month, day, year, storeCode, hour);
+		return getReturnedItemsAmount(month, day, year, storeCode) + getGiftCheckAmount(month, day, year, storeCode, hour) + getPartialTransactionBalance(month, day, year, storeCode, hour);
 	}
 	
 	public Double getDeductibles(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		return getReturnedItemsAmount(transDate, eodDate, storeCode) + getGiftCheckAmount(transDate, eodDate, storeCode);
+		return getReturnedItemsAmount(transDate, eodDate, storeCode) + getGiftCheckAmount(transDate, eodDate, storeCode) + getPartialTransactionBalance(transDate, eodDate, storeCode);
 	}
 	
 	public Double getGiftCheckAmount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
@@ -128,6 +155,37 @@ public class ComplianceService {
 				giftCheckAmount = rs.getDouble(1);
 				logger.debug("Gift Check Amount: "+giftCheckAmount);
 				return giftCheckAmount;
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+
+	}
+	
+	public Double getPartialTransactionBalance(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND o.STORE_CODE = ?";
+		
+		logger.debug("Partial Transaction Balance query=" + query);
+		PreparedStatement pquery;
+		ResultSet rs = null;
+		try {
+			pquery = Main.getDBManager().getConnection().prepareStatement(query);
+			
+			pquery.setTimestamp(1, transDate);
+			pquery.setTimestamp(2, eodDate);
+			pquery.setInt(3, storeCode);
+			
+			Double partialBalance = 0.0d;
+			rs = pquery.executeQuery();
+			
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				partialBalance = rs.getDouble(1);
+				logger.debug("Partial Balance: "+partialBalance);
+				return partialBalance;
 			}
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
