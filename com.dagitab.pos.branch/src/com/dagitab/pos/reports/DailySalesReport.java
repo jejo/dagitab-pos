@@ -15,6 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import com.dagitab.pos.bus.ComplianceService;
 import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.GCItemService;
 import com.dagitab.pos.bus.InvoiceItemService;
@@ -124,24 +125,31 @@ public class DailySalesReport {
 					sheet.shiftRows(rowCounter+1,rowCounter+2,1);
 					
 					if(currentRowSize == totalRowSize){
-						//TOTAL
+						
+						//PARTIAL TRANSACTION BALANCE
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
+						Double partialBalance = Double.valueOf(String.format("%.2f",ComplianceService.getComplianceService().getPartialTransactionBalancePerInvoice(invoice.getOrNo(), Main.getStoreCode())));
+						cell.setCellValue(Double.parseDouble(String.format("%.2f", partialBalance)));
+						
+						//TOTAL
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 10,false,false);
 						Double total = Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice)));
 						if(total < 0){
 							total = 0.0d;
 						}
+						total = total-partialBalance;
 						cell.setCellValue(Double.parseDouble(String.format("%.2f", total)));
 						
 						//cashier id
-						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
+						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
 						cell.setCellValue(invoice.getEncoderCode());
 						
 						//sales specialist
-						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
+						cell = HSSFUtil.createIntCell(wb,row, (short) 12,false,false);
 						cell.setCellValue(invoice.getAssistantCode());
 						
 						//gift certificate amount
-						cell = HSSFUtil.createAmountCell(wb, row, (short) 12, false, false);
+						cell = HSSFUtil.createAmountCell(wb, row, (short) 13, false, false);
 						Double gcAmount = GCItemService.getInstance().getTotalGCAmountPerInvoice(invoice.getOrNo());
 						cell.setCellValue(gcAmount);
 						
@@ -206,8 +214,13 @@ public class DailySalesReport {
 					sheet.shiftRows(rowCounter+1,rowCounter+2,1);
 					
 					if(currentRowSize == totalRowSize){
-						//TOTAL
+						
+						//PARTIAL AMOUNT BALANCE IS 0 BECAUSE IT IS RETURNED
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
+						cell.setCellValue(0.0d);
+						
+						//TOTAL
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 10,false,false);
 						Double total = Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice)));
 						if(total < 0){
 							total = 0.0d;
@@ -215,11 +228,11 @@ public class DailySalesReport {
 						cell.setCellValue(total);
 						
 						//cashier id
-						cell = HSSFUtil.createIntCell(wb,row, (short) 10,false,false);
+						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
 						cell.setCellValue(invoice.getEncoderCode());
 						
 						//sales specialist
-						cell = HSSFUtil.createIntCell(wb,row, (short) 11,false,false);
+						cell = HSSFUtil.createIntCell(wb,row, (short) 12,false,false);
 						cell.setCellValue(invoice.getAssistantCode());
 					}
 					
@@ -247,6 +260,7 @@ public class DailySalesReport {
 		}
 	}
 	
+	@Deprecated
 	public boolean generateTemp(String fileName, String startDate, String endDate){
 		HSSFCell cell;
 		POIFSFileSystem fs;
@@ -485,6 +499,7 @@ public class DailySalesReport {
 
 	}
 	
+	@Deprecated
 	public  void writeTotals() {
 		HSSFRow row = ReportUtility.getSheet(wb).getRow(rowCounter+2);
 		HSSFCell cell = HSSFUtil.createStringCell(wb,row, (short) 0,false,false);
@@ -497,7 +512,8 @@ public class DailySalesReport {
 		cell.setCellValue(String.format("%.2f",totalDiscPrice));
 		cell = HSSFUtil.createAmountCell(wb,row, (short) 8,false,false);
 		cell.setCellValue(String.format("%.2f",totalSubtotal));
-		cell = HSSFUtil.createAmountCell(wb,row, (short) 9,false,false);
+		
+		cell = HSSFUtil.createAmountCell(wb,row, (short) 10,false,false);
 		cell.setCellValue(String.format("%.2f",totalTotal));
 	}
 	
@@ -519,11 +535,11 @@ public class DailySalesReport {
 		/*String totalSubtotalFormula = "SUM(I"+firstRow+":I"+lastRow+")";
 		cell = HSSFUtil.createFormulaCell(wb,row, (short) 8,totalSubtotalFormula,false,false);*/
 		
-		String totalTotalFormula = "SUM(J"+firstRow+":J"+lastRow+")";
-		cell = HSSFUtil.createFormulaCell(wb,row, (short) 9,totalTotalFormula,false,false);
+		String totalTotalFormula = "SUM(K"+firstRow+":K"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 10,totalTotalFormula,false,false);
 		
-		String totalGcAmountFormula = "SUM(M"+firstRow+":M"+lastRow+")";
-		cell = HSSFUtil.createFormulaCell(wb,row, (short) 12,totalGcAmountFormula,false,false);
+		String totalGcAmountFormula = "SUM(N"+firstRow+":N"+lastRow+")";
+		cell = HSSFUtil.createFormulaCell(wb,row, (short) 13,totalGcAmountFormula,false,false);
 		
 	}
 }

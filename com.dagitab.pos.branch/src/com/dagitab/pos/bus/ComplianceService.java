@@ -120,7 +120,23 @@ public class ComplianceService {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
 		return null;
+	}
+	
+	public Double getPartialTransactionBalancePerInvoice(long orNo, String storeCode){
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND o.STORE_CODE = '"+storeCode+"' AND o.OR_NO = "+orNo;
 		
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		Double partialBalance = 0.0d;
+		try {
+			while(rs.next()){	
+				partialBalance = rs.getDouble(1);
+				logger.debug("Partial Balance Amount: "+partialBalance);
+				return partialBalance;
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
 	}
 	
 	public Double getDeductibles(int month, int day, int year, int storeCode, int...hour ) {
