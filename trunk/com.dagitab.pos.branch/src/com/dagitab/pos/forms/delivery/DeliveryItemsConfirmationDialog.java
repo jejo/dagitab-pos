@@ -44,7 +44,7 @@ import com.dagitab.pos.util.LoggerUtility;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-@Deprecated
+
 public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	private JLabel deliveryItemsLabel;
 	private JLabel jLabel2;
@@ -64,10 +64,13 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 	private JTextField acceptedQuantityTextField;
 	private String delitemno;
 	private int quantity;
+	
 	private static Logger logger = Logger.getLogger(DeliveryItemsConfirmationDialog.class);
 	
 	private DeliveryItemsConfirmationDialog deliveryItemsConfirmationDialog;
 	private Long deliveryItemId;
+	private Long deliveryId;
+	private String prodCode;
 	private DeliveryDialog deliveryDialog;
 
 	{
@@ -94,12 +97,14 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 		initSwtAwtGUI();
 	}
 	
-	public DeliveryItemsConfirmationDialog(JFrame parent, DeliveryDialog deliveryDialog, Long deliveryItemId) {
+	public DeliveryItemsConfirmationDialog(JFrame parent, DeliveryDialog deliveryDialog, Long deliveryItemId, Long deliveryId, String prodCode) {
 		super(parent);
 		initSwtAwtGUI();
 		this.deliveryDialog = deliveryDialog;
 		this.deliveryItemsConfirmationDialog = this;
 		this.deliveryItemId = deliveryItemId;
+		this.deliveryId = deliveryId;
+		this.prodCode = prodCode;
 	}
 	
 	private void initGUI() {
@@ -357,7 +362,7 @@ public class DeliveryItemsConfirmationDialog extends javax.swing.JDialog {
 		//SimpleDateFormat sdf = new SimpleDateFormat();
 		//Calendar calendarInstance = Calendar.getInstance();
 		//calendarInstance.set(calendar.getYear(), calendar.getMonth(), calendar.getDay());
-		boolean success = DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
+		boolean success = DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity, deliveryId, prodCode);
 		
 		if(success){
 			deliveryDialog.refreshPendingDeliveryItemsTable((Long) deliveryDialog.getPendingDeliveryTable().getValueAt(deliveryDialog.getPendingDeliveryTable().getSelectedRow(), 0));

@@ -402,7 +402,9 @@ public class DeliveryDialog extends javax.swing.JDialog {
 		if(pendingDeliveryItemsTable.getSelectedRow() != -1) {
 			if(((Integer) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 6)).equals(0) ) {
 				if(deliveryItemsConfirmationDialog == null) {
-					deliveryItemsConfirmationDialog = new DeliveryItemsConfirmationDialog(Main.getInst(), this, (Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0));
+					Long deliveryId = (Long)pendingDeliveryTable.getValueAt(pendingDeliveryTable.getSelectedRow(), 0);
+					String prodCode = pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 1).toString();
+					deliveryItemsConfirmationDialog = new DeliveryItemsConfirmationDialog(Main.getInst(), this, (Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0), deliveryId, prodCode);
 					deliveryItemsConfirmationDialog.setLocationRelativeTo(null);
 					deliveryItemsConfirmationDialog.setVisible(true);
 				}

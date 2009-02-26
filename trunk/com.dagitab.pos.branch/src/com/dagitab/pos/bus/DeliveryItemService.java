@@ -28,7 +28,7 @@ public class DeliveryItemService {
 		return null;
 	}
 	
-	public static boolean updateDeliveryItem(Long deliveryItemId, String date, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
+	public static boolean updateDeliveryItem(Long deliveryItemId, String date, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity, Long deliveryId, String prodCode) {
 		
 		Integer deliveryItemQuantity = getDeliveryItemQuantity(deliveryItemId);
 		Integer sumOfQuantity = Integer.valueOf(acceptedQuantity.toString()) +  Integer.valueOf(missingQuantity.toString()) + Integer.valueOf(damagedQuantity.toString());
@@ -37,8 +37,11 @@ public class DeliveryItemService {
 			String[] columns = new String[]{"PROCESSED_STAT","RCVD_DATE","ACCEPTED_QTY","MISSING_QTY","DAMAGED_QTY"};
 			String[] columnValues = new String[]{"1", date + " 00:00:00", acceptedQuantity.toString(), missingQuantity.toString(), damagedQuantity.toString()};
 			String table = "delivery_items";
-			String[] whereColumns = new String[]{"DEL_ITEM_NO"};
-			String[] whereValues = new String[]{deliveryItemId.toString()};
+			
+			//Fix for Ticket #80 Modify Update Statement for Delivery Items
+			
+			String[] whereColumns = new String[]{"DEL_NO","PROD_CODE"};
+			String[] whereValues = new String[]{deliveryId.toString(), prodCode};
 			
 			int success = Main.getDBManager().update(columns, columnValues, table, whereColumns, whereValues);
 			if(success > 0){

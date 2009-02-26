@@ -314,7 +314,7 @@ public class DeliveryItemConfirmationDialog extends javax.swing.JDialog {
 	 
 	
 	public void updatePendingDeliveryItem(Long deliveryItemId, Long acceptedQuantity, Long missingQuantity, Long damagedQuantity) {
-		DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
+//		DeliveryItemService.updateDeliveryItem(deliveryItemId, startDate,acceptedQuantity, missingQuantity, damagedQuantity);
 		deliveryDialog.refreshCompletedDeliveriesTable();
 		deliveryDialog.refreshPendingDeliveryItemsTable((Long) deliveryDialog.getPendingDeliveryTable().getValueAt(deliveryDialog.getPendingDeliveryTable().getSelectedRow(), 0));
 	}
