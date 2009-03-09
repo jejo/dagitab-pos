@@ -401,20 +401,24 @@ public class DeliveryDialog extends javax.swing.JDialog {
 	public void processPendingDeliveryItem() {
 		if(pendingDeliveryItemsTable.getSelectedRow() != -1) {
 			if(((Integer) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 6)).equals(0) ) {
-				if(deliveryItemsConfirmationDialog == null) {
-					Long deliveryId = (Long)pendingDeliveryTable.getValueAt(pendingDeliveryTable.getSelectedRow(), 0);
-					String prodCode = pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 1).toString();
-					deliveryItemsConfirmationDialog = new DeliveryItemsConfirmationDialog(Main.getInst(), this, (Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0), deliveryId, prodCode);
-					deliveryItemsConfirmationDialog.setLocationRelativeTo(null);
-					deliveryItemsConfirmationDialog.setVisible(true);
+				if(deliveryItemsConfirmationDialog != null) {
+					deliveryItemsConfirmationDialog.dispose();
 				}
-				else {
-					deliveryItemsConfirmationDialog.setDeliveryItemId((Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0));
-					deliveryItemsConfirmationDialog.setVisible(true);
-					deliveryItemsConfirmationDialog.getAcceptedQuantityTextField().setText("0");
-					deliveryItemsConfirmationDialog.getMissingQuantityTextField().setText("0");
-					deliveryItemsConfirmationDialog.getDamagedQuantityTextField().setText("0");
-				}
+					
+				Long deliveryId = (Long)pendingDeliveryTable.getValueAt(pendingDeliveryTable.getSelectedRow(), 0);
+				String prodCode = pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 1).toString();
+				deliveryItemsConfirmationDialog = new DeliveryItemsConfirmationDialog(Main.getInst(), this, (Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0), deliveryId, prodCode);
+				deliveryItemsConfirmationDialog.setLocationRelativeTo(null);
+				deliveryItemsConfirmationDialog.setVisible(true);
+				
+//				}
+//				else {
+//					deliveryItemsConfirmationDialog.setDeliveryItemId((Long) pendingDeliveryItemsTable.getValueAt(pendingDeliveryItemsTable.getSelectedRow(), 0));
+//					deliveryItemsConfirmationDialog.setVisible(true);
+//					deliveryItemsConfirmationDialog.getAcceptedQuantityTextField().setText("0");
+//					deliveryItemsConfirmationDialog.getMissingQuantityTextField().setText("0");
+//					deliveryItemsConfirmationDialog.getDamagedQuantityTextField().setText("0");
+//				}
 			}
 		}
 	}
