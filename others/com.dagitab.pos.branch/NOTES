@@ -1,0 +1,7 @@
+In computation for total amounts and rounding offs 
+
+Selling Price * Discount Rate
+dispSellingPrice = Double.parse(String.format)
+
+totalAmount = (displaySellingPrice * Qty)
+displayTotalAmount = Double.parseDouble(String.format)
