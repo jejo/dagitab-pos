@@ -61,7 +61,7 @@ public class FestivalComplianceService {
 		tenantsId = StorePropertyHandler.getTenantNo();
 		
 		// only get the first four of the tenants id
-		firstFourTenantsId = tenantsId.substring(0,4);
+		firstFourTenantsId = "BABY";
 		terminalNumber = StringUtils.leftPad(StorePropertyHandler.getTerminalNo(),2,"0");
 		
 		
