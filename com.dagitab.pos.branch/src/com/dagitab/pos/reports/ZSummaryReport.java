@@ -272,7 +272,8 @@ public class ZSummaryReport {
 		HSSFCell cell = HSSFUtil.createStringCell(wb,row,(short)0,true,true);
 		cell.setCellValue("Previous Accumulated Grand Total");
 		cell = HSSFUtil.createAmountCell(wb,row,(short)1,true,true);
-		cell.setCellValue(ComplianceService.getComplianceService().getOldGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode())));
+		Double prevAccumulated = ComplianceService.getComplianceService().getOldGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode()));
+		cell.setCellValue(prevAccumulated);
 	}
 	
 	public  void writeCurrentAccumulatedGrandTotal(String startDate){
@@ -282,6 +283,7 @@ public class ZSummaryReport {
 		HSSFCell cell = HSSFUtil.createStringCell(wb,row,(short)0,true,true);
 		cell.setCellValue("Current Accumulated Grand Total");
 		cell = HSSFUtil.createAmountCell(wb,row,(short)1,true,true);
-		cell.setCellValue(ComplianceService.getComplianceService().getNewGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode())));
+		Double curAccumulated = ComplianceService.getComplianceService().getNewGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode()));
+		cell.setCellValue(curAccumulated);
 	}
 }

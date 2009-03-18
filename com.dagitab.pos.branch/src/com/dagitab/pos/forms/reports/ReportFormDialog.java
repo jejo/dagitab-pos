@@ -38,6 +38,7 @@ import com.dagitab.pos.reports.DailySales;
 import com.dagitab.pos.reports.DailySalesReport;
 import com.dagitab.pos.reports.PullOutReport;
 import com.dagitab.pos.reports.TotalMerchandise;
+import com.dagitab.pos.reports.ZReadingReport;
 import com.dagitab.pos.reports.ZSummaryReport;
 import com.dagitab.pos.util.DateUtility;
 import com.dagitab.pos.util.FileChooserUtility;
@@ -114,9 +115,9 @@ public class ReportFormDialog extends javax.swing.JDialog {
 					reportFormLabel = new JLabel();
 					AnchorLayout jLabel4Layout = new AnchorLayout();
 					reportFormLabel.setLayout(jLabel4Layout);
-					getContentPane().add(reportFormLabel, new AnchorConstraint(23, 344, 92, 27, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(reportFormLabel, new AnchorConstraint(1, 332, 69, 16, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportFormLabel.setText("Export Reports");
-					reportFormLabel.setPreferredSize(new java.awt.Dimension(166, 28));
+					reportFormLabel.setPreferredSize(new java.awt.Dimension(207, 34));
 					reportFormLabel.setFont(new java.awt.Font("Tahoma",0,18));
 					reportFormLabel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "reportFormLabel");
 					reportFormLabel.getActionMap().put("reportFormLabel",getReportFormLabelAbstractAction() );
@@ -163,19 +164,19 @@ public class ReportFormDialog extends javax.swing.JDialog {
 				}
 				{
 					ComboBoxModel reportTypeComboBoxModel = new DefaultComboBoxModel(
-						new String[] { "Daily Sales", "Daily Sales Summary", "Total Pullouts","Total Merchandise","Z-Summary" });
+						new String[] { "Daily Sales", "Daily Sales Summary", "Total Pullouts","Total Merchandise","Z-Summary","Z-Reading" });
 					reportyTypeComboBox = new JComboBox();
-					getContentPane().add(reportyTypeComboBox, new AnchorConstraint(95, 958, 149, 220, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(reportyTypeComboBox, new AnchorConstraint(69, 956, 115, 216, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportyTypeComboBox.setModel(reportTypeComboBoxModel);
-					reportyTypeComboBox.setPreferredSize(new java.awt.Dimension(504, 29));
+					reportyTypeComboBox.setPreferredSize(new java.awt.Dimension(484, 23));
 				}
 				{
 					reportTypeLabel = new JLabel();
-					getContentPane().add(reportTypeLabel, new AnchorConstraint(91, 239, 149, 28, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(reportTypeLabel, new AnchorConstraint(63, 239, 115, 28, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					reportTypeLabel.setText("Report Type");
 					reportTypeLabel.setFont(new java.awt.Font("Tahoma",0,12));
 
-					reportTypeLabel.setPreferredSize(new java.awt.Dimension(144, 31));
+					reportTypeLabel.setPreferredSize(new java.awt.Dimension(138, 26));
 				}
 				{
 					dateCanvas = new Canvas();
@@ -344,6 +345,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						    	   
 						    	   
 						        }
+								OLEViewer.open2(fileName);
 							break;
 							
 							case 1://daily sales summary
@@ -354,7 +356,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 								else{
 									JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
 								}
-								
+								OLEViewer.open2(fileName);
 							break;
 							
 							
@@ -366,6 +368,8 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						        else{
 						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
 						        }
+								
+								OLEViewer.open2(fileName);
 							break;
 							
 							case 3:
@@ -376,6 +380,8 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						        else{
 						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
 						        }
+								
+								OLEViewer.open2(fileName);
 							break;
 							
 							case 4:
@@ -386,14 +392,25 @@ public class ReportFormDialog extends javax.swing.JDialog {
 						        else{
 						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
 						        }
+								
+								OLEViewer.open2(fileName);
 							break;
 							
-							
-							
-							
-							
+							case 5:
+								
+								if(!startDate.equals(endDate)){
+									JOptionPane.showMessageDialog(null, "Date should be the same.","Error",JOptionPane.ERROR_MESSAGE);
+								}
+								String fileNameText = "temp.txt";
+								logger.info("Generating: "+fileNameText);
+								success = (new ZReadingReport()).generate(fileNameText, startDate, endDate);
+								if(!success){
+									 JOptionPane.showMessageDialog(null,"Cannot export file","Error",JOptionPane.ERROR_MESSAGE);
+								}
+							    Process p = Runtime.getRuntime().exec("notepad.exe "+fileNameText );
+							break;
 						}
-						OLEViewer.open2(fileName);
+						
 					} catch (IOException e) {
 						LoggerUtility.getInstance().logStackTrace(e);
 					}
@@ -412,7 +429,7 @@ public class ReportFormDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					JFileChooser fileChooser = new JFileChooser();
 					fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-					FileFilter fileFilter = FileChooserUtility.getFileChooserUtility().createFileFilter("Excel Files Only",true,new String[]{"xls"});
+					FileFilter fileFilter = FileChooserUtility.getFileChooserUtility().createFileFilter("Excel Files/Txt Files",true,new String[]{"xls","txt"});
 				  	fileChooser.setFileFilter(fileFilter);
 				  	int returnValue = fileChooser.showSaveDialog(ReportFormDialog.this);
 				    if(returnValue == JFileChooser.APPROVE_OPTION) {
@@ -465,16 +482,30 @@ public class ReportFormDialog extends javax.swing.JDialog {
 							case 4:
 								success = (new ZSummaryReport()).generate(fileName, startDate, endDate);
 								if(success){
-							    	   JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
 						        }
 						        else{
 						    	   JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
 						        }
 							break;
 							
-							
+							case 5:
+								String fileNameText = fileChooser.getSelectedFile().getAbsolutePath()+".txt";
 								
-						}
+								if(!startDate.equals(endDate)){
+									JOptionPane.showMessageDialog(null, "Date should be the same.","Error",JOptionPane.ERROR_MESSAGE);
+								}
+								logger.info("Generating: "+fileNameText);
+								success = (new ZReadingReport()).generate(fileNameText, startDate, endDate);
+								if(!success){
+									 JOptionPane.showMessageDialog(null,"Cannot save file","Error",JOptionPane.ERROR_MESSAGE);
+								}
+								else{
+									JOptionPane.showMessageDialog(null,"The report is saved.","Saved",JOptionPane.INFORMATION_MESSAGE);
+								}
+							break;
+						
+				    	}
 				    }
 					
 				}
