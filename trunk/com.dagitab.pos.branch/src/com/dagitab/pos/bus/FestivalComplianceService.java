@@ -302,8 +302,7 @@ public class FestivalComplianceService {
 		// LINE#16 SALES TYPE 02 - NON FOOD
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "NF" );
 		
-		// LINE#17 SALES TYPE 02 - NON FOOD
-		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "NF" );
+		// LINE#17 SALES TYPE 02 - NON FOOD NET SALES
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(netSalesAmount, 2));
 		
 		// LINE#18 TOTAL TAX/VAT AMOUNT
