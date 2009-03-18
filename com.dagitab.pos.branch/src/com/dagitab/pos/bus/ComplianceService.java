@@ -69,6 +69,102 @@ public class ComplianceService {
 		return dailySale;
 	}
 	
+	//need to change where to derive amount to invoice_item less discounts
+	public Double getRawGross(int orNo, int storeCode ) {
+//		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.OR_NO= '"+orNo+"' AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double dailySale = 0.0d;
+		try {
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				
+				dailySale = rs.getDouble(1);
+				logger.debug("Raw Gross BEFORE SUBTRACTION: "+dailySale);
+				
+				dailySale = dailySale - getDeductibles(orNo, storeCode);
+				logger.debug("Raw Gross AFTER SUBTRACTION: "+dailySale);
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.debug("Raw Gross: "+dailySale);
+		return dailySale;
+	}
+	
+	private Double getDeductibles(int orNo, int storeCode) {
+		// TODO Auto-generated method stub
+		return getReturnedItemsAmount(orNo, storeCode) + getGiftCheckAmount(orNo, storeCode) + getPartialTransactionBalance(orNo, storeCode);
+	}
+
+	private Double getPartialTransactionBalance(int orNo, int storeCode) {
+		// TODO Auto-generated method stub
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND o.OR_NO= '"+orNo+"' AND o.STORE_CODE = '"+storeCode+"'";
+		
+		logger.debug("PARTIAL TRANSACTION BALANCE AMOUNT QUERY="+query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double partialBalance = 0.0d;
+		try {
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				
+				
+				partialBalance = rs.getDouble(1);
+				logger.debug("Partial Balance Amount: "+partialBalance);
+				return partialBalance;
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
+	}
+
+	private Double getGiftCheckAmount(int orNo, int storeCode) {
+		// TODO Auto-generated method stub
+		String query = "SELECT SUM(g.AMOUNT) FROM invoice o, gc_item g WHERE o.OR_NO = g.OR_NO and o.STORE_CODE = g.STORE_CODE AND o.OR_NO = '"+orNo+"' AND o.STORE_CODE = '"+storeCode+"'";
+		
+		logger.debug("GIFTCHECK AMOUNT QUERY="+query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double giftCheckAmount = 0.0d;
+		try {
+			while(rs.next()){
+//				double amount = rs.getDouble(1);
+//				dailySale = amount/getVatRate();
+				
+				
+				giftCheckAmount = rs.getDouble(1);
+				logger.debug("Gift Check Amount: "+giftCheckAmount);
+				return giftCheckAmount;
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		return null;
+	}
+
+	private Double getReturnedItemsAmount(int orNo, int storeCode) {
+		// TODO Auto-generated method stub
+		String query = "SELECT SUM(r.SELL_PRICE*r.QUANTITY) FROM returned_items r, invoice o, payment_item p WHERE r.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND r.STORE_CODE = o.STORE_CODE and o.OR_NO = '"+orNo+"' AND r.OR_NO = o.OR_NO AND o.STORE_CODE = '"+storeCode+"' and o.RETURN = 1";
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = main.getDb().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double returnedItemsAmount= 0.0d;
+		try {
+			while(rs.next()){
+				returnedItemsAmount = rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.debug("Returned Items Amount: "+returnedItemsAmount);
+		return returnedItemsAmount;
+	}
+
 	public Double getGiftCheckAmount(int month, int day, int year, int storeCode, int...hour ) {
 		String query = "SELECT SUM(g.AMOUNT) FROM invoice o, gc_item g WHERE o.OR_NO = g.OR_NO and o.STORE_CODE = g.STORE_CODE and MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"'";
 		
@@ -469,6 +565,35 @@ public class ComplianceService {
 		logger.debug("TOTAL DISCOUNT: "+ amount);
 		return amount;
 	}
+	
+	public Double getNetSales(int orNo, int storeCode ) {
+//		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
+//		"WHERE  p.PROD_CODE = i.PROD_CODE" +
+//		"  AND MONTH (o.TRANS_DT) = '"+month+"' && " +
+//		"YEAR(o.TRANS_DT) = '"+year+"' && " +
+//		"DAY(o.TRANS_DT) = '"+day+"' " +
+//		"AND i.OR_NO = o.OR_NO " +
+//		"AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT sum(p.AMT) from payment_item p " +
+			"  WHERE p.OR_NO = '"+orNo+"' " +
+			"AND p.STORE_CODE = '"+storeCode+"'";
+		
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		Double amount = 0.0d;
+		Double discountedAmount;
+		try {
+			while(rs.next()){
+//				discountedAmount = InvoiceItemService.getInstance().getDiscountedAmount(rs.getLong("OR_NO"),rs.getString("PROD_CODE"));
+//				discountedAmount = Double.parseDouble(String.format("%.2f",discountedAmount));
+//				amount += discountedAmount * rs.getDouble("QUANTITY");
+				amount = rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.debug("NET SALES PER OR: "+ amount);
+		return amount;
+	}
 	//here, SELL_PRICE is assumed to have the discount already, derive SELL_PRICE - DISC_RATE
 	public Double getTotalDiscount(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode, int... discountType) {
 		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
@@ -586,6 +711,37 @@ public class ComplianceService {
 		return vat;
 	}
 	
+	public Double getVat(int orNo, int storeCode) {
+		Double amt = getRawGross(orNo, storeCode);
+		Double otherDiscountAmount = getTotalDiscount(orNo, storeCode);
+		Double dlysale = (amt - otherDiscountAmount)/getVatRate();
+		Double vat = amt - otherDiscountAmount - dlysale; 
+		
+		logger.debug("VAT: "+vat);
+		return vat;
+	}
+	public Double getTotalDiscount(int orNo, int storeCode) {
+		String query = "SELECT o.OR_NO, i.PROD_CODE, i.SELL_PRICE, i.QUANTITY from invoice_item i, invoice o, products_lu p " +
+		"WHERE  p.PROD_CODE = i.PROD_CODE" +
+		"  AND o.OR_NO = '"+orNo+"' " +
+		"  AND i.OR_NO = o.OR_NO " +
+		"  AND o.STORE_CODE = i.STORE_CODE " +
+		"AND o.STORE_CODE = '"+storeCode+"'";
+		
+		System.out.println("TOTALDISCOUNT QUERY = " + query);
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+		Double amount = 0.0d;
+		try {
+			while(rs.next()){
+				amount += (InvoiceItemService.getInstance().getDiscountAmount(rs.getLong("OR_NO"),rs.getString("PROD_CODE"))) * rs.getDouble("QUANTITY");
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.debug("TOTAL DISCOUNT: "+ amount);
+		return amount;
+	}
+
 	public Double getVat(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
 		Double amt = getRawGross(transDate, eodDate, storeCode);
 		Double otherDiscountAmount = getTotalDiscount(transDate, eodDate, storeCode);
