@@ -60,7 +60,7 @@ public class ZReadingReport {
 			text.append(NEW_LINE);
 			
 			//column headers
-			text.append("Invoice No"+COMMA+"Gross Amount"+COMMA+"Net"+COMMA+"Vat"+COMMA+"Total Payment"+NEW_LINE);
+			text.append("Invoice No"+COMMA+"Gross Amount"+COMMA+"Net Sale"+COMMA+"Vat Amount"+COMMA+"Total Payment"+NEW_LINE);
 			
 			
 			String branchClause=" && i.store_code="+Main.getStoreCode();
@@ -72,119 +72,54 @@ public class ZReadingReport {
 				text.append(invoiceNo+COMMA);
 				
 				//CASH PAYMENT
-				ResultSet  rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Cash\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
+				ResultSet  rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
+				double total;
 				if(rs2.next()) {
-					cash=rs2.getDouble(1);
-					cashTotal+=cash;
+					total=rs2.getDouble(1);
 				}
 				else {
-					cash=0d;
+					total=0d;
 				}
-				
-				
-				
-				//CARD PAYMENT
-				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Credit Card\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				if(rs2.next()) {
-					card=rs2.getDouble(1);
-					cardTotal+=card;
-				}
-				else {
-					card=0d;
-				}
-				
-				//GC PAYMENT
-				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Gift Certificate\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				if(rs2.next()) {
-					gc=rs2.getDouble(1);
-					gcTotal+=gc;
-				}
-				else {
-					gc=0d;
-				}
-				
-				
-				//CHECK PAYMENT
-				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Bank Check\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				if(rs2.next()) {
-					check=rs2.getDouble(1);
-					checkTotal+=check;
-				}
-				else {
-					check=0d;
-				}
-				
-				//OTHER PAYMENT
-				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name!=\"Bank Check\" && ptype.name!=\"Cash\" && ptype.name!=\"Credit Card\" && ptype.name!=\"Gift Certificate\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				if(rs2.next()) {
-					others=rs2.getDouble(1);
-					othersTotal+=others;
-				}
-				else {
-					others=0d;
-				}
-				
 				
 				//GROSS AMOUNT
-				rs2 = Main.getDBManager().executeQuery("SELECT SUM(it.SELL_PRICE * it.QUANTITY) FROM invoice_item it WHERE it.or_no = "+rs.getInt(1));
-				if(rs2.next()){
-					grossAmount = rs2.getDouble(1);
-					grossAmountTotal+=grossAmount;
-				}
-				else{
-					grossAmount = 0d;
-				}
+				grossAmount = ComplianceService.getComplianceService().getRawGross(rs.getInt(1), rs.getInt(2));
+				grossAmountTotal+=grossAmount;
+				
 				text.append(String.format("%.2f",grossAmount)+COMMA);
 				
-				//DISCOUNT AMOUNT
-				rs2 = Main.getDBManager().executeQuery("SELECT sum(d.DISC_RATE/100 *i.sell_price*i.quantity) FROM discount_lu d, invoice_item i WHERE d.disc_no = i.disc_code AND i.or_no = "+rs.getInt(1));
-				if(rs2.next()){
-					discountAmount = rs2.getDouble(1);
-					discountAmountTotal+=discountAmount;
-				}
-				else{
-					discountAmount = 0d;
-				}
-				
-				
 				//NET AMOUNT
-				netAmount = (grossAmount - discountAmount) / VatService.getVatRate();
+				netAmount = ComplianceService.getComplianceService().getNetSales(rs.getInt(1), rs.getInt(2));
 				netAmountTotal+=netAmount;
 				text.append(String.format("%.2f",netAmount)+COMMA);
 				
 				
 				//VAT AMOUNT
-				vatAmount = (grossAmount - discountAmount) * (VatService.getVatAmount() / 100);
+				vatAmount = ComplianceService.getComplianceService().getVat(rs.getInt(1), rs.getInt(2));
 				vatAmountTotal+=vatAmount;
 				text.append(String.format("%.2f",vatAmount)+COMMA);
 				
-				double total= cash+check+card+others; //removed gc
 				totalTotal += total;
-				text.append(String.format("%.2f",total)+COMMA);
+				text.append(String.format("%.2f",total));
 				
 				text.append(NEW_LINE);
 			}
 			text.append(NEW_LINE);
 			
 			//TOTALS
-			text.append("Gross Amount Total"+COMMA+String.format("%.2f", grossAmountTotal)+COMMA+NEW_LINE);
-			text.append("Net Total"+COMMA+String.format("%.2f",netAmountTotal)+COMMA+NEW_LINE);
-			text.append("Vat Total"+COMMA+String.format("%.2f",vatAmountTotal)+COMMA+NEW_LINE);
-			text.append("Total Payments:"+COMMA+String.format("%.2f",totalTotal)+COMMA+NEW_LINE);
+			text.append("Gross Amount Total: "+String.format("%.2f", grossAmountTotal)+NEW_LINE);
+			text.append("Net Total: "+String.format("%.2f",netAmountTotal)+NEW_LINE);
+			text.append("Vat Total: "+String.format("%.2f",vatAmountTotal)+NEW_LINE);
+			text.append("Total Payments: "+String.format("%.2f",totalTotal)+NEW_LINE);
 			
 			text.append(NEW_LINE);
 			//OTHER TOTALS
 			
 			String[] date = startDate.split("-");
-			Double totalAmountReturn = ComplianceService.getComplianceService().getReturnedItemsAmount(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode()));
-			text.append("Total Amount Return:"+COMMA+totalAmountReturn+COMMA+NEW_LINE);
-			
 			Double previousAccumulatedGrandTotal = ComplianceService.getComplianceService().getOldGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode()));
-			text.append("Previous Accumulated Grand Total:"+COMMA+previousAccumulatedGrandTotal+COMMA+NEW_LINE);
+			text.append("Previous Accumulated Grand Total:"+previousAccumulatedGrandTotal+NEW_LINE);
 			
 			Double currentAccumulatedGrandTotal = ComplianceService.getComplianceService().getNewGT(Integer.parseInt(date[1]),Integer.parseInt(date[2]) , Integer.parseInt(date[0]), Integer.parseInt(Main.getStoreCode()));
-			text.append("Current Accumulated Grand Total: "+COMMA+currentAccumulatedGrandTotal+COMMA+NEW_LINE);
-			
+			text.append("Current Accumulated Grand Total: "+currentAccumulatedGrandTotal+NEW_LINE);
 			
 			writer.write(text.toString());
 			writer.flush();
