@@ -119,8 +119,8 @@ public class FestivalComplianceService {
 		int month = getComponent(date, Calendar.MONTH) + 1; // month is zero
 															// based!!
 		int day = getComponent(date, Calendar.DAY_OF_MONTH);
-//		int storeCode = Integer.parseInt(this.storeNumber);
-		int storeCode = 1;
+		int storeCode = Integer.parseInt(this.storeNumber);
+
 
 		String fileName = generateFileName(month, day, year, ComplianceMode.HOURLY);
 		PrintStream out = new PrintStream(new FileOutputStream(
@@ -147,17 +147,17 @@ public class FestivalComplianceService {
 		String dateString = sdf.format(cal.getTime());
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + dateString);
 		
-		for(int hour = 1; hour <= 24; hour++) {
+		// print all hours even with no transactions from 10AM to 11:59PM
+		for(int hour = 10; hour < 24; hour++) {
 			// LINE#4 HOUR
+			lineNumber = 4;
 			System.out.println("HOUR = " + hour);
-			Integer totalNoOfSalesTransactions = ComplianceService.getComplianceService().getNoOfSalesTransactions(month, day, year, storeCode, hour%24);
-			
-			if ( totalNoOfSalesTransactions == 0 )
-				continue;
+			Integer totalNoOfSalesTransactions =  ComplianceService.getComplianceService().getNoOfSalesTransactions(month, day, year, storeCode, hour%24);
 			
 			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + "" + hour);
 			// LINE#5 TOTAL NET SALES FOR GIVEN HOUR
-			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + removeDecimalPoint(ComplianceService.getComplianceService().getNetSales(month, day, year, storeCode, hour%24), 2));
+			Double netSalesWithoutVat = ComplianceService.getComplianceService().getNetSalesWithoutVat(month, day, year, storeCode, hour%24);
+			out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + removeDecimalPoint(netSalesWithoutVat, 2));
 
 //			Integer totalNoOfTransactions = ComplianceService.getComplianceService().getNoOfTransactions(month, day, year, storeCode, hour%24);
 			// LINE#6 TOTAL NO OF SALES TRANSACTION / HOUR
@@ -166,11 +166,11 @@ public class FestivalComplianceService {
 		}
 		
 		// LINE # 7 Total NET SALES amount for the day
-		Double netSalesAmount = ComplianceService.getComplianceService().getNetSales(month, day, year, storeCode);
-		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(netSalesAmount, 2));
+		Double netSalesAmountWithoutVat = ComplianceService.getComplianceService().getNetSalesWithoutVat(month, day, year, storeCode);
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(netSalesAmountWithoutVat, 2));
 		
 		// LINE# 8 Total no of SALES / TRANSACTION
-		Integer totalNoOfSalesTransactions = ComplianceService.getComplianceService().getNoOfTransactions(month, day, year, storeCode);
+		Integer totalNoOfSalesTransactions =  ComplianceService.getComplianceService().getNoOfSalesTransactions(month, day, year, storeCode);
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0") + ""  + totalNoOfSalesTransactions);
 		
 		return fileName;
@@ -263,11 +263,13 @@ public class FestivalComplianceService {
 								storeCode), 2));
 				
 
-		// LINE#6 Gross Sales QUERY
+		// LINE#6 Gross Sales QUERY 
+		// FOR FESTIVAL GROSS = NET AMOUNT
+		// NET = WITHOUT VAT
 		Double grossSalesAmount = ComplianceService.getComplianceService().getRawGross(month, day, year, storeCode);
 		Double netSalesAmount = ComplianceService.getComplianceService().getNetSales(month, day, year, storeCode);
 		Double otherDiscountAmount = grossSalesAmount - netSalesAmount;
-		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(grossSalesAmount, 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(netSalesAmount, 2));
 		
 		
 		// LINE#7 TOTAL NON-TAXABLE AMOUNT
@@ -303,7 +305,7 @@ public class FestivalComplianceService {
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ "NF" );
 		
 		// LINE#17 SALES TYPE 02 - NON FOOD NET SALES
-		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(netSalesAmount, 2));
+		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService.getComplianceService().getNetSalesWithoutVat(month, day, year, storeCode), 2));
 		
 		// LINE#18 TOTAL TAX/VAT AMOUNT
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(ComplianceService

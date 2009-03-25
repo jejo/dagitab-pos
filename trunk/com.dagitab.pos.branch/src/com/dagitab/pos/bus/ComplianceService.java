@@ -701,10 +701,25 @@ public class ComplianceService {
 		return null;
 	}
 	
-	public Double getVat(int month, int day, int year, int storeCode) {
-		Double amt = getRawGross(month, day, year, storeCode);
-		Double otherDiscountAmount = getTotalDiscount(month, day, year, storeCode);
-		Double dlysale = (amt - otherDiscountAmount)/getVatRate();
+	/// APPLICABLE ONLY TO FESTIVAL
+	public Double getNetSalesWithoutVat(int month, int day, int year, int storeCode, int... hour) {
+		Double amt = getNetSales(month, day, year, storeCode, hour);
+		Double dlysale = (amt)/getVatRate();
+		
+		return dlysale;
+	}
+	public Double getVat(int month, int day, int year, int storeCode, int... hour) {
+		Double amt, dlysale, otherDiscountAmount;
+		// festival specific logic
+		if (storeCode == 2) {
+			amt = getNetSales(month, day, year, storeCode, hour);
+			dlysale = (amt)/getVatRate();
+			otherDiscountAmount = 0.0;
+		} else {
+			amt = getRawGross(month, day, year, storeCode, hour);
+			otherDiscountAmount = getTotalDiscount(month, day, year, storeCode, hour);
+			dlysale = (amt - otherDiscountAmount)/getVatRate();
+		}
 		Double vat = amt - otherDiscountAmount - dlysale; 
 		
 		logger.debug("VAT: "+vat);
