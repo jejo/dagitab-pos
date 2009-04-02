@@ -50,7 +50,9 @@ public class DeliveryItemService {
 				if(!hasInventory){
 					InventoryService.getInstance().insertIntoInventory(Integer.valueOf(acceptedQuantity.toString()), productCode);
 				}
-				InventoryService.getInstance().addToInventory(Integer.valueOf(acceptedQuantity.toString()), productCode);
+				else{
+					InventoryService.getInstance().addToInventory(Integer.valueOf(acceptedQuantity.toString()), productCode);
+				}
 			}
 			return true;
 		}
