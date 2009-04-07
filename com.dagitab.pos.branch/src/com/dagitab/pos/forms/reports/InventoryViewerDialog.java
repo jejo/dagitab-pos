@@ -3,8 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.sql.ResultSet;
-import java.util.Vector;
+import java.util.UUID;
 
 import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
@@ -25,15 +26,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-
 import org.apache.log4j.Logger;
-
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.bus.StoreService;
 import com.dagitab.pos.main.Main;
+import com.dagitab.pos.main.OLEViewer;
+import com.dagitab.pos.reports.CurrentInventory;
 import com.dagitab.pos.util.LoggerUtility;
 import com.dagitab.pos.util.TableUtility;
 
@@ -61,7 +62,6 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 	private JButton jButton2;
 	private JScrollPane productScrollPane;
 	private JTextField productTextField;
-	private Vector<Vector<String>> inventoryTable;
 	private static Logger logger = Logger.getLogger(InventoryViewerDialog.class);
 	
 
@@ -108,41 +108,20 @@ public class InventoryViewerDialog extends javax.swing.JDialog {
 					jButton2.setPreferredSize(new java.awt.Dimension(154, 25));
 					jButton2.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							  JFileChooser chooser = new JFileChooser();
-							  chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-							    // Note: source for ExampleFileFilter can be found in FileChooserDemo,
-							    // under the demo/jfc directory in the JDK.
-//							  	
-							  	FileFilter filter = createFileFilter("Excel Files Only",true,new String[]{"xls"});
-							  	chooser.setFileFilter(filter);
-
-							  
-							  	int returnVal = chooser.showSaveDialog(InventoryViewerDialog.this);
-//							    int returnVal = chooser.showOpenDialog(InventoryViewer.this);
-							    if(returnVal == JFileChooser.APPROVE_OPTION) {
-							       logger.info("You chose to open this file: " +
-							            
-							            chooser.getSelectedFile().getAbsolutePath()+".xls");
-							       
-							       
-							       
-							       boolean success = 
-							    	   com.dagitab.pos.reports.CurrentInventory.generate(chooser.getSelectedFile().getAbsolutePath()+".xls",inventoryTable,Main.getDBManager(),Main.getStoreCode());
-							       
-							       if(success){
-							    	   JOptionPane.showMessageDialog(null, 
-												"The report is saved.", 
-												"Saved",JOptionPane.INFORMATION_MESSAGE);
-							       }
-							       else{
-							    	   JOptionPane.showMessageDialog(null, 
-												"Cannot save file", 
-												"Error",JOptionPane.ERROR_MESSAGE);
-							       }
-							       
-							       		
-							    }
-
+							String fileName = "temp.xls";
+							logger.info("Exporting " + fileName);
+						    boolean success = (new CurrentInventory()).generate( fileName,  productTable, storeComboBox.getSelectedItem().toString() );
+						    if(success){
+						    	   try {
+										OLEViewer.open2(fileName);
+						    	   } 
+						    	   catch (IOException e) {
+										LoggerUtility.getInstance().logStackTrace(e);
+						    	   }
+					       }
+					       else{
+					    	   JOptionPane.showMessageDialog(null, "Cannot export file", "Error",JOptionPane.ERROR_MESSAGE);
+					       }
 						}
 					});
 				}

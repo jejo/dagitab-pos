@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.JTable;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -21,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import com.dagitab.pos.main.DBManager;
+import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.LoggerUtility;
 
 
@@ -29,6 +31,80 @@ public class CurrentInventory {
 	
 	public static void main(String[] args){
 		//generate("This.xls");
+	}
+	
+	public boolean generate( String fileName, JTable table, String branch ){
+		HSSFCell cell;
+		POIFSFileSystem fs;
+		int topMarker = 9;
+		
+		try {
+			fs = new POIFSFileSystem(new FileInputStream("xls/currentinventory.xls"));
+		
+			HSSFWorkbook wb = new HSSFWorkbook(fs);
+			HSSFSheet sheet = wb.getSheetAt(0);
+	
+	
+			// page generated
+			HSSFRow row = sheet.getRow(1);
+			cell = HSSFUtil.createStringCell(wb,row, (short) 1,false,false);
+	
+			SimpleDateFormat format = new SimpleDateFormat(
+					"MMMM dd, yyyy hh:mm:ss a");
+			cell.setCellValue(format.format(new Date(System.currentTimeMillis())));
+			
+//			 branch
+			row = sheet.getRow(2);
+			cell = HSSFUtil.createStringCell(wb,row, (short) 1,false,false);
+			cell.setCellValue(branch.split("-")[1]);
+					
+			int rowCounter=topMarker;
+			
+			for(int i=0; i<table.getRowCount(); i++){
+				row = sheet.createRow(rowCounter);
+				
+				//product code
+				cell = HSSFUtil.createStringCell(wb,row,(short)0,false,true);
+				cell.setCellValue(table.getValueAt(i, 0).toString());
+				
+				//product name
+				cell = HSSFUtil.createStringCell(wb,row,(short)1,false,true);
+				cell.setCellValue(table.getValueAt(i, 1).toString());
+				
+				
+				
+				//selling price
+				cell = HSSFUtil.createAmountCell(wb,row,(short)2,false,true);
+				cell.setCellValue(table.getValueAt(i, 2).toString());
+				
+				//available qty
+				cell = HSSFUtil.createIntCell(wb,row,(short)3,false,true);
+				cell.setCellValue(table.getValueAt(i, 3).toString());
+				
+				//deferred qty
+				cell = HSSFUtil.createIntCell(wb,row,(short)4,false,true);
+				cell.setCellValue(table.getValueAt(i, 4).toString());
+				
+				rowCounter++;
+				
+//				 Write the output to a file
+				FileOutputStream fileOut = new FileOutputStream(fileName);
+				wb.write(fileOut);
+				fileOut.close();
+			}
+			
+			return true;
+			
+		} catch (FileNotFoundException e) {
+
+			LoggerUtility.getInstance().logStackTrace(e);
+			return false;
+		} catch (IOException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+			return false;
+		}
+		
+		
 	}
 	
 	
@@ -46,7 +122,7 @@ public class CurrentInventory {
 	
 			// page generated
 			HSSFRow row = sheet.getRow(1);
-			cell = createStringCell(wb,row, (short) 1,false,false);
+			cell = HSSFUtil.createStringCell(wb,row, (short) 1,false,false);
 	
 			SimpleDateFormat format = new SimpleDateFormat(
 					"MMMM dd, yyyy hh:mm:ss a");
@@ -74,11 +150,11 @@ public class CurrentInventory {
 				for(int j=0; j<data.get(i).size();j++){
 					if(j != 4 && j!=5){
 						if(j == 3){
-							cell = createAmountCell(wb,row,(short)colnum,false,true);
+							cell = HSSFUtil.createAmountCell(wb,row,(short)colnum,false,true);
 							cell.setCellValue(Double.parseDouble(data.get(i).get(j)));
 						}
 						else{
-							cell = createStringCell(wb,row,(short)colnum,false,true);
+							cell = HSSFUtil.createStringCell(wb,row,(short)colnum,false,true);
 							cell.setCellValue(data.get(i).get(j));
 						}
 						colnum++;
@@ -105,106 +181,5 @@ public class CurrentInventory {
 		}
 	}
 	
-	static HSSFCell createAmountCell(HSSFWorkbook wb, HSSFRow row, short index,
-			boolean bold, boolean border) {
-		HSSFCell cell = row.createCell(index);
-		HSSFCellStyle style = wb.createCellStyle();
-		HSSFDataFormat format = wb.createDataFormat();
-		style.setDataFormat(format.getFormat("0.00"));
-		if (border) {
-			setBorder(style, true, true, true, true);
-		}
-		cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-		cell.setCellStyle(style);
-		return cell;
-	}
-
-	static HSSFCell createPercentCell(HSSFWorkbook wb, HSSFRow row, short index,
-			boolean bold, boolean border) {
-		HSSFCell cell = row.createCell(index);
-		HSSFCellStyle style = wb.createCellStyle();
-		HSSFDataFormat format = wb.createDataFormat();
-		style.setDataFormat(format.getFormat("0.00 %"));
-		if (border) {
-			setBorder(style, true, true, true, true);
-		}
-		if(bold) {
-			HSSFFont font = wb.createFont();
-			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-			style.setFont(font);
-		}
-		
-		cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-		cell.setCellStyle(style);
-		return cell;
-	}
-
-	static HSSFCell createIntCell(HSSFWorkbook wb, HSSFRow row, short index,
-			boolean bold, boolean border) {
-		HSSFCell cell = row.createCell(index);
-		HSSFCellStyle style = wb.createCellStyle();
-		style.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
-		if (border) {
-			setBorder(style, true, true, true, true);
-		}
-		if(bold) {
-			HSSFFont font = wb.createFont();
-			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-			style.setFont(font);
-		}
-		cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-		cell.setCellStyle(style);
-		return cell;
-	}
-
-	static HSSFCell createStringCell(HSSFWorkbook wb, HSSFRow row, short index,
-			boolean bold, boolean border) {
-		HSSFCell cell = row.createCell(index);
-		HSSFCellStyle style = wb.createCellStyle();
-		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		if (border) {
-			setBorder(style, true, true, true, true);
-		}
-		if(bold) {
-			HSSFFont font = wb.createFont();
-			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-			style.setFont(font);
-		}
-		cell.setCellStyle(style);
-		return cell;
-	}
-
-	static HSSFCell createFormulaCell(HSSFWorkbook wb, HSSFRow row, short index,
-			String formula, boolean bold, boolean isPercent) {
-		HSSFCell cell = row.createCell(index);
-		HSSFCellStyle style = wb.createCellStyle();
-		setBorder(style, true, true, true, true);
-		cell.setCellType(HSSFCell.CELL_TYPE_FORMULA);
-		cell.setCellFormula(formula);
-		HSSFDataFormat format = wb.createDataFormat();
-		style.setDataFormat(format.getFormat("0.00 %"));
-		if(bold) {
-			HSSFFont font = wb.createFont();
-			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-		}
-		cell.setCellStyle(style);
-		return cell;
-	}
-
-	static void setBorder(HSSFCellStyle style, boolean top, boolean left,
-			boolean bottom, boolean right) {
-		if (top) {
-			style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		}
-		if (left) {
-			style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		}
-		if (right) {
-			style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		}
-		if (top) {
-			style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		// style.setTopBorderColor(HSSFColor.BLACK.index);
-		}
-	}
+	
 }
