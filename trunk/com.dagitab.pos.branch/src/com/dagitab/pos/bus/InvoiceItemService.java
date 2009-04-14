@@ -138,7 +138,8 @@ public class InvoiceItemService {
 		return 0.0d;
 	}
 	public  Double getDiscountedInvoiceItemAmount(Long orNo){
-		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM((invoice_item.SELL_PRICE  - (invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01)) * invoice_item.QUANTITY)) FROM invoice_item, discount_lu WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode() +" AND invoice_item.DISC_CODE = discount_lu.DISC_NO");
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT SUM((invoice_item.SELL_PRICE  - (invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01))) * invoice_item.QUANTITY) FROM invoice_item, discount_lu WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode() +" AND invoice_item.DISC_CODE = discount_lu.DISC_NO");
+		System.out.println("SELECT SUM((invoice_item.SELL_PRICE  - (invoice_item.SELL_PRICE * (discount_lu.DISC_RATE * .01))) * invoice_item.QUANTITY) FROM invoice_item, discount_lu WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode() +" AND invoice_item.DISC_CODE = discount_lu.DISC_NO");
 		
 		try {
 			if(rs.next()){
