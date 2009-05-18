@@ -120,7 +120,7 @@ public class AboutDialog extends javax.swing.JDialog {
 	}
 	
 	private AbstractAction getAboutLabelAbstractAction() {
-		AbstractAction aboutLabelAction = new AbstractAction("About Babyland POS Application 2.0", null) {
+		AbstractAction aboutLabelAction = new AbstractAction("About Babyland POS Application 2.01", null) {
 			
 			public void actionPerformed(ActionEvent evt) {
 				AboutDialog.this.dispose();
