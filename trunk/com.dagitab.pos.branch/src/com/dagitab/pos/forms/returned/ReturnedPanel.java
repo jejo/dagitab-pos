@@ -998,7 +998,7 @@ public class ReturnedPanel extends javax.swing.JPanel implements Payments {
 				paymentItem.setAmount(amount);
 			}
 		}
-		
+		model.setValueAt(paymentItem.getPaymentCode(), index, 0);
 		model.setValueAt(PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode()), index, 1);
 		model.setValueAt(paymentItem.getAmount(), index, 2);
 		model.setValueAt(paymentItem.getCardType().toString(), index, 3);
