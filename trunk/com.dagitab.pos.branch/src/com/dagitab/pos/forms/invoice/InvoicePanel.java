@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -630,13 +631,21 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 							if(confirm == 0){
 								logger.info("processing invoice transaction...");
 								if(hasEnoughPayment()){
-									saveTransaction();
+									try {
+										saveTransaction();
+									} catch (SQLException e) {
+										LoggerUtility.getInstance().logStackTrace(e);
+									}
 								}
 								else{
 									if(isPartial()){
 										int confirm2  = JOptionPane.showConfirmDialog(null, "You are saving a partial transaction. Are you sure you want to continue?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 										if(confirm2 == 0){
-											saveTransaction();
+											try {
+												saveTransaction();
+											} catch (SQLException e) {
+												LoggerUtility.getInstance().logStackTrace(e);
+											}
 										}
 									}
 									else{
@@ -1084,11 +1093,15 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		return partialChk.isSelected();
 	}
 	
-	public void saveTransaction(){
+	public void saveTransaction() throws SQLException{
+		
+		
+		//Make saving a transaction based
+		Main.getDBManager().getConnection().setAutoCommit(false);
+		
 		
 		Invoice invoice = new Invoice();
 		invoice.setOrNo(Long.parseLong(orNoTxt.getText()));
-		//TODO: validate numeric fields (use Apache commons)
 		if(!invoiceTxt.getText().trim().equals("")){
 			invoice.setInvoiceNo(Long.parseLong(invoiceTxt.getText()));
 		}
@@ -1155,7 +1168,6 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(lblAmount.getText()));
 		for(PaymentItem paymentItem: calculatedPaymentItems){
 			logger.info("Inserting payment item");
-			
 			//CHANGE REQUEST 2009-01-20 FILTER GC ITEMS AND  INSERT IT INTO GC_ITEM TABLE
 			if(paymentItem.getPaymentCode().equals(4)){
 				GCItem gcItem = new GCItem();
@@ -1170,18 +1182,19 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			}
 		}
 		
-		//GC ITEM Population
-		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
+		Main.getDBManager().getConnection().commit();
+		Main.getDBManager().getConnection().setAutoCommit(true);
 		
 		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 		
+		//GC ITEM Population
+		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
+		
 		//MAKE RECEIPT
 		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeField.getText());
-		
 		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
 		validateReceiptDialog.setLocationRelativeTo(null);
 		validateReceiptDialog.setVisible(true);
-		
 		
 		//Additional check if or_no is not updated
 		try {
@@ -1189,6 +1202,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
+		
 		
 	}
 	
