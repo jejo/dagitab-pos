@@ -207,7 +207,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 							
 							if(Double.parseDouble(txtAmount.getText())>0){
 								if(invoker instanceof InvoicePanel){
-									logger.info("invoking instance of invoice panel from payment dialog");
+									logger.debug("invoking instance of invoice panel from payment dialog");
 									InvoicePanel invoicePanel = (InvoicePanel)invoker;
 								
 									if(actionProdCode.equals("add")){

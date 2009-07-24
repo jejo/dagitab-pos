@@ -56,6 +56,7 @@ public class InventoryService {
 		String sql = "INSERT INTO inventory_lu (QUANTITY, PROD_CODE, STORE_CODE) VALUES ("+quantity+",\""+productCode+"\","+Main.getStoreCode()+")";
 		Integer result = Main.getDBManager().executeUpdate(sql);
 		if(result > 0){
+			Main.getSyncManager().record(sql);
 			logger.info("Added to inventory_lu added quantity of "+quantity+" to product: "+productCode+". Affected: "+result);
 		}
 		return result;

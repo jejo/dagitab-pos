@@ -6,8 +6,6 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
-import com.dagitab.pos.bus.DiscountService;
-import com.dagitab.pos.bus.VatService;
 import com.dagitab.pos.domain.Invoice;
 import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.DateUtility;
@@ -50,6 +48,7 @@ public class InvoiceService {
 
 	
 	public static Invoice getInvoiceByOr(String orNo){
+		logger.info("entering `getInvoiceByOr` method");
 		ResultSet rs = Main.getDBManager().executeQuery("Select * from Invoice where OR_NO = '" + orNo + "'");
 		
 		try {
@@ -62,7 +61,7 @@ public class InvoiceService {
 			LoggerUtility.getInstance().logStackTrace(e);
 		} finally{
 			try {
-				System.out.println("closing rs connection");
+//				System.out.println("closing rs connection");
 				rs.close();
 			} catch (SQLException e) {
 				LoggerUtility.getInstance().logStackTrace(e);
@@ -146,7 +145,7 @@ public class InvoiceService {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}finally{
 			try {
-				System.out.println("closing rs connection");
+//				System.out.println("closing rs connection");
 				rs.close();
 			} catch (SQLException e) {
 				LoggerUtility.getInstance().logStackTrace(e);
@@ -156,6 +155,7 @@ public class InvoiceService {
 	}
 	
 	public static Double getInvoiceAmount(Long orNo){
+		logger.info("entering `getInvoiceAmount` method");
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT * FROM invoice_item WHERE OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode());
 		Double invoiceAmount = 0.0d;
 		try {
@@ -169,7 +169,7 @@ public class InvoiceService {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}finally{
 			try {
-				System.out.println("closing rs connection");
+//				System.out.println("closing rs connection");
 				rs.close();
 			} catch (SQLException e) {
 				LoggerUtility.getInstance().logStackTrace(e);
@@ -198,7 +198,7 @@ public class InvoiceService {
 	
 	public static Double getTotalDiscountAmount(Long orNo){
 		String query = "SELECT  truncate((d.DISC_RATE * .01)*SELL_PRICE*i.QUANTITY,2), d.DISC_RATE  FROM invoice_item i, discount_lu  d WHERE i.DISC_CODE = d.DISC_NO AND i.OR_NO = "+orNo+" AND STORE_CODE = "+Main.getStoreCode();
-		logger.info(query);
+		//logger.info(query);
 		Double totalDiscount = 0.0d;
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		try {
@@ -214,5 +214,4 @@ public class InvoiceService {
 		
 	}
 	
-
 }

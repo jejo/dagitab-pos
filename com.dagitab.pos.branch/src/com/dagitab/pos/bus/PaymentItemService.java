@@ -71,6 +71,7 @@ public class PaymentItemService {
 											 paymentItem.getStoreNo().toString()};
 		
 		Integer result = Main.getDBManager().insert(columns, columnValues, "payment_item", null, null);
+		logger.info("Added new invoice item entry. Affected: "+result);
 		return result;
 	}
 	

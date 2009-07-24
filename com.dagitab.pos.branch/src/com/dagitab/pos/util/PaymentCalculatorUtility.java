@@ -25,15 +25,18 @@ public class PaymentCalculatorUtility {
 	//handle exact amounts to be paid
 	
 	public List<PaymentItem> getCalculatedPaymentItems(List<PaymentItem> items, Double transactionAmount){
+		logger.info("entering `getCalculatedPaymentItems` method");
+		
 		//Copy paymentItems to new list to eliminate pointer problem!
 		List<PaymentItem> calculatedPaymentItems = copy(items);
-		logger.info(calculatedPaymentItems.size());
+		//logger.info(calculatedPaymentItems.size());
 		sortPaymentItems(calculatedPaymentItems);
+		
 		Double amount = transactionAmount;
 		Double amountToBe=null;
-		for(PaymentItem paymentItem: items){
-			logger.info(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
-		}
+//		for(PaymentItem paymentItem: items){
+			//logger.info(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+//		}
 		
 		for(int i =0; i < calculatedPaymentItems.size(); i++){
 			String payType = calculatedPaymentItems.get(i).getPaymentType();
@@ -73,13 +76,13 @@ public class PaymentCalculatorUtility {
 			calculatedPaymentItems.get(i).setAmount(amountToBe);
 		}
 		
-		for(PaymentItem paymentItem: items){
-			logger.debug(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
-		}
-		
-		for(PaymentItem paymentItem: calculatedPaymentItems){
-			logger.debug("calculated: "+paymentItem.getPaymentType()+": "+paymentItem.getAmount());
-		}
+//		for(PaymentItem paymentItem: items){
+//			logger.debug(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+//		}
+//		
+//		for(PaymentItem paymentItem: calculatedPaymentItems){
+//			logger.debug("calculated: "+paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+//		}
 		return calculatedPaymentItems;
 	}
 	

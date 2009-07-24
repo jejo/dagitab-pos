@@ -248,9 +248,10 @@ public class ReceiptPanel extends javax.swing.JPanel {
 				sellingPriceQuantityAmount = Double.parseDouble(String.format("%.2f",ReturnItemService.getDiscountedAmount(invoiceItem.getOrNo(), invoiceItem.getProductCode()))) * invoiceItem.getQuantity();
 			}
 			
-			logger.info("Product Code: "+product.getProdCode()+" Product Name: "+product.getName());
-			logger.info("current price*quantity: "+currentPriceQuantityAmount);
-			logger.info("selling price*quantity: "+sellingPriceQuantityAmount);
+//			logger.info("Product Code: "+product.getProdCode()+" Product Name: "+product.getName());
+//			logger.info("current price*quantity: "+currentPriceQuantityAmount);
+//			logger.info("selling price*quantity: "+sellingPriceQuantityAmount);
+			
 			currentSubTotal+=currentPriceQuantityAmount;
 			sellingSubTotal += sellingPriceQuantityAmount;
 			g.setFont(new Font("Arial", Font.PLAIN, 9));
@@ -345,7 +346,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 
 //		 Double netSaleAmount = Double.parseDouble(String.format("%.2f",currentSubTotal)) - Double.parseDouble(String.format("%.2f",totalDiscount));
 //		 logger.info("Net Sale Amount: "+netSaleAmount);
-		 logger.info("SUB TOTAL:"+sellingSubTotal);
+//		 logger.info("SUB TOTAL:"+sellingSubTotal);
 		 
 		 Double vatRate = VatService.getVatRate();
 		 sellingSubTotal = Double.parseDouble(String.format("%.2f", sellingSubTotal));
@@ -404,7 +405,7 @@ public class ReceiptPanel extends javax.swing.JPanel {
 		 /***TOTAL**/
 		
 		 
-		 logger.info("Total Amount:" +sellingSubTotal);
+//		 logger.info("Total Amount:" +sellingSubTotal);
 		 
 		 //	for right justified compute 190 - string size*5 as first position
 //		 double Total = Double.parseDouble(String.format("%.2f", vatablepurchase))+Double.parseDouble(vatAmount);

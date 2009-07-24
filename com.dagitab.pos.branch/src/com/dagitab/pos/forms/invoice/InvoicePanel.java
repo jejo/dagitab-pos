@@ -629,23 +629,17 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 						if(itemTable.getRowCount() > 0){
 							int confirm  = JOptionPane.showConfirmDialog(null, "Are you sure you want to process this transaction?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 							if(confirm == 0){
-								logger.info("processing invoice transaction...");
+								logger.debug("processing invoice transaction...");
 								if(hasEnoughPayment()){
-									try {
+									
 										saveTransaction();
-									} catch (SQLException e) {
-										LoggerUtility.getInstance().logStackTrace(e);
-									}
+									
 								}
 								else{
 									if(isPartial()){
 										int confirm2  = JOptionPane.showConfirmDialog(null, "You are saving a partial transaction. Are you sure you want to continue?", "Prompt", JOptionPane.INFORMATION_MESSAGE);
 										if(confirm2 == 0){
-											try {
-												saveTransaction();
-											} catch (SQLException e) {
-												LoggerUtility.getInstance().logStackTrace(e);
-											}
+											saveTransaction();
 										}
 									}
 									else{
@@ -869,6 +863,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	}
 	
 	public void updatePaymentAmounts(){
+		logger.info("entering `updatePaymentAmounts` method");
 		
 		Double totalPaymentAmount = 0.0d;
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
@@ -879,7 +874,6 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		String amountString = lblAmount.getText();
 		double amount = Double.parseDouble(amountString);
 		totalPayment.setText(String.format("%.2f", totalPaymentAmount));
-		logger.info("amount: "+amount);
 		
 		//for recording change amount, gift certificate should not be considered for change
 		totalPaymentAmount = 0.0d;
@@ -904,7 +898,7 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 				}
 			}
 		}
-		logger.info("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
+		logger.debug("Total Amount: "+totalPaymentAmount+" - amount: "+amount+" Change Amount: "+changeAmount);
 		changeField.setText(String.format("%.2f", changeAmount));
 	}
 	
@@ -987,12 +981,13 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 	}
 	
 	public Boolean hasCardNo(Integer paymentCode, String cardNo){
+		logger.info("entering `hasCardNo` method");
 		String paymentName = PaymentItemService.getInstance().getPaymentType(paymentCode);
 		DefaultTableModel model = (DefaultTableModel) paymentTable.getModel();
 		for(int i = 0; i<model.getRowCount(); i++){
-			logger.info(model.getValueAt(i, 1).toString());
-			logger.info(model.getValueAt(i, 4).toString());
-			logger.info(cardNo);
+			//logger.info(model.getValueAt(i, 1).toString());
+			//logger.info(model.getValueAt(i, 4).toString());
+			//logger.info(cardNo);
 			if(model.getValueAt(i, 1).toString().equals("Credit Card") && paymentName.equals("Credit Card") && model.getValueAt(i, 4).equals(cardNo)){
 				logger.info("true");
 				return true;
@@ -1093,36 +1088,107 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 		return partialChk.isSelected();
 	}
 	
-	public void saveTransaction() throws SQLException{
-		
-		
-		//Make saving a transaction based
-		Main.getDBManager().getConnection().setAutoCommit(false);
-		
-		
-		Invoice invoice = new Invoice();
-		invoice.setOrNo(Long.parseLong(orNoTxt.getText()));
-		if(!invoiceTxt.getText().trim().equals("")){
-			invoice.setInvoiceNo(Long.parseLong(invoiceTxt.getText()));
+	public void saveTransaction() {
+		logger.info("entering `saveTransaction` method");
+		try{
+			//Make saving a transaction based
+			Main.getDBManager().getConnection().setAutoCommit(false);
+			Invoice invoice = saveInvoice();
+			List<InvoiceItem> invoiceItems = saveInvoiceItems();
+			List<PaymentItem> paymentItems = fillPaymentItemData();
+			List<PaymentItem> calculatedPaymentItems = saveCalculatedPaymentItems(paymentItems);
+			Main.getDBManager().getConnection().commit();
+			JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
+			prepareReceipt(calculatedPaymentItems, invoice, invoiceItems, paymentItems);
+			
+			//Additional check if or_no is not updated
+			try {
+				clearInfoValues();
+			} catch (Exception e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+				JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		if(!salesSpecialistTxt.getText().trim().equals("")){
-			invoice.setAssistantCode(Integer.parseInt(salesSpecialistTxt.getText()));
+		catch(Exception e){
+			try {
+				Main.getDBManager().getConnection().rollback();
+			} catch (SQLException e1) {
+				LoggerUtility.getInstance().logStackTrace(e1);
+			} finally{
+				try {
+					clearInfoValues();
+				} catch (Exception e1) {
+					LoggerUtility.getInstance().logStackTrace(e1);
+				}
+			}
+			JOptionPane.showMessageDialog(null, "There was an error occured in the transaction. Please re-enter the transaction", "Save Error", JOptionPane.ERROR_MESSAGE);
+			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		if(!customerTxt.getText().trim().equals("")){
-			invoice.setCustomerNo(Integer.parseInt(customerTxt.getText()));
+		finally{
+			try {
+				Main.getDBManager().getConnection().setAutoCommit(true);
+			} catch (SQLException e) {
+				LoggerUtility.getInstance().logStackTrace(e);
+			}
 		}
-		if(partialChk.isSelected()){
-			invoice.setIsPartial(1);
-		}
-		else{
-			invoice.setIsPartial(0);
-		}
-		invoice.setEncoderCode(Main.getClerkCode());
-		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
-		invoice.setChangeAmount(Double.parseDouble(changeField.getText()));
+	}
+
+	private void prepareReceipt(List<PaymentItem> calculatedPaymentItems, Invoice invoice, List<InvoiceItem> invoiceItems, List<PaymentItem> paymentItems) {
+		logger.info("entering `prepareReceipt` method");
+		//GC ITEM Population
+		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
 		
-		InvoiceService.insert(invoice);
-		
+		//MAKE RECEIPT
+		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeField.getText());
+		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
+		validateReceiptDialog.setLocationRelativeTo(null);
+		validateReceiptDialog.setVisible(true);
+	}
+
+	private List<PaymentItem> saveCalculatedPaymentItems(
+			List<PaymentItem> paymentItems) {
+		logger.info("entering `saveCalculatedPaymentItems` method");
+		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(lblAmount.getText()));
+		for(PaymentItem paymentItem: calculatedPaymentItems){
+			
+			//CHANGE REQUEST 2009-01-20 FILTER GC ITEMS AND  INSERT IT INTO GC_ITEM TABLE
+			if(paymentItem.getPaymentCode().equals(4)){
+				GCItem gcItem = new GCItem();
+				gcItem.setOrNo(paymentItem.getOrNo());
+				gcItem.setStoreNo(paymentItem.getStoreNo());
+				gcItem.setAmount(paymentItem.getAmount());
+				gcItem.setGcNo(paymentItem.getGcNo());
+				GCItemService.getInstance().insert(gcItem);
+			}
+			else{
+				PaymentItemService.getInstance().insert(paymentItem);
+			}
+		}
+		return calculatedPaymentItems;
+	}
+
+	private List<PaymentItem> fillPaymentItemData() {
+		//payment item data
+		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
+		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
+		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
+			PaymentItem paymentItem = new PaymentItem();
+			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
+			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
+			paymentItem.setCardType(paymentTable.getValueAt(i, 3).toString());
+			paymentItem.setCheckNo(paymentTable.getValueAt(i, 5).toString());
+			paymentItem.setGcNo(paymentTable.getValueAt(i, 6).toString());
+			paymentItem.setOrNo(Long.parseLong(orNoTxt.getText()));
+			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
+			paymentItem.setPaymentType(paymentTable.getValueAt(i, 1).toString());
+//			PaymentItemService.getInstance().insert(paymentItem);
+			paymentItems.add(paymentItem);
+		}
+		return paymentItems;
+	}
+
+	private List<InvoiceItem> saveInvoiceItems() {
 		List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
 		//invoice item data
 		DefaultTableModel itemTableModel = (DefaultTableModel) itemTable.getModel();
@@ -1147,63 +1213,34 @@ public class InvoicePanel extends javax.swing.JPanel implements Payments  {
 			invoiceItems.add(invoiceItem);
 		}
 		
-		//payment item data
-		List<PaymentItem> paymentItems = new ArrayList<PaymentItem>();
-		DefaultTableModel paymentTableModel = (DefaultTableModel) paymentTable.getModel();
-		for(int i = 0; i <paymentTableModel.getRowCount(); i++){
-			PaymentItem paymentItem = new PaymentItem();
-			paymentItem.setAmount(Double.parseDouble(paymentTable.getValueAt(i, 2).toString()));
-			paymentItem.setCardNo(paymentTable.getValueAt(i, 4).toString());
-			paymentItem.setCardType(paymentTable.getValueAt(i, 3).toString());
-			paymentItem.setCheckNo(paymentTable.getValueAt(i, 5).toString());
-			paymentItem.setGcNo(paymentTable.getValueAt(i, 6).toString());
-			paymentItem.setOrNo(Long.parseLong(orNoTxt.getText()));
-			paymentItem.setStoreNo(Integer.parseInt(Main.getStoreCode()));
-			paymentItem.setPaymentCode(Integer.parseInt(paymentTable.getValueAt(i, 0).toString()));
-			paymentItem.setPaymentType(paymentTable.getValueAt(i, 1).toString());
-//			PaymentItemService.getInstance().insert(paymentItem);
-			paymentItems.add(paymentItem);
+		
+		return invoiceItems;
+	}
+
+	private Invoice saveInvoice() {
+		Invoice invoice = new Invoice();
+		invoice.setOrNo(Long.parseLong(orNoTxt.getText()));
+		if(!invoiceTxt.getText().trim().equals("")){
+			invoice.setInvoiceNo(Long.parseLong(invoiceTxt.getText()));
 		}
-		
-		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(lblAmount.getText()));
-		for(PaymentItem paymentItem: calculatedPaymentItems){
-			logger.info("Inserting payment item");
-			//CHANGE REQUEST 2009-01-20 FILTER GC ITEMS AND  INSERT IT INTO GC_ITEM TABLE
-			if(paymentItem.getPaymentCode().equals(4)){
-				GCItem gcItem = new GCItem();
-				gcItem.setOrNo(paymentItem.getOrNo());
-				gcItem.setStoreNo(paymentItem.getStoreNo());
-				gcItem.setAmount(paymentItem.getAmount());
-				gcItem.setGcNo(paymentItem.getGcNo());
-				GCItemService.getInstance().insert(gcItem);
-			}
-			else{
-				PaymentItemService.getInstance().insert(paymentItem);
-			}
+		if(!salesSpecialistTxt.getText().trim().equals("")){
+			invoice.setAssistantCode(Integer.parseInt(salesSpecialistTxt.getText()));
 		}
-		
-		Main.getDBManager().getConnection().commit();
-		Main.getDBManager().getConnection().setAutoCommit(true);
-		
-		JOptionPane.showMessageDialog(null, "Successfully processed transaction", "Prompt", JOptionPane.INFORMATION_MESSAGE);
-		
-		//GC ITEM Population
-		List<GCItem> gcItems = GCItemService.getInstance().filterToGCItemList(calculatedPaymentItems);
-		
-		//MAKE RECEIPT
-		ReceiptPanel receiptPanel = new ReceiptPanel(invoice, invoiceItems, paymentItems, gcItems, changeField.getText());
-		ValidateReceipt validateReceiptDialog = new ValidateReceipt(Main.getInst(), receiptPanel);
-		validateReceiptDialog.setLocationRelativeTo(null);
-		validateReceiptDialog.setVisible(true);
-		
-		//Additional check if or_no is not updated
-		try {
-			clearInfoValues();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Database connection seems to be unstable. Please restart the application.", "Warning", JOptionPane.ERROR_MESSAGE);
+		if(!customerTxt.getText().trim().equals("")){
+			invoice.setCustomerNo(Integer.parseInt(customerTxt.getText()));
 		}
+		if(partialChk.isSelected()){
+			invoice.setIsPartial(1);
+		}
+		else{
+			invoice.setIsPartial(0);
+		}
+		invoice.setEncoderCode(Main.getClerkCode());
+		invoice.setStoreNo(Integer.parseInt(Main.getStoreCode()));
+		invoice.setChangeAmount(Double.parseDouble(changeField.getText()));
 		
-		
+		InvoiceService.insert(invoice);
+		return invoice;
 	}
 	
 	private AbstractAction getAddInvoiceItemAction() {
