@@ -80,15 +80,8 @@ public class Main {
 			
 			properties.load(new FileInputStream("store.properties"));
 			storeCode = properties.getProperty("store.no");
-			logger.info("Store Configuration settings: store.no="+storeCode);
-			logger.info(properties.getProperty("localRoot"));
-			
-			
-			
-			
-			
-			
-			
+			logger.info("Store Configuration Settings: store.no="+storeCode);
+			logger.info("Sync Files Directory: "+properties.getProperty("localRoot"));
 			
 			
 			//Synchronizer Configuration
@@ -115,11 +108,13 @@ public class Main {
 				@Override
 				public void onSqlRead(String arg0) {
 					 try {
-						 logger.info(arg0);
 						 if(filterSQL(arg0)){
 							Statement statement = Main.getDBManager().getConnection().createStatement();
 							statement.executeUpdate(arg0);
-							logger.info(arg0);
+							logger.info("Processed: "+arg0);
+						 }
+						 else{
+							 logger.info("Skipped: "+arg0); 
 						 }
 					} catch (SQLException e) {
 						errors++;

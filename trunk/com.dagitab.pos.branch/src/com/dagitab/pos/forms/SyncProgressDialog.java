@@ -137,7 +137,7 @@ public class SyncProgressDialog extends javax.swing.JDialog implements PropertyC
 						while(e.getCause()!= null){
 							e = e.getCause();
 						}
-						JOptionPane.showMessageDialog(null, "Unable to connect to server. "+e.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Connection to server was interrupted. Please try synchronizing after a few minutes. If problem persist, contact administrator. \n\n Details: \n \t "+e.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
 						setCursor(null); //turn off the wait cursor
 						SyncProgressDialog.this.dispose();
 						

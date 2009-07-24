@@ -230,7 +230,7 @@ public class ProductDialog extends javax.swing.JDialog {
 								
 								if(Integer.parseInt(quantityTxt.getText())>0){
 									if(invoker instanceof InvoicePanel){
-										logger.info("invoking...");
+										logger.debug("invoking...");
 										InvoicePanel invoicePanel = (InvoicePanel)invoker;
 										if(action.equals("add")){
 											if(invoicePanel.getInvoiceItemRow(invoiceItem.getProductCode()) == null){
