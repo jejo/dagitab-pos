@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: lib/swt.jar lib/jdbf.jar lib/poi-2.5.1-final-20040804.jar lib/mysql-connector-java-3.1.13-bin.jar lib/com.babyland.sync-10092008.jar lib/commons-net-1.4.1.jar lib/commons-logging.jar lib/log4j-1.2.14.jar lib/jakarta-oro-2.0.8.jar lib/commons-lang-2.4.jar lib/activation.jar lib/commons-email-1.1.jar lib/mail.jar lib/com.babyland.debugger.jar 
-Main-Class: com.dagitab.pos.main.Main
-
