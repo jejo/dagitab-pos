@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.dagitab.pos.domain.Invoice;
 import com.dagitab.pos.domain.InvoiceItem;
+import com.dagitab.pos.domain.PaymentItem;
 import com.dagitab.pos.domain.ReturnItem;
 import com.dagitab.pos.main.Main;
 import com.dagitab.pos.util.DateUtility;
@@ -267,6 +268,11 @@ public class ReportService {
 			totalPerInvoice+=subTotal;
 		}
 		return totalPerInvoice;
+	}
+	
+	public Double getTotalPaymentPerInvoice(Invoice invoice){
+		return PaymentItemService.getInstance().getTotalPaymentAmount(invoice.getOrNo());
+		
 	}
 	
 	
