@@ -967,11 +967,15 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 
 	@Override
 	public Double getTotalPayment() {
-		Double totalPayment = 0.0d;
-		for(int i =0; i<paymentTable.getRowCount(); i++){
-			totalPayment += Double.valueOf(paymentTable.getValueAt(i, 2).toString());
+		Double previousPaymentAmount = 0.0d;
+		Double totalAmount = Double.parseDouble(totalAmountLabel.getText()); 
+		List<PaymentItem> previousPayments = getPreviousPaymentItemData();
+		
+		for(PaymentItem paymentItem: previousPayments){
+			previousPaymentAmount += paymentItem.getAmount();
 		}
-		return totalPayment;
+		Double partialBalance = totalAmount - previousPaymentAmount;
+		return partialBalance;
 	}
 
 	@Override
