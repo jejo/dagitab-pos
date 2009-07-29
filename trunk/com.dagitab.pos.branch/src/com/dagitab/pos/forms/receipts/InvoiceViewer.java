@@ -31,6 +31,7 @@ import com.dagitab.pos.bus.DiscountService;
 import com.dagitab.pos.bus.GCItemService;
 import com.dagitab.pos.bus.InvoiceItemService;
 import com.dagitab.pos.bus.InvoiceService;
+import com.dagitab.pos.bus.InvoiceSetService;
 import com.dagitab.pos.bus.PaymentItemService;
 import com.dagitab.pos.bus.ProductService;
 import com.dagitab.pos.bus.ReturnItemService;
@@ -281,18 +282,33 @@ public class InvoiceViewer extends javax.swing.JDialog {
 								returnedInvoiceItem.setSellPrice(returnItem.getSellPrice());
 								returnedInvoiceItem.setStoreNo(returnItem.getStoreCode());
 								invoiceItems.add(returnedInvoiceItem);
+								
 							}
 							
 							List<PaymentItem> paymentItems = PaymentItemService.getInstance().getPaymentItemList(Long.parseLong(txtOR.getText()));
+							List<PaymentItem> previousPayments  = PaymentItemService.getInstance().getPaymentItemList(InvoiceSetService.getParentORNo(Long.parseLong(txtOR.getText())));
 							
 							//edit payment item which is cash, derive how much the customer gave by adding the change to the exact cash value amount
 							for(PaymentItem paymentItem: paymentItems){
 								if(paymentItem.getPaymentType().equals("Cash")){
-									Double originalAmount = paymentItem.getAmount() + invoice.getChangeAmount();
+									Double originalAmount = paymentItem.getAmount();
+									if(invoice.getChangeAmount() > 0){
+										originalAmount +=  invoice.getChangeAmount();
+									}
 									paymentItem.setAmount(originalAmount);
+									
 								}
 							}
 							
+							//add previous payments
+							for(PaymentItem paymentItem: previousPayments){
+								paymentItems.add(paymentItem);
+							}
+							
+							//check if partial, regular or completed transaction
+							if(InvoiceSetService.isCompleted(invoice,Long.parseLong(txtOR.getText()))){
+								invoice.setIsPartial(0);
+							}
 							
 							List<GCItem> gcItems = GCItemService.getInstance().getGcItemList(NumberUtils.toLong(txtOR.getText()));
 							
@@ -395,7 +411,8 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							Double invoiceAmount =  InvoiceService.getInvoiceAmount(invoice.getOrNo());
 							Double subTotalAmount = InvoiceService.getSubTotal(invoiceAmount);
 							Double vatAmount = invoiceAmount - subTotalAmount;
-							Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo()) +invoice.getChangeAmount();
+//							Double totalPaymentAmount = InvoiceService.getTotalPaymentAmount(invoice.getOrNo()) +invoice.getChangeAmount();
+							Double totalPaymentAmount = PaymentItemService.getInstance().getTotalPaymentAmount(invoice.getOrNo());
 							
 							amountDueTextField.setText(String.format("%.2f", invoiceAmount));
 							subTotalTextField.setText(String.format("%.2f", subTotalAmount));
@@ -435,7 +452,12 @@ public class InvoiceViewer extends javax.swing.JDialog {
 							String paymentName = PaymentItemService.getInstance().getPaymentType(paymentItem.getPaymentCode());
 							rowData[1] = paymentName;
 							if(paymentName.equals("Cash")){
-								rowData[2] = String.format("%.2f",paymentItem.getAmount() + invoice.getChangeAmount()) ;
+								if(invoice.getChangeAmount() > 0){
+									rowData[2] = String.format("%.2f",paymentItem.getAmount() + invoice.getChangeAmount()) ;
+								}
+								else{
+									rowData[2] = String.format("%.2f",paymentItem.getAmount());
+								}
 							}
 							else{
 								rowData[2] = String.format("%.2f",paymentItem.getAmount());

@@ -138,7 +138,7 @@ public class PartialPanel extends javax.swing.JPanel {
 	}
 
 	public void refreshPartialTable() {
-		ResultSet rs = InvoiceService.fetchAllPartialInvoices();
+		ResultSet rs = InvoiceService.fetchPartialTransactions();
 		TableUtility.fillTable(partialTable, rs, new String[]{"OR Number","Transaction Date & Time", "Clerk No"});
 	}
 

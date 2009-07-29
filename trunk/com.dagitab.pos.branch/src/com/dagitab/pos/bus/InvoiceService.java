@@ -31,8 +31,14 @@ public class InvoiceService {
 		ResultSet rs = Main.getDBManager().executeQuery("SELECT `OR_NO`, `TRANS_DT`, `ENCODER_CODE` FROM invoice WHERE PARTIAL = '1'");		
 		return rs;
 	}
+	
+	public static ResultSet fetchPartialTransactions(){
+		ResultSet rs = Main.getDBManager().executeQuery("SELECT i.`OR_NO`, i.`TRANS_DT`, i.`ENCODER_CODE` FROM invoice i WHERE `PARTIAL` = 1 AND i.OR_NO NOT IN (SELECT i2.OR_NO FROM invoice_set i2) AND i.OR_NO NOT IN (SELECT i2.PARENT_OR_NO FROM invoice_set i2)");		
+		return rs;
+	}
 
 	public static Invoice toInvoiceObject(ResultSet rs) throws SQLException {
+		
 		Invoice invoice = new Invoice();
 		invoice.setStoreNo(rs.getInt("STORE_CODE"));
 		invoice.setOrNo(rs.getLong("OR_NO"));
@@ -40,10 +46,12 @@ public class InvoiceService {
 		invoice.setInvoiceNo(rs.getLong("INVOICE_NO"));
 		invoice.setEncoderCode(rs.getInt("ENCODER_CODE"));
 		invoice.setCustomerNo(rs.getInt("CUST_NO"));
+		invoice.setIsPartial(rs.getInt("PARTIAL"));
 		invoice.setAssistantCode(rs.getInt("ASSIST_CODE"));
 		invoice.setTransactionDate(rs.getString("TRANS_DT"));
 		invoice.setChangeAmount(rs.getDouble("CHANGE_AMOUNT"));
 		return invoice;
+		
 	}
 
 	
