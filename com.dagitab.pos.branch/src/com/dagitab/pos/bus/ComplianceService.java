@@ -67,6 +67,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
+//		dailySale = dailySale - getDeductibles(month, day, year, storeCode) + getCompletedTransactions(month, day, year, storeCode);
 		logger.debug("Raw Gross: "+dailySale);
 		return dailySale;
 	}
@@ -149,7 +150,8 @@ public class ComplianceService {
 
 	private Double getPartialTransactionBalance(int orNo, int storeCode) {
 		// TODO Auto-generated method stub
-		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND o.OR_NO= '"+orNo+"' AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND o.OR_NO= '"+orNo+"' AND o.STORE_CODE = '"+storeCode+"'"
+		+ " AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		logger.debug("PARTIAL TRANSACTION BALANCE AMOUNT QUERY="+query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
@@ -240,7 +242,8 @@ public class ComplianceService {
 	}
 	
 	public Double getPartialTransactionBalance(int month, int day, int year, int storeCode, int...hour ) {
-		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND o.STORE_CODE = '"+storeCode+"'"
+		+ " AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		if (hour.length > 0) {
 			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
@@ -324,7 +327,8 @@ public class ComplianceService {
 	}
 	
 	public Double getPartialTransactionBalance(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND o.STORE_CODE = ?";
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 and o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND o.STORE_CODE = ?"
+			+ " AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		logger.debug("Partial Transaction Balance query=" + query);
 		PreparedStatement pquery;
