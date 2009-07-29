@@ -294,7 +294,7 @@ public class FestivalComplianceService {
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ ""  + (getMaxEodCounter() + 1) );
 
 		// LINE#14 TOTAL NO OF SALES TRANSACTION
-		Integer totalNoOfSalesTransactions =  ComplianceService.getComplianceService().getNoOfSalesTransactions(month, day, year, storeCode);
+		Integer totalNoOfSalesTransactions =  ComplianceService.getComplianceService().getNoOfTransactions(month, day, year, storeCode);
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ ""  + totalNoOfSalesTransactions);
 
 		// LINE#15 TOTAL NO OF TRANSACTIONS

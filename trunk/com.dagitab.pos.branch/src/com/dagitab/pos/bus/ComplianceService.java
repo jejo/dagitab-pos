@@ -3,6 +3,7 @@ package com.dagitab.pos.bus;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -39,7 +40,8 @@ public class ComplianceService {
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(int month, int day, int year, int storeCode, int...hour ) {
 //		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
-		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'"
+		 + " AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		if (hour.length > 0) {
 			query += " AND HOUR(o.TRANS_DT) = " + hour[0];
@@ -59,7 +61,7 @@ public class ComplianceService {
 				dailySale = rs.getDouble(1);
 				logger.debug("Raw Gross BEFORE SUBTRACTION: "+dailySale);
 				
-				dailySale = dailySale - getDeductibles(month, day, year, storeCode);
+				dailySale = dailySale - getDeductibles(month, day, year, storeCode) + getCompletedTransactions(month, day, year, storeCode);
 				logger.debug("Raw Gross AFTER SUBTRACTION: "+dailySale);
 			}
 		} catch (SQLException e) {
@@ -69,10 +71,34 @@ public class ComplianceService {
 		return dailySale;
 	}
 	
+	private double getCompletedTransactions(int month, int day, int year,
+			int storeCode) {
+//		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(p.AMT) FROM invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'"
+		 + " AND EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
+		
+		System.out.println("COMPLETED TRANSACTIONS QUERY = " + query);
+		
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+//		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
+		Double completedTransactions = 0.0d;
+		try {
+			while(rs.next()){
+				completedTransactions = rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.debug("Completed Transactions: "+completedTransactions);
+		return completedTransactions;
+	}
+
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(int orNo, int storeCode ) {
 //		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
-		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.OR_NO= '"+orNo+"' AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.OR_NO= '"+orNo+"' AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'"
+		+ " AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) "
+		;
 		
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 //		ResultSet rs = Main.getDBManager().executeQuery("SELECT sum(p.AMT) from payment_item p WHERE MONTH (p.TRANS_DT) = '"+month+"' && YEAR(p.TRANS_DT) = '"+year+"' && DAY(p.TRANS_DT) = '"+day+"' AND p.STORE_CODE = '"+storeCode+"'");
@@ -85,7 +111,7 @@ public class ComplianceService {
 				dailySale = rs.getDouble(1);
 				logger.debug("Raw Gross BEFORE SUBTRACTION: "+dailySale);
 				
-				dailySale = dailySale - getDeductibles(orNo, storeCode);
+				dailySale = dailySale - getDeductibles(orNo, storeCode) + getCompletedTransactions(orNo, storeCode);
 				logger.debug("Raw Gross AFTER SUBTRACTION: "+dailySale);
 			}
 		} catch (SQLException e) {
@@ -95,6 +121,27 @@ public class ComplianceService {
 		return dailySale;
 	}
 	
+	private double getCompletedTransactions(int orNo, int storeCode) {
+//		String query = "SELECT SUM(IF(o.RETURN=0,i.SELL_PRICE*i.QUANTITY,p.AMT)) FROM invoice_item i, invoice o, payment_item p WHERE MONTH (o.TRANS_DT) = '"+month+"' && YEAR(o.TRANS_DT) = '"+year+"' && DAY(o.TRANS_DT) = '"+day+"' AND i.OR_NO = o.OR_NO AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'";
+		String query = "SELECT SUM(p.AMT) FROM payment_item p, invoice o WHERE o.OR_NO= '"+orNo+"' AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = '"+storeCode+"'"
+		+ " AND EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) "
+		;
+		
+		ResultSet rs = Main.getDBManager().executeQuery(query);
+
+		Double completedTransactions = 0.0d;
+		try {
+			while(rs.next()){
+				completedTransactions = rs.getDouble(1);
+				logger.debug("completedTransactions "+completedTransactions);
+			}
+		} catch (SQLException e) {
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		logger.debug("completedTransactions: "+completedTransactions);
+		return completedTransactions;
+	}
+
 	private Double getDeductibles(int orNo, int storeCode) {
 		// TODO Auto-generated method stub
 		return getReturnedItemsAmount(orNo, storeCode) + getGiftCheckAmount(orNo, storeCode) + getPartialTransactionBalance(orNo, storeCode);
@@ -308,10 +355,11 @@ public class ComplianceService {
 	}
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getRawGross(java.sql.Timestamp transDate, java.sql.Timestamp eodDate, int storeCode) {
-		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = ?";
-		
+		String query = "SELECT SUM(i.SELL_PRICE*i.QUANTITY) FROM invoice_item i, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND i.OR_NO = o.OR_NO AND i.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = ?"
+		+ " AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		PreparedStatement pquery;
 		ResultSet rs = null;
+		Double dailySale = 0.0d;
 		try {
 			pquery = Main.getDBManager().getConnection().prepareStatement(query);
 			
@@ -321,7 +369,6 @@ public class ComplianceService {
 			logger.debug("TRANS DATE BEFORE"+transDate.toLocaleString());
 			logger.debug("TRANS DATE BEFORE"+eodDate.toLocaleString());
 			
-			Double dailySale = 0.0d;
 			rs = pquery.executeQuery();
 			
 			while(rs.next()){
@@ -330,7 +377,7 @@ public class ComplianceService {
 				dailySale = rs.getDouble(1);
 				logger.debug("Raw Gross BEFORE SUBTRACTION: "+dailySale);
 				// SUBTRACT all returned items
-				dailySale = dailySale - getDeductibles(transDate, eodDate, storeCode);
+				dailySale = dailySale - getDeductibles(transDate, eodDate, storeCode) + getCompletedTransactions(transDate, eodDate, storeCode);
 				logger.debug("Raw Gross AFTER RETURNED SUBTRACTION: "+dailySale);
 				return dailySale;
 			}
@@ -338,11 +385,46 @@ public class ComplianceService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return null;
+		return dailySale;
 
 	}
 	
 	
+	private double getCompletedTransactions(Timestamp transDate,
+			Timestamp eodDate, int storeCode) {
+		String query = "SELECT SUM(p.AMT) FROM payment_item p, invoice o WHERE o.TRANS_DT >= ? AND o.TRANS_DT <= ? AND p.OR_NO = o.OR_NO AND p.STORE_CODE = o.STORE_CODE AND o.STORE_CODE = ?"
+			+ " AND EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
+			PreparedStatement pquery;
+			ResultSet rs = null;
+			Double completedTransactions = 0.0d;
+			try {
+				pquery = Main.getDBManager().getConnection().prepareStatement(query);
+				
+				pquery.setTimestamp(1, transDate);
+				pquery.setTimestamp(2, eodDate);
+				pquery.setInt(3, storeCode);
+				logger.debug("TRANS DATE BEFORE"+transDate.toLocaleString());
+				logger.debug("TRANS DATE BEFORE"+eodDate.toLocaleString());
+				
+				rs = pquery.executeQuery();
+				
+				while(rs.next()){
+//					double amount = rs.getDouble(1);
+//					dailySale = amount/getVatRate();
+					completedTransactions = rs.getDouble(1);
+					logger.debug("Raw Gross BEFORE SUBTRACTION: "+completedTransactions);
+					// SUBTRACT all returned items
+					logger.debug("Raw Gross AFTER RETURNED SUBTRACTION: "+completedTransactions);
+					return completedTransactions;
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return completedTransactions;
+
+	}
+
 	//need to change where to derive amount to invoice_item less discounts
 	public Double getNewGT(int month, int day, int year, int storeCode) {
 		String date = year + "-" + StringUtils.leftPad(month + "", 2, "0") + "-" + StringUtils.leftPad(day + "", 2,"0");
@@ -471,7 +553,8 @@ public class ComplianceService {
 		"      DAY(o.TRANS_DT) = '"+day+"' " +
 		"  AND i.OR_NO = o.OR_NO " +
 		"  AND o.STORE_CODE = i.STORE_CODE " +
-		"AND o.STORE_CODE = '"+storeCode+"'";
+		"AND o.STORE_CODE = '"+storeCode+"'"
+		+" AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		if (discountType.length > 0) {
 			query += " AND i.DISC_CODE = " + discountType[0];
@@ -601,7 +684,8 @@ public class ComplianceService {
 		"  AND o.TRANS_DT >= ? AND o.TRANS_DT <= ? " +
 		"  AND i.OR_NO = o.OR_NO " +
 		"  AND o.STORE_CODE = i.STORE_CODE " +
-		"  AND o.STORE_CODE = ?";
+		"  AND o.STORE_CODE = ?" +
+		" AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 //		
 		if (discountType.length > 0) {
 			query += " AND i.DISC_CODE = " + discountType[0];
@@ -648,7 +732,8 @@ public class ComplianceService {
 				"	           from invoice_item i" +
 				"             where i.OR_NO = o.OR_NO " +
 				"               and i.DISC_CODE != 1 )         " +
-				"AND o.STORE_CODE = '"+storeCode+"'";
+				"AND o.STORE_CODE = '"+storeCode+"'"
+				+" AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		logger.debug("getNoOfDisc="+query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
@@ -672,7 +757,8 @@ public class ComplianceService {
 				"	           from invoice_item i" +
 				"             where i.OR_NO = o.OR_NO " +
 				"               and i.DISC_CODE != 1 )         " +
-				"AND o.STORE_CODE = ?";
+				"AND o.STORE_CODE = ?"
+				+" AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		logger.debug("getNoOfDisc="+query);
 		PreparedStatement pquery;
@@ -741,7 +827,8 @@ public class ComplianceService {
 		"  AND o.OR_NO = '"+orNo+"' " +
 		"  AND i.OR_NO = o.OR_NO " +
 		"  AND o.STORE_CODE = i.STORE_CODE " +
-		"AND o.STORE_CODE = '"+storeCode+"'";
+		"AND o.STORE_CODE = '"+storeCode+"'"
+		+" AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
 		
 		System.out.println("TOTALDISCOUNT QUERY = " + query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
