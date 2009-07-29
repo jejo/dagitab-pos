@@ -127,8 +127,8 @@ public class EastwoodComplianceService extends ComplianceService {
 		int month = getComponent(date, Calendar.MONTH) + 1; // month is zero
 															// based!!
 		int day = getComponent(date, Calendar.DAY_OF_MONTH);
-//		int storeCode = Integer.parseInt(this.storeNumber);
-		int storeCode = 1;
+		int storeCode = Integer.parseInt(this.storeNumber);
+//		int storeCode = 1;
 
 		String fileName = generateFileName(month, day, year, ComplianceMode.DISCOUNT);
 		PrintStream out = new PrintStream(new FileOutputStream(
@@ -158,8 +158,8 @@ public class EastwoodComplianceService extends ComplianceService {
 		int month = getComponent(date, Calendar.MONTH) + 1; // month is zero
 															// based!!
 		int day = getComponent(date, Calendar.DAY_OF_MONTH);
-//		int storeCode = Integer.parseInt(this.storeNumber);
-		int storeCode = 1;
+		int storeCode = Integer.parseInt(this.storeNumber);
+		
 
 		String fileName = generateFileName(month, day, year, ComplianceMode.HOURLY);
 		PrintStream out = new PrintStream(new FileOutputStream(
@@ -310,6 +310,7 @@ public class EastwoodComplianceService extends ComplianceService {
 		Double grossSalesAmount = ComplianceService.getComplianceService().getRawGross(month, day, year, storeCode);
 		Double netSalesAmount = ComplianceService.getComplianceService().getNetSales(month, day, year, storeCode);
 		Double otherDiscountAmount = grossSalesAmount - netSalesAmount;
+		
 		out.println(StringUtils.leftPad(lineNumber++ + "", 2, "0")+ removeDecimalPoint(grossSalesAmount, 2));
 		
 		
