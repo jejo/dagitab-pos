@@ -393,7 +393,7 @@ public class PaymentDialog extends javax.swing.JDialog {
 					}
 					else if(invoker instanceof PartialDialog){
 						PartialDialog partialDialog = (PartialDialog) invoker;
-						Double exactAmount = partialDialog.getAmountDue() - partialDialog.getTotalPayment();
+						Double exactAmount = partialDialog.getTotalPayment();
 						if(exactAmount > 0){
 							txtAmount.setText(String.format("%.2f", exactAmount));
 						}
