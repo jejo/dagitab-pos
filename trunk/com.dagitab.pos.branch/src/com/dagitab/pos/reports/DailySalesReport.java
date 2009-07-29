@@ -150,11 +150,6 @@ public class DailySalesReport {
 						
 						//Total Payments
 						Double totalPayments = Double.valueOf(String.format("%.2f", ReportService.getInstance().getTotalPaymentPerInvoice(invoice)));
-						if(invoice.getIsPartial() == 1){
-							if(invoice.getChangeAmount() > 0){
-								totalPayments -= invoice.getChangeAmount();
-							}
-						}
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 12,false,false);
 						cell.setCellValue(totalPayments);
 						
@@ -245,6 +240,12 @@ public class DailySalesReport {
 						}
 						cell.setCellValue(total);
 						
+
+						//Total Payments
+						Double totalPayments = Double.valueOf(String.format("%.2f", ReportService.getInstance().getTotalPaymentPerInvoice(invoice)));
+						cell = HSSFUtil.createAmountCell(wb,row, (short) 12,false,false);
+						cell.setCellValue(totalPayments);
+						
 						//cashier id
 						cell = HSSFUtil.createIntCell(wb,row, (short) 13,false,false);
 						cell.setCellValue(invoice.getEncoderCode());
@@ -252,6 +253,11 @@ public class DailySalesReport {
 						//sales specialist
 						cell = HSSFUtil.createIntCell(wb,row, (short) 14,false,false);
 						cell.setCellValue(invoice.getAssistantCode());
+						
+						//gift certificate amount
+						cell = HSSFUtil.createAmountCell(wb, row, (short) 15, false, false);
+						Double gcAmount = GCItemService.getInstance().getTotalGCAmountPerInvoice(invoice.getOrNo());
+						cell.setCellValue(gcAmount);
 					}
 					
 				}

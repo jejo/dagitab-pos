@@ -772,9 +772,23 @@ public class PartialDialog extends javax.swing.JDialog implements Payments {
 		validateReceiptDialog.setVisible(true);
 	}
 
-	private List<PaymentItem> saveCalculatedPaymentItems(List<PaymentItem> paymentItems) {
+	private List<PaymentItem> saveCalculatedPaymentItems(List<PaymentItem> paymentItems) throws Exception {
 		logger.info("entering `saveCalculatedPaymentItems` method");
-		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems,Double.parseDouble(totalAmountLabel.getText()));
+
+		Double previousPaymentAmount = 0.0d;
+		Double totalAmount = Double.parseDouble(totalAmountLabel.getText()); 
+		List<PaymentItem> previousPayments = getPreviousPaymentItemData();
+		
+		for(PaymentItem paymentItem: previousPayments){
+			previousPaymentAmount += paymentItem.getAmount();
+		}
+		
+		Double partialBalance = totalAmount - previousPaymentAmount;
+		if(partialBalance < 0){
+			throw new Exception("Partial Balance is already 0. Please verify this transaction");
+		}
+		
+		List<PaymentItem> calculatedPaymentItems = PaymentCalculatorUtility.getInstance().getCalculatedPaymentItems(paymentItems, partialBalance);
 		for(PaymentItem paymentItem: calculatedPaymentItems){
 			//CHANGE REQUEST 2009-01-20 FILTER GC ITEMS AND  INSERT IT INTO GC_ITEM TABLE
 			if(paymentItem.getPaymentCode().equals(4)){
