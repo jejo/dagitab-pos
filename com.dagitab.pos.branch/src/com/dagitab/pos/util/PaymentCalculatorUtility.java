@@ -76,13 +76,13 @@ public class PaymentCalculatorUtility {
 			calculatedPaymentItems.get(i).setAmount(amountToBe);
 		}
 		
-//		for(PaymentItem paymentItem: items){
-//			logger.debug(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
-//		}
-//		
-//		for(PaymentItem paymentItem: calculatedPaymentItems){
-//			logger.debug("calculated: "+paymentItem.getPaymentType()+": "+paymentItem.getAmount());
-//		}
+		for(PaymentItem paymentItem: items){
+			logger.debug(paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+		}
+		
+		for(PaymentItem paymentItem: calculatedPaymentItems){
+			logger.debug("calculated: "+paymentItem.getPaymentType()+": "+paymentItem.getAmount());
+		}
 		return calculatedPaymentItems;
 	}
 	
