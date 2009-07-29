@@ -2,12 +2,14 @@ package com.dagitab.pos.forms.reports;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
@@ -104,6 +106,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 	private static Logger logger = Logger.getLogger(EastwoodComplianceDialog.class);
 	public boolean isInit1 = true;
 	public boolean isInit2 = true;
+	private Properties props;
 
 	{
 		//Set Look & Feel
@@ -444,6 +447,20 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 		//set filtermonth to current month
 		filterMonthComboBox.setSelectedIndex(Calendar.getInstance().get(Calendar.MONTH));
 		
+		props = new java.util.Properties();
+		java.io.FileInputStream fis;
+		try {
+			fis = new java.io.FileInputStream(new java.io.File(
+					"ftp.properties"));
+			props.load(fis);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LoggerUtility.getInstance().logStackTrace(e);
+		}
+		
 		
 	}
 	
@@ -538,7 +555,7 @@ public class EastwoodComplianceDialog extends javax.swing.JDialog {
 				public void actionPerformed(ActionEvent evt) {
 					int selected = sentItemTable.getSelectedRow();
 					String filename = sentItemTable.getValueAt(selected, 1).toString();
-					File file = new File("compliance/"+filename);
+					File file = new File(props.getProperty("complianceDirectory")+filename);
 					fileTextArea.setText(ComplianceFileReader.getComplianceFileReader().getFileContents(file));
 				}
 			};
