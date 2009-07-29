@@ -219,8 +219,8 @@ public class ComplianceService {
 	}
 	
 	public Double getPartialTransactionBalancePerInvoice(long orNo, String storeCode){
-		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND o.STORE_CODE = '"+storeCode+"' AND o.OR_NO = "+orNo;
-		
+		String query = "SELECT SUM(-o.CHANGE_AMOUNT) FROM invoice o WHERE o.PARTIAL = 1 AND o.STORE_CODE = '"+storeCode+"' AND o.OR_NO = "+orNo+" AND NOT EXISTS (SELECT 1 FROM INVOICE_SET s WHERE s.OR_NO = o.OR_NO) ";
+		logger.info(query);
 		ResultSet rs = Main.getDBManager().executeQuery(query);
 		Double partialBalance = 0.0d;
 		try {
@@ -232,7 +232,7 @@ public class ComplianceService {
 		} catch (SQLException e) {
 			LoggerUtility.getInstance().logStackTrace(e);
 		}
-		return null;
+		return partialBalance;
 	}
 	
 	public Double getDeductibles(int month, int day, int year, int storeCode, int...hour ) {
