@@ -138,7 +138,7 @@ public class DailySalesReport {
 						//TOTAL
 						cell = HSSFUtil.createAmountCell(wb,row, (short) 11,false,false);
 						Double total = Double.valueOf(String.format("%.2f",ReportService.getInstance().getTotalPerInvoice(invoice)));
-//						
+						total -=  GCItemService.getInstance().getTotalGCAmountPerInvoice(invoice.getOrNo()); //subtract GC Amount
 						if(total < 0){
 							total = 0.0d;
 						}
@@ -240,6 +240,7 @@ public class DailySalesReport {
 						}
 						cell.setCellValue(total);
 						
+						total -=  GCItemService.getInstance().getTotalGCAmountPerInvoice(invoice.getOrNo()); //subtract GC Amount
 
 						//Total Payments
 						Double totalPayments = Double.valueOf(String.format("%.2f", ReportService.getInstance().getTotalPaymentPerInvoice(invoice)));
