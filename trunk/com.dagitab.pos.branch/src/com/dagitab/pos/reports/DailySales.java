@@ -102,20 +102,20 @@ public  boolean generate(String fileName, String startDate, String endDate) {
 				}
 				cell.setCellValue(card);
 				
-				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Gift Certificate\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				cell = HSSFUtil.createAmountCell(wb,row,(short)4,false,true);
-				if(rs2.next()) {
-					gc=rs2.getDouble(1);
-					gcTotal+=gc;
-				}
-				else {
-					gc=0d;
-
-				}
-				cell.setCellValue(gc);
+//				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Gift Certificate\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
+//				cell = HSSFUtil.createAmountCell(wb,row,(short)4,false,true);
+//				if(rs2.next()) {
+//					gc=rs2.getDouble(1);
+//					gcTotal+=gc;
+//				}
+//				else {
+//					gc=0d;
+//
+//				}
+//				cell.setCellValue(gc);
 				
 				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name=\"Bank Check\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				cell = HSSFUtil.createAmountCell(wb,row,(short)5,false,true);
+				cell = HSSFUtil.createAmountCell(wb,row,(short)4,false,true);
 				if(rs2.next()) {
 					check=rs2.getDouble(1);
 					checkTotal+=check;
@@ -126,7 +126,7 @@ public  boolean generate(String fileName, String startDate, String endDate) {
 				cell.setCellValue(check);
 				
 				rs2 = Main.getDBManager().executeQuery("SELECT SUM(amt) FROM payment_item p,pay_type_lu ptype WHERE p.pt_code=ptype.pt_code && ptype.name!=\"Bank Check\" && ptype.name!=\"Cash\" && ptype.name!=\"Credit Card\" && ptype.name!=\"Gift Certificate\" && p.or_no="+rs.getInt(1) + " && p.store_code="+rs.getInt(2));
-				cell = HSSFUtil.createAmountCell(wb,row,(short)6,false,true);
+				cell = HSSFUtil.createAmountCell(wb,row,(short)5,false,true);
 				if(rs2.next()) {
 					others=rs2.getDouble(1);
 					othersTotal+=others;
@@ -139,7 +139,7 @@ public  boolean generate(String fileName, String startDate, String endDate) {
 				double total= cash+check+card+others+gc; //restored gc...
 				totalTotal += total;
 				
-				cell = HSSFUtil.createAmountCell(wb,row,(short)7,false,true);
+				cell = HSSFUtil.createAmountCell(wb,row,(short)6,false,true);
 				cell.setCellValue(total);
 				
 				rowCounter++;
@@ -170,13 +170,13 @@ public  boolean generate(String fileName, String startDate, String endDate) {
 		cell.setCellValue(cashTotal);
 		cell = HSSFUtil.createAmountCell(wb,row,(short)3,true,true);
 		cell.setCellValue(cardTotal);
+//		cell = HSSFUtil.createAmountCell(wb,row,(short)4,true,true);
+//		cell.setCellValue(gcTotal);
 		cell = HSSFUtil.createAmountCell(wb,row,(short)4,true,true);
-		cell.setCellValue(gcTotal);
-		cell = HSSFUtil.createAmountCell(wb,row,(short)5,true,true);
 		cell.setCellValue(checkTotal);
-		cell = HSSFUtil.createAmountCell(wb,row,(short)6,true,true);
+		cell = HSSFUtil.createAmountCell(wb,row,(short)5,true,true);
 		cell.setCellValue(othersTotal);
-		cell = HSSFUtil.createAmountCell(wb,row,(short)7,true,true);
+		cell = HSSFUtil.createAmountCell(wb,row,(short)6,true,true);
 		cell.setCellValue(totalTotal);
 	}
 }
