@@ -27,7 +27,7 @@ public class Main {
 	private static LoginDialog loginDialog;
 	private static Integer clerkCode = null;
 	private static Logger logger = Logger.getLogger(Main.class);
-	private static int percentage = 0;
+	private static volatile int percentage = 0;
 	private static Properties properties;
 	
 	
@@ -120,6 +120,7 @@ public class Main {
 						errors++;
 						LoggerUtility.getInstance().logStackTrace(e);
 						logger.error(arg0);
+						throw new RuntimeException("SQL exception encountered.",e);
 					}
 				}
 				
