@@ -4,6 +4,7 @@ import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
@@ -13,7 +14,6 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-
 
 import org.apache.log4j.Logger;
 
@@ -128,21 +128,35 @@ public class SyncProgressDialog extends javax.swing.JDialog implements PropertyC
 		public Void doInBackground() {
 			Logger.getLogger(SyncProgressDialog.class).info("running in background");
 			new Thread() {
+				
 				public void run() {
 					Logger.getLogger(SyncProgressDialog.class).info("running in thread");
 					try{
+						Main.getDBManager().getConnection().setAutoCommit(false);
 						Main.getSyncManager().sync();
+						Main.getDBManager().getConnection().commit();
 					}
 					catch(Throwable e){
+						try {
+							Main.getDBManager().getConnection().rollback();
+							Logger.getLogger(SyncProgressDialog.class).info("Rolling Back transaction [...]");
+						} catch (SQLException e1) {
+							LoggerUtility.getInstance().logStackTrace(e1);
+						}
 						while(e.getCause()!= null){
 							e = e.getCause();
 						}
 						JOptionPane.showMessageDialog(null, "Connection to server was interrupted. Please try synchronizing after a few minutes. If problem persist, contact administrator. \n\n Details: \n \t "+e.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
 						setCursor(null); //turn off the wait cursor
 						SyncProgressDialog.this.dispose();
-						
 						LoggerUtility.getInstance().logStackTrace(e);
-						
+					}
+					finally{
+						try {
+							Main.getDBManager().getConnection().setAutoCommit(true);
+						} catch (SQLException e) {
+							LoggerUtility.getInstance().logStackTrace(e);
+						}
 					}
 				}
 			}.start();
